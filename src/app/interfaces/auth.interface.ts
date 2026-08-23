@@ -14,3 +14,9 @@ export interface RegisterInterface {
     password: string;
     confirmPassword: string;
 }
+
+export interface LocalUserInterface{
+    id: string;
+    email: string | undefined;
+    nombre: string;
+}
