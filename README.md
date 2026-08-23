@@ -173,8 +173,8 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | <span style="color:red">**Jeremias, Nicolas**</span> | Configuración inicial del proyecto | 24/08/2026 | 23/08/2026 | Completado |
 | <span style="color:red">**Jeremias, Nicolas**</span> | Creación de Base de Datos y datos de prueba (preliminar) | 24/08/2026 | 23/08/2026 | Completado |
 | <span style="color:red">**Jeremias, Nicolas**</span> | Diseño de icono y pantalla de presentación | 26/08/2026 | --/--/---- | Pendiente |
-| <span style="color:green">**Plucci, Kevin Martín**</span> | Creación de modulo ´formulario-ingreso´ | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:green">**Plucci, Kevin Martín**</span> | Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) | 25/08/2026 | --/--/---- | Pendiente |
+| <span style="color:green">**Plucci, Kevin**</span> | Creación de modulo ´formulario-ingreso´ | 25/08/2026 | --/--/---- | Pendiente |
+| <span style="color:green">**Plucci, Kevin**</span> | Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) | 25/08/2026 | --/--/---- | Pendiente |
 | <span style="color:blue">**Cura, Ezequiel**</span> | Creación del servicio de autenticación | 25/08/2026 | --/--/---- | Pendiente |
 | <span style="color:blue">**Cura, Ezequiel**</span> | Creación de componentes de ´ingreso-rapido´ | 25/08/2026 | --/--/---- | Pendiente |
 | <span style="color:orange">**Maida, Cristian**</span> | Establecer estilos globales (Utilizar variables Ionic) | 25/08/2026 |  --/--/---- | Pendiente |
