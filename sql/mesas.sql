@@ -1,0 +1,58 @@
+-- =========================================================================
+-- 1. LIMPIEZA DE DATOS PREVIOS (Orden estricto de dependencias)
+-- =========================================================================
+DROP TABLE IF EXISTS public.mesas;
+DROP TYPE IF EXISTS public.disponibilidad_mesa;
+DROP TYPE IF EXISTS public.tipo_mesa;
+
+-- =========================================================================
+-- 2. CREACIÓN DE TIPOS ENUM PARA MESAS Y PEDIDOS
+-- =========================================================================
+CREATE TYPE public.disponibilidad_mesa AS ENUM (
+    'disponible', 
+    'Reservada', 
+    'ocupada'
+);
+
+CREATE TYPE public.tipo_mesa AS ENUM (
+    'estándar', 
+    'VIP', 
+    'movilidad reducida'
+);
+
+-- =========================================================================
+-- 3. CREACIÓN DE LA TABLA DE MESAS
+-- =========================================================================
+CREATE TABLE public.mesas (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    numero_mesa INTEGER NOT NULL UNIQUE CHECK (numero_mesa > 0), -- N° físico de mesa
+    cantidad_lugares INTEGER NOT NULL CHECK (cantidad_lugares > 0),
+    tipo public.tipo_mesa NOT NULL DEFAULT 'estándar',
+    disponibilidad public.disponibilidad_mesa NOT NULL DEFAULT 'disponible',
+    
+    -- IDs de clientes asignados actualmente (Admite registrados o anónimos)
+    cliente_registrado_id UUID NULL REFERENCES public.usuarios(id) ON DELETE SET NULL,
+    cliente_anonimo_id UUID NULL REFERENCES public.clientes_anonimos(id) ON DELETE SET NULL,
+    
+    -- URLs de recursos multimedia almacenados en tu bucket manual de Supabase
+    qr_url TEXT NOT NULL,
+    foto_url TEXT NOT NULL,
+    fecha_creacion TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+
+-- Habilitar Seguridad RLS
+ALTER TABLE public.mesas ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Permitir select total mesas" ON public.mesas FOR ALL USING (true);
+
+-- =========================================================================
+-- 5. INSERCIÓN DE DATOS DE PRUEBA (5 Mesas Obligatorias - Página 5)
+-- =========================================================================
+INSERT INTO public.mesas (numero_mesa, cantidad_lugares, tipo, disponibilidad, qr_url, foto_url)
+VALUES 
+(1, 2, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co'),
+(2, 4, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co'),
+(3, 4, 'movilidad reducida', 'ocupada',    'https://supabase.co', 'https://supabase.co'),
+(4, 6, 'VIP',                'Reservada',  'https://supabase.co', 'https://supabase.co'),
+(5, 2, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co');
