@@ -1,16 +1,17 @@
-import { Service, inject, Injectable } from '@angular/core';
-import {
-    BarcodeScanner,
-    ScanResult,
-} from '@capacitor-mlkit/barcode-scanning';
+import { Service, inject, Injectable, signal } from '@angular/core';
+import { BarcodeScanner, ScanResult } from '@capacitor-mlkit/barcode-scanning';
 import { DniInterface } from '../interfaces/dni.interface';
 import { Platform } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
+import { ModalService } from './modal.service';
 
 @Service()
 export class QrService {
-
     platform = inject(Platform);
+    modal = inject(ModalService)
+
+    mostrarQr = signal<boolean>(false)
+    variableQr = signal<string>('')
 
     parseDNI(data: string | undefined): DniInterface | null {
         if (!data) {
@@ -118,5 +119,14 @@ export class QrService {
                 .querySelector('body')
                 ?.classList.remove('barcode-scanner-active');
         }
+    }
+
+    generateQr(data:string){
+        if(data.trim().length == 0){
+            this.modal.setOpen(true, "Error recibiendo informacion", "No se ha recibido información para generar el código QR, por favor intente nuevamente.")
+            return
+        }
+        this.variableQr.set(data)
+        this.mostrarQr.set(true)
     }
 }
