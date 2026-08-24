@@ -35,3 +35,62 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+@import './theme/variables.scss';
+
+/* Imports base de Ionic */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* Estilos de layout globales */
+ion-content {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+}
+
+ion-card {
+  --background: var(--ion-card-background);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  margin: 16px auto;
+  max-width: 500px;
+}
+
+ion-item {
+  --background: transparent;
+  --highlight-color-focused: var(--ion-color-primary);
+  margin-bottom: 8px;
+}
+
+/* Mensajes de validación de formularios */
+small {
+  display: block;
+  color: var(--ion-color-danger);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  padding-left: 4px;
+}
+
+/* Botones principales con espaciado consistente */
+ion-button {
+  --border-radius: 8px;
+  font-weight: 600;
+  margin-top: 12px;
+
+  &[fill="outline"] {
+    --border-color: var(--ion-color-primary);
+    --color: var(--ion-color-primary);
+  }
+}
+
+ion-toolbar {
+  --background: #254d7d;
+  --color: #ffffff;
+}

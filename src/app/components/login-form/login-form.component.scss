@@ -1,0 +1,177 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pantalla-completa {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: var(--ion-background-color, #1a3a60);
+  padding: 8px 10px;
+  gap: 8px;
+}
+
+/* 1. Cabecera superior */
+.bloque-cabecera {
+  background-color: #2b5488;
+  padding: 10px 8px;
+  border-radius: 8px;
+  text-align: center;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  h1 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin: 0 0 2px 0;
+  }
+  p {
+    font-size: 0.8rem;
+    color: #e2e8f0;
+    margin: 0;
+  }
+}
+
+/* 2. Accesos Rápidos (reparten proporcionalmente la altura) */
+.seccion-accesos {
+  flex: 1.2;
+  display: flex;
+  width: 100%;
+}
+
+.grid-perfiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.tarjeta-perfil {
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  padding: 4px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  .nombre-rol {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #ffffff;
+  }
+
+  .correo-rol {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    margin-top: 2px;
+    word-break: break-all;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* 3. Formulario (elimina el hueco central) */
+.seccion-formulario {
+  background-color: #2b5488;
+  border-radius: 8px;
+  padding: 10px;
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.formulario-completo {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  gap: 8px;
+}
+
+.campos-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.campo-contenedor {
+  width: 100%;
+}
+
+.item-personalizado {
+  --background: #1a3a60;
+  --color: #ffffff !important;
+  --placeholder-color: #cbd5e1;
+  --placeholder-opacity: 0.9;
+  --highlight-color-focused: #38bdf8;
+  --highlight-color-invalid: #1a3a60;
+  --highlight-color-valid: #1a3a60;
+  border: 1.5px solid #4a77ab;
+  border-radius: 6px;
+  min-height: 52px;
+
+  ion-input {
+    --color: #ffffff !important;
+    --placeholder-color: #cbd5e1 !important;
+    font-size: 0.95rem !important;
+    font-weight: 600;
+  }
+
+  ion-input::part(label) {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+  }
+}
+
+/* 4. Botones alargados que llenan la base del contenedor */
+.acciones-contenedor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.boton-accion {
+  width: 100%;
+  flex: 1;
+  max-height: 60px;
+  min-height: 50px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.principal {
+    background-color: #0284c7;
+    color: #ffffff;
+    border: 1.5px solid #38bdf8;
+  }
+
+  &.secundario {
+    background-color: #334155;
+    color: #ffffff;
+    border: 1.5px solid #64748b;
+  }
+}
