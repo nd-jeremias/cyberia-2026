@@ -1,0 +1,1 @@
+import {E}from'./main-PBK47ZMP.js';var e=class extends E{async show(o){}async hide(o){}};export{e as SplashScreenWeb};
