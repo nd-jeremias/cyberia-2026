@@ -1,0 +1,37 @@
+<ion-card>
+    <ion-card-header>
+        <ion-card-title>Iniciar sesión</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <form [formGroup]="formulario" (ngSubmit)="onLogin()">
+            <ion-item>
+                <ion-input formControlName="email" type="email" label="Correo electrónico" labelPlacement="floating"
+                    placeholder="juangomez@gmail.com"></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password">
+                    <ion-input-password-toggle show-icon="eye-off" hide-icon="eye" color="light"
+                        slot="end"></ion-input-password-toggle></ion-input>
+                <ion-icon slot="icon-only" name="eye"></ion-icon>
+            </ion-item>
+
+            <ion-button expand="full" fill="outline" type="submit">Ingresar</ion-button>
+            <ion-button expand="full" fill="outline" routerLink="/registrarse">Registrarse</ion-button>
+        </form>
+        <!-- Grilla de Acceso Rápido (Ocupa superficie completa en bloque) -->
+        <section class="seccion-accesos">
+            <div class="grid-perfiles">
+                @for (perfil of usuariosValidos; track perfil.email) {
+                <button type="button" class="tarjeta-perfil" [style.background-color]=""
+                    (click)="cargarCredenciales(perfil.email, perfil.pass)">
+                    <!-- <ion-icon [name]="perfil.icono" class="icono-perfil"></ion-icon> -->
+                    <span class="nombre-rol">{{ perfil.rol }}</span>
+                    <small class="correo-rol">{{ perfil.email }}</small>
+                </button>
+                }
+            </div>
+        </section>
+    </ion-card-content>
+</ion-card>
