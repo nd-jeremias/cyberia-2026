@@ -1,2 +1,30 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+:root {
+  /* Fondo general: Azul profundo medio (sin blanco ni negro) */
+  --ion-background-color: #1a3a60;
+  --ion-text-color: #ffffff;
+
+  /* Contenedores y tarjetas: Tono cobalto intermedio */
+  --ion-card-background: #254d7d;
+  --ion-item-background: #1e426d;
+
+  /* Botones de acción principal */
+  --ion-color-primary: #0284c7;
+  --ion-color-primary-contrast: #ffffff;
+
+  /* Colores de Perfiles Rápidos */
+  --color-duenio: #d97706;        /* Ámbar */
+  --color-supervisor: #0d9488;    /* Verde azulado */
+  --color-mozo: #e11d48;          /* Carmesí */
+  --color-cocinero: #ea580c;      /* Naranja terracota */
+  --color-metre: #7c3aed;         /* Violeta */
+  --color-cliente: #16a34a;       /* Verde esmeralda */
+}
+
+/* Forzar que no aplique temas claros u oscuros del sistema operativo */
+@media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
+  :root {
+    --ion-background-color: #1a3a60 !important;
+    --ion-text-color: #ffffff !important;
+    --ion-card-background: #254d7d !important;
+  }
+}

@@ -47,6 +47,21 @@ export class LoginFormComponent {
         }),
     });
 
+    // Lista harcodeada de usuarios válidos para pruebas
+    usuariosValidos = [
+        { email: 'duenio@restaurante.com', pass: '12345678', rol: 'dueño' },
+        { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'supervisor' },
+        { email: 'metre@restaurante.com', pass: '12345678', rol: 'metre' },
+        { email: 'mozo@restaurante.com', pass: '12345678', rol: 'mozo' },
+        { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'cocinero' },
+        { email: 'cliente@restaurante.com', pass: '12345678', rol: 'cliente registrado' },
+    ];
+
+
+    cargarCredenciales(correo: string, clave: string) {
+        this.formulario.setValue({ email: correo, password: clave });
+    }
+
     validateForm(form: FormGroup): boolean {
         const emailErrors = form.controls['email'].errors;
         const passwordErrors = form.controls['password'].errors;
