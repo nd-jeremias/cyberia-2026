@@ -181,7 +181,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | <span style="color:orange">**Maida, Cristian**</span> | Servicio de subida de imágenes desde galería | 25/08/2026 | --/--/---- | Pendiente |
 | <span style="color:orange">**Cura, Ezequiel**</span> | Creación de página de ´ingreso´ | 25/08/2026 |  --/--/---- | Pendiente |
 | <span style="color:red">**Jeremias, Nicolas**</span> | Diseño de icono y pantalla de presentación | 26/08/2026 | --/--/---- | En proceso |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Servicio de Lectura y Generación de  QR | 26/08/2026 | 24/08/2026 | Pendiente |
+| <span style="color:red">**Jeremias, Nicolas**</span> | Servicio de Lectura y Generación de  QR | 26/08/2026 | 24/08/2026 | Completo |
 | <span style="color:red">**Jeremias, Nicolas**</span> | Listado de Aprobación de Clientes Pendientes | 26/08/2026 |  --/--/---- | Pendiente |
 | <span style="color:green">**Plucci, Kevin**</span> | Creación de modulo ´formulario-registro´ | 26/08/2026 | --/--/---- | Pendiente |
 | <span style="color:red">**Plucci, Kevin**</span> | Creación de modulo ´formulario-alta-producto´ | 27/08/2026 | --/--/---- | Pendiente |
