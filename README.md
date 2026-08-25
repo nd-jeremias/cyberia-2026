@@ -174,9 +174,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | :------------------------------------------------------- | :-------------: | :--------: | :--------: |
 | Configuración inicial del proyecto                       |   24/08/2026    | 23/08/2026 | Completado |
 | Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |
-| Diseño de icono y pantalla de presentación               |   26/08/2026    | --/--/---- | En proceso |
-| Servicio de Lectura y Generación de QR                   |   26/08/2026    | --/--/---- | Pendiente  |
-| Listado de Aprobación de Clientes Pendientes             |   --/--/----    | --/--/---- | Pendiente  |
+| Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |
+| Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |
+| Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
 
 ---
 
