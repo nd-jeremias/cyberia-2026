@@ -168,26 +168,46 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 A continuación se detalla la distribución tentativa de tareas para los integrantes del equipo.
 
-| 👤 Responsable | 📝 Tarea / Descripción | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado |
-| :------------- | :--------------------- | :-------------: | :--------: | :-------: |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Configuración inicial del proyecto | 24/08/2026 | 23/08/2026 | Completado |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Creación de Base de Datos y datos de prueba (preliminar) | 24/08/2026 | 23/08/2026 | Completado |
-| <span style="color:green">**Plucci, Kevin**</span> | Creación de modulo ´formulario-ingreso´ | 25/08/2026 | 23/08/2026 | Completado |
-| <span style="color:green">**Plucci, Kevin**</span> | Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) | 25/08/2026 | 23/08/2026 | Completado |
-| <span style="color:blue">**Cura, Ezequiel**</span> | Creación del servicio de autenticación | 25/08/2026 | 23/08/2026 | Completado |
-| <span style="color:blue">**Maida, Cristian**</span> | Creación de componentes de ´ingreso-rapido´ | 25/08/2026 | 23/08/2026 | Completado |
-| <span style="color:orange">**Maida, Cristian**</span> | Establecer estilos globales (Utilizar variables Ionic) | 25/08/2026 |  23/08/2026 | En proceso |
-| <span style="color:orange">**Maida, Cristian**</span> | Servicio captura de Fotografía por Cámara | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:orange">**Maida, Cristian**</span> | Servicio de subida de imágenes desde galería | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:orange">**Cura, Ezequiel**</span> | Creación de página de ´ingreso´ | 25/08/2026 |  --/--/---- | Pendiente |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Diseño de icono y pantalla de presentación | 26/08/2026 | --/--/---- | En proceso |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Servicio de Lectura y Generación de  QR | 26/08/2026 | 24/08/2026 | Completo |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Listado de Aprobación de Clientes Pendientes | 26/08/2026 |  --/--/---- | Pendiente |
-| <span style="color:green">**Plucci, Kevin**</span> | Creación de modulo ´formulario-registro´ | 26/08/2026 | --/--/---- | Pendiente |
-| <span style="color:red">**Plucci, Kevin**</span> | Creación de modulo ´formulario-alta-producto´ | 27/08/2026 | --/--/---- | Pendiente |
-| <span style="color:blue">**Cura, Ezequiel**</span> | Componente ´tarjeta-producto´ | 27/08/2026 | --/--/---- | Pendiente |
-| <span style="color:blue">**Cura, Ezequiel**</span> | Componente ´tarjeta-listado-producto´ | 27/08/2026 | --/--/---- | Pendiente |
-| <span style="color:orange">**Cura, Ezequiel**</span> | Creación de página de ´seleccion-productos´ | 28/08/2026 |  --/--/---- | Pendiente |
-| <span style="color:red">**Plucci, Kevin**</span> | Creación de modulo ´formulario-alta-mesa´ | 28/08/2026 | --/--/---- | Pendiente |
+### 👤 Jeremías, Nicolás
+
+| 📝 Tarea / Descripción                                   | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :------------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Configuración inicial del proyecto                       |   24/08/2026    | 23/08/2026 | Completado |
+| Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |
+| Diseño de icono y pantalla de presentación               |   26/08/2026    | --/--/---- | En proceso |
+| Servicio de Lectura y Generación de QR                   |   26/08/2026    | --/--/---- | Pendiente  |
+| Listado de Aprobación de Clientes Pendientes             |   --/--/----    | --/--/---- | Pendiente  |
+
+---
+
+### 👤 Plucci, Kevin
+
+| 📝 Tarea / Descripción                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :--------------------------------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | --/--/---- | Pendiente |
+
+---
+
+### 👤 Cura, Ezequiel
+
+| 📝 Tarea / Descripción                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación del servicio de autenticación |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de página de ´ingreso´        |   25/08/2026    | 24/08/2026 | Completado  |
+| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´ | 27/08/2026 | --/--/---- | Pendiente |
+| Creación de página de ´seleccion-productos´ | 28/08/2026 |  --/--/---- | Pendiente |
+
+---
+
+### 👤 Maida, Cristian
+
+| 📝 Tarea / Descripción                                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :----------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación de componentes de ´ingreso-rapido´            |   25/08/2026    | 23/08/2026 | Completado |
+| Establecer estilos globales (Utilizar variables Ionic) |   25/08/2026    | 23/08/2026 | En proceso |
+| Servicio captura de Fotografía por Cámara              |   25/08/2026    | --/--/---- | Pendiente  |
+| Servicio de subida de imágenes desde galería           |   25/08/2026    | --/--/---- | Pendiente  |
 
 _Nota: La fecha real se actualizará únicamente al momento de realizar el deploy o commit final de la tarea._

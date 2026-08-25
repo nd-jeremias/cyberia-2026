@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular';
-import { SplashScreen } from '@capacitor/splash-screen';
+import { Component, inject } from '@angular/core';
+import { IonApp, IonRouterOutlet, ModalController } from '@ionic/angular';
+import { SplashComponent } from './components/splash/splash.component';
 
 @Component({
     selector: 'app-root',
@@ -8,14 +8,20 @@ import { SplashScreen } from '@capacitor/splash-screen';
     imports: [IonApp, IonRouterOutlet],
 })
 export class AppComponent {
-    constructor() {
-        this.showSplash()
-    }
+    private modalCtrl = inject(ModalController);
 
-    async showSplash() {
-        await SplashScreen.show({
-            showDuration: 3000,
-            autoHide: true,
-        });
-    }
+  ngOnInit() {
+    // 1. DISPARAMOS EL MODAL ANIMADO INMEDIATAMENTE
+    this.showAnimatedSplash();
+  }
+
+  async showAnimatedSplash() {
+    const modal = await this.modalCtrl.create({
+      component: SplashComponent,
+      cssClass: 'full-screen-modal',
+      backdropDismiss: false
+    });
+    
+    await modal.present();
+  }
 }

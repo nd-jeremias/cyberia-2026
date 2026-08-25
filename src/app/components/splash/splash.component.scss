@@ -1,0 +1,100 @@
+ion-content {
+  /* Fondo azul oscuro permanente */
+  --background: #000730; 
+}
+
+/* --- CAPA 1: LOGO ANIMADO --- */
+.layer-animated {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  animation: fadeOutLayer 0.5s ease-out 2.0s forwards;
+}
+
+.animated-logo {
+  width: 75vw; 
+  max-width: 500px;
+  height: auto;
+  opacity: 0;
+  transform: scale(0.6);
+  animation: logoEntrance 1.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards;
+}
+
+/* --- CAPA 2: LISTA DE NOMBRES HTML --- */
+.layer-html-credits {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  text-align: center;
+}
+
+.credits-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.credits-title {
+  color: #4a5d80; /* Azul grisáceo sobrio */
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin: 0;
+  opacity: 0;
+  
+  /* 1. Aparece primero "Desarrollado por" al segundo 2.0 */
+  animation: fadeInText 0.5s ease-out 2.0s forwards;
+}
+
+.names-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  li {
+    font-size: 1.4rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+    opacity: 0;
+    
+    /* 2. Todos los nombres aparecen JUNTOS al segundo 2.3 (un instante después) */
+    animation: fadeInText 0.5s ease-out 2.3s forwards;
+    
+    /* Degradado metálico sobrio */
+    background: linear-gradient(to bottom, #ffffff 60%, #b0c4de 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* --- ANIMACIONES REUTILIZABLES --- */
+@keyframes logoEntrance {
+  0% { opacity: 0; transform: scale(0.6); }
+  60% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeOutLayer {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* Animación de desvanecimiento limpia compartida (Fade-In) */
+@keyframes fadeInText {
+  to { opacity: 1; }
+}
