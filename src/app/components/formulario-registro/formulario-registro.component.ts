@@ -1,4 +1,4 @@
-import { Component, effect, input, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import {
     AbstractControl,
     FormControl,
@@ -20,6 +20,8 @@ import {
     IonSelectOption,
 } from '@ionic/angular';
 import { RegisterInterface } from '../../interfaces/auth.interface';
+import { DniInterface } from '../../interfaces/dni.interface';
+import { QrService } from '../../services/qr.service';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     const password = group.get('password')?.value;
@@ -49,6 +51,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
 export class FormularioRegistroComponent {
     // La pagina que renderiza el formulario indica si la sesion actual
     // es del dueño; solo en ese caso se muestran CUIL y tipo de empleado.
+    qrService = inject(QrService);
     esDueno = input<boolean>(false);
 
     registroSubmit = output<RegisterInterface>();
@@ -112,6 +115,17 @@ export class FormularioRegistroComponent {
             tipoEmpleado.updateValueAndValidity();
         });
     }
+
+    async scanearDNI() {
+    const dniData: DniInterface | null = await this.qrService.scanDNI();
+    if (dniData) {
+      this.formulario.patchValue({
+        nombres: dniData.nombres,
+        apellidos: dniData.apellidos,
+        dni: dniData.dni,
+      });
+    }
+  }
 
     onFotoSeleccionada(event: Event) {
         const input = event.target as HTMLInputElement;

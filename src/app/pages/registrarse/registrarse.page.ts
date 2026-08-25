@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton } from '@ionic/angular';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
+import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 
 @Component({
   selector: 'app-registrarse',
@@ -19,14 +20,14 @@ import { ModalService } from '../../services/modal.service';
       <app-formulario-registro (registroSubmit)="handleRegistro($event)"></app-formulario-registro>
     </ion-content>
   `,
-  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent],
+  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent, FormularioRegistroComponent],
 })
 export class RegistrarsePage {
   private router = inject(Router);
   private spinner = inject(SpinnerService);
   private modal = inject(ModalService);
 
-  async handleRegistro(formData: FormData) {
+  async handleRegistro(formData: any) {
     this.spinner.show();
     // Lógica para enviar formData a Supabase (Auth + Storage + Tabla usuarios)
     this.spinner.hide();
