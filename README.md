@@ -7,13 +7,13 @@
 
 ## 📋 Índice
 
-- [Descripción General](#-descripción-general)
-- [Tecnologías Utilizadas](#%EF%B8%8F-tecnologías-utilizadas)
-- [Requisitos del Sistema](#-requisitos-del-sistema)
-- [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
-- [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
-- [Guía Rápida de Git](#-guía-rápida-de-git)
-- [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
+-   [Descripción General](#-descripción-general)
+-   [Tecnologías Utilizadas](#%EF%B8%8F-tecnologías-utilizadas)
+-   [Requisitos del Sistema](#-requisitos-del-sistema)
+-   [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
+-   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
+-   [Guía Rápida de Git](#-guía-rápida-de-git)
+-   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
 
 ---
 
@@ -22,7 +22,7 @@
 El objetivo es realizar, implementar y documentar una aplicación totalmente funcional, utilizando las características de un dispositivo móvil para la gestión de un restaurante.
 La aplicación estará enfocada en la experiencia de usuario, tanto de los clientes cómo de los empleados del comercio.
 
-- **Estado del proyecto:** En desarrollo 🛠️
+-   **Estado del proyecto:** En desarrollo 🛠️
 
 ---
 
@@ -30,10 +30,10 @@ La aplicación estará enfocada en la experiencia de usuario, tanto de los clien
 
 Lista de las principales herramientas y frameworks del proyecto:
 
-- **Framework Principal:** Ionic Framework
-- **Lenguaje:** Angular (con TypeScript)
-- **Estilos:** SASS / CSS
-- **Base de datos / Backend:** Supabase
+-   **Framework Principal:** Ionic Framework
+-   **Lenguaje:** Angular (con TypeScript)
+-   **Estilos:** SASS / CSS
+-   **Base de datos / Backend:** Supabase
 
 ---
 
@@ -45,14 +45,14 @@ Ionic:
    Ionic CLI                     : 7.2.1 (C:\Users\ndjer\AppData\Roaming\npm\node_modules\@ionic\cli)
    Ionic Framework               : @ionic/angular 9.0.0
    @angular-devkit/build-angular : not installed
-   @angular-devkit/schematics    : 22.0.1
+   @angular-devkit/schematics    : 22.1.5
    @angular/cli                  : 22.0.1
    @ionic/angular-toolkit        : 13.0.0
 
 Capacitor:
 
    Capacitor CLI      : 8.5.0
-   @capacitor/android : not installed
+   @capacitor/android : 8.5.0
    @capacitor/core    : 8.5.0
    @capacitor/ios     : not installed
 
@@ -64,7 +64,7 @@ Utility:
 System:
 
    NodeJS : v24.19.0 (C:\Program Files\nodejs\node.exe)
-   npm    : 11.12.1
+   npm    : 11.17.0
    OS     : Windows 10
 
 ```
@@ -100,7 +100,7 @@ Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue est
 
 ### 1. Flujo Diario de Trabajo (Paso a Paso)
 
-- **Paso 1: Actualizar tu entorno local (¡Hacer esto SIEMPRE al iniciar el día!)**
+-   **Paso 1: Actualizar tu entorno local (¡Hacer esto SIEMPRE al iniciar el día!)**
 
     ```bash
     git checkout main && git pull origin main
@@ -108,7 +108,7 @@ Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue est
 
     _Moverse a la rama principal y descargar los últimos cambios de tus compañeros._
 
-- **Paso 2: Crear tu rama de trabajo**
+-   **Paso 2: Crear tu rama de trabajo**
 
     ```bash
     git switch nombre-de-tu-rama
@@ -116,7 +116,7 @@ Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue est
 
     _Moverse a una rama propia basada en para trabajar de forma segura._
 
-- **Paso 3: Guardar tus avances**
+-   **Paso 3: Guardar tus avances**
 
     ```bash
     git add .
@@ -125,7 +125,7 @@ Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue est
 
     _Prepara y guarda tus cambios localmente con un mensaje descriptivo._
 
-- **Paso 4: Enviar tus cambios al servidor**
+-   **Paso 4: Enviar tus cambios al servidor**
     ```bash
     git push origin nombre-de-tu-rama
     ```
@@ -168,16 +168,47 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 A continuación se detalla la distribución tentativa de tareas para los integrantes del equipo.
 
-| 👤 Responsable | 📝 Tarea / Descripción | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado |
-| :------------- | :--------------------- | :-------------: | :--------: | :-------: |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Configuración inicial del proyecto | 24/08/2026 | 23/08/2026 | Completado |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Creación de Base de Datos y datos de prueba (preliminar) | 24/08/2026 | 23/08/2026 | Completado |
-| <span style="color:red">**Jeremias, Nicolas**</span> | Diseño de icono y pantalla de presentación | 26/08/2026 | --/--/---- | Pendiente |
-| <span style="color:green">**Plucci, Kevin Martín**</span> | Creación de modulo ´formulario-ingreso´ | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:green">**Plucci, Kevin Martín**</span> | Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:blue">**Cura, Ezequiel**</span> | Creación del servicio de autenticación | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:blue">**Cura, Ezequiel**</span> | Creación de componentes de ´ingreso-rapido´ | 25/08/2026 | --/--/---- | Pendiente |
-| <span style="color:orange">**Maida, Cristian**</span> | Establecer estilos globales (Utilizar variables Ionic) | 25/08/2026 |  --/--/---- | Pendiente |
-| <span style="color:orange">**Maida, Cristian**</span> | Creación de página de ´ingreso´ | 26/08/2026 |  --/--/---- | Pendiente |
+### 👤 Jeremías, Nicolás
+
+| 📝 Tarea / Descripción                                   | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :------------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Configuración inicial del proyecto                       |   24/08/2026    | 23/08/2026 | Completado |
+| Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |
+| Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |
+| Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |
+| Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
+
+---
+
+### 👤 Plucci, Kevin
+
+| 📝 Tarea / Descripción                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :--------------------------------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado |
+
+---
+
+### 👤 Cura, Ezequiel
+
+| 📝 Tarea / Descripción                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación del servicio de autenticación |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de página de ´ingreso´        |   25/08/2026    | 24/08/2026 | Completado  |
+| Creación de página de ´home´        |   27/08/2026    | --/--/---- | Pendiente  |
+| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´ | 27/08/2026 | --/--/---- | Pendiente |
+| Creación de página de ´seleccion-productos´ | 28/08/2026 |  --/--/---- | Pendiente |
+
+---
+
+### 👤 Maida, Cristian
+
+| 📝 Tarea / Descripción                                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :----------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación de componentes de ´ingreso-rapido´            |   25/08/2026    | 23/08/2026 | Completado |
+| Establecer estilos globales (Utilizar variables Ionic) |   25/08/2026    | 23/08/2026 | Completado |
+| Servicio captura de Fotografía por Cámara              |   25/08/2026    | 25/08/2026 | Completado  |
+| Servicio de subida de imágenes desde galería           |   25/08/2026    | 25/08/2026 | Completado  |
 
 _Nota: La fecha real se actualizará únicamente al momento de realizar el deploy o commit final de la tarea._

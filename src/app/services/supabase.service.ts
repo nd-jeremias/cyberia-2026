@@ -1,3 +1,4 @@
+import { App } from '@capacitor/app';
 import { Preferences } from '@capacitor/preferences';
 import { createClient } from '@supabase/supabase-js';
 
@@ -21,8 +22,19 @@ const supabaseAuthStorage = {
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
     storage: supabaseAuthStorage,
-    persistSession: true, 
+    persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true
+  }
+});
+
+// En Capacitor, el refresh automático del token debe pausarse cuando la app
+// pasa a segundo plano (evita refrescos innecesarios/errores de red) y
+// retomarse al volver a primer plano, para que la sesión no quede vencida.
+App.addListener('appStateChange', ({ isActive }) => {
+  if (isActive) {
+    supabase.auth.startAutoRefresh();
+  } else {
+    supabase.auth.stopAutoRefresh();
   }
 });

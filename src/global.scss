@@ -93,6 +93,14 @@ ion-toolbar {
   --color: #ffffff;
 }
 
+.full-screen-modal {
+  --width: 100%;
+  --height: 100%;
+  --border-radius: 0px;
+  top: 0;
+  left: 0;
+}
+
 /* Ocultar scrollbar si no es necesario */
 ion-content::part(scroll) {
   scrollbar-width: none;
