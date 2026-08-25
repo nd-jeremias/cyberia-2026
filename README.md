@@ -186,7 +186,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | :--------------------------------------------------------------------------- | :-------------: | :--------: | :--------: |
 | Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado |
 | Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado |
-| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | --/--/---- | Pendiente |
+| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado |
 
 ---
 
