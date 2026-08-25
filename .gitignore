@@ -69,4 +69,7 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Android
+/android
+
 notas.md
