@@ -36,7 +36,9 @@
     </application>
 
     <!-- Permissions -->
-<meta-data
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <meta-data
         android:name="com.google.mlkit.vision.dependencies"
         android:value="barcode"
     />

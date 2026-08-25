@@ -1,17 +1,21 @@
-import { Service, inject, Injectable, signal } from '@angular/core';
+import { Service, inject, signal } from '@angular/core';
 import { BarcodeScanner, ScanResult } from '@capacitor-mlkit/barcode-scanning';
 import { DniInterface } from '../interfaces/dni.interface';
 import { Platform } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
 import { ModalService } from './modal.service';
+import html2canvas from 'html2canvas';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 @Service()
 export class QrService {
     platform = inject(Platform);
-    modal = inject(ModalService)
+    modal = inject(ModalService);
 
-    mostrarQr = signal<boolean>(false)
-    variableQr = signal<string>('')
+    mostrarQr = signal<boolean>(false);
+    variableQr = signal<string>('');
+    showedText = signal<string>('');
 
     parseDNI(data: string | undefined): DniInterface | null {
         if (!data) {
@@ -121,12 +125,89 @@ export class QrService {
         }
     }
 
-    generateQr(data:string){
-        if(data.trim().length == 0){
-            this.modal.setOpen(true, "Error recibiendo informacion", "No se ha recibido información para generar el código QR, por favor intente nuevamente.")
-            return
+    generateQr(data: string, texto: string) {
+        if (data.trim().length == 0) {
+            this.modal.setOpen(
+                true,
+                'Error recibiendo informacion',
+                'No se ha recibido información para generar el código QR, por favor intente nuevamente.'
+            );
+            return;
         }
-        this.variableQr.set(data)
-        this.mostrarQr.set(true)
+        this.variableQr.set(data);
+        this.mostrarQr.set(true);
+        this.showedText.set(texto);
+    }
+
+    // Método auxiliar para transformar el Canvas en Blob (se mantiene igual)
+    private canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
+        return new Promise((resolve, reject) => {
+            canvas.toBlob((blob) => {
+                if (blob) resolve(blob);
+                else reject(new Error('No se pudo convertir el canvas a Blob'));
+            }, 'image/png');
+        });
+    }
+
+    // Captura la pantalla, ejecuta las acciones nativas y RETORNA el Blob de IMG
+    captureScreen(id: string): Promise<Blob> {
+        return new Promise((resolve, reject) => {
+            const element = document.getElementById(id) as HTMLElement;
+
+            if (!element) {
+                reject(
+                    new Error(`No se encontró el elemento con el ID: ${id}`)
+                );
+                return;
+            }
+
+            html2canvas(element)
+                .then(async (canvas: HTMLCanvasElement) => {
+                    if (this.platform.is('capacitor')) {
+                        this.shareCanvaImg(canvas);
+                    } else {
+                        this.downloadCanvaImg(canvas);
+                    }
+
+                    try {
+                        const imageBlob = await this.canvasToBlob(canvas);
+                        resolve(imageBlob);
+                    } catch (error) {
+                        reject(error);
+                    }
+                })
+                .catch((err) => reject(err));
+        });
+    }
+
+    downloadCanvaImg(canva: HTMLCanvasElement) {
+        console.log('descargando');
+        const link = document.createElement('a');
+        link.href = canva.toDataURL();
+        link.download = Date.now() + '.png';
+        link.click();
+    }
+
+    async shareCanvaImg(canva: HTMLCanvasElement) {
+        let base64 = canva.toDataURL();
+        let path = Date.now() + '.png';
+
+        await Filesystem.writeFile({
+            path,
+            data: base64,
+            directory: Directory.Cache,
+        }).then(async (res) => {
+            let uri = res.uri;
+            await Share.share({
+                // title: 'See cool stuff',
+                // text: 'Really awesome thing you need to see right meow',
+                url: uri,
+                // dialogTitle: 'Share with buddies',
+            });
+            await Filesystem.deleteFile({
+                path,
+                directory: Directory.Cache,
+            });
+        });
     }
 }
