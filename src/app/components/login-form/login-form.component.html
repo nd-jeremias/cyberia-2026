@@ -1,37 +1,66 @@
-<ion-card>
-    <ion-card-header>
-        <ion-card-title>Iniciar sesión</ion-card-title>
-    </ion-card-header>
+<div class="pantalla-completa">
+  <!-- Cabecera -->
+  <header class="bloque-cabecera">
+    <h1>Sistema de Gestión Gastronómica</h1>
+    <p>Complete sus datos o seleccione un acceso rápido</p>
+  </header>
 
-    <ion-card-content>
-        <form [formGroup]="formulario" (ngSubmit)="onLogin()">
-            <ion-item>
-                <ion-input formControlName="email" type="email" label="Correo electrónico" labelPlacement="floating"
-                    placeholder="juangomez@gmail.com"></ion-input>
-            </ion-item>
+  <!-- Formulario Superior -->
+  <section class="seccion-formulario">
+    <form [formGroup]="formulario" (ngSubmit)="onLogin()" class="formulario-completo">
+      <div class="campos-grupo">
+        <div class="campo-contenedor">
+          <ion-item lines="none" class="item-personalizado">
+            <ion-input
+              formControlName="email"
+              type="email"
+              label="Correo Electrónico"
+              labelPlacement="floating"
+              placeholder="ejemplo@restaurante.com"
+            ></ion-input>
+          </ion-item>
+        </div>
 
-            <ion-item>
-                <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password">
-                    <ion-input-password-toggle show-icon="eye-off" hide-icon="eye" color="light"
-                        slot="end"></ion-input-password-toggle></ion-input>
-                <ion-icon slot="icon-only" name="eye"></ion-icon>
-            </ion-item>
+        <div class="campo-contenedor">
+          <ion-item lines="none" class="item-personalizado">
+            <ion-input
+              formControlName="password"
+              label="Contraseña"
+              labelPlacement="floating"
+              type="password"
+            >
+              <ion-input-password-toggle
+                show-icon="eye-off"
+                hide-icon="eye"
+                color="light"
+                slot="end"
+              ></ion-input-password-toggle>
+            </ion-input>
+          </ion-item>
+        </div>
+      </div>
 
-            <ion-button expand="full" fill="outline" type="submit">Ingresar</ion-button>
-            <ion-button expand="full" fill="outline" routerLink="/registrarse">Registrarse</ion-button>
-        </form>
-        <!-- Grilla de Acceso Rápido (Ocupa superficie completa en bloque) -->
-        <section class="seccion-accesos">
-            <div class="grid-perfiles">
-                @for (perfil of usuariosValidos; track perfil.email) {
-                <button type="button" class="tarjeta-perfil" [style.background-color]=""
-                    (click)="cargarCredenciales(perfil.email, perfil.pass)">
-                    <!-- <ion-icon [name]="perfil.icono" class="icono-perfil"></ion-icon> -->
-                    <span class="nombre-rol">{{ perfil.rol }}</span>
-                    <small class="correo-rol">{{ perfil.email }}</small>
-                </button>
-                }
-            </div>
-        </section>
-    </ion-card-content>
-</ion-card>
+      <!-- Botones de Acción Inmediata -->
+      <div class="acciones-contenedor">
+        <button type="submit" class="boton-accion principal">Iniciar Sesión</button>
+        <button type="button" class="boton-accion secundario" routerLink="/registrarse">Registrarse</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Grilla de Acceso Rápido Inferior (Zona táctil) -->
+  <section class="seccion-accesos">
+    <div class="grid-perfiles">
+      @for (perfil of usuariosValidos; track perfil.email) {
+        <button 
+          type="button" 
+          class="tarjeta-perfil" 
+          [style.background-color]="perfil.color"
+          (click)="cargarCredenciales(perfil.email, perfil.pass)">
+          <span class="nombre-rol">{{ perfil.rol }}</span>
+          <small class="correo-rol">{{ perfil.email }}</small>
+        </button>
+      }
+    </div>
+  </section>
+</div>
