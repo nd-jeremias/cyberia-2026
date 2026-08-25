@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -13,8 +13,6 @@ import {
     IonCardTitle,
     IonInput,
     IonItem,
-    IonSelect,
-    IonSelectOption,
     IonTextarea,
 } from '@ionic/angular';
 import {
@@ -35,17 +33,17 @@ const CANTIDAD_FOTOS_REQUERIDA = 3;
         IonCardTitle,
         IonInput,
         IonItem,
-        IonSelect,
-        IonSelectOption,
         IonTextarea,
         IonButton,
         ReactiveFormsModule,
     ],
 })
 export class FormularioAltaProductoComponent {
-    productoSubmit = output<ProductoAltaInterface>();
+    // El tipo lo define la pagina segun el perfil que la renderiza
+    // (cocinero -> Comida/Postre, cantinero -> Bebida), no el usuario.
+    tipo = input.required<TipoProducto>();
 
-    tiposProducto: TipoProducto[] = ['Comida', 'Bebida', 'Postre'];
+    productoSubmit = output<ProductoAltaInterface>();
 
     fotos: File[] = [];
 
@@ -61,9 +59,6 @@ export class FormularioAltaProductoComponent {
         }),
         precio: new FormControl<number | null>(null, {
             validators: [Validators.required, Validators.min(0.01)],
-        }),
-        tipo: new FormControl<TipoProducto | null>(null, {
-            validators: [Validators.required],
         }),
     });
 
@@ -86,7 +81,7 @@ export class FormularioAltaProductoComponent {
             descripcion: valores.descripcion ?? '',
             tiempoElaboracionMinutos: Number(valores.tiempoElaboracionMinutos),
             precio: Number(valores.precio),
-            tipo: valores.tipo as TipoProducto,
+            tipo: this.tipo(),
             fotos: this.fotos,
         });
     }

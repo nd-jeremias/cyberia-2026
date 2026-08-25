@@ -1,6 +1,6 @@
 <ion-card>
     <ion-card-header>
-        <ion-card-title>Alta de producto</ion-card-title>
+        <ion-card-title>Alta de producto ({{ tipo() }})</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -48,21 +48,6 @@
                     labelPlacement="floating"
                     placeholder="4500.00"
                 ></ion-input>
-            </ion-item>
-
-            <ion-item>
-                <ion-select
-                    formControlName="tipo"
-                    label="Tipo de producto"
-                    labelPlacement="floating"
-                    placeholder="Seleccionar"
-                >
-                    @for (tipo of tiposProducto; track tipo) {
-                        <ion-select-option [value]="tipo">{{
-                            tipo
-                        }}</ion-select-option>
-                    }
-                </ion-select>
             </ion-item>
 
             <ion-item>

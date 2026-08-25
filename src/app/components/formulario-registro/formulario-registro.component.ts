@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, effect, input, output } from '@angular/core';
 import {
     AbstractControl,
     FormControl,
@@ -47,6 +47,10 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     ],
 })
 export class FormularioRegistroComponent {
+    // La pagina que renderiza el formulario indica si la sesion actual
+    // es del dueño; solo en ese caso se muestran CUIL y tipo de empleado.
+    esDueno = input<boolean>(false);
+
     registroSubmit = output<RegisterInterface>();
 
     tiposEmpleado = [
@@ -71,9 +75,7 @@ export class FormularioRegistroComponent {
             dni: new FormControl('', {
                 validators: [Validators.required, Validators.pattern(/^\d{7,8}$/)],
             }),
-            cuil: new FormControl('', {
-                validators: [Validators.pattern(/^\d{11}$/)],
-            }),
+            cuil: new FormControl(''),
             correo: new FormControl('', {
                 validators: [Validators.required, Validators.email],
             }),
@@ -87,6 +89,29 @@ export class FormularioRegistroComponent {
         },
         { validators: [passwordsIguales] }
     );
+
+    constructor() {
+        effect(() => {
+            const cuil = this.formulario.controls.cuil;
+            const tipoEmpleado = this.formulario.controls.tipoEmpleado;
+
+            if (this.esDueno()) {
+                cuil.setValidators([
+                    Validators.required,
+                    Validators.pattern(/^\d{11}$/),
+                ]);
+                tipoEmpleado.setValidators([Validators.required]);
+            } else {
+                cuil.clearValidators();
+                tipoEmpleado.clearValidators();
+                cuil.reset('');
+                tipoEmpleado.reset('');
+            }
+
+            cuil.updateValueAndValidity();
+            tipoEmpleado.updateValueAndValidity();
+        });
+    }
 
     onFotoSeleccionada(event: Event) {
         const input = event.target as HTMLInputElement;

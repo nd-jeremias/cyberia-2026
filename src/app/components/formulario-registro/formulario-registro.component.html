@@ -36,16 +36,18 @@
                 ></ion-input>
             </ion-item>
 
-            <ion-item>
-                <ion-input
-                    formControlName="cuil"
-                    type="text"
-                    inputmode="numeric"
-                    label="CUIL (opcional)"
-                    labelPlacement="floating"
-                    placeholder="20123456783"
-                ></ion-input>
-            </ion-item>
+            @if (esDueno()) {
+                <ion-item>
+                    <ion-input
+                        formControlName="cuil"
+                        type="text"
+                        inputmode="numeric"
+                        label="CUIL"
+                        labelPlacement="floating"
+                        placeholder="20123456783"
+                    ></ion-input>
+                </ion-item>
+            }
 
             <ion-item>
                 <ion-input
@@ -57,20 +59,22 @@
                 ></ion-input>
             </ion-item>
 
-            <ion-item>
-                <ion-select
-                    formControlName="tipoEmpleado"
-                    label="Tipo de empleado (opcional)"
-                    labelPlacement="floating"
-                    placeholder="Seleccionar"
-                >
-                    @for (tipo of tiposEmpleado; track tipo) {
-                        <ion-select-option [value]="tipo">{{
-                            tipo
-                        }}</ion-select-option>
-                    }
-                </ion-select>
-            </ion-item>
+            @if (esDueno()) {
+                <ion-item>
+                    <ion-select
+                        formControlName="tipoEmpleado"
+                        label="Tipo de empleado"
+                        labelPlacement="floating"
+                        placeholder="Seleccionar"
+                    >
+                        @for (tipo of tiposEmpleado; track tipo) {
+                            <ion-select-option [value]="tipo">{{
+                                tipo
+                            }}</ion-select-option>
+                        }
+                    </ion-select>
+                </ion-item>
+            }
 
             <ion-item>
                 <label class="input-archivo">
