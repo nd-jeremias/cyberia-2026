@@ -1,0 +1,63 @@
+<ion-card>
+    <ion-card-header>
+        <ion-card-title>Alta de mesa</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <form [formGroup]="formulario" (ngSubmit)="onAltaMesa()">
+            <ion-item>
+                <ion-input
+                    formControlName="numeroMesa"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    label="Número de mesa"
+                    labelPlacement="floating"
+                    placeholder="1"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-input
+                    formControlName="cantidadLugares"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    label="Cantidad de lugares"
+                    labelPlacement="floating"
+                    placeholder="4"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-select
+                    formControlName="tipo"
+                    label="Tipo de mesa"
+                    labelPlacement="floating"
+                    placeholder="Seleccionar"
+                >
+                    @for (tipo of tiposMesa; track tipo) {
+                        <ion-select-option [value]="tipo">{{
+                            tipo
+                        }}</ion-select-option>
+                    }
+                </ion-select>
+            </ion-item>
+
+            <ion-item>
+                <label class="input-archivo">
+                    Foto de la mesa
+                    <input
+                        type="file"
+                        accept="image/*"
+                        (change)="onFotoSeleccionada($event)"
+                    />
+                </label>
+            </ion-item>
+
+            <ion-button expand="full" fill="outline" type="submit"
+                >Dar de alta</ion-button
+            >
+        </form>
+    </ion-card-content>
+</ion-card>
