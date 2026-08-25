@@ -1,66 +1,85 @@
-<div class="pantalla-completa">
-  <!-- Cabecera -->
-  <header class="bloque-cabecera">
-    <h1>Sistema de Gestión Gastronómica</h1>
-    <p>Complete sus datos o seleccione un acceso rápido</p>
+<div class="pantalla-login">
+  
+  <!-- 1. Cabecera con Isotipo -->
+  <header class="cabecera">
+    <div class="isotipo-icono">
+      <ion-icon name="restaurant-outline"></ion-icon>
+    </div>
+    <h1>Sistema de gestión gastronómica</h1>
+    <p>Ingresá con tu cuenta</p>
   </header>
 
-  <!-- Formulario Superior -->
-  <section class="seccion-formulario">
-    <form [formGroup]="formulario" (ngSubmit)="onLogin()" class="formulario-completo">
-      <div class="campos-grupo">
-        <div class="campo-contenedor">
-          <ion-item lines="none" class="item-personalizado">
-            <ion-input
-              formControlName="email"
-              type="email"
-              label="Correo Electrónico"
-              labelPlacement="floating"
-              placeholder="ejemplo@restaurante.com"
-            ></ion-input>
-          </ion-item>
-        </div>
-
-        <div class="campo-contenedor">
-          <ion-item lines="none" class="item-personalizado">
-            <ion-input
-              formControlName="password"
-              label="Contraseña"
-              labelPlacement="floating"
-              type="password"
-            >
-              <ion-input-password-toggle
-                show-icon="eye-off"
-                hide-icon="eye"
-                color="light"
-                slot="end"
-              ></ion-input-password-toggle>
-            </ion-input>
-          </ion-item>
+  <!-- 2. Formulario Principal -->
+  <section class="seccion-form">
+    <form [formGroup]="formulario" (ngSubmit)="onLogin()">
+      
+      <!-- Campo Email -->
+      <div class="grupo-input">
+        <label class="input-label">Correo electrónico</label>
+        <div class="caja-input">
+          <ion-icon name="mail-outline" class="icono-campo"></ion-icon>
+          <ion-input
+            formControlName="email"
+            type="email"
+            placeholder="nombre@restaurante.com">
+          </ion-input>
         </div>
       </div>
 
-      <!-- Botones de Acción Inmediata -->
-      <div class="acciones-contenedor">
-        <button type="submit" class="boton-accion principal">Iniciar Sesión</button>
-        <button type="button" class="boton-accion secundario" routerLink="/registrarse">Registrarse</button>
+      <!-- Campo Contraseña -->
+      <div class="grupo-input">
+        <label class="input-label">Contraseña</label>
+        <div class="caja-input">
+          <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
+          <ion-input
+            formControlName="password"
+            type="password"
+            placeholder="••••••••">
+            <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
+          </ion-input>
+        </div>
       </div>
+
+      <!-- Botón Principal -->
+      <button type="submit" class="btn-principal">
+        Iniciar sesión
+      </button>
+
+      <!-- Enlaces secundarios -->
+      <div class="enlaces-secundarios">
+        <p>¿No tenés cuenta? <a routerLink="/registrarse">Registrate</a></p>
+        <button type="button" class="btn-link-anonimo" (click)="ingresoAnonimo()">
+          O continuar como <strong>Invitado / Anónimo</strong>
+        </button>
+      </div>
+
     </form>
   </section>
 
-  <!-- Grilla de Acceso Rápido Inferior (Zona táctil) -->
-  <section class="seccion-accesos">
-    <div class="grid-perfiles">
+  <!-- 3. Accesos Rápidos Demo -->
+  <footer class="seccion-demo">
+    <div class="divisor-demo">
+      <span>Acceso rápido · demo</span>
+    </div>
+
+    <div class="grilla-perfiles">
       @for (perfil of usuariosValidos; track perfil.email) {
         <button 
           type="button" 
-          class="tarjeta-perfil" 
-          [style.background-color]="perfil.color"
+          class="card-perfil" 
           (click)="cargarCredenciales(perfil.email, perfil.pass)">
-          <span class="nombre-rol">{{ perfil.rol }}</span>
-          <small class="correo-rol">{{ perfil.email }}</small>
+          <div class="icono-perfil-wrapper">
+            <ion-icon [name]="perfil.icono"></ion-icon>
+          </div>
+          <div class="textos-perfil">
+            <span class="rol">{{ perfil.rol }}</span>
+            <span class="email">{{ perfil.email }}</span>
+          </div>
         </button>
       }
     </div>
-  </section>
+
+    <small class="pie-ayuda">Tocá un perfil para autocompletar las credenciales</small>
+  </footer>
+
 </div>
