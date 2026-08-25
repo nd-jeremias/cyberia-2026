@@ -177,6 +177,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |
 | Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |
 | Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
+| Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
 
 ---
 
@@ -209,6 +210,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Creación de componentes de ´ingreso-rapido´            |   25/08/2026    | 23/08/2026 | Completado |
 | Establecer estilos globales (Utilizar variables Ionic) |   25/08/2026    | 23/08/2026 | Completado |
 | Servicio captura de Fotografía por Cámara              |   25/08/2026    | 25/08/2026 | Completado  |
+| Creación de página de ´registro´                       |   25/08/2026    | 23/08/2026 | Completado  |
 | Servicio de subida de imágenes desde galería           |   25/08/2026    | 25/08/2026 | Completado  |
 
 _Nota: La fecha real se actualizará únicamente al momento de realizar el deploy o commit final de la tarea._
