@@ -1,0 +1,166 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.tarjeta-producto {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--ion-card-background, #254d7d);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ----- Carrusel de fotos ----- */
+.carrusel {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: #12294a;
+  touch-action: pan-y;
+}
+
+.carrusel-pista {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.carrusel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+.insignia-tipo {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.control-carrusel {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(10, 22, 40, 0.65);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding: 0;
+
+  ion-icon {
+    pointer-events: none;
+  }
+}
+
+.control-anterior {
+  left: 8px;
+}
+
+.control-siguiente {
+  right: 8px;
+}
+
+.puntos-carrusel {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: rgba(255, 255, 255, 0.45);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.punto-activo {
+  background-color: #ffffff;
+  transform: scale(1.25);
+}
+
+/* ----- Contenido de texto ----- */
+.contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+}
+
+.nombre {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+}
+
+.descripcion {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  line-height: 1.35;
+}
+
+.detalles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.detalle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #cbd5e1;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+.precio {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #4ade80;
+}
+
+.boton-agregar {
+  margin-top: 10px;
+  --border-radius: 10px;
+  font-weight: 700;
+}

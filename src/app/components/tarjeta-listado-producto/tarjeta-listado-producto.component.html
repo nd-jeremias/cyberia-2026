@@ -1,0 +1,17 @@
+<section class="listado-productos">
+  <h2 class="titulo-listado">{{ tituloListado() }}</h2>
+
+  @if (productos().length === 0) {
+    <p class="listado-vacio">Todavía no hay productos cargados en esta sección.</p>
+  } @else {
+    <div class="lista">
+      @for (producto of productos(); track producto.id) {
+        <app-tarjeta-producto
+          class="item-lista"
+          [producto]="producto"
+          (agregarCarrito)="onAgregarCarrito($event)"
+        ></app-tarjeta-producto>
+      }
+    </div>
+  }
+</section>
