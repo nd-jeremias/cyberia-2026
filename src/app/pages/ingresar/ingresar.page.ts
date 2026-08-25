@@ -5,7 +5,7 @@ import { LoginFormComponent } from '../../components/login-form/login-form.compo
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
-import { Preferences } from '@capacitor/preferences';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-ingresar',
@@ -16,16 +16,21 @@ export class IngresarPage {
   private router = inject(Router);
   private spinner = inject(SpinnerService);
   private modal = inject(ModalService);
+  private authService = inject(AuthService);
 
- 
   async handleLogin(credentials: LoginInterface) {
     this.spinner.show();
 
-    // Simular retraso de red
-    await new Promise(resolve => setTimeout(resolve, 600));
+    try {
+      await this.authService.login(credentials);
+      this.router.navigate(['/home']);
+    } catch (error) {
+      const mensaje = error instanceof Error ? error.message : 'No se pudo iniciar sesión. Intente nuevamente.';
+      this.modal.setOpen(true, 'Error al ingresar', mensaje);
+    } finally {
+      this.spinner.hide();
+    }
 
-    this.spinner.hide();
-
-    this.router.navigate(['/home']);
+    
   }
 }
