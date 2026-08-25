@@ -1,9 +1,11 @@
 import { Service, signal } from '@angular/core';
 import { AuthResponse, Session } from '@supabase/supabase-js';
-import {LoginInterface,RegisterInterface, LocalUserInterface} from '../interfaces/auth.interface'
+import {
+    LoginInterface,
+    RegisterInterface,
+    LocalUserInterface,
+} from '../interfaces/auth.interface';
 import { supabase } from './supabase.service';
-
-
 
 @Service()
 export class AuthService {

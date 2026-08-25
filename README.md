@@ -45,14 +45,14 @@ Ionic:
    Ionic CLI                     : 7.2.1 (C:\Users\ndjer\AppData\Roaming\npm\node_modules\@ionic\cli)
    Ionic Framework               : @ionic/angular 9.0.0
    @angular-devkit/build-angular : not installed
-   @angular-devkit/schematics    : 22.0.1
+   @angular-devkit/schematics    : 22.1.5
    @angular/cli                  : 22.0.1
    @ionic/angular-toolkit        : 13.0.0
 
 Capacitor:
 
    Capacitor CLI      : 8.5.0
-   @capacitor/android : not installed
+   @capacitor/android : 8.5.0
    @capacitor/core    : 8.5.0
    @capacitor/ios     : not installed
 
@@ -64,7 +64,7 @@ Utility:
 System:
 
    NodeJS : v24.19.0 (C:\Program Files\nodejs\node.exe)
-   npm    : 11.12.1
+   npm    : 11.17.0
    OS     : Windows 10
 
 ```
@@ -175,8 +175,8 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Configuración inicial del proyecto                       |   24/08/2026    | 23/08/2026 | Completado |
 | Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |
 | Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |
-| Servicio de Lectura y Generación de QR                   |   26/08/2026    | 25/08/2026 | Completado |
-| Listado de Aprobación de Clientes Pendientes             |   --/--/----    | --/--/---- | Pendiente  |
+| Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |
+| Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
 
 ---
 

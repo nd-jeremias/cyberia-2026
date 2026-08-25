@@ -11,87 +11,42 @@
   height: 100%;
   box-sizing: border-box;
   background-color: var(--ion-background-color, #1a3a60);
-  padding: 8px 10px;
-  gap: 8px;
+  padding: 10px 12px;
+  gap: 10px;
 }
 
-/* 1. Cabecera superior */
+/* 1. Cabecera con tipografía protagonista */
 .bloque-cabecera {
   background-color: #2b5488;
-  padding: 10px 8px;
-  border-radius: 8px;
+  padding: 12px 10px;
+  border-radius: 10px;
   text-align: center;
   color: #ffffff;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
 
   h1 {
-    font-size: 1.15rem;
+    font-size: 1.45rem; /* Título grande */
     font-weight: 800;
-    margin: 0 0 2px 0;
+    margin: 0 0 4px 0;
+    letter-spacing: 0.5px;
   }
   p {
-    font-size: 0.8rem;
+    font-size: 0.95rem; /* Subtítulo legible */
     color: #e2e8f0;
     margin: 0;
   }
 }
 
-/* 2. Accesos Rápidos (reparten proporcionalmente la altura) */
-.seccion-accesos {
-  flex: 1.2;
-  display: flex;
-  width: 100%;
-}
-
-.grid-perfiles {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  width: 100%;
-  height: 100%;
-}
-
-.tarjeta-perfil {
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  border-radius: 8px;
-  padding: 4px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-  .nombre-rol {
-    font-weight: 800;
-    font-size: 0.95rem;
-    color: #ffffff;
-  }
-
-  .correo-rol {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #ffffff !important;
-    opacity: 1 !important;
-    margin-top: 2px;
-    word-break: break-all;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
-  }
-}
-
-/* 3. Formulario (elimina el hueco central) */
+/* 2. Sección del Formulario y Botones Principales */
 .seccion-formulario {
   background-color: #2b5488;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 10px;
+  padding: 12px;
   flex: 1.5;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
 }
 
 .formulario-completo {
@@ -99,14 +54,15 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
-  gap: 8px;
+  gap: 10px;
 }
 
 .campos-grupo {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .campo-contenedor {
@@ -121,43 +77,43 @@
   --highlight-color-focused: #38bdf8;
   --highlight-color-invalid: #1a3a60;
   --highlight-color-valid: #1a3a60;
-  border: 1.5px solid #4a77ab;
-  border-radius: 6px;
-  min-height: 52px;
+  border: 2px solid #4a77ab;
+  border-radius: 8px;
+  min-height: 56px;
 
   ion-input {
     --color: #ffffff !important;
     --placeholder-color: #cbd5e1 !important;
-    font-size: 0.95rem !important;
-    font-weight: 600;
+    font-size: 1.1rem !important; /* Texto de input más grande */
+    font-weight: 700;
   }
 
   ion-input::part(label) {
-    font-size: 0.88rem !important;
-    font-weight: 600 !important;
+    font-size: 1rem !important; /* Label flotante nítido */
+    font-weight: 700 !important;
     color: #ffffff !important;
     opacity: 1 !important;
   }
 }
 
-/* 4. Botones alargados que llenan la base del contenedor */
+/* Botones de acción estirados con texto grande */
 .acciones-contenedor {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
   gap: 8px;
   width: 100%;
+  margin-top: 6px;
 }
 
 .boton-accion {
   width: 100%;
   flex: 1;
-  max-height: 60px;
-  min-height: 50px;
+  min-height: 52px;
   font-weight: 800;
-  font-size: 1.05rem;
-  border-radius: 8px;
+  font-size: 1.25rem; /* Tipografía grande e imponente */
+  letter-spacing: 0.5px;
+  border-radius: 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -166,12 +122,59 @@
   &.principal {
     background-color: #0284c7;
     color: #ffffff;
-    border: 1.5px solid #38bdf8;
+    border: 2px solid #38bdf8;
   }
 
   &.secundario {
     background-color: #334155;
     color: #ffffff;
-    border: 1.5px solid #64748b;
+    border: 2px solid #64748b;
+  }
+}
+
+/* 3. Accesos Rápidos Inferiores */
+.seccion-accesos {
+  flex: 1.1;
+  display: flex;
+  width: 100%;
+}
+
+.grid-perfiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.tarjeta-perfil {
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  padding: 6px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+
+  .nombre-rol {
+    font-weight: 800;
+    font-size: 1.15rem; /* Rol destacado */
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .correo-rol {
+    font-size: 0.82rem; /* Correo legible */
+    font-weight: 600;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    margin-top: 3px;
+    word-break: break-all;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
   }
 }
