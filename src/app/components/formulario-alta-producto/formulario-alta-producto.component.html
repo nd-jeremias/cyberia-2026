@@ -1,0 +1,70 @@
+<ion-card>
+    <ion-card-header>
+        <ion-card-title>Alta de producto ({{ tipo() }})</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <form [formGroup]="formulario" (ngSubmit)="onAltaProducto()">
+            <ion-item>
+                <ion-input
+                    formControlName="nombre"
+                    type="text"
+                    label="Nombre"
+                    labelPlacement="floating"
+                    placeholder="Milanesa con Papas Fritas"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-textarea
+                    formControlName="descripcion"
+                    label="Descripción"
+                    labelPlacement="floating"
+                    placeholder="Milanesa de nalga rebozada acompañada de papas fritas."
+                    [autoGrow]="true"
+                ></ion-textarea>
+            </ion-item>
+
+            <ion-item>
+                <ion-input
+                    formControlName="tiempoElaboracionMinutos"
+                    type="number"
+                    inputmode="numeric"
+                    min="1"
+                    label="Tiempo de elaboración (minutos)"
+                    labelPlacement="floating"
+                    placeholder="20"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <ion-input
+                    formControlName="precio"
+                    type="number"
+                    inputmode="decimal"
+                    min="0.01"
+                    step="0.01"
+                    label="Precio"
+                    labelPlacement="floating"
+                    placeholder="4500.00"
+                ></ion-input>
+            </ion-item>
+
+            <ion-item>
+                <label class="input-archivo">
+                    Fotos del producto (3 requeridas)
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        (change)="onFotosSeleccionadas($event)"
+                    />
+                </label>
+            </ion-item>
+
+            <ion-button expand="full" fill="outline" type="submit"
+                >Dar de alta</ion-button
+            >
+        </form>
+    </ion-card-content>
+</ion-card>
