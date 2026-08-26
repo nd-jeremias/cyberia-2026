@@ -17,6 +17,6 @@ export interface RegisterInterface {
 
 export interface LocalUserInterface{
     id: string;
-    email: string | undefined;
-    nombre: string;
+    correo: string | undefined;
+    nombres: string;
 }

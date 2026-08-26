@@ -51,7 +51,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
         IonButton,
         ReactiveFormsModule,
         SubidaImagenesComponent,
-        RouterLink
+        RouterLink,
     ],
 })
 export class FormularioRegistroComponent {
@@ -134,29 +134,23 @@ export class FormularioRegistroComponent {
         this.formulario.get('imagenes')?.markAsTouched();
     }
 
-    // onFotoSeleccionada(event: Event) {
-    //     const input = event.target as HTMLInputElement;
-    //     this.foto = input.files?.[0] ?? null;
-    // }
-
     toCapitalize(word: string): string {
         if (!word || word.length === 0) return '';
         return word[0].toUpperCase() + word.slice(1);
     }
 
     validateForm(form: FormGroup): boolean {
-        if (!this.formulario.valid) {
+        form.markAllAsTouched();
+
+        if (!form.valid) {
             this.modal.setOpen(true, 'Datos inválidos', 'Revise los datos ingresados');
-            return true;
+            return true; // Retorna true si hay errores (el formulario NO es válido)
         }
 
-        return false;
+        return false; // Retorna false si todo está correcto
     }
 
     onRegistro() {
-        // if (this.formulario.invalid || !this.foto) return;
-        console.log(this.formulario)
-
         if (this.validateForm(this.formulario) || this.formulario.invalid) return;
 
         // 1. Forzamos a que los datos extraídos cumplan con la interfaz
@@ -173,11 +167,17 @@ export class FormularioRegistroComponent {
         formData.append('password', datosRegistro.password);
         formData.append('confirmPassword', datosRegistro.confirmPassword);
 
-        const fotoArchivo = this.formulario.get('foto')?.value;
-        if (fotoArchivo) {
-            formData.append('foto', fotoArchivo[0]); // Mantiene el nombre 'selfie_12345.jpg'
+        const fotosArray = this.formulario.get('foto')?.value as File[] | null;
+
+        if (fotosArray && fotosArray.length > 0) {
+            const archivoReal = fotosArray[0];
+            formData.append('foto', archivoReal);
         }
 
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}:`, value);
+        // });
         this.registroSubmit.emit(formData);
+        this.formulario.reset();
     }
 }

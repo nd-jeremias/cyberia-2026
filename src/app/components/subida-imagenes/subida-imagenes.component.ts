@@ -40,7 +40,7 @@ export class SubidaImagenesComponent implements OnInit {
     faSquareMinus = faSquareMinus;
 
     async subirImagen(index: number, modo: 'camara' | 'galeria', direccion?: 'frontal' | 'trasera') {
-        console.log("PRIMERO",index, modo)
+        
         if (this.imageSlots.length > this.maxImages()) {
             this.modal.setOpen(
                 true,
@@ -53,7 +53,7 @@ export class SubidaImagenesComponent implements OnInit {
         if (!this.platform.is('hybrid')){
             modo = 'galeria'
         }
-        console.log("SEGUNDO",index, modo)
+        
         try {
             let results = null;
             let item = null;
