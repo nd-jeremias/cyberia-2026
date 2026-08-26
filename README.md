@@ -176,9 +176,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |
 | Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |
 | Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |
-| Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
-| Listado de Aprobación de Clientes Pendientes             |   28/08/2026    | --/--/---- | Pendiente  |
-
+| Servicio para manejo de "Carrito"                        |   27/08/2026    | --/--/---- | Pendiente  |
 ---
 
 ### 👤 Plucci, Kevin
@@ -188,6 +186,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado |
 | Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado |
 | Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado |
+| Componente para listar Clientes Pendientes                                 |   27/08/2026    | --/--/---- | Pendiente  |
+| Creación de modulo: ´formulario-usuario-anonimo´                           |   27/08/2026    | --/--/---- | Pendiente  |
+| Servicio de Notificaciones Push                                            |   --/--/----    | --/--/---- | Pendiente  |
 
 ---
 
@@ -197,7 +198,8 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | :------------------------------------- | :-------------: | :--------: | :--------: |
 | Creación del servicio de autenticación |   25/08/2026    | 23/08/2026 | Completado |
 | Creación de página de ´ingreso´        |   25/08/2026    | 24/08/2026 | Completado  |
-| Creación de página de ´home´        |   27/08/2026    | --/--/---- | Pendiente  |
+| Creación de página de ´home´           |   27/08/2026    | --/--/---- | Pendiente  |
+| Estructura preliminar de todas las paginas(solo estructura) |   27/08/2026    | --/--/---- | Pendiente  |
 | Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´ | 27/08/2026 | --/--/---- | Pendiente |
 | Creación de página de ´seleccion-productos´ | 28/08/2026 |  --/--/---- | Pendiente |
 
@@ -206,11 +208,26 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 ### 👤 Maida, Cristian
 
 | 📝 Tarea / Descripción                                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
-| :----------------------------------------------------- | :-------------: | :--------: | :--------: |
-| Creación de componentes de ´ingreso-rapido´            |   25/08/2026    | 23/08/2026 | Completado |
-| Establecer estilos globales (Utilizar variables Ionic) |   25/08/2026    | 23/08/2026 | Completado |
-| Servicio captura de Fotografía por Cámara              |   25/08/2026    | 25/08/2026 | Completado  |
-| Creación de página de ´registro´                       |   25/08/2026    | 23/08/2026 | Completado  |
-| Servicio de subida de imágenes desde galería           |   25/08/2026    | 25/08/2026 | Completado  |
+| :----------------------------------------------------- | :------------: | :------------: | :--------: |
+| Creación de componentes de ´ingreso-rapido´            |   25/08/2026   | 23/08/2026 | Completado |
+| Establecer estilos globales (Utilizar variables Ionic) |   25/08/2026   | 23/08/2026 | Completado |
+| Servicio captura de Fotografía por Cámara              |   25/08/2026   | 25/08/2026 | Completado |
+| Servicio de subida de imágenes desde galería           |   25/08/2026   | 25/08/2026 | Completado |
+| Creación de página de ´registro´                       |   25/08/2026   | 23/08/2026 | Completado |
+| Servicio + Componente de Modal                         |   27/08/2026   | --/--/---- | Pendiente  |
+| Servicio + Componente de Spinner                       |   27/08/2026   | --/--/---- | Pendiente  |
+| Servicio de Envio de correos (https://www.emailjs.com/)|   --/--/----   | --/--/---- | Pendiente  |
 
+---
+
+| 📝 Tareas Pendientes |
+| :-------------------------------------------------------- |
+| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos" |
+| Servicio de facturacion                                   |
+| Servicio de Chat Mozo-Cliente                             |
+| Graficos de estadisticas                                  |
+| Juegos                                                    |
+| Servicio de manejo de pedidos                             |
+
+    
 _Nota: La fecha real se actualizará únicamente al momento de realizar el deploy o commit final de la tarea._
