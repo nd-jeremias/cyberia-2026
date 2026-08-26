@@ -176,7 +176,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |
 | Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |
 | Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |
+| Servicio de registro                                     |   --/--/----    | 26/08/2026 | Pendiente  |
 | Servicio para manejo de "Carrito"                        |   27/08/2026    | --/--/---- | Pendiente  |
+
 ---
 
 ### 👤 Plucci, Kevin
