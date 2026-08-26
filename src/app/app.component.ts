@@ -1,11 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet, ModalController } from '@ionic/angular';
 import { SplashComponent } from './components/splash/splash.component';
+import { ModalComponent } from './components/modal/modal.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
 
 @Component({
     selector: 'app-root',
     templateUrl: 'app.component.html',
-    imports: [IonApp, IonRouterOutlet],
+    imports: [IonApp, IonRouterOutlet, ModalComponent,SpinnerComponent],
 })
 export class AppComponent {
     private modalCtrl = inject(ModalController);
