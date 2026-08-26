@@ -1,19 +1,37 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton } from '@ionic/angular';
+import { SpinnerService } from '../../services/spinner.service';
+import { ModalService } from '../../services/modal.service';
+import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 
 @Component({
   selector: 'app-registrarse',
-  templateUrl: './registrarse.page.html',
-  styleUrls: ['./registrarse.page.scss'],
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  template: `
+    <ion-header>
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-back-button defaultHref="/ingresar"></ion-back-button>
+        </ion-buttons>
+        <ion-title>Crear Cuenta</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <app-formulario-registro (registroSubmit)="handleRegistro($event)"></app-formulario-registro>
+    </ion-content>
+  `,
+  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent, FormularioRegistroComponent],
 })
-export class RegistrarsePage implements OnInit {
+export class RegistrarsePage {
+  private router = inject(Router);
+  private spinner = inject(SpinnerService);
+  private modal = inject(ModalService);
 
-  constructor() { }
-
-  ngOnInit() {
+  async handleRegistro(formData: any) {
+    this.spinner.show();
+    // Lógica para enviar formData a Supabase (Auth + Storage + Tabla usuarios)
+    this.spinner.hide();
+    this.modal.setOpen(true, 'Registro', 'Solicitud enviada correctamente');
+    this.router.navigate(['/ingresar']);
   }
-
 }
