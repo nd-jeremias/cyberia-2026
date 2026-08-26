@@ -1,8 +1,5 @@
 import { Service } from '@angular/core';
-import {
-    Camera,
-    CameraDirection,
-} from '@capacitor/camera';
+import { Camera, CameraDirection } from '@capacitor/camera';
 import { FotoInterface } from '../interfaces/foto.interface';
 
 export interface FotoCapturada {

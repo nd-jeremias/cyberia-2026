@@ -1,0 +1,32 @@
+<div class="images-container">
+    <!-- El label pasarlo por el componente -->
+    <label>{{label()}}</label>
+
+    <div class="slot-container">
+        @for (slot of imageSlots; track slot; let idx = $index) {
+        <!-- CASO A: El slot está vacío -> Muestra botón para agregar -->
+        <!-- 1. El botón visual que verá el usuario -->
+        @if (slot.previewUrl || idx < maxImages()) {
+        <div class="image-slot">
+            @if (!slot.previewUrl) {
+            <ion-button class="add-button" (click)="subirImagen(idx, modo())" fill="clear">
+                <fa-icon class="fa-regular fa-square-plus" [icon]="faSquarePlus"></fa-icon>
+            </ion-button>
+            }
+            <!-- CASO B: Ya tiene imagen -> Muestra la imagen y botón de eliminar -->
+            @else {
+            <div class="preview-wrapper">
+                <!-- Miniatura de la imagen -->
+                <img [src]="slot.previewUrl" class="preview-img" />
+
+                <!-- Botón "Minus" para eliminar la imagen superpuesto -->
+                <ion-button class="remove-button" color="danger" (click)="removeImage(idx)" fill="clear">
+                    <fa-icon class="fa-regular fa-square-minus" [icon]="faSquareMinus"></fa-icon>
+                </ion-button>
+            </div>
+            }
+
+        </div>
+        } }
+    </div>
+</div>
