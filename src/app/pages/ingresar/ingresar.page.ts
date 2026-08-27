@@ -6,6 +6,7 @@ import { LoginInterface } from '../../interfaces/auth.interface';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 @Component({
   selector: 'app-ingresar',
@@ -17,12 +18,17 @@ export class IngresarPage {
   private spinner = inject(SpinnerService);
   private modal = inject(ModalService);
   private authService = inject(AuthService);
+  private notificaciones = inject(NotificacionesService);
 
   async handleLogin(credentials: LoginInterface) {
     this.spinner.show();
 
     try {
       await this.authService.login(credentials);
+
+      // Recien ahora hay sesion, asi que el token puede asociarse al usuario.
+      await this.notificaciones.sincronizarToken();
+
       this.router.navigate(['/home']);
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : 'No se pudo iniciar sesión. Intente nuevamente.';

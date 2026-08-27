@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonContent, ModalController } from '@ionic/angular';
 
@@ -11,7 +11,7 @@ import { IonContent, ModalController } from '@ionic/angular';
 })
 export class SplashComponent implements OnInit {
 
-  constructor(private modalCtrl: ModalController) { }
+  private modalCtrl = inject(ModalController);
 
   async ngOnInit() {
     setTimeout(() => {

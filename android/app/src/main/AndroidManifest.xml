@@ -43,4 +43,8 @@
         android:value="barcode"
     />
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Requerido desde Android 13 (API 33) para poder mostrar notificaciones -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>

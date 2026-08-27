@@ -24,6 +24,12 @@
             placeholder="nombre@restaurante.com">
           </ion-input>
         </div>
+        @if (hayError('email', 'required')) {
+          <small class="mensaje-error">Ingrese su correo electrónico.</small>
+        }
+        @if (hayError('email', 'email')) {
+          <small class="mensaje-error">El correo electrónico no es válido.</small>
+        }
       </div>
 
       <!-- Campo Contraseña -->
@@ -38,6 +44,12 @@
             <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
           </ion-input>
         </div>
+        @if (hayError('password', 'required')) {
+          <small class="mensaje-error">Ingrese su contraseña.</small>
+        }
+        @if (hayError('password', 'minlength')) {
+          <small class="mensaje-error">La contraseña debe tener al menos 8 caracteres.</small>
+        }
       </div>
 
       <!-- Botón Principal -->

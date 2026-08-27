@@ -16,6 +16,9 @@
                 @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
                 <small>Debe ingresar su/s nombre/s</small>
                 }
+                @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
+                <small>Debe ingresar su/s nombre/s</small>
+                }
             </ion-item>
 
             <ion-item>
@@ -26,6 +29,9 @@
                     labelPlacement="floating"
                     placeholder="Gómez"
                 ></ion-input>
+                @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
+                <small>Debe ingresar su/s apellido/s</small>
+                }
                 @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
                 <small>Debe ingresar su/s apellido/s</small>
                 }
@@ -40,6 +46,16 @@
                     labelPlacement="floating"
                     placeholder="12345678"
                 ></ion-input>
+                @let dniControl = formulario.get("dni"); @if (dniControl?.touched) { @if
+                (dniControl?.errors?.["required"]) {
+                <small>Debe ingresar el DNI</small>
+                } @if (dniControl?.errors?.["pattern"]) {
+                <small>El DNI debe tener entre 7 y 8 dígitos</small>
+                } }
+                <ion-button type="button" class="boton-scanner" (click)="scanearDNI()">
+                    <span>Escanear</span>
+                </ion-button>
+            </ion-item>
                 @let dniControl = formulario.get("dni"); @if (dniControl?.touched) { @if
                 (dniControl?.errors?.["required"]) {
                 <small>Debe ingresar el DNI</small>
@@ -68,6 +84,22 @@
                 <small>El CUIL debe tener entre 10 y 11 dígitos</small>
                 } }
             </ion-item>
+            <ion-item class="item-input">
+                <ion-input
+                    formControlName="cuil"
+                    type="text"
+                    inputmode="numeric"
+                    label="CUIL"
+                    labelPlacement="floating"
+                    placeholder="20123456783"
+                ></ion-input>
+                @let cuilControl = formulario.get("cuil"); @if (cuilControl?.touched) { @if
+                (cuilControl?.errors?.["required"]) {
+                <small>Debe ingresar el CUIL</small>
+                } @if (cuilControl?.errors?.["pattern"]) {
+                <small>El CUIL debe tener entre 10 y 11 dígitos</small>
+                } }
+            </ion-item>
             }
 
             <ion-item class="item-input">
@@ -78,6 +110,11 @@
                     labelPlacement="floating"
                     placeholder="juangomez@gmail.com"
                 ></ion-input>
+                @if (formulario.get("correo")?.errors?.["required"] && formulario.get("correo")?.touched) {
+                <small>Debe ingresar su correo electrónico</small>
+                } @if (formulario.get("correo")?.errors?.["email"] && formulario.get("correo")?.touched) {
+                <small>Formato de correo electrónico incorrecto. </small>
+                }
                 @if (formulario.get("correo")?.errors?.["required"] && formulario.get("correo")?.touched) {
                 <small>Debe ingresar su correo electrónico</small>
                 } @if (formulario.get("correo")?.errors?.["email"] && formulario.get("correo")?.touched) {
@@ -114,9 +151,21 @@
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
                 <small>Debe cargar 3 imagenes del producto</small>
                 }
+            <ion-item>
+                <app-subida-imagenes
+                    [label]="'Foto de perfil'"
+                    [maxImages]="1"
+                    (imagenesChange)="recibirImagenes($event)"
+                    [modo]="'galeria'"
+                >
+                </app-subida-imagenes>
+                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
+                <small>Debe cargar 3 imagenes del producto</small>
+                }
             </ion-item>
 
             <ion-item class="item-input">
+                <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password">
                 <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password">
                     <ion-input-password-toggle
                         show-icon="eye-off"
@@ -152,6 +201,10 @@
                 }
             </ion-item>
 
+            <ion-button expand="full" fill="outline" type="submit" class="boton-primario">{{ esDueno() ? "Registrar Empleado" : "Registrarse" }}</ion-button>
+            @if (!esDueno()) {
+                <ion-button expand="full" fill="outline" routerLink="/ingresar"> Ingresar </ion-button>
+            }
             <ion-button expand="full" fill="outline" type="submit" class="boton-primario">{{ esDueno() ? "Registrar Empleado" : "Registrarse" }}</ion-button>
             @if (!esDueno()) {
                 <ion-button expand="full" fill="outline" routerLink="/ingresar"> Ingresar </ion-button>

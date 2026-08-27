@@ -1,0 +1,13 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>Clientes pendientes</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <app-listado-clientes-pendientes
+        [clientes]="clientes()"
+        (aprobarCliente)="onAprobar($event)"
+        (rechazarCliente)="onRechazar($event)"
+    ></app-listado-clientes-pendientes>
+</ion-content>

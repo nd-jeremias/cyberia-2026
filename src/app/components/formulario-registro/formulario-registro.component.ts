@@ -20,8 +20,10 @@ import {
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
+import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
@@ -83,6 +85,7 @@ export class FormularioRegistroComponent {
             }),
             tipoEmpleado: new FormControl(''),
             foto: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
+            foto: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
             password: new FormControl('', {
                 validators: [Validators.required, Validators.minLength(8)],
             }),
@@ -100,6 +103,7 @@ export class FormularioRegistroComponent {
 
             if (this.esDueno()) {
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+                cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 tipoEmpleado.setValidators([Validators.required]);
             } else {
                 cuil.clearValidators();
@@ -114,6 +118,15 @@ export class FormularioRegistroComponent {
     }
 
     async scanearDNI() {
+        const dniData: DniInterface | null = await this.qrService.scanDNI();
+        if (dniData) {
+            this.formulario.patchValue({
+                nombres: dniData.nombres,
+                apellidos: dniData.apellidos,
+                dni: dniData.dni,
+            });
+        }
+    }
         const dniData: DniInterface | null = await this.qrService.scanDNI();
         if (dniData) {
             this.formulario.patchValue({

@@ -1,6 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton } from '@ionic/angular';
+import {
+    IonContent,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonBackButton,
+} from '@ionic/angular';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
@@ -32,3 +39,4 @@ export class RegistrarsePage {
         }
     }
 }
+
