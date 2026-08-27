@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { IonItem, IonLabel, IonSpinner } from "@ionic/angular/";
+import { Component, inject } from '@angular/core';
+import { IonItem, IonLabel, IonSpinner } from "@ionic/angular";
 import { SpinnerService } from '../../services/spinner.service';
 
 @Component({
@@ -8,10 +8,9 @@ import { SpinnerService } from '../../services/spinner.service';
   styleUrls: ['./spinner.component.scss'],
   imports: [IonItem, IonLabel, IonSpinner]
 })
-export class SpinnerComponent  implements OnInit {
+export class SpinnerComponent {
 
   spinnerService = inject(SpinnerService);
 
-  ngOnInit() {}
 
 }

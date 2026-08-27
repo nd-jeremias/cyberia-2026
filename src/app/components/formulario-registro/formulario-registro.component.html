@@ -101,7 +101,7 @@
                     <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
                     }
                 </ion-select>
-                @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value == "") {
+                @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value === "") {
                 <small>Seleccione el tipo de empleado a registrar. </small>
                 }
             </ion-item>

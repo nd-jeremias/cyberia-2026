@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
     IonButton,
     IonButtons,
@@ -6,7 +6,7 @@ import {
     IonHeader,
     IonModal,
     IonTitle,
-    IonToolbar, IonFooter } from '@ionic/angular/';
+    IonToolbar, IonFooter } from '@ionic/angular';
 import { ModalService } from '../../services/modal.service';
 
 @Component({
@@ -15,11 +15,9 @@ import { ModalService } from '../../services/modal.service';
     styleUrls: ['./modal.component.scss'],
     imports: [IonFooter, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonModal, IonButtons],
 })
-export class ModalComponent implements OnInit {
+export class ModalComponent {
     modalService = inject(ModalService);
 
-    constructor() {}
 
-    ngOnInit() {}
 
 }
