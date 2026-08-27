@@ -1,0 +1,11 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title>Alta de mesa</ion-title>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+    <app-formulario-alta-mesa
+        (mesaSubmit)="onAltaMesa($event)"
+    ></app-formulario-alta-mesa>
+</ion-content>

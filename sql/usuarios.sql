@@ -42,6 +42,7 @@ CREATE TABLE public.usuarios (
     perfil public.usuarios_rol NOT NULL,
     foto_url TEXT NULL, 
     estado public.usuarios_estado NOT NULL DEFAULT 'Activo',
+    token_push TEXT NULL, -- Token de FCM del dispositivo, para notificaciones push
     fecha_registro TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
@@ -50,6 +51,7 @@ CREATE TABLE public.clientes_anonimos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nombres TEXT NOT NULL,
     foto_url TEXT NULL,
+    token_push TEXT NULL, -- Token de FCM del dispositivo, para notificaciones push
     fecha_ingreso TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 

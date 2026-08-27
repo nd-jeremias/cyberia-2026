@@ -10,7 +10,7 @@ export interface RegisterInterface {
     cuil?: string;
     correo: string;
     tipoEmpleado?: string;
-    foto: File;
+    foto: File[];
     password: string;
     confirmPassword: string;
 }

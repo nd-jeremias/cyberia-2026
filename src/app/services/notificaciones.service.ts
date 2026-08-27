@@ -5,20 +5,27 @@ import {
     PushNotifications,
     Token,
 } from '@capacitor/push-notifications';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import { Preferences } from '@capacitor/preferences';
-import { Platform } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 import {
     NotificacionInterface,
     TipoNotificacion,
 } from '../interfaces/notificacion.interface';
 import { ModalService } from './modal.service';
+import { supabase } from './supabase.service';
 
 const CLAVE_TOKEN = 'token-push';
+
+// Android 8+ ignora sonido y prioridad si la notificacion no pertenece a un
+// canal declarado, por eso se crea uno propio al inicializar.
+const CANAL_AVISOS = 'avisos-cyberia';
 
 @Service()
 export class NotificacionesService {
     private platform = inject(Platform);
     private modal = inject(ModalService);
+    private toastCtrl = inject(ToastController);
 
     token = signal<string | null>(null);
     permisoConcedido = signal<boolean>(false);
@@ -41,9 +48,27 @@ export class NotificacionesService {
 
         if (!permiso) return;
 
+        await this.crearCanal();
+
         this.escucharEventos();
 
         await PushNotifications.register();
+    }
+
+    private async crearCanal(): Promise<void> {
+        if (!this.platform.is('android')) return;
+
+        await PushNotifications.createChannel({
+            id: CANAL_AVISOS,
+            name: 'Avisos del restaurante',
+            description:
+                'Pedidos, mesas, consultas y aprobaciones de clientes.',
+            importance: 5,
+            visibility: 1,
+            sound: 'default',
+            vibration: true,
+            lights: true,
+        });
     }
 
     private async pedirPermiso(): Promise<boolean> {
@@ -72,9 +97,15 @@ export class NotificacionesService {
         PushNotifications.addListener('registration', async (token: Token) => {
             this.token.set(token.value);
             await Preferences.set({ key: CLAVE_TOKEN, value: token.value });
+
+            // Si el usuario ya inicio sesion, el backend necesita el token
+            // para poder dirigirle los avisos a este dispositivo.
+            await this.sincronizarToken();
         });
 
-        PushNotifications.addListener('registrationError', () => {
+        PushNotifications.addListener('registrationError', async () => {
+            await Haptics.notification({ type: NotificationType.Error });
+
             this.modal.setOpen(
                 true,
                 'Error de registro',
@@ -82,22 +113,43 @@ export class NotificacionesService {
             );
         });
 
+        // Con la app en primer plano Android no dibuja nada en la barra:
+        // entrega el aviso y la app decide como mostrarlo.
         PushNotifications.addListener(
             'pushNotificationReceived',
-            (notificacion: PushNotificationSchema) => {
-                this.agregar(notificacion);
+            async (notificacion: PushNotificationSchema) => {
+                const nueva = this.agregar(notificacion);
+                await this.avisarEnPantalla(nueva);
             }
         );
 
         PushNotifications.addListener(
             'pushNotificationActionPerformed',
             (accion: ActionPerformed) => {
-                this.agregar(accion.notification);
+                const nueva = this.agregar(accion.notification);
+                this.marcarLeida(nueva.id);
             }
         );
     }
 
-    private agregar(origen: PushNotificationSchema): void {
+    private async avisarEnPantalla(
+        notificacion: NotificacionInterface
+    ): Promise<void> {
+        await Haptics.notification({ type: NotificationType.Success });
+
+        const toast = await this.toastCtrl.create({
+            header: notificacion.titulo,
+            message: notificacion.cuerpo,
+            duration: 5000,
+            position: 'top',
+            color: 'primary',
+            buttons: [{ text: 'Cerrar', role: 'cancel' }],
+        });
+
+        await toast.present();
+    }
+
+    private agregar(origen: PushNotificationSchema): NotificacionInterface {
         const datos = (origen.data ?? {}) as Record<string, unknown>;
         const tipo = datos['tipo'];
 
@@ -112,6 +164,8 @@ export class NotificacionesService {
         };
 
         this.notificaciones.update((actuales) => [nueva, ...actuales]);
+
+        return nueva;
     }
 
     marcarLeida(id: string): void {
@@ -134,6 +188,29 @@ export class NotificacionesService {
         }
     }
 
+    // Guarda el token en la fila del usuario logueado. Se llama al recibir el
+    // token y tambien despues del login, porque el orden entre ambos no esta
+    // garantizado: el registro puede resolverse antes de que exista sesion.
+    async sincronizarToken(): Promise<void> {
+        const token = await this.recuperarToken();
+
+        if (!token) return;
+
+        const { data } = await supabase.auth.getSession();
+        const usuarioId = data.session?.user.id;
+
+        if (!usuarioId) return;
+
+        const { error } = await supabase
+            .from('usuarios')
+            .update({ token_push: token })
+            .eq('id', usuarioId);
+
+        if (error) {
+            console.error('No se pudo guardar el token push:', error.message);
+        }
+    }
+
     async recuperarToken(): Promise<string | null> {
         if (this.token()) return this.token();
 
@@ -145,6 +222,10 @@ export class NotificacionesService {
     }
 
     async cerrarSesion(): Promise<void> {
+        // Se borra el token de la base ANTES de limpiarlo localmente, para que
+        // el proximo usuario del dispositivo no reciba avisos ajenos.
+        await this.olvidarTokenEnBase();
+
         this.notificaciones.set([]);
         this.token.set(null);
 
@@ -154,5 +235,17 @@ export class NotificacionesService {
             await PushNotifications.removeAllListeners();
             await PushNotifications.unregister();
         }
+    }
+
+    private async olvidarTokenEnBase(): Promise<void> {
+        const { data } = await supabase.auth.getSession();
+        const usuarioId = data.session?.user.id;
+
+        if (!usuarioId) return;
+
+        await supabase
+            .from('usuarios')
+            .update({ token_push: null })
+            .eq('id', usuarioId);
     }
 }

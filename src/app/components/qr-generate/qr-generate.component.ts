@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { QrCodeComponent } from 'ng-qrcode';
 import { QrService } from '../../services/qr.service';
 import { IonButton } from '@ionic/angular';
@@ -11,10 +11,8 @@ import { faShareNodes } from '@fortawesome/free-solid-svg-icons';
     styleUrls: ['./qr-generate.component.scss'],
     imports: [FontAwesomeModule, IonButton, QrCodeComponent,],
 })
-export class QrGenerateComponent implements OnInit {
-    constructor() {}
+export class QrGenerateComponent {
 
-    ngOnInit() {}
 
     faShareNodes = faShareNodes
 
