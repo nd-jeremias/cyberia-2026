@@ -20,7 +20,30 @@ export const routes: Routes = [
   {
     path: 'registrarse',
     loadComponent: () => import('./pages/registrarse/registrarse.page').then( m => m.RegistrarsePage)
-  }
-
-
+  },
+  {
+    path: 'ingreso-anonimo',
+    loadComponent: () =>
+      import('./pages/ingreso-anonimo/ingreso-anonimo.page').then((m) => m.IngresoAnonimoPage),
+  },
+  {
+    path: 'alta-producto',
+    loadComponent: () =>
+      import('./pages/alta-producto/alta-producto.page').then((m) => m.AltaProductoPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'alta-mesa',
+    loadComponent: () =>
+      import('./pages/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'clientes-pendientes',
+    loadComponent: () =>
+      import('./pages/clientes-pendientes/clientes-pendientes.page').then(
+        (m) => m.ClientesPendientesPage
+      ),
+    canActivate: [authGuard],
+  },
 ];

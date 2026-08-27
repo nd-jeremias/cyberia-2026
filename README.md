@@ -181,8 +181,9 @@ llegar hasta completar la configuración de Firebase**, que requiere credenciale
 | Canal de notificaciones de Android (sonido y vibración) | ✅ Hecho |
 | Aviso visible con la aplicación abierta | ✅ Hecho |
 | Columna `token_push` en la base de datos | ✅ Hecho (`sql/usuarios.sql`) |
-| Archivo `google-services.json` | ⚠️ **Pendiente** |
-| Edge Function que dispara los envíos | ⚠️ **Pendiente** |
+| El token se guarda y se borra en Supabase | ✅ Hecho (login y cierre de sesión) |
+| Edge Function y disparadores de la base | ✅ Hecho (`supabase/functions/`, `sql/notificaciones.sql`) |
+| Archivo `google-services.json` | ⚠️ **Pendiente** (requiere cuenta de Firebase) |
 
 ### Paso pendiente 1: Firebase
 
@@ -194,11 +195,21 @@ llegar hasta completar la configuración de Firebase**, que requiere credenciale
 
 Sin este archivo, Android nunca emite el token y el evento `registration` no se dispara.
 
-### Paso pendiente 2: envío desde Supabase
+### Paso pendiente 2: desplegar el envío
+
+El código ya está escrito: la Edge Function en `supabase/functions/enviar-notificacion/` y los
+disparadores en `sql/notificaciones.sql`. Falta desplegarlos y cargar la clave de Firebase:
+
+```bash
+supabase functions deploy enviar-notificacion
+supabase secrets set FCM_SERVER_KEY=<clave del proyecto Firebase>
+```
+
+Luego ejecutar `sql/notificaciones.sql` y completar los dos `ALTER DATABASE` del encabezado con
+la URL del proyecto y la clave de servicio.
 
 Supabase no envía notificaciones push por sí solo: su canal en tiempo real usa WebSocket, que
-se corta cuando la aplicación se cierra. El envío se resuelve con una Edge Function que recibe
-el aviso de un trigger de la base y le pide a Firebase que notifique al dispositivo.
+se corta cuando la aplicación se cierra. Por eso el envío pasa por Firebase.
 
 ```
 INSERT en usuarios (estado = 'Pendiente')

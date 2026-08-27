@@ -13,6 +13,7 @@ import {
     TipoNotificacion,
 } from '../interfaces/notificacion.interface';
 import { ModalService } from './modal.service';
+import { supabase } from './supabase.service';
 
 const CLAVE_TOKEN = 'token-push';
 
@@ -96,6 +97,10 @@ export class NotificacionesService {
         PushNotifications.addListener('registration', async (token: Token) => {
             this.token.set(token.value);
             await Preferences.set({ key: CLAVE_TOKEN, value: token.value });
+
+            // Si el usuario ya inicio sesion, el backend necesita el token
+            // para poder dirigirle los avisos a este dispositivo.
+            await this.sincronizarToken();
         });
 
         PushNotifications.addListener('registrationError', async () => {
@@ -183,6 +188,29 @@ export class NotificacionesService {
         }
     }
 
+    // Guarda el token en la fila del usuario logueado. Se llama al recibir el
+    // token y tambien despues del login, porque el orden entre ambos no esta
+    // garantizado: el registro puede resolverse antes de que exista sesion.
+    async sincronizarToken(): Promise<void> {
+        const token = await this.recuperarToken();
+
+        if (!token) return;
+
+        const { data } = await supabase.auth.getSession();
+        const usuarioId = data.session?.user.id;
+
+        if (!usuarioId) return;
+
+        const { error } = await supabase
+            .from('usuarios')
+            .update({ token_push: token })
+            .eq('id', usuarioId);
+
+        if (error) {
+            console.error('No se pudo guardar el token push:', error.message);
+        }
+    }
+
     async recuperarToken(): Promise<string | null> {
         if (this.token()) return this.token();
 
@@ -194,6 +222,10 @@ export class NotificacionesService {
     }
 
     async cerrarSesion(): Promise<void> {
+        // Se borra el token de la base ANTES de limpiarlo localmente, para que
+        // el proximo usuario del dispositivo no reciba avisos ajenos.
+        await this.olvidarTokenEnBase();
+
         this.notificaciones.set([]);
         this.token.set(null);
 
@@ -203,5 +235,17 @@ export class NotificacionesService {
             await PushNotifications.removeAllListeners();
             await PushNotifications.unregister();
         }
+    }
+
+    private async olvidarTokenEnBase(): Promise<void> {
+        const { data } = await supabase.auth.getSession();
+        const usuarioId = data.session?.user.id;
+
+        if (!usuarioId) return;
+
+        await supabase
+            .from('usuarios')
+            .update({ token_push: null })
+            .eq('id', usuarioId);
     }
 }

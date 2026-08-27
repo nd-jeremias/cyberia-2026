@@ -18,10 +18,8 @@ interface ImageSlot {
     styleUrls: ['./subida-imagenes.component.scss'],
     imports: [IonButton, FontAwesomeModule],
 })
-export class SubidaImagenesComponent implements OnInit {
-    constructor() {}
+export class SubidaImagenesComponent {
 
-    ngOnInit() {}
 
     archivosService = inject(FileService);
     modal = inject(ModalService);

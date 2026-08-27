@@ -234,3 +234,11 @@
   font-size: 0.75rem;
   margin: 0;
 }
+/* Mensajes de validación bajo cada campo */
+.mensaje-error {
+  display: block;
+  margin-top: 4px;
+  padding-left: 4px;
+  font-size: 0.8rem;
+  color: var(--ion-color-danger, #dc2626);
+}

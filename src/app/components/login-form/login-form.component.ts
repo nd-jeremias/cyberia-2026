@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonIcon, IonInput, IonInputPasswordToggle } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
@@ -13,7 +13,9 @@ import {
   fastFoodOutline, 
   personOutline 
 } from 'ionicons/icons';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-login-form',
@@ -22,6 +24,8 @@ import { LoginInterface } from '../../interfaces/auth.interface';
   imports: [IonIcon, IonInput, IonInputPasswordToggle, ReactiveFormsModule, RouterLink],
 })
 export class LoginFormComponent {
+  private modal = inject(ModalService);
+
   loginSubmit = output<LoginInterface>();
   loginAnonimo = output<void>();
 
@@ -56,8 +60,28 @@ export class LoginFormComponent {
     this.formulario.setValue({ email: correo, password: clave });
   }
 
-  onLogin() {
-    if (this.formulario.invalid) return;
+  hayError(control: string, error: string): boolean {
+    const campo = this.formulario.get(control);
+
+    return !!campo && campo.touched && campo.hasError(error);
+  }
+
+  async onLogin() {
+    if (this.formulario.invalid) {
+      // Ionic solo pinta el error si el control esta "tocado".
+      this.formulario.markAllAsTouched();
+
+      await Haptics.notification({ type: NotificationType.Error });
+
+      this.modal.setOpen(
+        true,
+        'Datos inválidos',
+        'Revise el correo y la contraseña antes de continuar.'
+      );
+
+      return;
+    }
+
     this.loginSubmit.emit(this.formulario.value as LoginInterface);
   }
 
