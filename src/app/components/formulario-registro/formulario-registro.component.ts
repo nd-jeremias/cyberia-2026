@@ -1,3 +1,4 @@
+import { FileService } from './../../services/file.service';
 import { Component, effect, inject, input, output } from '@angular/core';
 import {
     AbstractControl,
@@ -22,6 +23,9 @@ import {
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
+import { ModalService } from '../../services/modal.service';
+import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
+import { RouterLink } from '@angular/router';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     const password = group.get('password')?.value;
@@ -46,27 +50,22 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
         IonSelectOption,
         IonButton,
         ReactiveFormsModule,
+        SubidaImagenesComponent,
+        RouterLink,
     ],
 })
 export class FormularioRegistroComponent {
-    // La pagina que renderiza el formulario indica si la sesion actual
-    // es del dueño; solo en ese caso se muestran CUIL y tipo de empleado.
-    qrService = inject(QrService);
     esDueno = input<boolean>(false);
 
-    registroSubmit = output<RegisterInterface>();
+    qrService = inject(QrService);
+    modal = inject(ModalService);
+    fileService = inject(FileService);
 
-    tiposEmpleado = [
-        'dueño',
-        'supervisor',
-        'metre',
-        'mozo',
-        'cocinero',
-        'cantinero',
-    ];
+    registroSubmit = output<FormData>();
 
-    foto: File | null = null;
+    tiposEmpleado = ['dueño', 'supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
 
+    foto: File[] = [];
     formulario = new FormGroup(
         {
             nombres: new FormControl('', {
@@ -83,6 +82,7 @@ export class FormularioRegistroComponent {
                 validators: [Validators.required, Validators.email],
             }),
             tipoEmpleado: new FormControl(''),
+            foto: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
             password: new FormControl('', {
                 validators: [Validators.required, Validators.minLength(8)],
             }),
@@ -99,10 +99,7 @@ export class FormularioRegistroComponent {
             const tipoEmpleado = this.formulario.controls.tipoEmpleado;
 
             if (this.esDueno()) {
-                cuil.setValidators([
-                    Validators.required,
-                    Validators.pattern(/^\d{11}$/),
-                ]);
+                cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 tipoEmpleado.setValidators([Validators.required]);
             } else {
                 cuil.clearValidators();
@@ -117,36 +114,70 @@ export class FormularioRegistroComponent {
     }
 
     async scanearDNI() {
-    const dniData: DniInterface | null = await this.qrService.scanDNI();
-    if (dniData) {
-      this.formulario.patchValue({
-        nombres: dniData.nombres,
-        apellidos: dniData.apellidos,
-        dni: dniData.dni,
-      });
+        const dniData: DniInterface | null = await this.qrService.scanDNI();
+        if (dniData) {
+            this.formulario.patchValue({
+                nombres: dniData.nombres,
+                apellidos: dniData.apellidos,
+                dni: dniData.dni,
+            });
+        }
     }
-  }
 
-    onFotoSeleccionada(event: Event) {
-        const input = event.target as HTMLInputElement;
-        this.foto = input.files?.[0] ?? null;
+    recibirImagenes(imagenes: File[]) {
+        this.foto = imagenes;
+
+        // Almacena el array de Files directamente en el formulario
+        this.formulario.patchValue({ foto: imagenes });
+
+        // Opcional: Marca el control como "dirty" o "touched" para la validación
+        this.formulario.get('imagenes')?.markAsTouched();
+    }
+
+    toCapitalize(word: string): string {
+        if (!word || word.length === 0) return '';
+        return word[0].toUpperCase() + word.slice(1);
+    }
+
+    validateForm(form: FormGroup): boolean {
+        form.markAllAsTouched();
+
+        if (!form.valid) {
+            this.modal.setOpen(true, 'Datos inválidos', 'Revise los datos ingresados');
+            return true; // Retorna true si hay errores (el formulario NO es válido)
+        }
+
+        return false; // Retorna false si todo está correcto
     }
 
     onRegistro() {
-        if (this.formulario.invalid || !this.foto) return;
+        if (this.validateForm(this.formulario) || this.formulario.invalid) return;
 
-        const valores = this.formulario.getRawValue();
+        // 1. Forzamos a que los datos extraídos cumplan con la interfaz
+        const datosRegistro = this.formulario.value as RegisterInterface;
 
-        this.registroSubmit.emit({
-            nombres: valores.nombres ?? '',
-            apellidos: valores.apellidos ?? '',
-            dni: valores.dni ?? '',
-            cuil: valores.cuil || undefined,
-            correo: valores.correo ?? '',
-            tipoEmpleado: valores.tipoEmpleado || undefined,
-            foto: this.foto,
-            password: valores.password ?? '',
-            confirmPassword: valores.confirmPassword ?? '',
-        });
+        const formData = new FormData();
+
+        formData.append('dni', datosRegistro.dni.toString());
+        formData.append('cuil', datosRegistro.cuil?.toString() ?? '');
+        formData.append('apellidos', this.toCapitalize(datosRegistro.apellidos));
+        formData.append('nombres', this.toCapitalize(datosRegistro.nombres));
+        formData.append('correo', datosRegistro.correo.toLowerCase().trim());
+        formData.append('tipoEmpleado', datosRegistro.tipoEmpleado ?? '');
+        formData.append('password', datosRegistro.password);
+        formData.append('confirmPassword', datosRegistro.confirmPassword);
+
+        const fotosArray = this.formulario.get('foto')?.value as File[] | null;
+
+        if (fotosArray && fotosArray.length > 0) {
+            const archivoReal = fotosArray[0];
+            formData.append('foto', archivoReal);
+        }
+
+        // formData.forEach((value, key) => {
+        //     console.log(`${key}:`, value);
+        // });
+        this.registroSubmit.emit(formData);
+        this.formulario.reset();
     }
 }

@@ -1,0 +1,19 @@
+<ion-modal [isOpen]="modalService.isModalOpen">
+    <ng-template>
+        <ion-header>
+            <ion-toolbar>
+                <ion-title> {{ modalService.tituloModal() }} </ion-title>
+            </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+            <p>
+                {{ modalService.mensajeModal() }}
+            </p>
+        </ion-content>
+        <ion-footer>
+            <ion-buttons class="botonContainer">
+                <ion-button class="botonCerrar" (click)="modalService.setOpen(false)">Cerrar</ion-button>
+            </ion-buttons>
+        </ion-footer>
+    </ng-template>
+</ion-modal>

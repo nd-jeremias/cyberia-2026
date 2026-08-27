@@ -4,34 +4,31 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton 
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-registrarse',
-  template: `
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button defaultHref="/ingresar"></ion-back-button>
-        </ion-buttons>
-        <ion-title>Crear Cuenta</ion-title>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-      <app-formulario-registro (registroSubmit)="handleRegistro($event)"></app-formulario-registro>
-    </ion-content>
-  `,
-  imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent, FormularioRegistroComponent],
+    selector: 'app-registrarse',
+    templateUrl: './registrarse.page.html',
+    styleUrls: ['./registrarse.page.scss'],
+    imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent, FormularioRegistroComponent],
 })
 export class RegistrarsePage {
-  private router = inject(Router);
-  private spinner = inject(SpinnerService);
-  private modal = inject(ModalService);
+    private router = inject(Router);
+    private spinner = inject(SpinnerService);
+    private modal = inject(ModalService);
+    authService = inject(AuthService);
 
-  async handleRegistro(formData: any) {
-    this.spinner.show();
-    // Lógica para enviar formData a Supabase (Auth + Storage + Tabla usuarios)
-    this.spinner.hide();
-    this.modal.setOpen(true, 'Registro', 'Solicitud enviada correctamente');
-    this.router.navigate(['/ingresar']);
-  }
+    async handleRegistro(formData: FormData) {
+        this.spinner.show();
+        try {
+            this.authService.register(formData);
+            this.spinner.hide();
+            this.modal.setOpen(true, 'Registro', 'Solicitud enviada correctamente');
+            this.router.navigate(['/ingresar']);
+        } catch (error: any) {
+            this.spinner.hide();
+            console.error('Error en el proceso de registro:', error);
+            this.modal.setOpen(true, 'Error', error.message || 'No se pudo completar el registro');
+        }
+    }
 }

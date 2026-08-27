@@ -1,10 +1,6 @@
 import { Service, signal } from '@angular/core';
 import { AuthResponse, Session } from '@supabase/supabase-js';
-import {
-    LoginInterface,
-    RegisterInterface,
-    LocalUserInterface,
-} from '../interfaces/auth.interface';
+import { LoginInterface, RegisterInterface, LocalUserInterface } from '../interfaces/auth.interface';
 import { supabase } from './supabase.service';
 
 @Service()
@@ -37,8 +33,8 @@ export class AuthService {
 
         const user: LocalUserInterface = {
             id: response.data.user.id,
-            email: response.data.session.user.email,
-            nombre: response.data.session.user.user_metadata['nombre'],
+            correo: response.data.session.user.email,
+            nombres: response.data.session.user.user_metadata['nombre'],
         };
 
         this.setLocalUser(user);
@@ -60,5 +56,82 @@ export class AuthService {
         if (error) throw error;
 
         localStorage.removeItem('user');
+    }
+
+    async register(form: FormData): Promise<void> {
+        try {
+            const correo = form.get('correo') as string;
+            const password = form.get('password') as string;
+            const dni = form.get('dni') as string;
+            const nombres = form.get('nombres') as string;
+            const apellidos = form.get('apellidos') as string;
+            const cuil = form.get('cuil') as string;
+            const tipoEmpleado = form.get('tipoEmpleado') as string;
+            const fotoArchivo = form.get('foto') as File;
+
+            const publicUrl = await this.subirImagen(fotoArchivo);
+
+            if (!publicUrl) throw Error;
+
+            // Normalizacion de datos
+            const correoRaw = form.get('correo') as string;
+            const correolimpio = correoRaw.replace(/["']/g, '').trim().toLowerCase();
+
+            const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
+
+            const { data, error } = await supabase.auth.signUp({
+                email: correo,
+                password,
+                options: {
+                    // Metadatos que van directamente al usuario de Auth (Opcional)
+                    data: { nombres, apellidos },
+                },
+            });
+
+            if (error) {
+                throw error;
+            }
+
+            if (data.user) {
+                const user: LocalUserInterface = {
+                    id: data.user.id,
+                    correo,
+                    nombres,
+                };
+                this.setLocalUser(user);
+
+                const { error } = await supabase.from('usuarios').insert({
+                    id: user.id,
+                    nombres,
+                    apellidos,
+                    dni,
+                    cuil,
+                    correo_electronico: correo,
+                    foto_url: publicUrl,
+                    perfil: perfilFinal,
+                    estado: tipoEmpleado ? 'Activo' : 'Pendiente',
+                });
+
+                if (error) throw error;
+            }
+            // return session <==
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async subirImagen(fotoArchivo: File): Promise<string> {
+        const rutaArchivo = `usuarios/${fotoArchivo.name}`;
+
+        const { data: storageData, error: storageError } = await supabase.storage
+            .from('Fotos')
+            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: false });
+
+        if (storageError) throw storageError;
+
+        // Obtener la URL pública del archivo subido
+        const { data: urlData } = supabase.storage.from('Fotos').getPublicUrl(rutaArchivo);
+
+        return urlData.publicUrl;
     }
 }

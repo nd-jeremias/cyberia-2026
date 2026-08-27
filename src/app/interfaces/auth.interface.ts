@@ -10,13 +10,13 @@ export interface RegisterInterface {
     cuil?: string;
     correo: string;
     tipoEmpleado?: string;
-    foto: File;
+    foto: File[];
     password: string;
     confirmPassword: string;
 }
 
 export interface LocalUserInterface{
     id: string;
-    email: string | undefined;
-    nombre: string;
+    correo: string | undefined;
+    nombres: string;
 }

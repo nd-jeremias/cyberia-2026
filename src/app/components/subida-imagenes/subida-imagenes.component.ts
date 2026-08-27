@@ -1,0 +1,155 @@
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Component, inject, input, OnInit, output } from '@angular/core';
+import { IonButton, Platform } from '@ionic/angular';
+import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { FileService } from '../../services/file.service';
+import { ModalService } from '../../services/modal.service';
+import { GaleriaService } from '../../services/galeria.service';
+import { CameraService } from '../../services/camera.service';
+
+
+interface ImageSlot {
+    file: File | null;
+    previewUrl: string | null;
+}
+@Component({
+    selector: 'app-subida-imagenes',
+    templateUrl: './subida-imagenes.component.html',
+    styleUrls: ['./subida-imagenes.component.scss'],
+    imports: [IonButton, FontAwesomeModule],
+})
+export class SubidaImagenesComponent implements OnInit {
+    constructor() {}
+
+    ngOnInit() {}
+
+    archivosService = inject(FileService);
+    modal = inject(ModalService);
+    galeriaService = inject(GaleriaService)
+    camaraService = inject(CameraService)
+    platform = inject(Platform);
+
+    imagenesChange = output<File[]>();
+    maxImages = input<number>(3);
+    modo = input<'camara' | 'galeria'>('galeria')
+    label = input<string>("")
+
+    imageSlots: ImageSlot[] = [{ file: null, previewUrl: null }]; // Array que maneja los slots de imágenes (empieza con uno vacío)
+
+    faSquarePlus = faSquarePlus;
+    faSquareMinus = faSquareMinus;
+
+    async subirImagen(index: number, modo: 'camara' | 'galeria', direccion?: 'frontal' | 'trasera') {
+        
+        if (this.imageSlots.length > this.maxImages()) {
+            this.modal.setOpen(
+                true,
+                'Límite de imágenes alcanzado',
+                'No puedes subir más de ' + this.maxImages() + ' imágenes.'
+            );
+            return;
+        }
+
+        if (!this.platform.is('hybrid')){
+            modo = 'galeria'
+        }
+        
+        try {
+            let results = null;
+            let item = null;
+
+            if (modo === 'galeria') {
+                results = await this.galeriaService.subirImagen(1);
+
+                if (results && results.length > 0) {
+                    item = results[0];
+
+                    if (!item.webPath) return;
+                    // 2. Obtenemos los datos binarios puros (Blob) desde la ruta temporal de Capacitor
+                    const response = await fetch(item?.webPath!);
+                    const blobPuro = await response.blob();
+
+                    // 3. Convertimos el Blob en un File real dándole un nombre único
+                    const nombreArchivo = `foto_${index}_${Date.now()}.jpg`;
+                    const archivoFile = new File([blobPuro], nombreArchivo, {
+                        type: blobPuro.type, // Mantiene 'image/jpeg' o el formato original
+                    });
+
+                    this.imageSlots[index] = { file: archivoFile, previewUrl: item.webPath };
+
+                    if (index === this.imageSlots.length - 1) {
+                        this.imageSlots.push({ file: null, previewUrl: null });
+                    }
+
+                    this.emitirImagenes();
+                }
+            } else {
+                results = await this.camaraService.tomarFoto(direccion ?? 'frontal');
+                if (results) {
+                    // this.fotoPreview = results.previewUrl; // Usar en <img [src]="fotoPreview">
+                    // Convertimos el Blob en un File con nombre y tipo explícito
+                    const archivoFoto = new File([results.blob], `selfie_${Date.now()}.jpg`, {
+                        type: 'image/jpeg',
+                    });
+
+                    this.imageSlots[index] = { file: archivoFoto, previewUrl: results.previewUrl };
+                }
+            }
+        } catch (error) {
+            console.error('Error procesando la imagen:', error);
+        }
+    }
+
+    async onFileSelected(event: Event, index: number) {
+        const input = event.target as HTMLInputElement;
+
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            if (!this.archivosService.isValidTypeImg(file)) {
+                // Retornar valor para pasarle al formulario
+                return;
+            }
+
+            if (!this.archivosService.isValidFileSize(file, 5)) {
+                // Retornar valor para pasarle al formulario
+                return;
+            }
+
+            // Generar URL temporal para mostrar la vista previa en el HTML
+            const previewUrl = await this.archivosService.generatePreview(file);
+
+            // Guardar el archivo y la preview en el slot correspondiente
+            this.imageSlots[index] = { file, previewUrl };
+
+            // LÓGICA DINÁMICA: Si modificamos el último slot disponible, añadimos uno nuevo vacío
+            if (index === this.imageSlots.length - 1) {
+                this.imageSlots.push({ file: null, previewUrl: null });
+            }
+
+            this.emitirImagenes();
+        }
+    }
+
+    private emitirImagenes() {
+        const archivos = this.imageSlots.map((slot) => slot.file).filter((file): file is File => file !== null);
+
+        this.imagenesChange.emit(archivos);
+    }
+
+    removeImage(index: number) {
+        // Revocar la URL para liberar memoria del navegador
+        if (this.imageSlots[index].previewUrl) {
+            URL.revokeObjectURL(this.imageSlots[index].previewUrl!);
+        }
+
+        // Eliminar el slot del array
+        this.imageSlots.splice(index, 1);
+
+        // Asegurarse de que si eliminamos todo, quede al menos un botón para agregar
+        if (this.imageSlots.length === 0) {
+            this.imageSlots.push({ file: null, previewUrl: null });
+        }
+        this.emitirImagenes();
+    }
+}
