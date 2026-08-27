@@ -13,6 +13,7 @@
 -   [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
 -   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Guía Rápida de Git](#-guía-rápida-de-git)
+-   [Índice de Imágenes](#-índice-de-imágenes)
 -   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
 
 ---
@@ -164,6 +165,66 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 ---
 
+## 🖼️ Índice de Imágenes
+
+Índice de todas las imágenes asociadas al proyecto, según lo requerido por la consigna.
+
+### Ícono de la aplicación
+
+| Imagen | Archivo | Uso |
+| :----: | :------ | :-- |
+| <img src="assets/icon-only.png" width="90" alt="Ícono de la aplicación" /> | `assets/icon-only.png` | Ícono base para generar los recursos nativos |
+| <img src="assets/icon-foreground.png" width="90" alt="Ícono - capa frontal" /> | `assets/icon-foreground.png` | Capa frontal del ícono adaptativo de Android |
+| <img src="assets/icon-background.png" width="90" alt="Ícono - capa de fondo" /> | `assets/icon-background.png` | Capa de fondo del ícono adaptativo de Android |
+| <img src="src/assets/icon/favicon.png" width="45" alt="Favicon" /> | `src/assets/icon/favicon.png` | Favicon de la aplicación web |
+
+### Pantalla de presentación (splash screen)
+
+| Imagen | Archivo | Uso |
+| :----: | :------ | :-- |
+| <img src="assets/splash.png" width="160" alt="Pantalla de presentación" /> | `assets/splash.png` | Pantalla de presentación en tema claro |
+| <img src="assets/splash-dark.png" width="160" alt="Pantalla de presentación oscura" /> | `assets/splash-dark.png` | Pantalla de presentación en tema oscuro |
+| <img src="src/assets/splash-logo.webp" width="120" alt="Logo de la presentación" /> | `src/assets/splash-logo.webp` | Logo animado del componente `splash` |
+
+### Íconos de la aplicación web (PWA)
+
+Declarados en `src/manifest.webmanifest` para los distintos tamaños de pantalla.
+
+| Imagen | Archivo | Tamaño |
+| :----: | :------ | :----- |
+| <img src="src/assets/icons/icon-48.webp" width="48" alt="Ícono 48" /> | `src/assets/icons/icon-48.webp` | 48 × 48 |
+| <img src="src/assets/icons/icon-72.webp" width="56" alt="Ícono 72" /> | `src/assets/icons/icon-72.webp` | 72 × 72 |
+| <img src="src/assets/icons/icon-96.webp" width="64" alt="Ícono 96" /> | `src/assets/icons/icon-96.webp` | 96 × 96 |
+| <img src="src/assets/icons/icon-128.webp" width="72" alt="Ícono 128" /> | `src/assets/icons/icon-128.webp` | 128 × 128 |
+| <img src="src/assets/icons/icon-192.webp" width="80" alt="Ícono 192" /> | `src/assets/icons/icon-192.webp` | 192 × 192 |
+| <img src="src/assets/icons/icon-256.webp" width="88" alt="Ícono 256" /> | `src/assets/icons/icon-256.webp` | 256 × 256 |
+| <img src="src/assets/icons/icon-512.webp" width="96" alt="Ícono 512" /> | `src/assets/icons/icon-512.webp` | 512 × 512 |
+
+### Recursos gráficos auxiliares
+
+| Imagen | Archivo | Uso |
+| :----: | :------ | :-- |
+| <img src="src/assets/shapes.svg" width="90" alt="Formas decorativas" /> | `src/assets/shapes.svg` | Formas decorativas de fondo |
+
+### Capturas de pantalla de la aplicación
+
+> ⚠️ **Pendiente de carga.** Las capturas de formularios, listados y demás pantallas se deben
+> agregar a medida que las vistas queden integradas en la aplicación. Cada captura debe sumarse
+> a esta tabla para cumplir con el requisito de la consigna (TODAS Y CADA UNA DE LAS IMÁGENES).
+
+| Pantalla | Imagen | Estado |
+| :------- | :----: | :----- |
+| Formulario de ingreso | — | Pendiente |
+| Formulario de registro | — | Pendiente |
+| Formulario de alta de producto | — | Pendiente |
+| Formulario de alta de mesa | — | Pendiente |
+| Formulario de usuario anónimo | — | Pendiente |
+| Listado de clientes pendientes | — | Pendiente |
+| Listado de productos | — | Pendiente |
+| Códigos QR generados | — | Pendiente |
+
+---
+
 ## 📅 Cronograma y Distribución de Tareas
 
 A continuación se detalla la distribución tentativa de tareas para los integrantes del equipo.
@@ -190,7 +251,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado | kev-dev   |
 | Componente para listar Clientes Pendientes                                 |   27/08/2026    | 27/08/2026 | Completado | kev-dev   |
 | Creación de modulo: ´formulario-usuario-anonimo´                           |   27/08/2026    | 27/08/2026 | Completado | kev-dev   |
-| Servicio de Notificaciones Push                                            |   --/--/----    | --/--/---- | Pendiente  | kev-dev   |
+| Servicio de Notificaciones Push                                            |   27/08/2026    | 27/08/2026 | Completado | kev-dev   |
 
 ---
 
