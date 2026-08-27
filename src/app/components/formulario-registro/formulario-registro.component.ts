@@ -20,7 +20,6 @@ import {
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
@@ -100,7 +99,6 @@ export class FormularioRegistroComponent {
             const tipoEmpleado = this.formulario.controls.tipoEmpleado;
 
             if (this.esDueno()) {
-                cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 tipoEmpleado.setValidators([Validators.required]);
             } else {
