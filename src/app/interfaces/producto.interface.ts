@@ -18,3 +18,13 @@ export interface ProductoAltaInterface {
     tipo: TipoProducto;
     fotos: File[];
 }
+
+export interface ProductoCarrito {
+    id: string;
+    nombre: string;
+    tiempoElaboracionMinutos: number;
+    precioUnitario: number;
+    precioTotal: number;
+    tipo: TipoProducto;
+    cantidad: number;
+}
