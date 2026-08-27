@@ -183,14 +183,14 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 
 ### 👤 Plucci, Kevin
 
-| 📝 Tarea / Descripción                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
-| :--------------------------------------------------------------------------- | :-------------: | :--------: | :--------: |
-| Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado |
-| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado |
-| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado |
-| Componente para listar Clientes Pendientes                                 |   27/08/2026    | --/--/---- | Pendiente  |
-| Creación de modulo: ´formulario-usuario-anonimo´                           |   27/08/2026    | --/--/---- | Pendiente  |
-| Servicio de Notificaciones Push                                            |   --/--/----    | --/--/---- | Pendiente  |
+| 📝 Tarea / Descripción                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  | 🌿 Branch |
+| :--------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :-------: |
+| Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado | kev-dev   |
+| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado | kev-dev   |
+| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado | kev-dev   |
+| Componente para listar Clientes Pendientes                                 |   27/08/2026    | 27/08/2026 | Completado | kev-dev   |
+| Creación de modulo: ´formulario-usuario-anonimo´                           |   27/08/2026    | 27/08/2026 | Completado | kev-dev   |
+| Servicio de Notificaciones Push                                            |   --/--/----    | --/--/---- | Pendiente  | kev-dev   |
 
 ---
 
