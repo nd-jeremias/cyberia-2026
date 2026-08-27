@@ -6,7 +6,7 @@ import {
     IonHeader,
     IonModal,
     IonTitle,
-    IonToolbar, IonFooter } from '@ionic/angular/';
+    IonToolbar, IonFooter } from '@ionic/angular';
 import { ModalService } from '../../services/modal.service';
 
 @Component({
