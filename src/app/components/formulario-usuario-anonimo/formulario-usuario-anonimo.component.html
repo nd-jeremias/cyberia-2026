@@ -1,0 +1,54 @@
+<ion-card>
+    <ion-card-header>
+        <ion-card-title>Ingreso como cliente anónimo</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <form [formGroup]="formulario" (ngSubmit)="onRegistrar()">
+            <ion-item>
+                <ion-input
+                    formControlName="nombres"
+                    type="text"
+                    label="Nombre"
+                    labelPlacement="floating"
+                    placeholder="Juan"
+                ></ion-input>
+            </ion-item>
+
+            <div class="bloque-foto">
+                <div class="contenedor-foto">
+                    @if (foto(); as fotoTomada) {
+                        <img
+                            class="foto-previa"
+                            [src]="fotoTomada.previewUrl"
+                            alt="Foto del cliente anónimo"
+                        />
+                    } @else {
+                        <div class="foto-ausente">
+                            <ion-icon name="camera"></ion-icon>
+                            <span>Todavía no tomaste tu foto</span>
+                        </div>
+                    }
+                </div>
+
+                <ion-button
+                    expand="block"
+                    fill="outline"
+                    type="button"
+                    (click)="onTomarFoto()"
+                >
+                    <ion-icon slot="start" name="camera"></ion-icon>
+                    @if (foto()) {
+                        Tomar otra foto
+                    } @else {
+                        Tomar foto
+                    }
+                </ion-button>
+            </div>
+
+            <ion-button expand="block" type="submit"
+                >Ingresar al local</ion-button
+            >
+        </form>
+    </ion-card-content>
+</ion-card>
