@@ -1,10 +1,13 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-    appId: 'io.ionic.starter',
+    appId: 'com.cyberia.restaurante',
     appName: 'cyberia-2026',
     webDir: 'www',
     plugins: {
+        PushNotifications: {
+            presentationOptions: ['badge', 'sound', 'alert'],
+        },
         SplashScreen: {
             launchShowDuration: 0,
             launchAutoHide: false,

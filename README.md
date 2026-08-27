@@ -13,6 +13,7 @@
 -   [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
 -   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Guía Rápida de Git](#-guía-rápida-de-git)
+-   [Notificaciones Push](#-notificaciones-push)
 -   [Índice de Imágenes](#-índice-de-imágenes)
 -   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
 
@@ -162,6 +163,61 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 ```
 
 > ⚠️ **Regla del equipo:** Antes de crear una nueva página o servicio, verifica que no exista en su carpeta correspondiente para evitar duplicar código.
+
+---
+
+## 🔔 Notificaciones Push
+
+El servicio `src/app/services/notificaciones.service.ts` ya está implementado y enganchado en
+`app.component.ts`. Del lado de la aplicación no falta nada, pero **las notificaciones no van a
+llegar hasta completar la configuración de Firebase**, que requiere credenciales propias.
+
+### Estado de la configuración
+
+| Paso | Estado |
+| :--- | :----- |
+| Plugin `@capacitor/push-notifications` instalado y sincronizado | ✅ Hecho |
+| Permiso `POST_NOTIFICATIONS` en el `AndroidManifest.xml` | ✅ Hecho |
+| Canal de notificaciones de Android (sonido y vibración) | ✅ Hecho |
+| Aviso visible con la aplicación abierta | ✅ Hecho |
+| Columna `token_push` en la base de datos | ✅ Hecho (`sql/usuarios.sql`) |
+| Archivo `google-services.json` | ⚠️ **Pendiente** |
+| Edge Function que dispara los envíos | ⚠️ **Pendiente** |
+
+### Paso pendiente 1: Firebase
+
+1. Crear un proyecto en [Firebase Console](https://console.firebase.google.com).
+2. Agregar una aplicación Android con el nombre de paquete **`com.cyberia.restaurante`**
+   (debe coincidir exactamente con el `appId` de `capacitor.config.ts`).
+3. Descargar el `google-services.json` y guardarlo en `android/app/`.
+4. Ejecutar `npx cap sync android`.
+
+Sin este archivo, Android nunca emite el token y el evento `registration` no se dispara.
+
+### Paso pendiente 2: envío desde Supabase
+
+Supabase no envía notificaciones push por sí solo: su canal en tiempo real usa WebSocket, que
+se corta cuando la aplicación se cierra. El envío se resuelve con una Edge Function que recibe
+el aviso de un trigger de la base y le pide a Firebase que notifique al dispositivo.
+
+```
+INSERT en usuarios (estado = 'Pendiente')
+        ↓ trigger de Postgres
+   Edge Function de Supabase
+        ↓ HTTP POST
+       Firebase Cloud Messaging
+        ↓
+  Dispositivo del dueño o supervisor
+```
+
+El mensaje debe incluir el bloque `notification` (para que el sistema lo muestre con la
+aplicación cerrada) y un campo `data.tipo` con uno de los valores de `TipoNotificacion`, que es
+lo que permite llevar al usuario a la pantalla correspondiente.
+
+### Cómo probarlo
+
+Las notificaciones push **no funcionan en el navegador**. Se prueban con la aplicación compilada
+en un dispositivo real (`npx cap run android`); los emuladores sin Google Play tampoco sirven.
 
 ---
 

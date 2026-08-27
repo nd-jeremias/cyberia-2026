@@ -19,8 +19,10 @@ import {
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
+import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
@@ -52,6 +54,7 @@ export class FormularioRegistroComponent {
     // La pagina que renderiza el formulario indica si la sesion actual
     // es del dueño; solo en ese caso se muestran CUIL y tipo de empleado.
     qrService = inject(QrService);
+    private modal = inject(ModalService);
     esDueno = input<boolean>(false);
 
     registroSubmit = output<RegisterInterface>();
@@ -132,8 +135,37 @@ export class FormularioRegistroComponent {
         this.foto = input.files?.[0] ?? null;
     }
 
-    onRegistro() {
-        if (this.formulario.invalid || !this.foto) return;
+    // Mensajes por campo: Ionic solo pinta el error si el control esta
+    // "tocado", de ahi el markAllAsTouched antes de avisar.
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    get passwordsNoCoinciden(): boolean {
+        return (
+            this.formulario.controls.confirmPassword.touched &&
+            this.formulario.hasError('passwordsDistintas')
+        );
+    }
+
+    async onRegistro() {
+        if (this.formulario.invalid || !this.foto) {
+            this.formulario.markAllAsTouched();
+
+            await Haptics.notification({ type: NotificationType.Error });
+
+            this.modal.setOpen(
+                true,
+                'Datos inválidos',
+                !this.foto
+                    ? 'Debe cargar una foto de perfil para continuar.'
+                    : 'Revise los datos ingresados antes de continuar.'
+            );
+
+            return;
+        }
 
         const valores = this.formulario.getRawValue();
 

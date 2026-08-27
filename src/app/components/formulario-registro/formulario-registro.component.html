@@ -8,6 +8,9 @@
             <ion-item class="item-input">
                 <ion-input
                     formControlName="nombres"
+                    errorText="Ingrese los nombres"
+                    [class.ion-invalid]="hayError('nombres', 'required')"
+                    [class.ion-touched]="hayError('nombres', 'required')"
                     type="text"
                     label="Nombres"
                     labelPlacement="floating"
@@ -18,6 +21,9 @@
             <ion-item>
                 <ion-input
                     formControlName="apellidos"
+                    errorText="Ingrese los apellidos"
+                    [class.ion-invalid]="hayError('apellidos', 'required')"
+                    [class.ion-touched]="hayError('apellidos', 'required')"
                     type="text"
                     label="Apellidos"
                     labelPlacement="floating"
@@ -28,6 +34,9 @@
             <ion-item class="item-input">
                 <ion-input
                     formControlName="dni"
+                    errorText="El DNI debe tener 7 u 8 dígitos"
+                    [class.ion-invalid]="hayError('dni', 'required') || hayError('dni', 'pattern')"
+                    [class.ion-touched]="hayError('dni', 'required') || hayError('dni', 'pattern')"
                     type="text"
                     inputmode="numeric"
                     label="DNI"
@@ -43,6 +52,9 @@
                 <ion-item class="item-input">
                     <ion-input
                         formControlName="cuil"
+                        errorText="El CUIL debe tener 11 dígitos"
+                        [class.ion-invalid]="hayError('cuil', 'required') || hayError('cuil', 'pattern')"
+                        [class.ion-touched]="hayError('cuil', 'required') || hayError('cuil', 'pattern')"
                         type="text"
                         inputmode="numeric"
                         label="CUIL"
@@ -55,6 +67,9 @@
             <ion-item class="item-input">
                 <ion-input
                     formControlName="correo"
+                    errorText="Ingrese un correo electrónico válido"
+                    [class.ion-invalid]="hayError('correo', 'required') || hayError('correo', 'email')"
+                    [class.ion-touched]="hayError('correo', 'required') || hayError('correo', 'email')"
                     type="email"
                     label="Correo electrónico"
                     labelPlacement="floating"
@@ -93,6 +108,9 @@
             <ion-item class="item-input">
                 <ion-input
                     formControlName="password"
+                    errorText="La contraseña debe tener al menos 8 caracteres"
+                    [class.ion-invalid]="hayError('password', 'required') || hayError('password', 'minlength')"
+                    [class.ion-touched]="hayError('password', 'required') || hayError('password', 'minlength')"
                     label="Contraseña"
                     labelPlacement="floating"
                     type="password"
@@ -109,6 +127,9 @@
             <ion-item>
                 <ion-input
                     formControlName="confirmPassword"
+                    errorText="Las contraseñas no coinciden"
+                    [class.ion-invalid]="passwordsNoCoinciden"
+                    [class.ion-touched]="passwordsNoCoinciden"
                     label="Confirmar contraseña"
                     labelPlacement="floating"
                     type="password"
