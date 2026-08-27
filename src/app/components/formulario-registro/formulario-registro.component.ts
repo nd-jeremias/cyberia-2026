@@ -20,10 +20,11 @@ import {
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
-import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
+import { QrService } from '../../services/qr.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { RouterLink } from '@angular/router';
 
@@ -55,6 +56,8 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     ],
 })
 export class FormularioRegistroComponent {
+    // La pagina que renderiza el formulario indica si la sesion actual
+    // es del dueño; solo en ese caso se muestran CUIL y tipo de empleado.
     esDueno = input<boolean>(false);
 
     qrService = inject(QrService);
@@ -153,11 +156,31 @@ export class FormularioRegistroComponent {
         return false;
     }
 
-    onRegistro() {
-        // if (this.formulario.invalid || !this.foto) return;
-        console.log(this.formulario)
+    // Mensajes por campo: Ionic solo pinta el error si el control esta
+    // "tocado", de ahi el markAllAsTouched antes de avisar.
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
 
-        if (this.validateForm(this.formulario) || this.formulario.invalid) return;
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    get passwordsNoCoinciden(): boolean {
+        return (
+            this.formulario.controls.confirmPassword.touched &&
+            this.formulario.hasError('passwordsDistintas')
+        );
+    }
+
+    async onRegistro() {
+        // validateForm ya muestra el modal; aca sumamos los mensajes por
+        // campo y la vibracion que pide la consigna ante cualquier error.
+        if (this.validateForm(this.formulario) || this.formulario.invalid) {
+            this.formulario.markAllAsTouched();
+
+            await Haptics.notification({ type: NotificationType.Error });
+
+            return;
+        }
 
         // 1. Forzamos a que los datos extraídos cumplan con la interfaz
         const datosRegistro = this.formulario.value as RegisterInterface;

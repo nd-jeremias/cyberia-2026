@@ -127,7 +127,7 @@
                 </ion-input>
                 @if (formulario.get("password")?.errors?.["required"] && formulario.get("password")?.touched) {
                 <small>Ingrese una contraseña. </small>
-                } @if (formulario.get("password")?.errors?.["minLength"] && formulario.get("password")?.touched) {
+                } @if (formulario.get("password")?.errors?.["minlength"] && formulario.get("password")?.touched) {
                 <small>La contraseña es demasiado corta. </small>
                 }
             </ion-item>
@@ -146,8 +146,7 @@
                         slot="end"
                     ></ion-input-password-toggle>
                 </ion-input>
-                @if ( formulario.get("confirmPassword")?.errors?.["passwordMismatch"] &&
-                formulario.get("confirmPassword")?.touched ) {
+                @if (passwordsNoCoinciden) {
                 <small>Las contraseñas no coinciden. </small>
                 }
             </ion-item>
