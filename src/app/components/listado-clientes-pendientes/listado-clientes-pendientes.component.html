@@ -1,0 +1,68 @@
+<section class="listado-clientes">
+    <h2 class="titulo-listado">{{ tituloListado() }}</h2>
+
+    @if (clientes().length === 0) {
+        <p class="listado-vacio">
+            No hay clientes esperando aprobación en este momento.
+        </p>
+    } @else {
+        <div class="lista">
+            @for (cliente of clientes(); track cliente.id) {
+                <article class="tarjeta-cliente">
+                    <div class="contenedor-foto">
+                        @if (cliente.fotoUrl) {
+                            <img
+                                class="foto-cliente"
+                                [src]="cliente.fotoUrl"
+                                [alt]="
+                                    'Foto de ' + nombreCompleto(cliente)
+                                "
+                            />
+                        } @else {
+                            <div class="foto-ausente">
+                                <ion-icon name="person"></ion-icon>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="datos-cliente">
+                        <h3 class="nombre-cliente">
+                            {{ nombreCompleto(cliente) }}
+                        </h3>
+                        <p class="dato">Documento: {{ cliente.dni }}</p>
+                        <p class="dato">{{ cliente.correo }}</p>
+                        <p class="dato fecha">
+                            Solicitud: {{ fechaFormateada(cliente) }}
+                        </p>
+                    </div>
+
+                    <div class="acciones">
+                        <ion-button
+                            expand="block"
+                            color="success"
+                            (click)="onAprobar(cliente)"
+                        >
+                            <ion-icon
+                                slot="start"
+                                name="checkmark-circle"
+                            ></ion-icon>
+                            Aprobar
+                        </ion-button>
+
+                        <ion-button
+                            expand="block"
+                            color="danger"
+                            (click)="onRechazar(cliente)"
+                        >
+                            <ion-icon
+                                slot="start"
+                                name="close-circle"
+                            ></ion-icon>
+                            Rechazar
+                        </ion-button>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>
