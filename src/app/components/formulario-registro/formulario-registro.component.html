@@ -1,167 +1,189 @@
 <ion-card class="pantalla-registro">
-    <ion-card-header class="cabecera-registro">
-        <ion-card-title>Registrarse</ion-card-title>
-    </ion-card-header>
+  <ion-card-header class="cabecera-registro">
+    <ion-card-title>Registrarse</ion-card-title>
+  </ion-card-header>
 
-    <ion-card-content>
-        <form [formGroup]="formulario" (ngSubmit)="onRegistro()" class="formulario-cuerpo">
-            <ion-item class="item-input">
-                <ion-input
-                    formControlName="nombres"
-                    type="text"
-                    label="Nombres"
-                    labelPlacement="floating"
-                    placeholder="Juan"
-                ></ion-input>
-                @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
-                <small>Debe ingresar su/s nombre/s</small>
-                } @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
-                <small>Debe ingresar su/s nombre/s</small>
-                }
-            </ion-item>
+  <ion-card-content>
+    <form [formGroup]="formulario" (ngSubmit)="onRegistro()" class="formulario-cuerpo">
+      
+      <!-- Nombres -->
+      <ion-item class="item-input">
+        <ion-input
+          formControlName="nombres"
+          type="text"
+          label="Nombres"
+          labelPlacement="floating"
+          placeholder="Juan"
+        ></ion-input>
+        @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
+          <small>Debe ingresar su/s nombre/s</small>
+        }
+      </ion-item>
 
-            <ion-item>
-                <ion-input
-                    formControlName="apellidos"
-                    type="text"
-                    label="Apellidos"
-                    labelPlacement="floating"
-                    placeholder="Gómez"
-                ></ion-input>
-                @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
-                <small>Debe ingresar su/s apellido/s</small>
-                } @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
-                <small>Debe ingresar su/s apellido/s</small>
-                }
-            </ion-item>
+      <!-- Apellidos -->
+      <ion-item class="item-input">
+        <ion-input
+          formControlName="apellidos"
+          type="text"
+          label="Apellidos"
+          labelPlacement="floating"
+          placeholder="Gómez"
+        ></ion-input>
+        @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
+          <small>Debe ingresar su/s apellido/s</small>
+        }
+      </ion-item>
 
-            <ion-item class="item-input">
-                <ion-input
-                    formControlName="dni"
-                    type="text"
-                    inputmode="numeric"
-                    label="DNI"
-                    labelPlacement="floating"
-                    placeholder="12345678"
-                ></ion-input>
-                @let dniControl = formulario.get("dni"); @if (dniControl?.touched) { @if
-                (dniControl?.errors?.["required"]) {
-                <small>Debe ingresar el DNI</small>
-                } @if (dniControl?.errors?.["pattern"]) {
-                <small>El DNI debe tener entre 7 y 8 dígitos</small>
-                } }
-                <ion-button type="button" class="boton-scanner" (click)="scanearDNI()">
-                    <span>Escanear</span>
-                </ion-button>
-            </ion-item>
+      <!-- DNI + Botón Scan -->
+      <ion-item class="item-input">
+        <ion-input
+          formControlName="dni"
+          type="text"
+          inputmode="numeric"
+          label="DNI"
+          labelPlacement="floating"
+          placeholder="12345678"
+        ></ion-input>
+        <ion-button slot="end" type="button" class="boton-scanner" (click)="scanearDNI()">
+          <span>Escanear</span>
+        </ion-button>
+      </ion-item>
+      @let dniControl = formulario.get("dni");
+      @if (dniControl?.touched) {
+        @if (dniControl?.errors?.["required"]) {
+          <small>Debe ingresar el DNI</small>
+        }
+        @if (dniControl?.errors?.["pattern"]) {
+          <small>El DNI debe tener entre 7 y 8 dígitos</small>
+        }
+      }
 
-            @if (esDueno()) {
-            <ion-item class="item-input">
-                <ion-input
-                    formControlName="cuil"
-                    type="text"
-                    inputmode="numeric"
-                    label="CUIL"
-                    labelPlacement="floating"
-                    placeholder="20123456783"
-                ></ion-input>
-                @let cuilControl = formulario.get("cuil"); @if (cuilControl?.touched) { @if
-                (cuilControl?.errors?.["required"]) {
-                <small>Debe ingresar el CUIL</small>
-                } @if (cuilControl?.errors?.["pattern"]) {
-                <small>El CUIL debe tener entre 10 y 11 dígitos</small>
-                } }
-            </ion-item>
+      <!-- CUIL (Solo Dueño) -->
+      @if (esDueno()) {
+        <ion-item class="item-input">
+          <ion-input
+            formControlName="cuil"
+            type="text"
+            inputmode="numeric"
+            label="CUIL"
+            labelPlacement="floating"
+            placeholder="20123456783"
+          ></ion-input>
+        </ion-item>
+        @let cuilControl = formulario.get("cuil");
+        @if (cuilControl?.touched) {
+          @if (cuilControl?.errors?.["required"]) {
+            <small>Debe ingresar el CUIL</small>
+          }
+          @if (cuilControl?.errors?.["pattern"]) {
+            <small>El CUIL debe tener 11 dígitos</small>
+          }
+        }
+      }
+
+      <!-- Correo -->
+      <ion-item class="item-input">
+        <ion-input
+          formControlName="correo"
+          type="email"
+          label="Correo electrónico"
+          labelPlacement="floating"
+          placeholder="juangomez@gmail.com"
+        ></ion-input>
+      </ion-item>
+      @if (formulario.get("correo")?.touched) {
+        @if (formulario.get("correo")?.errors?.["required"]) {
+          <small>Debe ingresar su correo electrónico</small>
+        }
+        @if (formulario.get("correo")?.errors?.["email"]) {
+          <small>Formato de correo electrónico incorrecto.</small>
+        }
+      }
+
+      <!-- Tipo de Empleado (Solo Dueño) -->
+      @if (esDueno()) {
+        <ion-item class="item-input">
+          <ion-select
+            formControlName="tipoEmpleado"
+            label="Tipo de empleado"
+            labelPlacement="floating"
+            placeholder="Seleccionar"
+          >
+            @for (tipo of tiposEmpleado; track tipo) {
+              <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
             }
+          </ion-select>
+        </ion-item>
+        @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value == "") {
+          <small>Seleccione el tipo de empleado a registrar.</small>
+        }
+      }
 
-            <ion-item class="item-input">
-                <ion-input
-                    formControlName="correo"
-                    type="email"
-                    label="Correo electrónico"
-                    labelPlacement="floating"
-                    placeholder="juangomez@gmail.com"
-                ></ion-input>
-                @if (formulario.get("correo")?.errors?.["required"] && formulario.get("correo")?.touched) {
-                <small>Debe ingresar su correo electrónico</small>
-                } @if (formulario.get("correo")?.errors?.["email"] && formulario.get("correo")?.touched) {
-                <small>Formato de correo electrónico incorrecto. </small>
-                }
-            </ion-item>
+      <!-- Subida de Foto de Perfil -->
+      <div class="contenedor-foto">
+        <app-subida-imagenes
+          [label]="'Foto de perfil'"
+          [maxImages]="1"
+          (imagenesChange)="recibirImagenes($event)"
+          [modo]="'galeria'"
+        ></app-subida-imagenes>
+        @if (formulario.get("foto")?.errors?.["minLengthArray"] && formulario.get("foto")?.touched) {
+          <small>Debe cargar una foto de perfil</small>
+        }
+      </div>
 
-            @if (esDueno()) {
-            <ion-item class="item-input">
-                <ion-select
-                    formControlName="tipoEmpleado"
-                    label="Tipo de empleado"
-                    labelPlacement="floating"
-                    placeholder="Seleccionar"
-                >
-                    @for (tipo of tiposEmpleado; track tipo) {
-                    <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
-                    }
-                </ion-select>
-                @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value == "") {
-                <small>Seleccione el tipo de empleado a registrar. </small>
-                }
-            </ion-item>
-            }
+      <!-- Contraseña -->
+      <ion-item class="item-input">
+        <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password">
+          <ion-input-password-toggle
+            show-icon="eye-off"
+            hide-icon="eye"
+            color="light"
+            slot="end"
+          ></ion-input-password-toggle>
+        </ion-input>
+      </ion-item>
+      @if (formulario.get("password")?.touched) {
+        @if (formulario.get("password")?.errors?.["required"]) {
+          <small>Ingrese una contraseña.</small>
+        }
+        @if (formulario.get("password")?.errors?.["minLength"]) {
+          <small>La contraseña debe tener al menos 8 caracteres.</small>
+        }
+      }
 
-            <ion-item>
-                <app-subida-imagenes
-                    [label]="'Foto de perfil'"
-                    [maxImages]="1"
-                    (imagenesChange)="recibirImagenes($event)"
-                    [modo]="'galeria'"
-                >
-                </app-subida-imagenes>
-                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <small>Debe cargar 3 imagenes del producto</small>
-                }
+      <!-- Confirmar Contraseña -->
+      <ion-item class="item-input">
+        <ion-input
+          formControlName="confirmPassword"
+          label="Confirmar contraseña"
+          labelPlacement="floating"
+          type="password"
+        >
+          <ion-input-password-toggle
+            show-icon="eye-off"
+            hide-icon="eye"
+            color="light"
+            slot="end"
+          ></ion-input-password-toggle>
+        </ion-input>
+      </ion-item>
+      @if (formulario.errors?.["passwordsDistintas"] && formulario.get("confirmPassword")?.touched) {
+        <small>Las contraseñas no coinciden.</small>
+      }
 
-                <ion-item class="item-input">
-                    <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password">
-                        <ion-input-password-toggle
-                            show-icon="eye-off"
-                            hide-icon="eye"
-                            color="light"
-                            slot="end"
-                        ></ion-input-password-toggle>
-                    </ion-input>
-                    @if (formulario.get("password")?.errors?.["required"] && formulario.get("password")?.touched) {
-                    <small>Ingrese una contraseña. </small>
-                    } @if (formulario.get("password")?.errors?.["minLength"] && formulario.get("password")?.touched) {
-                    <small>La contraseña es demasiado corta. </small>
-                    }
-                </ion-item>
+      <!-- Botones de Acción (Fuera de ion-item) -->
+      <div class="acciones-form">
+        <ion-button expand="full" type="submit" class="boton-primario">
+          {{ esDueno() ? "Registrar Empleado" : "Registrarse" }}
+        </ion-button>
+        @if (!esDueno()) {
+          <ion-button expand="full" fill="outline" routerLink="/ingresar">
+            Ingresar
+          </ion-button>
+        }
+      </div>
 
-                <ion-item>
-                    <ion-input
-                        formControlName="confirmPassword"
-                        label="Confirmar contraseña"
-                        labelPlacement="floating"
-                        type="password"
-                    >
-                        <ion-input-password-toggle
-                            show-icon="eye-off"
-                            hide-icon="eye"
-                            color="light"
-                            slot="end"
-                        ></ion-input-password-toggle>
-                    </ion-input>
-                    @if ( formulario.get("confirmPassword")?.errors?.["passwordMismatch"] &&
-                    formulario.get("confirmPassword")?.touched ) {
-                    <small>Las contraseñas no coinciden. </small>
-                    }
-                </ion-item>
-
-                <ion-button expand="full" fill="outline" type="submit" class="boton-primario">{{
-                    esDueno() ? "Registrar Empleado" : "Registrarse"
-                }}</ion-button>
-                @if (!esDueno()) {
-                <ion-button expand="full" fill="outline" routerLink="/ingresar"> Ingresar </ion-button>
-                }
-            </ion-item>
-        </form>
-    </ion-card-content>
+    </form>
+  </ion-card-content>
 </ion-card>

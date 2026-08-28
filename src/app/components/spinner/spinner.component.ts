@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { IonItem, IonLabel, IonSpinner } from "@ionic/angular/";
+import { IonItem, IonLabel, IonSpinner } from "@ionic/angular";
 import { SpinnerService } from '../../services/spinner.service';
 
 @Component({
