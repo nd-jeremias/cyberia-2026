@@ -11,9 +11,8 @@
 -   [Tecnologías Utilizadas](#%EF%B8%8F-tecnologías-utilizadas)
 -   [Requisitos del Sistema](#-requisitos-del-sistema)
 -   [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
--   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Guía Rápida de Git](#-guía-rápida-de-git)
--   [Notificaciones Push](#-notificaciones-push)
+-   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Índice de Imágenes](#-índice-de-imágenes)
 -   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
 
@@ -166,72 +165,6 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 ---
 
-## 🔔 Notificaciones Push
-
-El servicio `src/app/services/notificaciones.service.ts` ya está implementado y enganchado en
-`app.component.ts`. Del lado de la aplicación no falta nada, pero **las notificaciones no van a
-llegar hasta completar la configuración de Firebase**, que requiere credenciales propias.
-
-### Estado de la configuración
-
-| Paso | Estado |
-| :--- | :----- |
-| Plugin `@capacitor/push-notifications` instalado y sincronizado | ✅ Hecho |
-| Permiso `POST_NOTIFICATIONS` en el `AndroidManifest.xml` | ✅ Hecho |
-| Canal de notificaciones de Android (sonido y vibración) | ✅ Hecho |
-| Aviso visible con la aplicación abierta | ✅ Hecho |
-| Columna `token_push` en la base de datos | ✅ Hecho (`sql/usuarios.sql`) |
-| El token se guarda y se borra en Supabase | ✅ Hecho (login y cierre de sesión) |
-| Edge Function y disparadores de la base | ✅ Hecho (`supabase/functions/`, `sql/notificaciones.sql`) |
-| Archivo `google-services.json` | ⚠️ **Pendiente** (requiere cuenta de Firebase) |
-
-### Paso pendiente 1: Firebase
-
-1. Crear un proyecto en [Firebase Console](https://console.firebase.google.com).
-2. Agregar una aplicación Android con el nombre de paquete **`com.cyberia.restaurante`**
-   (debe coincidir exactamente con el `appId` de `capacitor.config.ts`).
-3. Descargar el `google-services.json` y guardarlo en `android/app/`.
-4. Ejecutar `npx cap sync android`.
-
-Sin este archivo, Android nunca emite el token y el evento `registration` no se dispara.
-
-### Paso pendiente 2: desplegar el envío
-
-El código ya está escrito: la Edge Function en `supabase/functions/enviar-notificacion/` y los
-disparadores en `sql/notificaciones.sql`. Falta desplegarlos y cargar la clave de Firebase:
-
-```bash
-supabase functions deploy enviar-notificacion
-supabase secrets set FCM_SERVER_KEY=<clave del proyecto Firebase>
-```
-
-Luego ejecutar `sql/notificaciones.sql` y completar los dos `ALTER DATABASE` del encabezado con
-la URL del proyecto y la clave de servicio.
-
-Supabase no envía notificaciones push por sí solo: su canal en tiempo real usa WebSocket, que
-se corta cuando la aplicación se cierra. Por eso el envío pasa por Firebase.
-
-```
-INSERT en usuarios (estado = 'Pendiente')
-        ↓ trigger de Postgres
-   Edge Function de Supabase
-        ↓ HTTP POST
-       Firebase Cloud Messaging
-        ↓
-  Dispositivo del dueño o supervisor
-```
-
-El mensaje debe incluir el bloque `notification` (para que el sistema lo muestre con la
-aplicación cerrada) y un campo `data.tipo` con uno de los valores de `TipoNotificacion`, que es
-lo que permite llevar al usuario a la pantalla correspondiente.
-
-### Cómo probarlo
-
-Las notificaciones push **no funcionan en el navegador**. Se prueban con la aplicación compilada
-en un dispositivo real (`npx cap run android`); los emuladores sin Google Play tampoco sirven.
-
----
-
 ## 🖼️ Índice de Imágenes
 
 ### Ícono de la aplicación
@@ -240,7 +173,11 @@ en un dispositivo real (`npx cap run android`); los emuladores sin Google Play t
 
 ### Pantalla de presentación (splash screen)
 
-<img src="\assets\splash-logo.webp" width="90" alt="Splas Screen"/>
+<img src="" width="90" alt="Splas Screen"/>
+
+### Favicon (web)
+
+<img src="/src/assets/icon/favicon.png" width="90" alt="Splas Screen"/>
 
 ### Capturas de pantalla de la aplicación
 
@@ -301,7 +238,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Creación de página de ´registro´                       |   25/08/2026   | 23/08/2026 | Completado |
 | Servicio + Componente de Modal                         |   27/08/2026   | --/--/---- | Pendiente  |
 | Servicio + Componente de Spinner                       |   27/08/2026   | --/--/---- | Pendiente  |
-| Servicio de Envio de correos (https://www.emailjs.com/)|   --/--/----   | --/--/---- | Pendiente  |
+| Servicio de Envio de correos (https://www.emailjs.com/)|   --/--/----   | 28/08/2026 | Completado  |
 
 ---
 

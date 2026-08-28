@@ -70,6 +70,8 @@ testem.log
 Thumbs.db
 
 # Android
-/android
+android/.gradle/
+android/app/build/
+android/build/
 
 notas.md
