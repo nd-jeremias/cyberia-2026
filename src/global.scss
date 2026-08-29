@@ -107,3 +107,108 @@ ion-toolbar {
 ion-content::part(scroll) {
   scrollbar-width: none;
 }
+
+/* Spinner de pantalla completa reutilizable */
+.backdrop-spinner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999; /* Se asegura de tapar todo, incluso headers y tabs */
+    background-color: rgba(0, 0, 0, 0.55); /* Fondo oscuro semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px); /* Opcional: agrega un ligero desenfoque al fondo */
+}
+
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.backdrop-spinner ion-spinner {
+    transform: scale(1.6); /* Un poco más grande para que destaque */
+}
+
+.spinner-text {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Mejora la legibilidad */
+}
+/* ==========================================================================
+   Estilos Personalizados para ion-modal (Tema Gastronómico)
+   ========================================================================== */
+
+ion-modal {
+  // Ajusta la opacidad y color de la capa de fondo detrás del modal
+  --backdrop-opacity: 0.6;
+  
+  &::part(content) {
+    // Esquinas redondeadas usando tu variable de restaurante
+    border-radius: var(--restaurant-border-radius) !important; 
+    // Bordes limpios acordes a la paleta
+    border: 1px solid var(--ion-border-color);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Encabezado del Modal */
+ion-modal ion-header ion-toolbar {
+  // Color oscuro Slate para la barra de título
+  --background: var(--ion-overlay-background-color) !important;
+  --color: var(--ion-text-color) !important;
+  --border-color: var(--ion-border-color) !important;
+  text-align: center;
+}
+
+ion-modal ion-title {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Cuerpo del Contenido */
+ion-modal ion-content {
+  // Un tono ligeramente diferente para contrastar con el header
+  --background: var(--ion-background-color) !important;
+  --color: var(--ion-text-color) !important;
+  
+  p {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--ion-color-step-750); // Texto secundario legible
+    margin: 16px 0;
+  }
+}
+
+/* Pie de página y Contenedor del Botón */
+ion-modal ion-footer {
+  background: var(--ion-background-color);
+  border-top: 1px solid var(--ion-border-color);
+  padding: 12px 16px;
+  
+  .botonContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  // Estilo del botón "Cerrar" adaptado al diseño de tus inputs/botones
+  .botonCerrar {
+    --background: var(--ion-color-danger); // O var(--ion-color-secondary) si prefieres sobrio
+    --background-hover: var(--ion-color-danger-shade);
+    --color: var(--ion-color-danger-contrast);
+    --border-radius: 10px;
+    font-weight: 600;
+    width: 100%;
+    max-width: 200px;
+    margin: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  }
+}

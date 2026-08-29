@@ -59,7 +59,7 @@ export class ClientesPendientesPage implements OnInit {
                     ? error.message
                     : 'No se pudo cargar el listado de clientes.';
 
-            this.modal.setOpen(true, 'Error', mensaje);
+            this.modal.setOpen('Error', mensaje);
         } finally {
             this.spinner.hide();
         }
@@ -93,7 +93,6 @@ export class ClientesPendientesPage implements OnInit {
             );
 
             this.modal.setOpen(
-                true,
                 estado === 'Activo' ? 'Cliente aprobado' : 'Cliente rechazado',
                 `${cliente.apellidos}, ${cliente.nombres} fue ${
                     estado === 'Activo' ? 'aprobado' : 'rechazado'
@@ -105,7 +104,7 @@ export class ClientesPendientesPage implements OnInit {
                     ? error.message
                     : 'No se pudo actualizar el estado del cliente.';
 
-            this.modal.setOpen(true, 'Error', mensaje);
+            this.modal.setOpen('Error', mensaje);
         } finally {
             this.spinner.hide();
         }

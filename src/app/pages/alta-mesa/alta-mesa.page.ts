@@ -28,7 +28,6 @@ export class AltaMesaPage {
             await new Promise((resolve) => setTimeout(resolve, 400));
 
             this.modal.setOpen(
-                true,
                 'Mesa cargada',
                 `La mesa N° ${mesa.numeroMesa} se registró correctamente.`
             );

@@ -43,7 +43,6 @@ export class SubidaImagenesComponent implements OnInit {
         
         if (this.imageSlots.length > this.maxImages()) {
             this.modal.setOpen(
-                true,
                 'Límite de imágenes alcanzado',
                 'No puedes subir más de ' + this.maxImages() + ' imágenes.'
             );

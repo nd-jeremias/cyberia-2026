@@ -1,0 +1,38 @@
+.backdrop-spinner {
+    // Posicionamiento fijo para cubrir toda la pantalla
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    // Capa visual superior (por encima de modales e inputs)
+    z-index: 9999; 
+    
+    // Fondo oscuro semi-transparente
+    background-color: rgba(0, 0, 0, 0.5); 
+    
+    // Centrado absoluto del contenido
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; // Espacio entre el spinner y el texto
+}
+
+ion-spinner {
+    // Puedes agrandar el spinner cambiando su escala
+    transform: scale(1.5); 
+}
+
+.spinner-text {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 0;
+}

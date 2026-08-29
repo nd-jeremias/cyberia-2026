@@ -143,7 +143,7 @@ export class FormularioRegistroComponent {
         form.markAllAsTouched();
 
         if (!form.valid) {
-            this.modal.setOpen(true, 'Datos inválidos', 'Revise los datos ingresados');
+            this.modal.setOpen('Datos inválidos', 'Revise los datos ingresados');
             return true; // Retorna true si hay errores (el formulario NO es válido)
         }
 

@@ -6,7 +6,7 @@ import { SpinnerService } from '../../services/spinner.service';
   selector: 'app-spinner',
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss'],
-  imports: [IonItem, IonLabel, IonSpinner]
+  imports: [IonSpinner]
 })
 export class SpinnerComponent  implements OnInit {
 

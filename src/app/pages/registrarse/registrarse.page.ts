@@ -30,12 +30,12 @@ export class RegistrarsePage {
         try {
             this.authService.register(formData);
             this.spinner.hide();
-            this.modal.setOpen(true, 'Registro', 'Solicitud enviada correctamente');
+            this.modal.setOpen('Registro', 'Solicitud enviada correctamente');
             this.router.navigate(['/ingresar']);
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen(true, 'Error', error.message || 'No se pudo completar el registro');
+            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro');
         }
     }
 }
