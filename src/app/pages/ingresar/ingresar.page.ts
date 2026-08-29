@@ -26,7 +26,6 @@ export class IngresarPage {
     try {
       await this.authService.login(credentials);
 
-      // Recien ahora hay sesion, asi que el token puede asociarse al usuario.
       await this.notificaciones.sincronizarToken();
 
       this.router.navigate(['/home']);

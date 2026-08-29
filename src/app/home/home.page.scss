@@ -1,27 +1,22 @@
-#container {
+.grilla-botones {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.boton-home {
+  --border-radius: 10px;
+  height: 64px;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.sin-botones {
   text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+  color: #e2e8f0;
+  font-weight: 600;
+  margin-top: 24px;
 }
