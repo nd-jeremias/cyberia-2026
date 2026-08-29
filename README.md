@@ -11,9 +11,8 @@
 -   [Tecnologías Utilizadas](#%EF%B8%8F-tecnologías-utilizadas)
 -   [Requisitos del Sistema](#-requisitos-del-sistema)
 -   [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
--   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Guía Rápida de Git](#-guía-rápida-de-git)
--   [Notificaciones Push](#-notificaciones-push)
+-   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Índice de Imágenes](#-índice-de-imágenes)
 -   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
 
@@ -166,84 +165,35 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 ---
 
-## 🔔 Notificaciones Push
+## 🖼️ Índice de Imágenes
 
-El servicio `src/app/services/notificaciones.service.ts` ya está implementado y enganchado en
-`app.component.ts`. Del lado de la aplicación no falta nada, pero **las notificaciones no van a
-llegar hasta completar la configuración de Firebase**, que requiere credenciales propias.
+### Boceto de paginas
 
-### Estado de la configuración
-
-| Paso | Estado |
-| :--- | :----- |
-| Plugin `@capacitor/push-notifications` instalado y sincronizado | ✅ Hecho |
-| Permiso `POST_NOTIFICATIONS` en el `AndroidManifest.xml` | ✅ Hecho |
-| Canal de notificaciones de Android (sonido y vibración) | ✅ Hecho |
-| Aviso visible con la aplicación abierta | ✅ Hecho |
-| Columna `token_push` en la base de datos | ✅ Hecho (`sql/usuarios.sql`) |
-| El token se guarda y se borra en Supabase | ✅ Hecho (login y cierre de sesión) |
-| Edge Function y disparadores de la base | ✅ Hecho (`supabase/functions/`, `sql/notificaciones.sql`) |
-| Archivo `google-services.json` | ⚠️ **Pendiente** (requiere cuenta de Firebase) |
-
-### Paso pendiente 1: Firebase
-
-1. Crear un proyecto en [Firebase Console](https://console.firebase.google.com).
-2. Agregar una aplicación Android con el nombre de paquete **`com.cyberia.restaurante`**
-   (debe coincidir exactamente con el `appId` de `capacitor.config.ts`).
-3. Descargar el `google-services.json` y guardarlo en `android/app/`.
-4. Ejecutar `npx cap sync android`.
-
-Sin este archivo, Android nunca emite el token y el evento `registration` no se dispara.
-
-### Paso pendiente 2: desplegar el envío
-
-El código ya está escrito: la Edge Function en `supabase/functions/enviar-notificacion/` y los
-disparadores en `sql/notificaciones.sql`. Falta desplegarlos y cargar la clave de Firebase:
-
-```bash
-supabase functions deploy enviar-notificacion
-supabase secrets set FCM_SERVER_KEY=<clave del proyecto Firebase>
-```
-
-Luego ejecutar `sql/notificaciones.sql` y completar los dos `ALTER DATABASE` del encabezado con
-la URL del proyecto y la clave de servicio.
-
-Supabase no envía notificaciones push por sí solo: su canal en tiempo real usa WebSocket, que
-se corta cuando la aplicación se cierra. Por eso el envío pasa por Firebase.
-
-```
-INSERT en usuarios (estado = 'Pendiente')
-        ↓ trigger de Postgres
-   Edge Function de Supabase
-        ↓ HTTP POST
-       Firebase Cloud Messaging
-        ↓
-  Dispositivo del dueño o supervisor
-```
-
-El mensaje debe incluir el bloque `notification` (para que el sistema lo muestre con la
-aplicación cerrada) y un campo `data.tipo` con uno de los valores de `TipoNotificacion`, que es
-lo que permite llevar al usuario a la pantalla correspondiente.
-
-### Cómo probarlo
-
-Las notificaciones push **no funcionan en el navegador**. Se prueban con la aplicación compilada
-en un dispositivo real (`npx cap run android`); los emuladores sin Google Play tampoco sirven.
+<img src="assets\boceto.png" width="120" alt="Boceto"/>
 
 ---
 
-## 🖼️ Índice de Imágenes
+### Favicon (web)
+
+<img src="/src/assets/icon/favicon.png" width="120" alt="Splas Screen"/>
+
+---
 
 ### Ícono de la aplicación
 
-<img src="assets/icon-only.png" width="90" alt="Ícono de la aplicación"/> 
+<img src="assets/icon-only.png" width="120" alt="Ícono de la aplicación"/> <img src="assets\screenshots\Screenshot_icono_aplicacion.png" width="120" alt="Ícono desde el celular"/>
+
+---
 
 ### Pantalla de presentación (splash screen)
 
-<img src="\assets\splash-logo.webp" width="90" alt="Splas Screen"/>
+<img src="assets\screenshots\Screenshot_splashscreen_logo.png" width="120" alt="Pantalla de Bienvenida (Logo)"/> <img src="assets\screenshots\Screenshot_splashscreen_nombres.png" width="120" alt="Pantalla de Bienvenida (Nombres)"/>
 
-### Capturas de pantalla de la aplicación
+---
 
+### Pantalla de Ingreso
+
+<img src="assets\screenshots\Screenshot_pantalla_login.png" width="120" alt="Pantalla de Ingreso"/>
 
 ---
 
@@ -262,50 +212,51 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Servicio de registro                                     |   --/--/----    | 26/08/2026 | Completado |
 | Servicio para manejo de "Carrito"                        |   27/08/2026    | --/--/---- | Completado |
 
+
 ---
 
 ### 👤 Plucci, Kevin 🌿 Branch: kev-dev
 
-| 📝 Tarea / Descripción                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
-| :--------------------------------------------------------------------------- | :-------------: | :--------: | :--------: |
-| Creación de modulo ´formulario-ingreso´                                      |   25/08/2026    | 23/08/2026 | Completado |
-| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario) |   25/08/2026    | 23/08/2026 | Completado |
+| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación de modulo ´formulario-ingreso´                                                      |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario)                 |   25/08/2026    | 23/08/2026 | Completado |
 | Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado |
-| Componente para listar Clientes Pendientes                                 |   27/08/2026    | 27/08/2026 | Completado |
-| Creación de modulo: ´formulario-usuario-anonimo´                           |   27/08/2026    | 27/08/2026 | Completado |
-| Servicio de Notificaciones Push                                            |   27/08/2026    | 27/08/2026 | Completado |
+| Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |
+| Creación de modulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |
+| Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |
 
 ---
 
 ### 👤 Cura, Ezequiel 🌿 Branch: eze-dev
 
-| 📝 Tarea / Descripción                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
-| :------------------------------------- | :-------------: | :--------: | :--------: |
-| Creación del servicio de autenticación |   25/08/2026    | 23/08/2026 | Completado |
-| Creación de página de ´ingreso´        |   25/08/2026    | 24/08/2026 | Completado  |
-| Creación de página de ´home´           |   27/08/2026    | --/--/---- | Pendiente  |
+| 📝 Tarea / Descripción                                      | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :---------------------------------------------------------- | :-------------: | :--------: | :--------: |
+| Creación del servicio de autenticación                      |   25/08/2026    | 23/08/2026 | Completado |
+| Creación de página de ´ingreso´                             |   25/08/2026    | 24/08/2026 | Completado |
+| Creación de página de ´home´                                |   27/08/2026    | --/--/---- | Pendiente  |
 | Estructura preliminar de todas las paginas(solo estructura) |   27/08/2026    | --/--/---- | Pendiente  |
-| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´ | 27/08/2026 | --/--/---- | Pendiente |
-| Creación de página de ´seleccion-productos´ | 28/08/2026 |  --/--/---- | Pendiente |
+| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´  |   27/08/2026    | --/--/---- | Pendiente  |
+| Creación de página de ´seleccion-productos´                 |   28/08/2026    | --/--/---- | Pendiente  |
 
 ---
 
 ### 👤 Maida, Cristian 🌿 Branch: dev-cristian
 
-| 📝 Tarea / Descripción                                 | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
-| :----------------------------------------------------- | :------------: | :------------: | :--------: |
-| Creación de componentes de ´ingreso-rapido´            |   25/08/2026   | 23/08/2026 | Completado |
-| Establecer estilos globales (Utilizar variables Ionic) |   25/08/2026   | 23/08/2026 | Completado |
-| Servicio captura de Fotografía por Cámara              |   25/08/2026   | 25/08/2026 | Completado |
-| Servicio de subida de imágenes desde galería           |   25/08/2026   | 25/08/2026 | Completado |
-| Creación de página de ´registro´                       |   25/08/2026   | 23/08/2026 | Completado |
-| Servicio + Componente de Modal                         |   27/08/2026   | --/--/---- | Pendiente  |
-| Servicio + Componente de Spinner                       |   27/08/2026   | --/--/---- | Pendiente  |
-| Servicio de Envio de correos (https://www.emailjs.com/)|   --/--/----   | --/--/---- | Pendiente  |
+| 📝 Tarea / Descripción                                  | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |
+| :------------------------------------------------------ | :-------------: | :--------: | :--------: |
+| Creación de componentes de ´ingreso-rapido´             |   25/08/2026    | 23/08/2026 | Completado |
+| Establecer estilos globales (Utilizar variables Ionic)  |   25/08/2026    | 23/08/2026 | Completado |
+| Servicio captura de Fotografía por Cámara               |   25/08/2026    | 25/08/2026 | Completado |
+| Servicio de subida de imágenes desde galería            |   25/08/2026    | 25/08/2026 | Completado |
+| Creación de página de ´registro´                        |   25/08/2026    | 23/08/2026 | Completado |
+| Servicio + Componente de Modal                          |   27/08/2026    | --/--/---- | Pendiente  |
+| Servicio + Componente de Spinner                        |   27/08/2026    | --/--/---- | Pendiente  |
+| Servicio de Envio de correos (https://www.emailjs.com/) |   --/--/----    | 28/08/2026 | Completado |
 
 ---
 
-| 📝 Tareas Pendientes |
+| 📝 Tareas Pendientes                                      |
 | :-------------------------------------------------------- |
 | Servicio para manejo de "Mesa"-"Lista_espera"-"Productos" |
 | Servicio de facturacion                                   |
@@ -314,5 +265,4 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Juegos                                                    |
 | Servicio de manejo de pedidos                             |
 
-    
 _Nota: La fecha real se actualizará únicamente al momento de realizar el deploy o commit final de la tarea._

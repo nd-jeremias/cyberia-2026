@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { IonItem, IonLabel, IonSpinner } from "@ionic/angular";
 import { SpinnerService } from '../../services/spinner.service';
 
@@ -6,7 +6,7 @@ import { SpinnerService } from '../../services/spinner.service';
   selector: 'app-spinner',
   templateUrl: './spinner.component.html',
   styleUrls: ['./spinner.component.scss'],
-  imports: [IonItem, IonLabel, IonSpinner]
+  imports: [IonSpinner]
 })
 export class SpinnerComponent {
 

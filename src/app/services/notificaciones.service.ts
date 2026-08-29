@@ -84,7 +84,6 @@ export class NotificacionesService {
 
         if (!concedido) {
             this.modal.setOpen(
-                true,
                 'Notificaciones desactivadas',
                 'Habilite las notificaciones desde la configuración del dispositivo para recibir avisos.'
             );
@@ -107,7 +106,6 @@ export class NotificacionesService {
             await Haptics.notification({ type: NotificationType.Error });
 
             this.modal.setOpen(
-                true,
                 'Error de registro',
                 'No se pudo registrar el dispositivo para recibir notificaciones.'
             );

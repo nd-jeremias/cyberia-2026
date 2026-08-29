@@ -26,7 +26,7 @@ export class HomePage {
       await this.authService.logout();
     } catch (error) {
       const mensaje = error instanceof Error ? error.message : 'No se pudo cerrar sesión.';
-      this.modal.setOpen(true, 'Error', mensaje);
+      this.modal.setOpen('Error', mensaje);
     } finally {
       this.router.navigate(['/ingresar']);
     }

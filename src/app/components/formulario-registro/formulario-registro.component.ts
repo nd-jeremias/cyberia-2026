@@ -9,24 +9,31 @@ import {
     Validators,
 } from '@angular/forms';
 import {
-    IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonInput,
-    IonInputPasswordToggle,
     IonItem,
+    IonInput,
     IonSelect,
     IonSelectOption,
+    IonInputPasswordToggle,
+    IonButton,
+    IonIcon,
 } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
-import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { RouterLink } from '@angular/router';
+import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
+import {
+    personAddOutline,
+    personOutline,
+    cardOutline,
+    qrCodeOutline,
+    briefcaseOutline,
+    peopleOutline,
+    mailOutline,
+    lockClosedOutline,
+} from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     const password = group.get('password')?.value;
@@ -40,19 +47,16 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     templateUrl: './formulario-registro.component.html',
     styleUrls: ['./formulario-registro.component.scss'],
     imports: [
-        IonCard,
-        IonCardContent,
-        IonCardHeader,
-        IonCardTitle,
-        IonInput,
-        IonInputPasswordToggle,
+        IonIcon,
+        IonButton,
         IonItem,
         IonSelect,
         IonSelectOption,
-        IonButton,
         ReactiveFormsModule,
-        SubidaImagenesComponent,
         RouterLink,
+        IonInput,
+        SubidaImagenesComponent,
+        IonInputPasswordToggle,
     ],
 })
 export class FormularioRegistroComponent {
@@ -95,12 +99,22 @@ export class FormularioRegistroComponent {
     );
 
     constructor() {
+        // Registramos los íconos para que se puedan renderizar en el HTML
+        addIcons({
+            personAddOutline,
+            personOutline,
+            cardOutline,
+            qrCodeOutline,
+            briefcaseOutline,
+            peopleOutline,
+            mailOutline,
+            lockClosedOutline,
+        });
         effect(() => {
             const cuil = this.formulario.controls.cuil;
             const tipoEmpleado = this.formulario.controls.tipoEmpleado;
 
             if (this.esDueno()) {
-                cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 tipoEmpleado.setValidators([Validators.required]);
             } else {
@@ -145,7 +159,7 @@ export class FormularioRegistroComponent {
         form.markAllAsTouched();
 
         if (!form.valid) {
-            this.modal.setOpen(true, 'Datos inválidos', 'Revise los datos ingresados');
+            this.modal.setOpen('Datos inválidos', 'Revise los datos ingresados');
             return true; // Retorna true si hay errores (el formulario NO es válido)
         }
 

@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-    appId: 'com.cyberia.restaurante',
+    appId: 'com.cyberia.resto',
     appName: 'cyberia-2026',
     webDir: 'www',
     plugins: {

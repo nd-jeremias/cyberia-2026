@@ -8,7 +8,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 @Component({
     selector: 'app-root',
     templateUrl: 'app.component.html',
-    imports: [IonApp, IonRouterOutlet, ModalComponent,SpinnerComponent],
+    imports: [IonApp, IonRouterOutlet, ModalComponent, SpinnerComponent],
 })
 export class AppComponent implements OnInit {
     private modalCtrl = inject(ModalController);

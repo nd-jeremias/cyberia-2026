@@ -128,7 +128,6 @@ export class QrService {
     generateQr(data: string, texto: string) {
         if (data.trim().length == 0) {
             this.modal.setOpen(
-                true,
                 'Error recibiendo informacion',
                 'No se ha recibido información para generar el código QR, por favor intente nuevamente.'
             );

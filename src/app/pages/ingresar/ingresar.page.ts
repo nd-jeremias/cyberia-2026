@@ -9,34 +9,42 @@ import { AuthService } from '../../services/auth.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
 
 @Component({
-  selector: 'app-ingresar',
-  templateUrl: './ingresar.page.html',
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, LoginFormComponent],
+    selector: 'app-ingresar',
+    templateUrl: './ingresar.page.html',
+    imports: [IonHeader, IonToolbar, IonTitle, IonContent, LoginFormComponent],
 })
 export class IngresarPage {
-  private router = inject(Router);
-  private spinner = inject(SpinnerService);
-  private modal = inject(ModalService);
-  private authService = inject(AuthService);
-  private notificaciones = inject(NotificacionesService);
+    private router = inject(Router);
+    private spinner = inject(SpinnerService);
+    private modal = inject(ModalService);
+    private authService = inject(AuthService);
+    private notificaciones = inject(NotificacionesService);
 
-  async handleLogin(credentials: LoginInterface) {
-    this.spinner.show();
+    async handleLogin(credentials: LoginInterface) {
+        this.spinner.show();
 
-    try {
-      await this.authService.login(credentials);
+        try {
+            await this.authService.login(credentials);
 
-      // Recien ahora hay sesion, asi que el token puede asociarse al usuario.
-      await this.notificaciones.sincronizarToken();
+            // Recien ahora hay sesion, asi que el token puede asociarse al usuario.
+            await this.notificaciones.sincronizarToken();
 
-      this.router.navigate(['/home']);
-    } catch (error) {
-      const mensaje = error instanceof Error ? error.message : 'No se pudo iniciar sesión. Intente nuevamente.';
-      this.modal.setOpen(true, 'Error al ingresar', mensaje);
-    } finally {
-      this.spinner.hide();
+            this.router.navigate(['/home']);
+        } catch (error: any) {
+            // 1. Mostramos el mensaje amigable en la interfaz
+
+            this.modal.setOpen(
+                'Error al ingresar',
+                'No se pudo iniciar sesión. Verifique los datos e intente nuevamente.'
+            );
+
+            // 2. Registramos el error real en la consola para poder debuggear
+            console.error('Error en el proceso de login:', error);
+
+            // 3. Propagamos el error de forma correcta (Sintaxis válida)
+            throw error;
+        } finally {
+            this.spinner.hide();
+        }
     }
-
-    
-  }
 }

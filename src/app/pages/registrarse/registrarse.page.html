@@ -1,21 +1,3 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>registrarse</ion-title>
-    </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-    <ion-header>
-        <ion-toolbar>
-            <ion-buttons slot="start">
-                <ion-back-button defaultHref="/ingresar"></ion-back-button>
-            </ion-buttons>
-            <ion-title>Crear Cuenta</ion-title>
-        </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-        <app-formulario-registro
-            (registroSubmit)="handleRegistro($event)"
-        ></app-formulario-registro>
-    </ion-content>
+<ion-content class="ion-padding">
+    <app-formulario-registro (registroSubmit)="handleRegistro($event)"></app-formulario-registro>
 </ion-content>

@@ -74,7 +74,6 @@ export class LoginFormComponent {
       await Haptics.notification({ type: NotificationType.Error });
 
       this.modal.setOpen(
-        true,
         'Datos inválidos',
         'Revise el correo y la contraseña antes de continuar.'
       );
