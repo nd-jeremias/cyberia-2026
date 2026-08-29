@@ -1,6 +1,6 @@
 import { Service, signal } from '@angular/core';
 import { AuthResponse, Session } from '@supabase/supabase-js';
-import { LoginInterface, RegisterInterface, LocalUserInterface } from '../interfaces/auth.interface';
+import { LoginInterface, RegisterInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
 import { supabase } from './supabase.service';
 
 @Service()
@@ -9,10 +9,38 @@ export class AuthService {
     // logout, refresh de token o expiración, sin importar quién lo dispare.
     session = signal<Session | null>(null);
 
+    // El rol no viene en la sesión de Auth: hay que pedirlo aparte a "usuarios".
+    // Se resuelve solo cada vez que cambia la sesión (login/logout/refresh).
+    perfil = signal<PerfilUsuario | null>(null);
+
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
             this.session.set(session);
+
+            if (session?.user) {
+                this.cargarPerfil(session.user.id);
+            } else {
+                this.perfil.set(null);
+            }
         });
+    }
+
+    private async cargarPerfil(userId: string) {
+        const { data, error } = await supabase
+            .from('usuarios')
+            .select('perfil')
+            .eq('id', userId)
+            .single();
+
+        if (error) {
+            // Causa típica: existe el usuario en auth.users (ej. creado a mano
+            // desde el Dashboard) pero no tiene fila en public.usuarios.
+            console.error('No se pudo cargar el perfil del usuario', userId, error);
+            this.perfil.set(null);
+            return;
+        }
+
+        this.perfil.set(data.perfil);
     }
 
     setLocalUser(user: LocalUserInterface) {

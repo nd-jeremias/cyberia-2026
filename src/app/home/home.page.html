@@ -1,11 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-    <ion-buttons slot="end" style="background: red;">
-      <ion-button (click)="cerrarSesion()">
-        <ion-icon style="width: 70px;" name="log-out-outline">Cerrar sesión</ion-icon>
+    <ion-title>Perfil: {{ perfil() ?? 'sin asignar' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarSesion()" aria-label="Cerrar sesión" style="--background: red; --color: var(--ion-color-danger);">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -14,12 +12,25 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
+      <ion-title size="large">Perfil: {{ perfil() ?? 'sin asignar' }}</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="grilla-botones">
+    @for (boton of botonesDelRol(); track boton.ruta) {
+      <ion-button expand="block" class="boton-home" [routerLink]="boton.ruta">
+        <ion-icon [name]="boton.icono" slot="start"></ion-icon>
+        {{ boton.texto }}
+      </ion-button>
+    } @empty {
+      @if (perfil() === null) {
+        <p class="sin-botones">
+          No se pudo determinar tu perfil. Verificá que tu usuario tenga una fila
+          cargada en la tabla "usuarios" (con el mismo id que en auth.users).
+        </p>
+      } @else {
+        <p class="sin-botones">Todavía no hay funciones asignadas a tu perfil.</p>
+      }
+    }
   </div>
 </ion-content>

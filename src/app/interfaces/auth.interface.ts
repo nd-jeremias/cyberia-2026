@@ -20,3 +20,15 @@ export interface LocalUserInterface{
     correo: string | undefined;
     nombres: string;
 }
+
+// Coincide con el enum public.usuarios_rol de la base, más "cliente anónimo"
+// (no tiene fila en "usuarios" ni usa Auth, pero necesita su propio set de botones).
+export type PerfilUsuario =
+    | 'dueño'
+    | 'supervisor'
+    | 'metre'
+    | 'mozo'
+    | 'cocinero'
+    | 'cantinero'
+    | 'cliente registrado'
+    | 'cliente anónimo';
