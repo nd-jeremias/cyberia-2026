@@ -30,7 +30,6 @@ export class IngresoAnonimoPage {
             await new Promise((resolve) => setTimeout(resolve, 400));
 
             this.modal.setOpen(
-                true,
                 'Bienvenido',
                 `${cliente.nombres}, ya podés escanear el código QR de ingreso.`
             );

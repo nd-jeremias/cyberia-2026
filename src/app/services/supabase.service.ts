@@ -31,10 +31,16 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 // En Capacitor, el refresh automático del token debe pausarse cuando la app
 // pasa a segundo plano (evita refrescos innecesarios/errores de red) y
 // retomarse al volver a primer plano, para que la sesión no quede vencida.
-App.addListener('appStateChange', ({ isActive }) => {
-  if (isActive) {
-    supabase.auth.startAutoRefresh();
-  } else {
-    supabase.auth.stopAutoRefresh();
-  }
-});
+// Envuelto en try/catch: si el plugin App no está disponible (build nativo
+// desactualizado), esto no debe romper el resto de la app.
+try {
+  App.addListener('appStateChange', ({ isActive }) => {
+    if (isActive) {
+      supabase.auth.startAutoRefresh();
+    } else {
+      supabase.auth.stopAutoRefresh();
+    }
+  });
+} catch (error) {
+  console.error('No se pudo suscribir a appStateChange', error);
+}

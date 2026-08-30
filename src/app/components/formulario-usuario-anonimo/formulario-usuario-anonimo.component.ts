@@ -58,7 +58,6 @@ export class FormularioUsuarioAnonimoComponent {
         } catch {
             // El servicio ya registra el detalle; aca solo avisamos al usuario.
             this.modal.setOpen(
-                true,
                 'No se pudo tomar la foto',
                 'Revise los permisos de la cámara e intente nuevamente.'
             );
@@ -70,7 +69,6 @@ export class FormularioUsuarioAnonimoComponent {
 
         if (this.formulario.invalid || !fotoActual) {
             this.modal.setOpen(
-                true,
                 'Datos incompletos',
                 'Ingrese su nombre y tome una foto para continuar.'
             );

@@ -1,6 +1,8 @@
 @if (spinnerService.isLoading()) {
-    <ion-item>
-        <ion-label>Crescent</ion-label>
-        <ion-spinner name="crescent" [color]="spinnerService.color()"></ion-spinner>
-    </ion-item>
+    <div class="backdrop-spinner">
+        <div class="spinner-container">
+            <ion-spinner name="crescent" [color]="spinnerService.color()"></ion-spinner>
+            <p class="spinner-text">Cargando...</p>
+        </div>
+    </div>
 }

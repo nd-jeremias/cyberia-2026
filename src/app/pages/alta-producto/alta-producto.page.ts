@@ -35,7 +35,6 @@ export class AltaProductoPage {
             await new Promise((resolve) => setTimeout(resolve, 400));
 
             this.modal.setOpen(
-                true,
                 'Producto cargado',
                 `"${producto.nombre}" se agregó a la carta.`
             );

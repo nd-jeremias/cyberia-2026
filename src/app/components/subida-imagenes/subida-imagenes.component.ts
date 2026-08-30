@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Component, inject, input, OnInit, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { IonButton, Platform } from '@ionic/angular';
 import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FileService } from '../../services/file.service';
@@ -18,10 +18,8 @@ interface ImageSlot {
     styleUrls: ['./subida-imagenes.component.scss'],
     imports: [IonButton, FontAwesomeModule],
 })
-export class SubidaImagenesComponent implements OnInit {
-    constructor() {}
+export class SubidaImagenesComponent {
 
-    ngOnInit() {}
 
     archivosService = inject(FileService);
     modal = inject(ModalService);
@@ -43,7 +41,6 @@ export class SubidaImagenesComponent implements OnInit {
         
         if (this.imageSlots.length > this.maxImages()) {
             this.modal.setOpen(
-                true,
                 'Límite de imágenes alcanzado',
                 'No puedes subir más de ' + this.maxImages() + ' imágenes.'
             );
