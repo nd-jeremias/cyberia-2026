@@ -1,0 +1,82 @@
+.paso {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+}
+
+.titulo-paso {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ion-text-color, #ffffff);
+}
+
+.vacio {
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  background-color: var(--ion-card-background, #254d7d);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.lista,
+.lista-mesas {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cliente-elegido {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aviso-asignada {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background-color: rgba(234, 179, 8, 0.18);
+  border: 1px solid rgba(234, 179, 8, 0.5);
+  color: #ffffff;
+  font-size: 0.95rem;
+}
+
+/* ----- Tarjeta de mesa ----- */
+.tarjeta-mesa {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background-color: var(--ion-card-background, #254d7d);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.encabezado-mesa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.encabezado-mesa h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ion-text-color, #ffffff);
+}
+
+.dato-mesa {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.tarjeta-mesa ion-button {
+  margin-top: 6px;
+}

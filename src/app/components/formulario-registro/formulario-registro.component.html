@@ -113,7 +113,7 @@
                         }
                     </ion-select>
                 </div>
-                @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value == "") {
+                @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value === "") {
                 <span class="mensaje-error">Seleccione el tipo de empleado a registrar.</span>
                 }
             </div>

@@ -1,6 +1,6 @@
 # cyberia-2026
 
-> Trabajo Final Integrador. Tecnicatura Universitaria en Programacion. 2026.
+> Trabajo Final Integrador. Tecnicatura Universitaria en Programación. 2026.
 > Repositorio grupal para el 2do Cuatrimestre.
 
 ---
@@ -13,6 +13,7 @@
 -   [Instalación y Configuración](#%EF%B8%8F-instalación-y-configuración)
 -   [Guía Rápida de Git](#-guía-rápida-de-git)
 -   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
+-   [Guía de Compilación Nativa (Capacitor + Android)](<#-guía-de-compilación-nativa-(capacitor-+-android)>)
 -   [Índice de Imágenes](#-índice-de-imágenes)
 -   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
 
@@ -20,8 +21,8 @@
 
 ## 🔍 Descripción General
 
-El objetivo es realizar, implementar y documentar una aplicación totalmente funcional, utilizando las características de un dispositivo móvil para la gestión de un restaurante.
-La aplicación estará enfocada en la experiencia de usuario, tanto de los clientes cómo de los empleados del comercio.
+El objetivo es desarrollar, implementar y documentar una aplicación totalmente funcional, utilizando las características de un dispositivo móvil para la gestión de un restaurante.
+La aplicación estará enfocada en la experiencia de usuario, tanto de los clientes como de los empleados del comercio.
 
 -   **Estado del proyecto:** En desarrollo 🛠️
 
@@ -29,7 +30,7 @@ La aplicación estará enfocada en la experiencia de usuario, tanto de los clien
 
 ## 🛠️ Tecnologías Utilizadas
 
-Lista de las principales herramientas y frameworks del proyecto:
+Lista de las principales herramientas y frameworks utilizados en el proyecto:
 
 -   **Framework Principal:** Ionic Framework
 -   **Lenguaje:** Angular (con TypeScript)
@@ -97,7 +98,7 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
 
 ## 🌿 Guía Rápida de Git
 
-Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue estos pasos para evitar conflictos de código y pérdida de cambios.
+Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue estos pasos para evitar conflictos de código y pérdida de cambios realizados.
 
 ### 1. Flujo Diario de Trabajo (Paso a Paso)
 
@@ -115,7 +116,7 @@ Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue est
     git switch nombre-de-tu-rama
     ```
 
-    _Moverse a una rama propia basada en para trabajar de forma segura._
+    _Moverse a una rama propia basada en main para trabajar de forma segura._
 
 -   **Paso 3: Guardar tus avances**
 
@@ -165,9 +166,67 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 ---
 
+## Guía de Compilación Nativa (Capacitor + Android)
+
+Este proyecto utiliza **Capacitor** para envolver la aplicación web en un entorno nativo de Android. Dado que contamos con configuraciones personalizadas (notificaciones Push con Firebase y un Splash Screen animado en HTML/CSS), es fundamental seguir los flujos de trabajo descritos a continuación para no perder configuraciones críticas.
+
+Los archivos de configuración nativa originales están respaldados en la carpeta raíz `android_backup/`.
+
+---
+
+### 🔄 Flujo Diario: Desplegar Cambios o Generar la APK
+
+Utiliza este flujo siempre que realices cambios en el código TypeScript, HTML, CSS o assets dentro de Visual Studio Code y necesites probarlos en el celular o generar una nueva versión (APK/Bundle).
+
+```bash
+# 1. Compila los archivos web de Angular/Ionic (genera la carpeta www/)
+ionic build
+
+# 2. Sincroniza el código web y actualiza los plugins nativos en la carpeta de Android
+npx cap sync
+
+# 3. Abre el proyecto en Android Studio
+npx cap open android
+
+```
+
+> 💡 **Nota de productividad:** Si ya tienes **Android Studio** abierto, no necesitas cerrarlo ni volver a ejecutar `npx cap open android`. El entorno detectará los cambios automáticamente. Solo ve a Android Studio y presiona el botón **Play (Run App)** o genera la APK desde el menú _Build > Build Bundle(s) / APK(s)_.
+
+---
+
+### 🚨 Flujo de Emergencia: Restaurar la carpeta Android desde cero
+
+Si por algún motivo la carpeta `android/` se corrompe, se borra accidentalmente o se incluye por error en el `.gitignore` y necesitas recrear el entorno nativo sin romper las Notificaciones Push de Firebase ni los permisos personalizados, ejecuta la siguiente secuencia exacta:
+
+```bash
+# 1. Asegúrate de tener la última compilación web lista
+ionic build
+
+# 2. Añade la plataforma nativa de Android completamente limpia
+npx cap add android
+
+# 3. Restaura las configuraciones críticas desde la carpeta de respaldos
+cp android_backup/google-services.json android/app/
+cp android_backup/AndroidManifest.xml android/app/src/main/
+
+# 4. Sincroniza de nuevo para que Gradle registre el archivo de Firebase y los permisos del manifiesto
+npx cap sync
+
+# 5. Abre el proyecto en Android Studio para compilar de forma definitiva
+npx cap open android
+
+```
+
+#### ¿Por qué es necesario este orden?
+
+-   **`npx cap add android`** crea una estructura genérica de Ionic. Si compilas directamente tras este paso, las notificaciones Push fallarán porque falta la vinculación con Firebase y el icono de la aplicación volverá a ser el por defecto.
+-   **`cp`** devuelve nuestras credenciales secretas de Firebase (`google-services.json`) y el archivo de permisos personalizado (`AndroidManifest.xml`) a sus ubicaciones nativas obligatorias antes de que el compilador de Gradle intente empaquetar la app.
+
+---
+
 ## 🖼️ Índice de Imágenes
 
-### Boceto de paginas
+### Boceto de páginas
 
 <img src="assets\boceto.png" width="600" alt="Boceto"/>
 
@@ -175,7 +234,7 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 ### Favicon (web)
 
-<img src="/src/assets/icon/favicon.png" width="300" alt="Splas Screen"/>
+<img src="/src/assets/icon/favicon.png" width="300" alt="Splash Screen"/>
 
 ---
 
@@ -201,66 +260,97 @@ Para mantener el orden y evitar conflictos entre las tareas de los integrantes, 
 
 A continuación se detalla la distribución tentativa de tareas para los integrantes del equipo.
 
-### 👤 Jeremías, Nicolás 🌿 Branch: nico-dev
+### 👤 Jeremías, Nicolás (🚀 Alpha ) 🌿 Branch: nico-dev
 
-| 📝 Tarea / Descripción                                   | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                  Observaciones                  |
-| :------------------------------------------------------- | :-------------: | :--------: | :--------: | :----------------------------------------------: |
-| Configuración inicial del proyecto                       |   24/08/2026    | 23/08/2026 | Completado |                                                  |
-| Creación de Base de Datos y datos de prueba (preliminar) |   24/08/2026    | 23/08/2026 | Completado |                                                  |
-| Diseño de icono y pantalla de presentación               |   26/08/2026    | 25/08/2026 | Completado |                                                  |
-| Servicio de Lectura y Generación de QR + lectura DNI     |   26/08/2026    | 26/08/2026 | Completado |                                                  |
-| Servicio de registro                                     |   --/--/----    | 26/08/2026 | Completado |                                                  |
-| Servicio para manejo de "Carrito"                        |   27/08/2026    | --/--/---- | Completado |                                                  |
-| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"|
-| Servicio de Chat Mozo-Cliente                             |
+| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                Observaciones                 |
+| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :------------------------------------------: |
+| Configuración inicial del proyecto                                                           |   24/08/2026    | 23/08/2026 | Completado |                                              |
+| Creación de Base de Datos y datos de prueba (preliminar)                                     |   24/08/2026    | 23/08/2026 | Completado |                                              |
+| Diseño de icono y pantalla de presentación                                                   |   26/08/2026    | 25/08/2026 | Completado |      Corregir color de fondo del splash      |
+| Servicio de Lectura y Generación de QR + lectura DNI                                         |   26/08/2026    | 26/08/2026 | Completado | Verificar la funcionalidad del lector de DNI |
+| Servicio de registro                                                                         |   --/--/----    | 26/08/2026 | Completado |                                              |
+| Servicio para manejo de "Carrito"                                                            |   27/08/2026    | 29/08/2026 | Completado |                                              |
+| páginas dueño/supervisor + componentes necesarios                                            |   04/09/2026    | --/-/----  | Pendiente  |                                              |
+| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   04/09/2026    | --/--/---- | Pendiente  |                                              |
+| Servicio de Chat Mozo-Cliente                                                                |   --/--/----    | --/--/---- | Pendiente  |                                              |
+| **Puntos del TP a realizar:** |
+| 1.- Agregar un empleado                                                                      |   02/09/2026    | --/--/---- | ---------  |                                              |
+| 4.- Agregar una nueva mesa                                                                   |   02/09/2026    | --/--/---- | ---------  |                                              |
+| 6.- Verificar ingreso del cliente registrado                                                 |   05/09/2026    | --/--/---- | ---------  |                                              |
+| 7.- El dueño o supervisor rechaza a un cliente.                                              |   05/09/2026    | --/--/---- | ---------  |                                              |
+| 8.- El dueño o supervisor acepta a un cliente registrado.                                    |   05/09/2026    | --/--/---- | ---------  |                                              |
 
 ---
 
 ### 👤 Plucci, Kevin 🌿 Branch: kev-dev
 
-| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                  Observaciones                  |
-| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :----------------------------------------------: |
-| Creación de modulo ´formulario-ingreso´                                                      |   25/08/2026    | 23/08/2026 | Completado |                                                  |
-| Creación de interfaz de usuarios (autenticacion, registro, cliente, usuario)                 |   25/08/2026    | 23/08/2026 | Completado |                                                  |
-| Creación de modulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado |                                                  |
-| Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |                                                  |
-| Creación de modulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |                                                  |
-| Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                                                  |
-| Pagina metre/mozo + componentes necesarios                                                   |   04/09/2026    | --/-/----  | Pendiente  |                                                  |
-| Servicio de manejo de pedidos                                                                |   --/-/----     | --/-/----  | Pendiente  |                                                  |
+| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                        Observaciones                         |
+| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :----------------------------------------------------------: |
+| Creación de módulo ´formulario-ingreso´                                                      |   25/08/2026    | 23/08/2026 | Completado |                                                              |
+| Creación de interfaz de usuarios (autenticación, registro, cliente, usuario)                 |   25/08/2026    | 23/08/2026 | Completado |                                                              |
+| Creación de módulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado | Revisar la validación de datos antes de hacer el envío(emit) |
+| Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |  Crear una tarjeta `usuario` para modularizar y reutilizar   |
+| Creación de módulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |                                                              |
+| Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                                                              |
+| páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
+| Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
+| **Puntos del TP a realizar:** |
+| 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
+| 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |
+| 19.- El mozo entrega el pedido completo                                                      |   12/09/2026    | --/--/---- | ---------  |                                                              |
+| 13.- El mozo rechaza el pedido                                                               |   12/09/2026    | --/--/---- | ---------  |                                                              |
+| 14.- El mozo confirma el pedido                                                              |   12/09/2026    | --/--/---- | ---------  |                                                              |
+| 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | --/--/---- | ---------  |                                                              |
 
 ---
 
 ### 👤 Cura, Ezequiel 🌿 Branch: eze-dev
 
-| 📝 Tarea / Descripción                                      | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                  Observaciones                  |
-| :---------------------------------------------------------- | :-------------: | :--------: | :--------: | :----------------------------------------------: |
-| Creación del servicio de autenticación                      |   25/08/2026    | 23/08/2026 | Completado |                                                  |
-| Creación de página de ´ingreso´                             |   25/08/2026    | 24/08/2026 | Completado |                                                  |
-| Creación de página de ´home´                                |   27/08/2026    | 25/08/2026 | Completado |                                                  |
-| Estructura preliminar de todas las paginas(solo estructura) |   27/08/2026    | 25/08/2026 | Completado |                                                  |
-| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´  |   27/08/2026    | 26/08/2026 | Completado |                                                  |
-| Creación de página de ´seleccion-productos´                 |   28/08/2026    | 26/08/2026 | Completado |                                                  |
-| Pagina cocinero/cantinero + componentes necesarios          |   04/09/2026    | --/-/----  | Pendiente  |                                                  |
-| Servicio de facturacion                                     |   --/-/----     | --/-/----  | Pendiente  |                                                  |
+| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                                                      Observaciones                                                      |
+| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :---------------------------------------------------------------------------------------------------------------------: |
+| Creación del servicio de autenticación                                                       |   25/08/2026    | 23/08/2026 | Completado |                                                                                                                         |
+| Creación de página de ´ingreso´                                                              |   25/08/2026    | 24/08/2026 | Completado |                                                                                                                         |
+| Creación de página de ´home´                                                                 |   27/08/2026    | 25/08/2026 | Completado | Aparece un mensaje de error antes de que termine de cargar la página. Revisar la línea 25 de `home.page.html`. Corregir |
+| Estructura preliminar de todas las páginas(solo estructura)                                  |   27/08/2026    | 25/08/2026 | Completado |                                                                                                                         |
+| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´                                   |   27/08/2026    | 26/08/2026 | Completado |                                                                                                                         |
+| Creación de página de ´seleccion-productos´                                                  |   28/08/2026    | 26/08/2026 | Completado |                                                                                                                         |
+| páginas cocinero/cantinero + componentes necesarios                                          |   04/09/2026    | --/-/----  | Pendiente  |                                                                                                                         |
+| Servicio de facturación                                                                      |    --/-/----    | --/-/----  | Pendiente  |                                                                                                                         |
+| **Puntos del TP a realizar:** |
+| 2.- Agregar un nuevo plato                                                                   |   02/09/2026    | --/--/---- | ---------  |                                                                                                                         |
+| 3.- Agregar una nueva bebida                                                                 |   02/09/2026    | --/--/---- | ---------  |                                                                                                                         |
+| 16.- El sector cocina recibe los productos correspondientes                                  |   09/09/2026    | --/--/---- | ---------  |                                                                                                                         |
+| 17.- El sector bar recibe los productos correspondientes                                     |   09/09/2026    | --/--/---- | ---------  |                                                                                                                         |
+| 18.- Cada sector verifica el pedido completo.                                                |   09/09/2026    | --/--/---- | ---------  |                                                                                                                         |
 
 ---
 
-### 👤 Maida, Cristian 🌿 Branch: dev-cristian
+### 👤 Maida, Cristian 🌿 Branch: dev-cristian | cris-dev
 
-| 📝 Tarea / Descripción                                  | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                  Observaciones                  |
-| :------------------------------------------------------ | :-------------: | :--------: | :--------: | :----------------------------------------------: |
-| Creación de componentes de ´ingreso-rapido´             |   25/08/2026    | 23/08/2026 | Completado |                                                  |
-| Establecer estilos globales (Utilizar variables Ionic)  |   25/08/2026    | 23/08/2026 | Completado |                                                  |
-| Servicio captura de Fotografía por Cámara               |   25/08/2026    | 25/08/2026 | Completado |                                                  |
-| Servicio de subida de imágenes desde galería            |   25/08/2026    | 25/08/2026 | Completado |                                                  |
-| Creación de página de ´registro´                        |   25/08/2026    | 23/08/2026 | Completado |                                                  |
-| Servicio + Componente de Modal                          |   27/08/2026    | 25/08/2026 | Completado |                                                  |
-| Servicio + Componente de Spinner                        |   27/08/2026    | 25/08/2026 | Completado |                                                  |
-| Servicio de Envio de correos (https://www.emailjs.com/) |   --/--/----    | 28/08/2026 | Completado |                                                  |
-| Graficos de estadisticas                                |   --/--/----    | --/--/---- | Pendiente  |                                                  |
-| Juegos                                                  |   --/--/----    | --/--/---- | Pendiente  |                                                  |
+| 📝 Tarea / Descripción                                                                                                                                                                        | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                        Observaciones                        |
+| :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :---------------------------------------------------------: |
+| Creación de componentes de ´ingreso-rapido´                                                                                                                                                   |   25/08/2026    | 23/08/2026 | Completado |                                                             |
+| Establecer estilos globales (utilizar variables Ionic)                                                                                                                                        |   25/08/2026    | 23/08/2026 | Completado | Revisar colores generales. Corregir estilos de formularios. |
+| Servicio captura de Fotografía por Cámara                                                                                                                                                     |   25/08/2026    | 25/08/2026 | Completado |                                                             |
+| Servicio de subida de imágenes desde galería                                                                                                                                                  |   25/08/2026    | 25/08/2026 | Completado |                                                             |
+| Creación de página de ´registro´                                                                                                                                                              |   25/08/2026    | 23/08/2026 | Completado |                                                             |
+| Servicio + Componente de Modal                                                                                                                                                                |   27/08/2026    | 25/08/2026 | Completado |                                                             |
+| Servicio + Componente de Spinner                                                                                                                                                              |   27/08/2026    | 25/08/2026 | Completado |                                                             |
+| Servicio de envío de correos (https://www.emailjs.com/)                                                                                                                                       |   --/--/----    | 28/08/2026 | Completado |                                                             |
+| Gráficos de estadísticas                                                                                                                                                                      |   --/--/----    | --/--/---- | Pendiente  |                                                             |
+| Juegos                                                                                                                                                                                        |   --/--/----    | --/--/---- | Pendiente  |                                                             |
+| **Puntos del TP a realizar:** |
+| 9.- Ingresar al local como un cliente anónimo                                                                                                                                                 |   02/09/2026    | --/--/---- | ---------  |                                                             |
+| 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos                                                                            |   09/09/2026    | --/--/---- | ---------  |                                                             |
+| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                                                                                            |   09/09/2026    | --/--/---- | ---------  |                                                             |
+| 15.- El cliente accede a la sección de juegos en busca de descuentos.                                                                                                                         |   16/09/2026    | --/--/---- | ---------  |                                                             |
+| 20.- El cliente accede a la encuesta                                                                                                                                                          |   19/09/2026    | --/--/---- | ---------  |                                                             |
+| 21.- El cliente solicita la cuenta al mozo.                                                                                                                                                   |   19/09/2026    | --/--/---- | ---------  |                                                             |
 
 ---
 
 _Nota: La fecha real se actualizará únicamente al momento de realizar el deploy o commit final de la tarea._
+
+## Objetivo: 03/10
+
+> **Aprobación de la primer parte:** La fecha de entrega es el 17-10-2026. El objetivo es tener hasta el punto 22 realizado para el 03-10-2026 (dos semanas antes de la entrega). De esta manera podríamos disponer una semana para revisar los detalles (estéticos y funcionales) y una semana para corrección de errores y generar la apk unificada en todos los dispositivos

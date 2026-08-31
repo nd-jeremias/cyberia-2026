@@ -1,0 +1,44 @@
+<article class="tarjeta-usuario">
+    <div class="contenedor-foto">
+        @if (usuario().fotoUrl) {
+            <img
+                class="foto-usuario"
+                [src]="usuario().fotoUrl"
+                [alt]="'Foto de ' + nombreCompleto()"
+            />
+        } @else {
+            <div class="foto-ausente">
+                <ion-icon name="person"></ion-icon>
+            </div>
+        }
+    </div>
+
+    <div class="datos-usuario">
+        <h3 class="nombre-usuario">{{ nombreCompleto() }}</h3>
+
+        @if (mostrarEstado()) {
+            <ion-badge [color]="colorEstado()">{{ usuario().estado }}</ion-badge>
+        }
+
+        @if (mostrarContacto()) {
+            <p class="dato">Documento: {{ usuario().dni }}</p>
+            <p class="dato">{{ usuario().correo }}</p>
+            <p class="dato fecha">Solicitud: {{ fechaFormateada() }}</p>
+        }
+    </div>
+
+    @if (acciones().length > 0) {
+        <div class="acciones">
+            @for (accion of acciones(); track accion.id) {
+                <ion-button
+                    expand="block"
+                    [color]="accion.color"
+                    (click)="onAccion(accion.id)"
+                >
+                    <ion-icon slot="start" [name]="accion.icono"></ion-icon>
+                    {{ accion.etiqueta }}
+                </ion-button>
+            }
+        </div>
+    }
+</article>

@@ -1,4 +1,4 @@
-import { Component, output } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -16,7 +16,9 @@ import {
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
     selector: 'app-formulario-alta-mesa',
@@ -36,6 +38,8 @@ import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
     ],
 })
 export class FormularioAltaMesaComponent {
+    private modal = inject(ModalService);
+
     mesaSubmit = output<MesaAltaInterface>();
 
     tiposMesa: TipoMesa[] = ['estándar', 'VIP', 'movilidad reducida'];
@@ -59,8 +63,27 @@ export class FormularioAltaMesaComponent {
         this.foto = input.files?.[0] ?? null;
     }
 
-    onAltaMesa() {
-        if (this.formulario.invalid || !this.foto) return;
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    async onAltaMesa() {
+        if (this.formulario.invalid || !this.foto) {
+            this.formulario.markAllAsTouched();
+
+            await Haptics.notification({ type: NotificationType.Error });
+
+            this.modal.setOpen(
+                'Datos inválidos',
+                !this.foto
+                    ? 'Debe cargar una foto de la mesa para continuar.'
+                    : 'Revise los datos ingresados antes de continuar.'
+            );
+
+            return;
+        }
 
         const valores = this.formulario.getRawValue();
 
