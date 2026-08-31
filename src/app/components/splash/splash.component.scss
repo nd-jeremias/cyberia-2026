@@ -1,100 +1,150 @@
 ion-content {
-  /* Fondo azul oscuro permanente */
-  --background: #000730; 
+    /* Fondo azul oscuro permanente */
+    --background: #000730;
 }
 
 /* --- CAPA 1: LOGO ANIMADO --- */
 .layer-animated {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  animation: fadeOutLayer 0.5s ease-out 2.0s forwards;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    animation: fadeOutLayer 0.5s ease-out 2s forwards;
 }
 
 .animated-logo {
-  width: 75vw; 
-  max-width: 500px;
-  height: auto;
-  opacity: 0;
-  transform: scale(0.6);
-  animation: logoEntrance 1.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards;
+    width: 75vw;
+    max-width: 500px;
+    height: auto;
+    opacity: 0;
+    transform: scale(0.9);
+    animation: logoEntrance 1.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards;
 }
 
 /* --- CAPA 2: LISTA DE NOMBRES HTML --- */
 .layer-html-credits {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-  text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    text-align: center;
 }
 
 .credits-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 75vh;
+    box-sizing: border-box;
+    padding: 20px 0;
 }
 
 .credits-title {
-  color: #4a5d80; /* Azul grisáceo sobrio */
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin: 0;
-  opacity: 0;
-  
-  /* 1. Aparece primero "Desarrollado por" al segundo 2.0 */
-  animation: fadeInText 0.5s ease-out 2.0s forwards;
+    color: #b0c0dd;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin: 0;
+    opacity: 0;
+    animation: fadeInText 0.5s ease-out 2s forwards;
 }
 
 .names-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 
-  li {
-    font-size: 1.4rem;
-    font-weight: 300;
-    letter-spacing: 1px;
+    /* ATENCIÓN AQUÍ: Cambiamos 'li' por 'li:not(.divider-line)' 
+       para que las propiedades de texto NO pisen a la línea separadora */
+    li:not(.divider-line) {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        opacity: 0;
+        animation: fadeInText 0.5s ease-out 2.3s forwards;
+
+        background: linear-gradient(to bottom, #ffffff 40%, #b0c4de 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+}
+
+.names-list li.divider-line {
+    width: 45%; /* Un poco más larga para que luzca mejor */
+    height: 2px; /* 2px le da un grosor físico visible en móviles */
+    align-self: center;
+    display: block; /* Forzamos su renderizado como bloque */
     opacity: 0;
-    
-    /* 2. Todos los nombres aparecen JUNTOS al segundo 2.3 (un instante después) */
     animation: fadeInText 0.5s ease-out 2.3s forwards;
-    
-    /* Degradado metálico sobrio */
-    background: linear-gradient(to bottom, #ffffff 60%, #b0c4de 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+
+    /* Removemos los efectos de texto heredados para asegurar su visibilidad */
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+
+    /* Subimos la opacidad a 0.5 (50%) en el centro para que se aprecie con nitidez */
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.5) 50%,
+        rgba(255, 255, 255, 0) 100%
+    ) !important;
+}
+
+/* Estilos de fuentes agrandadas */
+.first-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.last-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
 }
 
 /* --- ANIMACIONES REUTILIZABLES --- */
 @keyframes logoEntrance {
-  0% { opacity: 0; transform: scale(0.6); }
-  60% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
+    0% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 @keyframes fadeOutLayer {
-  to { opacity: 0; visibility: hidden; }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 
-/* Animación de desvanecimiento limpia compartida (Fade-In) */
 @keyframes fadeInText {
-  to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }
