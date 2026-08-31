@@ -5,13 +5,13 @@ import {
     PushNotifications,
     Token,
 } from '@capacitor/push-notifications';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { Preferences } from '@capacitor/preferences';
 import { Platform, ToastController } from '@ionic/angular';
 import {
     NotificacionInterface,
     TipoNotificacion,
 } from '../interfaces/notificacion.interface';
+import { VibracionService } from './vibracion.service';
 import { ModalService } from './modal.service';
 import { supabase } from './supabase.service';
 
@@ -25,6 +25,7 @@ const CANAL_AVISOS = 'avisos-cyberia';
 export class NotificacionesService {
     private platform = inject(Platform);
     private modal = inject(ModalService);
+    private vibracion = inject(VibracionService);
     private toastCtrl = inject(ToastController);
 
     token = signal<string | null>(null);
@@ -103,7 +104,7 @@ export class NotificacionesService {
         });
 
         PushNotifications.addListener('registrationError', async () => {
-            await Haptics.notification({ type: NotificationType.Error });
+            await this.vibracion.error();
 
             this.modal.setOpen(
                 'Error de registro',
@@ -133,7 +134,7 @@ export class NotificacionesService {
     private async avisarEnPantalla(
         notificacion: NotificacionInterface
     ): Promise<void> {
-        await Haptics.notification({ type: NotificationType.Success });
+        await this.vibracion.exito();
 
         const toast = await this.toastCtrl.create({
             header: notificacion.titulo,

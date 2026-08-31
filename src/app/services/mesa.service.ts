@@ -5,7 +5,7 @@ import {
     TipoMesa,
 } from '../interfaces/mesa.interface';
 import { ModalService } from './modal.service';
-import { supabase } from './supabase.service';
+import { SupabaseService } from './supabase.service';
 
 interface FilaMesa {
     id: string;
@@ -26,6 +26,7 @@ const SELECT_MESA =
 @Service()
 export class MesaService {
     private modal = inject(ModalService);
+    private supabase = inject(SupabaseService);
 
     mesas = signal<MesaInterface[]>([]);
     cargando = signal<boolean>(false);
@@ -62,7 +63,7 @@ export class MesaService {
         this.cargando.set(true);
 
         try {
-            const { data, error } = await supabase
+            const { data, error } = await this.supabase
                 .from('mesas')
                 .select(SELECT_MESA)
                 .order('numero_mesa', { ascending: true });
@@ -149,7 +150,7 @@ export class MesaService {
 
             // El filtro por disponibilidad evita que dos metres asignen la
             // misma mesa a la vez: el segundo update no afecta ninguna fila.
-            const { data, error } = await supabase
+            const { data, error } = await this.supabase
                 .from('mesas')
                 .update({ ...asignacion, disponibilidad: 'ocupada' })
                 .eq('id', mesaId)
@@ -187,7 +188,7 @@ export class MesaService {
     // Punto 22: al confirmarse el pago la mesa vuelve a estar disponible.
     async liberar(mesaId: string): Promise<boolean> {
         try {
-            const { error } = await supabase
+            const { error } = await this.supabase
                 .from('mesas')
                 .update({
                     disponibilidad: 'disponible',

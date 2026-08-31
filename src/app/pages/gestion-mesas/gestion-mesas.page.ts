@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
@@ -9,8 +9,4 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
     styleUrls: ['./gestion-mesas.page.scss'],
     imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule],
 })
-export class GestionMesasPage implements OnInit {
-    constructor() {}
-
-    ngOnInit() {}
-}
+export class GestionMesasPage {}

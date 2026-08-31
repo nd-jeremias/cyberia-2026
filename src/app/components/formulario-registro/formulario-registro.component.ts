@@ -155,6 +155,30 @@ export class FormularioRegistroComponent {
         return word[0].toUpperCase() + word.slice(1);
     }
 
+    /**
+     * Indica si un campo debe mostrar un error concreto.
+     *
+     * Se exige que el control esté "tocado" para no llenar de rojo un
+     * formulario que el usuario todavía no completó.
+     */
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    /**
+     * La coincidencia de contraseñas se valida a nivel de grupo, porque
+     * comparar dos controles entre sí no lo puede hacer un validador de campo.
+     * Por eso el error se consulta en el FormGroup y no en confirmPassword.
+     */
+    get passwordsNoCoinciden(): boolean {
+        return (
+            !!this.formulario.controls.confirmPassword.touched &&
+            this.formulario.hasError('passwordsDistintas')
+        );
+    }
+
     validateForm(form: FormGroup): boolean {
         form.markAllAsTouched();
 

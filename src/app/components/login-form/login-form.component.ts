@@ -13,8 +13,8 @@ import {
   fastFoodOutline, 
   personOutline 
 } from 'ionicons/icons';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
+import { VibracionService } from '../../services/vibracion.service';
 import { ModalService } from '../../services/modal.service';
 
 @Component({
@@ -25,6 +25,7 @@ import { ModalService } from '../../services/modal.service';
 })
 export class LoginFormComponent {
   private modal = inject(ModalService);
+  private vibracion = inject(VibracionService);
 
   loginSubmit = output<LoginInterface>();
   loginAnonimo = output<void>();
@@ -71,7 +72,7 @@ export class LoginFormComponent {
       // Ionic solo pinta el error si el control esta "tocado".
       this.formulario.markAllAsTouched();
 
-      await Haptics.notification({ type: NotificationType.Error });
+      await this.vibracion.error();
 
       this.modal.setOpen(
         'Datos inválidos',

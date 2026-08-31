@@ -7,7 +7,7 @@ import {
     PedidoInterface,
 } from '../interfaces/pedido.interface';
 import { ModalService } from './modal.service';
-import { supabase } from './supabase.service';
+import { SupabaseService } from './supabase.service';
 
 // Filas crudas tal como las devuelve Supabase, antes de mapearlas a la interfaz.
 interface FilaDetalle {
@@ -49,6 +49,7 @@ const SELECT_PEDIDO =
 @Service()
 export class PedidoService {
     private modal = inject(ModalService);
+    private supabase = inject(SupabaseService);
 
     pedidos = signal<PedidoInterface[]>([]);
     cargando = signal<boolean>(false);
@@ -103,7 +104,7 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
-            let consulta = supabase
+            let consulta = this.supabase
                 .from('pedidos')
                 .select(SELECT_PEDIDO)
                 .order('fecha', { ascending: true });
@@ -147,7 +148,7 @@ export class PedidoService {
                 0
             );
 
-            const { data, error } = await supabase
+            const { data, error } = await this.supabase
                 .from('pedidos')
                 .insert({
                     mesa_id: nuevo.mesaId,
@@ -168,7 +169,7 @@ export class PedidoService {
                 precio_unitario: item.precioUnitario,
             }));
 
-            const { error: errorDetalles } = await supabase
+            const { error: errorDetalles } = await this.supabase
                 .from('pedido_detalles')
                 .insert(detalles);
 
@@ -191,7 +192,7 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
-            const { error } = await supabase
+            const { error } = await this.supabase
                 .from('pedidos')
                 .update({ estado })
                 .eq('id', pedidoId);
@@ -233,7 +234,7 @@ export class PedidoService {
 
         if (!actualizado) return false;
 
-        const { error } = await supabase
+        const { error } = await this.supabase
             .from('mesas')
             .update({
                 disponibilidad: 'disponible',
@@ -257,7 +258,7 @@ export class PedidoService {
         estado: EstadoItem
     ): Promise<boolean> {
         try {
-            const { error } = await supabase
+            const { error } = await this.supabase
                 .from('pedido_detalles')
                 .update({ estado_producto: estado })
                 .eq('id', detalleId);

@@ -1,6 +1,7 @@
 import { App } from '@capacitor/app';
 import { Preferences } from '@capacitor/preferences';
-import { createClient } from '@supabase/supabase-js';
+import { Service } from '@angular/core';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://uwmptccyleznngdazgrp.supabase.co/';
 const supabaseKey = 'sb_publishable_Rergl078Rb0RVfq5uNPlIw_byzVZGEK';
@@ -43,4 +44,31 @@ try {
   });
 } catch (error) {
   console.error('No se pudo suscribir a appStateChange', error);
+}
+
+/**
+ * Envoltura inyectable del cliente de Supabase.
+ *
+ * La constante `supabase` de arriba sigue exportándose para el código que ya
+ * la usa, pero los servicios nuevos deberían inyectar esta clase en su lugar.
+ *
+ * El motivo es la inversión de dependencias: mientras un servicio importe la
+ * constante directamente queda atado a una implementación concreta y no se
+ * puede probar sin salir a la red. Inyectándola, un test puede reemplazarla
+ * por un doble mediante `TestBed.configureTestingModule({ providers: [...] })`.
+ */
+@Service()
+export class SupabaseService {
+    /** Cliente real de Supabase. En los tests se sustituye por un doble. */
+    readonly cliente: SupabaseClient = supabase;
+
+    /** Atajo al módulo de autenticación, que es lo que más se usa. */
+    get auth() {
+        return this.cliente.auth;
+    }
+
+    /** Atajo a una tabla; equivale a `cliente.from(tabla)`. */
+    from(tabla: string) {
+        return this.cliente.from(tabla);
+    }
 }

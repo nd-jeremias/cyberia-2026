@@ -16,8 +16,8 @@ import {
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
+import { VibracionService } from '../../services/vibracion.service';
 import { ModalService } from '../../services/modal.service';
 
 @Component({
@@ -39,6 +39,7 @@ import { ModalService } from '../../services/modal.service';
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
+    private vibracion = inject(VibracionService);
 
     mesaSubmit = output<MesaAltaInterface>();
 
@@ -73,7 +74,7 @@ export class FormularioAltaMesaComponent {
         if (this.formulario.invalid || !this.foto) {
             this.formulario.markAllAsTouched();
 
-            await Haptics.notification({ type: NotificationType.Error });
+            await this.vibracion.error();
 
             this.modal.setOpen(
                 'Datos inválidos',

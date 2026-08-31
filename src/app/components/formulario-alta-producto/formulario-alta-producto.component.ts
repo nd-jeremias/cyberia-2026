@@ -15,11 +15,11 @@ import {
     IonItem,
     IonTextarea,
 } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import {
     ProductoAltaInterface,
     TipoProducto,
 } from '../../interfaces/producto.interface';
+import { VibracionService } from '../../services/vibracion.service';
 import { ModalService } from '../../services/modal.service';
 
 const CANTIDAD_FOTOS_REQUERIDA = 3;
@@ -42,6 +42,7 @@ const CANTIDAD_FOTOS_REQUERIDA = 3;
 })
 export class FormularioAltaProductoComponent {
     private modal = inject(ModalService);
+    private vibracion = inject(VibracionService);
 
     // El tipo lo define la pagina segun el perfil que la renderiza
     // (cocinero -> Comida/Postre, cantinero -> Bebida), no el usuario.
@@ -85,7 +86,7 @@ export class FormularioAltaProductoComponent {
             // que el usuario todavia no toco.
             this.formulario.markAllAsTouched();
 
-            await Haptics.notification({ type: NotificationType.Error });
+            await this.vibracion.error();
 
             this.modal.setOpen(
                 'Datos inválidos',
