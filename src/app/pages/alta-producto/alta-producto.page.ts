@@ -8,6 +8,13 @@ import {
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 
+/**
+ * Alta de producto (puntos 2 y 3 del enunciado).
+ *
+ * La página fija el tipo y el formulario sólo pide el resto: el cocinero carga
+ * platos y el cantinero bebidas, así que el tipo es una consecuencia del perfil
+ * y no una elección del usuario.
+ */
 @Component({
     selector: 'app-alta-producto',
     templateUrl: './alta-producto.page.html',

@@ -6,6 +6,12 @@ import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 
+/**
+ * Ingreso de cliente anónimo (punto 9 del enunciado).
+ *
+ * A diferencia del registro común, no hay aprobación: el cliente entra
+ * directamente y ya puede escanear el QR de ingreso al local.
+ */
 @Component({
     selector: 'app-ingreso-anonimo',
     templateUrl: './ingreso-anonimo.page.html',

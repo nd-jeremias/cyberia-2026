@@ -1,8 +1,24 @@
+/**
+ * Contratos de autenticación y registro.
+ *
+ * Estas formas son las que viajan entre los formularios y los servicios. No
+ * son el reflejo de las tablas: la base usa snake_case y cada servicio traduce
+ * en su frontera.
+ */
+
+/** Credenciales de ingreso. */
 export interface LoginInterface {
     email: string;
     password: string;
 }
 
+/**
+ * Datos del alta de usuario.
+ *
+ * Sirve tanto para el registro de clientes (punto 5) como para el alta de
+ * empleados (punto 1). La diferencia está en los campos opcionales: `cuil` y
+ * `tipoEmpleado` sólo se completan cuando lo carga un dueño o supervisor.
+ */
 export interface RegisterInterface {
     nombres: string;
     apellidos: string;
@@ -15,6 +31,7 @@ export interface RegisterInterface {
     confirmPassword: string;
 }
 
+/** Datos mínimos del usuario que se guardan en el dispositivo. */
 export interface LocalUserInterface{
     id: string;
     correo: string | undefined;

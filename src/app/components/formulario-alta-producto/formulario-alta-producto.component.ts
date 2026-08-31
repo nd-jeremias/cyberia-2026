@@ -22,8 +22,17 @@ import {
 } from '../../interfaces/producto.interface';
 import { ModalService } from '../../services/modal.service';
 
+// La tabla `productos` tiene un CHECK que exige exactamente tres fotos. Se
+// valida acá también para no llegar a la base con un alta que va a rebotar.
 const CANTIDAD_FOTOS_REQUERIDA = 3;
 
+/**
+ * Alta de producto: platos, bebidas y postres (puntos 2 y 3 del enunciado).
+ *
+ * El mismo formulario sirve para los tres tipos. El tipo no lo elige el
+ * usuario sino la página, según el perfil que la abrió: el cocinero carga
+ * platos y el cantinero bebidas.
+ */
 @Component({
     selector: 'app-formulario-alta-producto',
     templateUrl: './formulario-alta-producto.component.html',

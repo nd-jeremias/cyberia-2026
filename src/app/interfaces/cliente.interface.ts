@@ -1,5 +1,21 @@
+/**
+ * Contratos de clientes: registrados y anónimos.
+ *
+ * El enunciado distingue dos tipos que se comportan distinto y viven en tablas
+ * separadas: el registrado necesita aprobación de un dueño o supervisor
+ * (punto 5), mientras que el anónimo entra directo con nombre y foto (punto 9).
+ */
+
+/** Espeja el ENUM `usuarios_estado` de la base. */
 export type EstadoCliente = 'Pendiente' | 'Activo' | 'Rechazado';
 
+/**
+ * Cliente tal como se lo muestra en los listados de aprobación.
+ *
+ * `fotoUrl` puede venir vacía: la foto es obligatoria en el formulario, pero
+ * un registro cargado a mano en la base podría no tenerla, y la interfaz debe
+ * poder mostrarlo igual.
+ */
 export interface ClientePendienteInterface {
     id: string;
     nombres: string;
@@ -11,6 +27,12 @@ export interface ClientePendienteInterface {
     fechaRegistro: string;
 }
 
+/**
+ * Alta de cliente anónimo.
+ *
+ * Sólo nombre y foto, que es lo único que guarda `clientes_anonimos`. La foto
+ * viaja como Blob porque así la entrega la cámara, lista para subir al bucket.
+ */
 export interface AnonimoAltaInterface {
     nombres: string;
     foto: Blob;

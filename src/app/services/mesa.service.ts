@@ -7,6 +7,15 @@ import {
 import { ModalService } from './modal.service';
 import { supabase } from './supabase.service';
 
+/**
+ * Mesas del salón: consulta, asignación y liberación.
+ *
+ * La regla central del negocio es que **una mesa pertenece a un solo cliente
+ * por vez, y un cliente a una sola mesa**. Todo el cuidado de este servicio
+ * apunta a sostener esa condición aunque varios metres trabajen a la vez.
+ */
+
+/** Fila cruda de Supabase, en snake_case, antes de traducirla al dominio. */
 interface FilaMesa {
     id: string;
     numero_mesa: number;
@@ -19,6 +28,8 @@ interface FilaMesa {
     foto_url: string;
 }
 
+// Columnas pedidas en cada consulta, declaradas una sola vez para que todas
+// devuelvan la misma forma.
 const SELECT_MESA =
     'id, numero_mesa, cantidad_lugares, tipo, disponibilidad, ' +
     'cliente_registrado_id, cliente_anonimo_id, qr_url, foto_url';
@@ -27,7 +38,10 @@ const SELECT_MESA =
 export class MesaService {
     private modal = inject(ModalService);
 
+    /** Todas las mesas del salón. */
     mesas = signal<MesaInterface[]>([]);
+
+    /** Bloquea los botones mientras hay una operación en curso. */
     cargando = signal<boolean>(false);
 
     disponibles = computed(() =>
@@ -38,6 +52,7 @@ export class MesaService {
         this.mesas().filter((m) => m.disponibilidad === 'ocupada')
     );
 
+    /** Traduce una fila de la base al modelo que usan las pantallas. */
     private mapear(fila: FilaMesa): MesaInterface {
         return {
             id: fila.id,
@@ -58,6 +73,7 @@ export class MesaService {
         this.modal.setOpen('Error', mensaje);
     }
 
+    /** Trae todas las mesas ordenadas por número, como están en el salón. */
     async listar(): Promise<void> {
         this.cargando.set(true);
 
@@ -106,6 +122,8 @@ export class MesaService {
         clienteId: string,
         esAnonimo = false
     ): Promise<boolean> {
+        // Verificación 1: el cliente no puede tener otra mesa. Si la tiene, se
+        // le indica cuál es en vez de sólo negarle el paso.
         const yaAsignada = this.mesaDelCliente(clienteId);
 
         if (yaAsignada && yaAsignada.id !== mesaId) {
@@ -125,6 +143,7 @@ export class MesaService {
             return false;
         }
 
+        // Verificación 2: la mesa no puede estar tomada por otro cliente.
         const ocupadaPorOtro =
             (mesa.clienteRegistradoId !== null &&
                 mesa.clienteRegistradoId !== clienteId) ||

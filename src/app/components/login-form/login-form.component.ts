@@ -17,6 +17,13 @@ import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { ModalService } from '../../services/modal.service';
 
+/**
+ * Formulario de ingreso.
+ *
+ * Valida y emite las credenciales, pero no autentica: de eso se ocupa la
+ * página, que conoce el servicio de autenticación. Así el formulario se puede
+ * probar y reutilizar sin arrastrar la sesión.
+ */
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
@@ -47,6 +54,12 @@ export class LoginFormComponent {
     password: new FormControl('', { validators: [Validators.required, Validators.minLength(8)] }),
   });
 
+  /**
+   * Credenciales de los botones de ingreso rápido.
+   *
+   * El enunciado los exige para agilizar la demostración con varios perfiles.
+   * Son datos de prueba: no deberían quedar en una versión de producción.
+   */
   usuariosValidos = [
     { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', icono: 'shield-checkmark-outline' },
     { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', icono: 'shield-checkmark-outline' },
@@ -56,16 +69,29 @@ export class LoginFormComponent {
     { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', icono: 'person-outline' },
   ];
 
+  /** Completa el formulario con un perfil de prueba, listo para enviar. */
   cargarCredenciales(correo: string, clave: string) {
     this.formulario.setValue({ email: correo, password: clave });
   }
 
+  /**
+   * Indica si un campo debe mostrar cierto error.
+   *
+   * Exige que el campo esté "tocado" para no marcar en rojo un formulario
+   * recién abierto.
+   */
   hayError(control: string, error: string): boolean {
     const campo = this.formulario.get(control);
 
     return !!campo && campo.touched && campo.hasError(error);
   }
 
+  /**
+   * Valida y emite las credenciales.
+   *
+   * Ante datos inválidos avisa en lugar de salir en silencio: sin ese aviso el
+   * botón parece no responder, que era el comportamiento anterior.
+   */
   async onLogin() {
     if (this.formulario.invalid) {
       // Ionic solo pinta el error si el control esta "tocado".
@@ -84,6 +110,7 @@ export class LoginFormComponent {
     this.loginSubmit.emit(this.formulario.value as LoginInterface);
   }
 
+  /** Punto 9: el cliente anónimo entra sin credenciales ni aprobación. */
   ingresoAnonimo() {
     this.loginAnonimo.emit();
   }

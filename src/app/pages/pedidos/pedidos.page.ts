@@ -11,6 +11,13 @@ import {
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { PedidoService } from '../../services/pedido.service';
 
+/**
+ * Pantalla del mozo: confirmar, rechazar y entregar pedidos.
+ *
+ * Cubre los puntos 13, 14 y 19 del enunciado. Se muestran dos grupos separados
+ * porque son dos tareas distintas: revisar lo que el cliente acaba de mandar, y
+ * llevar a la mesa lo que los sectores ya terminaron.
+ */
 @Component({
     selector: 'app-pedidos',
     templateUrl: './pedidos.page.html',
@@ -33,6 +40,7 @@ export class PedidosPage implements OnInit {
     listos = this.pedidoService.listosParaEntregar;
     cargando = this.pedidoService.cargando;
 
+    /** Se piden sólo los estados sobre los que el mozo puede actuar. */
     ngOnInit() {
         // El mozo trabaja sobre lo que espera su confirmacion y lo que los
         // sectores ya terminaron (puntos 13, 14 y 19).
@@ -46,6 +54,12 @@ export class PedidosPage implements OnInit {
         return this.pedidoService.tiempoEstimado(pedido);
     }
 
+    /**
+     * Importe en pesos, sin decimales.
+     *
+     * El enunciado exige que el total se vea grande y claro; los centavos sólo
+     * agregarían ruido a un número que se lee de reojo.
+     */
     totalFormateado(pedido: PedidoInterface): string {
         return this.pedidoService
             .totalConDescuento(pedido)
@@ -81,6 +95,12 @@ export class PedidosPage implements OnInit {
         await this.recargar();
     }
 
+    /**
+     * Vuelve a consultar tras cada acción.
+     *
+     * Es intencional que se recargue contra la base y no sólo en memoria: otro
+     * mozo pudo haber tocado el mismo pedido mientras tanto.
+     */
     private recargar(): Promise<void> {
         return this.pedidoService.listar([
             'Pendiente de Confirmación',

@@ -20,6 +20,13 @@ import { FotoInterface } from '../../interfaces/foto.interface';
 import { CameraService } from '../../services/camera.service';
 import { ModalService } from '../../services/modal.service';
 
+/**
+ * Alta de cliente anónimo (punto 9 del enunciado).
+ *
+ * Pide sólo nombre y foto, que es exactamente lo que guarda la tabla
+ * `clientes_anonimos`. Estos clientes no requieren aprobación, a diferencia de
+ * los registrados del punto 5.
+ */
 @Component({
     selector: 'app-formulario-usuario-anonimo',
     templateUrl: './formulario-usuario-anonimo.component.html',
@@ -50,6 +57,12 @@ export class FormularioUsuarioAnonimoComponent {
         }),
     });
 
+    /**
+     * Toma la foto con la cámara frontal.
+     *
+     * Es frontal porque se trata de una selfie de ingreso. Los fallos se
+     * informan al usuario: el servicio ya registra el detalle técnico.
+     */
     async onTomarFoto() {
         try {
             const capturada = await this.camara.tomarFoto('frontal');

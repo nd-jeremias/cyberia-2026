@@ -6,6 +6,13 @@ import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 import { supabase } from '../../services/supabase.service';
 
+/**
+ * Aprobación de clientes registrados (puntos 6, 7 y 8 del enunciado).
+ *
+ * Sólo dueño y supervisor deberían llegar acá. Al aprobar o rechazar, un
+ * disparador de la base envía el correo automático y la notificación push; por
+ * eso esta pantalla sólo cambia el estado y no se ocupa del aviso.
+ */
 @Component({
     selector: 'app-clientes-pendientes',
     templateUrl: './clientes-pendientes.page.html',
@@ -27,6 +34,11 @@ export class ClientesPendientesPage implements OnInit {
         this.cargar();
     }
 
+/**
+     * Trae las solicitudes en espera, de la más antigua a la más reciente.
+     *
+     * El orden importa: quien pidió primero debería resolverse primero.
+     */
     async cargar() {
         this.spinner.show();
 
@@ -73,6 +85,12 @@ export class ClientesPendientesPage implements OnInit {
         await this.cambiarEstado(cliente, 'Rechazado');
     }
 
+    /**
+     * Aprueba o rechaza una solicitud.
+     *
+     * Al resolverse, el cliente sale del listado: ya no está pendiente. Se
+     * quita de la copia local en vez de recargar todo, que sería más lento.
+     */
     private async cambiarEstado(
         cliente: ClientePendienteInterface,
         estado: 'Activo' | 'Rechazado'

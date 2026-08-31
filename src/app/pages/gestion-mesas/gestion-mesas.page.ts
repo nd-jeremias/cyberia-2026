@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 
+/**
+ * Administración de mesas del salón (punto 4).
+ *
+ * Pantalla todavía sin implementar: por ahora sólo tiene el armazón
+ * generado y la ruta declarada.
+ */
 @Component({
     selector: 'app-gestion-mesas',
     templateUrl: './gestion-mesas.page.html',
     styleUrls: ['./gestion-mesas.page.scss'],
     imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule],
 })
-export class GestionMesasPage implements OnInit {
-    constructor() {}
-
-    ngOnInit() {}
-}
+export class GestionMesasPage {}

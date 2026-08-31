@@ -1,17 +1,35 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './guards/auth.guard';
 
+/**
+ * Mapa de rutas de la aplicación.
+ *
+ * Todas las pantallas se cargan con `loadComponent`, es decir, de forma
+ * diferida: el código de cada una se descarga recién cuando el usuario navega
+ * hacia ella. En una aplicación móvil eso importa, porque acorta el arranque.
+ *
+ * Los guards controlan quién puede entrar:
+ *  - `guestGuard`  evita que alguien con sesión abierta vuelva al login;
+ *  - `authGuard`   exige sesión iniciada para las pantallas internas.
+ */
 export const routes: Routes = [
+    // Sin ruta explícita se entra por el login.
     {
         path: '',
         redirectTo: 'ingresar',
         pathMatch: 'full',
     },
+    // ---------------------------------------------------------------
+    // Acceso: visibles sin sesión iniciada
+    // ---------------------------------------------------------------
     {
         path: 'ingresar',
         loadComponent: () => import('./pages/ingresar/ingresar.page').then((m) => m.IngresarPage),
         canActivate: [guestGuard],
     },
+    // ---------------------------------------------------------------
+    // Pantalla principal, distinta según el perfil del usuario
+    // ---------------------------------------------------------------
     {
         path: 'home',
         loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
@@ -21,10 +39,14 @@ export const routes: Routes = [
         path: 'registrarse',
         loadComponent: () => import('./pages/registrarse/registrarse.page').then((m) => m.RegistrarsePage),
     },
+    // Punto 9: el cliente anónimo entra con nombre y foto, sin aprobación.
     {
         path: 'ingreso-anonimo',
         loadComponent: () => import('./pages/ingreso-anonimo/ingreso-anonimo.page').then((m) => m.IngresoAnonimoPage),
     },
+    // ---------------------------------------------------------------
+    // Altas: puntos 2, 3 y 4 del enunciado
+    // ---------------------------------------------------------------
     {
         path: 'alta-producto',
         loadComponent: () => import('./pages/alta-producto/alta-producto.page').then((m) => m.AltaProductoPage),
@@ -35,6 +57,7 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
         canActivate: [authGuard],
     },
+    // Puntos 6, 7 y 8: el dueño o supervisor aprueba o rechaza clientes.
     {
         path: 'clientes-pendientes',
         loadComponent: () =>
@@ -46,6 +69,10 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./pages/gestion-productos/gestion-productos.page').then((m) => m.GestionProductosPage),
     },
+    // ---------------------------------------------------------------
+    // Operación diaria: mozo, metre y sectores
+    // ---------------------------------------------------------------
+    // Puntos 13, 14 y 19: el mozo confirma, rechaza y entrega pedidos.
     {
         path: 'pedidos',
         loadComponent: () => import('./pages/pedidos/pedidos.page').then((m) => m.PedidosPage),
@@ -74,6 +101,7 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./pages/pedidos-clientes/pedidos-clientes.page').then((m) => m.PedidosClientesPage),
     },
+    // Punto 10: el metre asigna una mesa a un cliente registrado.
     {
         path: 'asignar-mesas',
         loadComponent: () => import('./pages/asignar-mesas/asignar-mesas.page').then((m) => m.AsignarMesasPage),

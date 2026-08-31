@@ -5,6 +5,12 @@ import { MesaAltaInterface } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 
+/**
+ * Alta de mesa (punto 4 del enunciado).
+ *
+ * Además de guardar la mesa, corresponde generar acá su código QR: es el que
+ * después escanean los clientes para vincularse a ella.
+ */
 @Component({
     selector: 'app-alta-mesa',
     templateUrl: './alta-mesa.page.html',

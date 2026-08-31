@@ -15,6 +15,16 @@ import { ModalService } from '../../services/modal.service';
 import { supabase } from '../../services/supabase.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
 
+/**
+ * Pantalla del metre: asignar una mesa a un cliente (punto 10).
+ *
+ * El flujo es de dos pasos deliberadamente: primero se elige el cliente y
+ * después la mesa. Al revés habría que soltar la mesa si el cliente resulta no
+ * poder tomarla, y esa reserva a medias es justo lo que causa mesas trabadas.
+ *
+ * Las verificaciones del enunciado viven en `MesaService`, no acá: son reglas
+ * de negocio y deben valer sin importar desde qué pantalla se asigne.
+ */
 @Component({
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
@@ -43,6 +53,12 @@ export class AsignarMesasPage implements OnInit {
 
     // Si el cliente elegido ya tiene mesa, el metre debe poder indicarsela
     // en vez de simplemente no dejarlo avanzar (punto 10 del enunciado).
+    /**
+     * Mesa que el cliente elegido ya tiene, si tiene alguna.
+     *
+     * El enunciado pide indicarle al metre cuál es, no sólo impedir la
+     * asignación: sin ese dato no sabría a dónde mandar al comensal.
+     */
     mesaYaAsignada = computed(() => {
         const cliente = this.clienteElegido();
 
@@ -63,6 +79,12 @@ export class AsignarMesasPage implements OnInit {
         this.mesaService.listar();
     }
 
+    /**
+     * Trae los clientes registrados que pueden recibir mesa.
+     *
+     * Se filtra por estado Activo porque un cliente pendiente o rechazado no
+     * debería siquiera aparecer como opción (puntos 5, 7 y 8).
+     */
     async cargarClientes() {
         try {
             const { data, error } = await supabase
@@ -109,6 +131,12 @@ export class AsignarMesasPage implements OnInit {
         this.clienteElegido.set(null);
     }
 
+    /**
+     * Intenta asignar la mesa al cliente seleccionado.
+     *
+     * Sólo se limpia la selección si la asignación salió bien; si falló, el
+     * cliente sigue elegido para poder probar con otra mesa sin rebuscarlo.
+     */
     async onAsignar(mesa: MesaInterface) {
         const cliente = this.clienteElegido();
 
