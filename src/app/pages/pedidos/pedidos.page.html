@@ -1,13 +1,104 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
-        <ion-title>pedidos</ion-title>
+        <ion-title>Pedidos</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">pedidos</ion-title>
-        </ion-toolbar>
-    </ion-header>
+    <section class="grupo">
+        <h2 class="titulo-grupo">Esperando confirmación</h2>
+
+        @if (pendientes().length === 0) {
+            <p class="vacio">No hay pedidos esperando confirmación.</p>
+        } @else {
+            @for (pedido of pendientes(); track pedido.id) {
+                <article class="tarjeta-pedido">
+                    <div class="encabezado">
+                        <h3>Mesa N° {{ pedido.numeroMesa }}</h3>
+                        <ion-badge color="warning">{{ pedido.estado }}</ion-badge>
+                    </div>
+
+                    <p class="dato">{{ fechaFormateada(pedido) }}</p>
+                    <p class="dato">
+                        Tiempo estimado: {{ tiempoEstimado(pedido) }} minutos
+                    </p>
+
+                    <ul class="detalles">
+                        @for (item of pedido.detalles; track item.id) {
+                            <li>
+                                <span class="cantidad">{{ item.cantidad }}×</span>
+                                {{ item.nombreProducto }}
+                            </li>
+                        }
+                    </ul>
+
+                    <p class="total">Total: {{ totalFormateado(pedido) }}</p>
+
+                    <div class="acciones">
+                        <ion-button
+                            expand="block"
+                            color="success"
+                            [disabled]="cargando()"
+                            (click)="onConfirmar(pedido)"
+                        >
+                            <ion-icon
+                                slot="start"
+                                name="checkmark-circle"
+                            ></ion-icon>
+                            Confirmar
+                        </ion-button>
+
+                        <ion-button
+                            expand="block"
+                            color="danger"
+                            [disabled]="cargando()"
+                            (click)="onRechazar(pedido)"
+                        >
+                            <ion-icon slot="start" name="close-circle"></ion-icon>
+                            Rechazar
+                        </ion-button>
+                    </div>
+                </article>
+            }
+        }
+    </section>
+
+    <section class="grupo">
+        <h2 class="titulo-grupo">Listos para entregar</h2>
+
+        @if (listos().length === 0) {
+            <p class="vacio">Todavía no hay pedidos listos.</p>
+        } @else {
+            @for (pedido of listos(); track pedido.id) {
+                <article class="tarjeta-pedido">
+                    <div class="encabezado">
+                        <h3>Mesa N° {{ pedido.numeroMesa }}</h3>
+                        <ion-badge color="success">{{ pedido.estado }}</ion-badge>
+                    </div>
+
+                    <p class="dato">{{ fechaFormateada(pedido) }}</p>
+
+                    <ul class="detalles">
+                        @for (item of pedido.detalles; track item.id) {
+                            <li>
+                                <span class="cantidad">{{ item.cantidad }}×</span>
+                                {{ item.nombreProducto }}
+                            </li>
+                        }
+                    </ul>
+
+                    <p class="total">Total: {{ totalFormateado(pedido) }}</p>
+
+                    <ion-button
+                        expand="block"
+                        [disabled]="cargando()"
+                        (click)="onEntregar(pedido)"
+                    >
+                        <ion-icon slot="start" name="restaurant"></ion-icon>
+                        Marcar como entregado
+                    </ion-button>
+                </article>
+            }
+        }
+    </section>
 </ion-content>

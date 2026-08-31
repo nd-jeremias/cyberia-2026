@@ -292,11 +292,11 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |  Crear una tarjeta `usuario` para modularizar y reutilizar   |
 | Creación de módulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |                                                              |
 | Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                                                              |
-| páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | --/--/---- | Pendiente  |                                                              |
-| Servicio de manejo de pedidos                                                                |    --/-/----    | --/--/---- | Pendiente  |                                                              |
+| páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
+| Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
 | **Puntos del TP a realizar:** |
-| 5.- Crear un cliente registrado                                                              |   02/09/2026    | --/--/---- | ---------  |                                                              |
-| 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | --/--/---- | ---------  |                                                              |
+| 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
+| 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |
 | 19.- El mozo entrega el pedido completo                                                      |   12/09/2026    | --/--/---- | ---------  |                                                              |
 | 13.- El mozo rechaza el pedido                                                               |   12/09/2026    | --/--/---- | ---------  |                                                              |
 | 14.- El mozo confirma el pedido                                                              |   12/09/2026    | --/--/---- | ---------  |                                                              |

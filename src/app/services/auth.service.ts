@@ -59,6 +59,25 @@ export class AuthService {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
 
+        // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
+        // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
+        // recien abierta para que no quede una sesion valida a medias.
+        const { data: fila } = await supabase
+            .from('usuarios')
+            .select('estado')
+            .eq('id', response.data.user.id)
+            .single();
+
+        if (fila && fila.estado !== 'Activo') {
+            await supabase.auth.signOut();
+
+            throw new Error(
+                fila.estado === 'Rechazado'
+                    ? 'Su solicitud de registro fue rechazada. No puede ingresar a la aplicación.'
+                    : 'Su registro todavía está pendiente de aprobación. Aguarde el correo de confirmación.'
+            );
+        }
+
         const user: LocalUserInterface = {
             id: response.data.user.id,
             correo: response.data.session.user.email,

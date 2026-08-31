@@ -1,12 +1,30 @@
 import { Component, input, output } from '@angular/core';
-import { IonButton, IonIcon } from '@ionic/angular';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
+import {
+    AccionTarjetaUsuario,
+    TarjetaUsuarioComponent,
+} from '../tarjeta-usuario/tarjeta-usuario.component';
+
+const ACCIONES: AccionTarjetaUsuario[] = [
+    {
+        id: 'aprobar',
+        etiqueta: 'Aprobar',
+        icono: 'checkmark-circle',
+        color: 'success',
+    },
+    {
+        id: 'rechazar',
+        etiqueta: 'Rechazar',
+        icono: 'close-circle',
+        color: 'danger',
+    },
+];
 
 @Component({
     selector: 'app-listado-clientes-pendientes',
     templateUrl: './listado-clientes-pendientes.component.html',
     styleUrls: ['./listado-clientes-pendientes.component.scss'],
-    imports: [IonButton, IonIcon],
+    imports: [TarjetaUsuarioComponent],
 })
 export class ListadoClientesPendientesComponent {
     clientes = input.required<ClientePendienteInterface[]>();
@@ -15,25 +33,14 @@ export class ListadoClientesPendientesComponent {
     aprobarCliente = output<ClientePendienteInterface>();
     rechazarCliente = output<ClientePendienteInterface>();
 
-    nombreCompleto(cliente: ClientePendienteInterface): string {
-        return `${cliente.apellidos}, ${cliente.nombres}`;
-    }
+    acciones = ACCIONES;
 
-    fechaFormateada(cliente: ClientePendienteInterface): string {
-        return new Date(cliente.fechaRegistro).toLocaleString('es-AR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    }
+    onAccion(evento: { accion: string; usuario: ClientePendienteInterface }) {
+        if (evento.accion === 'aprobar') {
+            this.aprobarCliente.emit(evento.usuario);
+            return;
+        }
 
-    onAprobar(cliente: ClientePendienteInterface) {
-        this.aprobarCliente.emit(cliente);
-    }
-
-    onRechazar(cliente: ClientePendienteInterface) {
-        this.rechazarCliente.emit(cliente);
+        this.rechazarCliente.emit(evento.usuario);
     }
 }

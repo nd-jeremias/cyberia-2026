@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -15,10 +15,12 @@ import {
     IonItem,
     IonTextarea,
 } from '@ionic/angular';
+import { Haptics, NotificationType } from '@capacitor/haptics';
 import {
     ProductoAltaInterface,
     TipoProducto,
 } from '../../interfaces/producto.interface';
+import { ModalService } from '../../services/modal.service';
 
 const CANTIDAD_FOTOS_REQUERIDA = 3;
 
@@ -39,6 +41,8 @@ const CANTIDAD_FOTOS_REQUERIDA = 3;
     ],
 })
 export class FormularioAltaProductoComponent {
+    private modal = inject(ModalService);
+
     // El tipo lo define la pagina segun el perfil que la renderiza
     // (cocinero -> Comida/Postre, cantinero -> Bebida), no el usuario.
     tipo = input.required<TipoProducto>();
@@ -67,12 +71,31 @@ export class FormularioAltaProductoComponent {
         this.fotos = Array.from(input.files ?? []);
     }
 
-    onAltaProducto() {
-        if (
-            this.formulario.invalid ||
-            this.fotos.length !== CANTIDAD_FOTOS_REQUERIDA
-        )
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    async onAltaProducto() {
+        const faltanFotos = this.fotos.length !== CANTIDAD_FOTOS_REQUERIDA;
+
+        if (this.formulario.invalid || faltanFotos) {
+            // Sin markAllAsTouched Ionic no pinta los errores de los campos
+            // que el usuario todavia no toco.
+            this.formulario.markAllAsTouched();
+
+            await Haptics.notification({ type: NotificationType.Error });
+
+            this.modal.setOpen(
+                'Datos inválidos',
+                faltanFotos
+                    ? `Debe cargar exactamente ${CANTIDAD_FOTOS_REQUERIDA} fotos del producto.`
+                    : 'Revise los datos ingresados antes de continuar.'
+            );
+
             return;
+        }
 
         const valores = this.formulario.getRawValue();
 

@@ -1,0 +1,88 @@
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+}
+
+.titulo-grupo {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--ion-text-color, #ffffff);
+}
+
+.vacio {
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  background-color: var(--ion-card-background, #254d7d);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.tarjeta-pedido {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background-color: var(--ion-card-background, #254d7d);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.encabezado h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ion-text-color, #ffffff);
+}
+
+.dato {
+  margin: 0;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.detalles {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.98rem;
+}
+
+.cantidad {
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* El importe tiene que verse grande y claro (requisito del enunciado). */
+.total {
+  margin: 8px 0 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ion-text-color, #ffffff);
+}
+
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.acciones ion-button {
+  flex: 1 1 0;
+  margin: 0;
+}
