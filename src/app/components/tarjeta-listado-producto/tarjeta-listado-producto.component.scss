@@ -1,51 +1,94 @@
+/**
+ * Listado de productos.
+ *
+ * Toma del login el encabezado con divisor, el fondo azul profundo y la
+ * tipografía. La grilla se adapta sola al ancho disponible: una columna en el
+ * celular y varias en pantallas grandes, sin puntos de corte fijos.
+ */
+
 :host {
-  display: block;
-  width: 100%;
-  height: 100%;
+    display: block;
+    width: 100%;
+    background-color: var(--bg-splash);
 }
 
 .listado-productos {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  background-color: var(--ion-background-color, #1a3a60);
-  padding: 12px;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 75rem;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 2rem;
+    box-sizing: border-box;
 }
 
+/* ---------------------------------------------------------------------------
+   Encabezado
+   --------------------------------------------------------------------------- */
+
+/**
+ * Mismo divisor que separa los accesos rápidos en la pantalla de ingreso: el
+ * título al centro y una línea que ocupa el resto del ancho a cada lado.
+ */
 .titulo-listado {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #ffffff;
-  flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.02rem;
+    color: var(--bg-lightblue);
+    text-align: center;
+
+    &::before,
+    &::after {
+        content: "";
+        flex: 1;
+        border-bottom: 0.062rem solid var(--bg-cyan);
+        opacity: 0.55;
+    }
 }
+
+/* ---------------------------------------------------------------------------
+   Estado vacío
+   --------------------------------------------------------------------------- */
 
 .listado-vacio {
-  margin: 0;
-  padding: 16px;
-  border-radius: 10px;
-  background-color: var(--ion-card-background, #254d7d);
-  color: #e2e8f0;
-  font-weight: 600;
-  text-align: center;
+    margin: 0;
+    padding: 2rem 1.25rem;
+    text-align: center;
+
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--bg-cyan);
+
+    background-color: rgba(80, 105, 150, 0.35);
+
+    // Borde punteado: comunica "acá todavía no hay nada" en lugar de parecer
+    // una tarjeta más que se quedó sin cargar.
+    border: 0.093rem dashed var(--bg-cyan);
+    border-radius: 1rem;
 }
 
-/* Scroll vertical con snap: cada tarjeta queda siempre completa, nunca cortada */
+/* ---------------------------------------------------------------------------
+   Grilla
+   --------------------------------------------------------------------------- */
+
 .lista {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow-y: auto;
-  scroll-snap-type: y proximity;
-  padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
+    display: grid;
+    gap: 1.25rem;
+
+    // `auto-fill` con un mínimo de 18rem acomoda las columnas que entren sin
+    // necesidad de media queries: una en el celular, dos o tres en tablet y
+    // escritorio.
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    align-items: start;
 }
 
 .item-lista {
-  scroll-snap-align: start;
-  scroll-margin-top: 8px;
+    display: block;
+    height: 100%;
 }

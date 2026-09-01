@@ -1,0 +1,92 @@
+/**
+ * Pantalla de gestión de productos.
+ *
+ * El archivo estaba vacío, así que la pantalla tomaba los colores por defecto
+ * de Ionic y se veía ajena al resto de la aplicación. Acá se la alinea con la
+ * pantalla de ingreso: mismo fondo, misma barra y el naranja reservado para la
+ * acción principal.
+ */
+
+/* ---------------------------------------------------------------------------
+   Barra superior
+   --------------------------------------------------------------------------- */
+
+ion-header {
+    // Sin la sombra por defecto: el borde inferior separa mejor sobre un fondo
+    // oscuro, donde una sombra prácticamente no se ve.
+    ion-toolbar {
+        --background: var(--bg-darkblue);
+        --color: var(--bg-lightblue);
+        --border-width: 0 0 0.062rem 0;
+        --border-color: var(--bg-cyan);
+        --min-height: 3.5rem;
+    }
+
+    &::after {
+        display: none;
+    }
+}
+
+ion-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.01rem;
+}
+
+/* Flecha de volver. */
+ion-back-button {
+    --color: var(--bg-lightblue);
+    --icon-font-size: 1.5rem;
+}
+
+/**
+ * Botón de alta.
+ *
+ * Va en naranja, el color que la aplicación reserva para la acción principal
+ * de cada pantalla, igual que "Iniciar sesión" en el ingreso.
+ */
+ion-buttons[slot="end"] ion-button {
+    --color: var(--bg-lightblue);
+    --background: var(--bg-orange);
+    --background-hover: var(--bg-red);
+    --border-radius: 0.5rem;
+    --padding-start: 0.75rem;
+    --padding-end: 0.75rem;
+
+    margin-inline-end: 0.5rem;
+    min-height: 2.25rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
+
+    ion-icon {
+        font-size: 1.1rem;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Contenido
+   --------------------------------------------------------------------------- */
+
+ion-content {
+    // El mismo azul profundo del ingreso, para que la aplicación se sienta
+    // continua al navegar entre pantallas.
+    --background: var(--bg-splash);
+    --padding-bottom: 1.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Pantallas anchas
+   --------------------------------------------------------------------------- */
+
+@media (min-width: 48rem) {
+    ion-buttons[slot="end"] ion-button {
+        // En tablet y escritorio hay lugar de sobra: el botón principal puede
+        // respirar y ganar presencia.
+        --padding-start: 1.25rem;
+        --padding-end: 1.25rem;
+        min-height: 2.5rem;
+        font-size: 0.95rem;
+    }
+}

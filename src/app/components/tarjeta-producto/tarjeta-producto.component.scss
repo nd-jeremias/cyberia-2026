@@ -1,202 +1,297 @@
+/**
+ * Tarjeta de producto.
+ *
+ * Sigue el mismo lenguaje visual que la pantalla de ingreso:
+ *  - fondo translúcido sobre el azul profundo de la aplicación;
+ *  - borde fino en cian y esquinas de 0.5rem / 1rem;
+ *  - naranja reservado para la acción principal;
+ *  - medidas en rem, para que acompañe el tamaño de fuente del sistema.
+ */
+
 :host {
-  display: block;
-  width: 100%;
+    display: block;
+    width: 100%;
 }
 
 .tarjeta-producto {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  background-color: var(--ion-card-background, #254d7d);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 30rem;
+    margin: 0 auto;
+
+    // Mismo relleno translúcido que las tarjetas de perfil del login.
+    background-color: rgba(80, 105, 150, 0.75);
+    border: 0.093rem solid var(--bg-cyan);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-0.125rem);
+        box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.45);
+    }
 }
 
-/* ----- Carrusel de fotos ----- */
+/* ---------------------------------------------------------------------------
+   Carrusel de fotos
+   --------------------------------------------------------------------------- */
+
 .carrusel {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  background-color: #12294a;
-  touch-action: pan-y;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: var(--bg-darkblue);
+
+    // Deja pasar el desplazamiento vertical: el gesto horizontal es del carrusel.
+    touch-action: pan-y;
 }
 
 .carrusel-pista {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.3s ease;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
 }
 
 .carrusel-slide {
-  flex: 0 0 100%;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
+    flex: 0 0 100%;
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: center;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        width: 100%;
+        height: 100%;
+
+        // "contain" y no "cover": el enunciado pide que no se muestren partes
+        // de otras fotos ni recortes que dejen el producto fuera de cuadro.
+        object-fit: contain;
+        object-position: center;
+    }
 }
 
 .carrusel-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #7f9cc4;
-  background-color: #12294a;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--bg-cyan);
+    background-color: var(--bg-darkblue);
 
-  ion-icon {
-    font-size: 2.5rem;
-  }
+    ion-icon {
+        font-size: 2.5rem;
+    }
 
-  span {
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
+    span {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
 }
 
+/* Distintivo del tipo de producto, sobre la foto. */
 .insignia-tipo {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.03rem;
+    text-transform: uppercase;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.4);
 }
 
+/* Flechas de navegación. */
 .control-carrusel {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  background-color: rgba(10, 22, 40, 0.65);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  padding: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  ion-icon {
-    pointer-events: none;
-  }
+    background-color: rgba(41, 50, 65, 0.85);
+    border: 0.093rem solid var(--bg-cyan);
+    border-radius: 50%;
+    color: var(--bg-lightblue);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 0;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+
+    &:hover {
+        background-color: var(--bg-blue);
+    }
+
+    &:active {
+        transform: translateY(-50%) scale(0.92);
+    }
 }
 
 .control-anterior {
-  left: 8px;
+    left: 0.5rem;
 }
 
 .control-siguiente {
-  right: 8px;
+    right: 0.5rem;
 }
 
+/* Puntos indicadores de la foto actual. */
 .puntos-carrusel {
-  position: absolute;
-  bottom: 10px;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 6px;
+    position: absolute;
+    bottom: 0.625rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.375rem;
 }
 
 .punto {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: none;
-  padding: 0;
-  background-color: rgba(255, 255, 255, 0.45);
-  transition: background-color 0.2s ease, transform 0.2s ease;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 0.062rem solid var(--bg-cyan);
+    background-color: rgba(224, 251, 252, 0.35);
+    padding: 0;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        width 0.2s ease;
 }
 
 .punto-activo {
-  background-color: #ffffff;
-  transform: scale(1.25);
+    // El punto activo se alarga además de cambiar de color: así también se
+    // distingue sin depender sólo del contraste.
+    width: 1.25rem;
+    border-radius: 0.25rem;
+    background-color: var(--bg-orange);
+    border-color: var(--bg-orange);
 }
 
-/* ----- Contenido de texto ----- */
+/* ---------------------------------------------------------------------------
+   Contenido
+   --------------------------------------------------------------------------- */
+
 .contenido {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
 }
 
 .nombre {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.25;
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--bg-lightblue);
 }
 
 .descripcion {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #e2e8f0;
-  line-height: 1.35;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: var(--bg-cyan);
+
+    // Se limita a tres líneas para que todas las tarjetas de una fila queden
+    // parejas sin cortar la palabra por la mitad.
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .detalles {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 0.062rem solid rgba(152, 193, 217, 0.35);
 }
 
 .detalle {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--bg-cyan);
 
-  ion-icon {
-    font-size: 1rem;
-  }
+    ion-icon {
+        font-size: 1rem;
+    }
 }
 
+/* El precio es el dato que más se busca de un vistazo. */
 .precio {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: #4ade80;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--bg-orange);
+    line-height: 1;
 }
+
+/* ---------------------------------------------------------------------------
+   Acciones
+   --------------------------------------------------------------------------- */
 
 .boton-agregar {
-  margin-top: 10px;
-  --border-radius: 10px;
-  font-weight: 700;
+    margin-top: 0.5rem;
+    --background: var(--bg-orange);
+    --color: var(--bg-lightblue);
+    --border-radius: 0.5rem;
+    --padding-top: 0.75rem;
+    --padding-bottom: 0.75rem;
+    font-weight: 800;
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+    min-height: 3rem;
 }
 
 .acciones-gestion {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
 
-  ion-button {
-    flex: 1;
-    margin: 0;
-    --border-radius: 10px;
-    font-weight: 700;
-  }
+    ion-button {
+        flex: 1 1 0;
+        margin: 0;
+        --border-radius: 0.5rem;
+        font-weight: 800;
+        font-size: 0.9rem;
+        text-transform: none;
+        letter-spacing: 0;
+        min-height: 3rem;
+    }
+}
+
+.boton-editar {
+    --border-color: var(--bg-cyan);
+    --border-width: 0.093rem;
+    --color: var(--bg-lightblue);
+}
+
+.boton-eliminar {
+    --border-radius: 0.5rem;
+    --color: var(--bg-lightblue);
 }
