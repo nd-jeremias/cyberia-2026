@@ -1,0 +1,14 @@
+.fotos-contenedor {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 0;
+}
+
+.fotos-etiqueta {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #cbd5e1;
+}

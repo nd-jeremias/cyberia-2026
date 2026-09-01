@@ -11,10 +11,21 @@ import { Producto } from '../../interfaces/producto.interface';
 export class TarjetaListadoProductoComponent {
     productos = input.required<Producto[]>();
     tituloListado = input<string>('Menú');
+    modo = input<'pedido' | 'gestion'>('pedido');
 
     agregarCarrito = output<Producto>();
+    editarProducto = output<Producto>();
+    eliminarProducto = output<Producto>();
 
     onAgregarCarrito(producto: Producto) {
         this.agregarCarrito.emit(producto);
+    }
+
+    onEditar(producto: Producto) {
+        this.editarProducto.emit(producto);
+    }
+
+    onEliminar(producto: Producto) {
+        this.eliminarProducto.emit(producto);
     }
 }
