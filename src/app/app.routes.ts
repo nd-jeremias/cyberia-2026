@@ -31,7 +31,7 @@ export const routes: Routes = [
     // Pantalla principal, distinta según el perfil del usuario
     // ---------------------------------------------------------------
     {
-        path: 'home',
+        path: 'inicio',
         loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
         canActivate: [authGuard],
     },
@@ -83,8 +83,17 @@ export const routes: Routes = [
             import('./pages/gestion-empleados/gestion-empleados.page').then((m) => m.GestionEmpleadosPage),
     },
     {
+        path: 'gestion-empleados/alta',
+        loadComponent: () =>
+            import('./pages/gestion-empleados/alta-empleado/alta-empleado.page').then((m) => m.AltaEmpleadoPage),
+    },
+    {
         path: 'gestion-mesas',
         loadComponent: () => import('./pages/gestion-mesas/gestion-mesas.page').then((m) => m.GestionMesasPage),
+    },
+    {
+        path: 'gestion-mesas/alta',
+        loadComponent: () => import('./pages/gestion-mesas/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
     },
     {
         path: 'gestion-clientes',

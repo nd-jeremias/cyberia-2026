@@ -62,14 +62,33 @@ export class QrService {
 
     // Verificar y solicitar permisos de la cámara
     async checkPermissions(): Promise<boolean> {
-        const status = await BarcodeScanner.checkPermissions();
+        try {
+            const status = await BarcodeScanner.checkPermissions();
+            // Si ya está concedido, perfecto
+            if (status.camera === 'granted') {
+                return true;
+            }
 
-        if (status.camera === 'denied' || status.camera === 'prompt') {
-            const request = await BarcodeScanner.requestPermissions();
-            return request.camera === 'granted';
+            // Si está denegado permanentemente, requestPermissions NO mostrará nada.
+            // Debes avisar al usuario que vaya a los ajustes del teléfono.
+            if (status.camera === 'denied') {
+                console.warn(
+                    'El permiso fue denegado previamente. El usuario debe activarlo desde los ajustes de la app.'
+                );
+                return false;
+            }
+
+            // Si está en 'prompt' o 'prompt-with-rationale', se solicita activamente
+            if (status.camera === 'prompt' || status.camera === 'prompt-with-rationale') {
+                const request = await BarcodeScanner.requestPermissions();
+                return request.camera === 'granted';
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Error verificando permisos:', error);
+            return false;
         }
-
-        return status.camera === 'granted';
     }
 
     // Iniciar escaneo en tiempo real (Modo Webview Transparente)
@@ -80,9 +99,7 @@ export class QrService {
 
             // 💡 Condición: Solo añade la clase transparente si estás corriendo en la App Nativa
             if (this.platform.is('hybrid')) {
-                document
-                    .querySelector('body')
-                    ?.classList.add('barcode-scanner-active');
+                document.querySelector('body')?.classList.add('barcode-scanner-active');
             }
 
             // Iniciar el lector limitándolo solo a códigos QR (mejora la velocidad)
@@ -119,9 +136,7 @@ export class QrService {
     stopScan(): void {
         BarcodeScanner.stopScan();
         if (this.platform.is('hybrid')) {
-            document
-                .querySelector('body')
-                ?.classList.remove('barcode-scanner-active');
+            document.querySelector('body')?.classList.remove('barcode-scanner-active');
         }
     }
 
@@ -154,9 +169,7 @@ export class QrService {
             const element = document.getElementById(id) as HTMLElement;
 
             if (!element) {
-                reject(
-                    new Error(`No se encontró el elemento con el ID: ${id}`)
-                );
+                reject(new Error(`No se encontró el elemento con el ID: ${id}`));
                 return;
             }
 

@@ -39,8 +39,9 @@
 <!-- Permissions -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <meta-data android:name="com.google.mlkit.vision.dependencies" android:value="barcode" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <meta-data android:name="com.google.mlkit.vision.dependencies" android:value="barcode" />
 
     <!-- Requerido desde Android 13 (API 33) para poder mostrar notificaciones -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

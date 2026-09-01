@@ -1,7 +1,11 @@
 <ion-content>
-  <!-- CAPA 1: Tu logotipo animado (Aparición y escala) -->
+  <!-- CAPA 1: Logotipo animado y Patrón de fondo (Aparición, latido y salida) -->
   <div class="layer-animated">
-    <img src="../../../assets/splash-logo.webp" class="animated-logo" alt="Logo" />
+    <!-- El patrón sutil de cubiertos que acompaña al logo -->
+    <div class="background-pattern"></div>
+    
+    <!-- Tu nuevo logo de Cyberia -->
+    <img src="../../../assets/logo.png" class="animated-logo" alt="Logo Cyberia" />
   </div>
 
   <!-- CAPA 2: HTML Personalizado (Lista de Nombres Sobria) -->
@@ -10,11 +14,26 @@
       <p class="credits-title">Desarrollado por</p>
       
       <ul class="names-list">
-        <!-- Puedes cambiar los nombres. El --i dicta el orden de aparición -->
-        <li style="--i: 3">Cura, Ezequiel</li>
-        <li style="--i: 2">Jeremías, Nicolás</li>
-        <li style="--i: 1">Maida, Cristian</li>
-        <li style="--i: 3">Plucci, Kevin</li>
+        <li>
+          <span class="first-name">Ezequiel</span>
+          <span class="last-name">Cura</span>
+        </li>
+        <li class="divider-line"></li>
+        <li>
+          <span class="first-name">Nicolás</span>
+          <span class="last-name">Jeremías</span>
+        </li>
+        <li class="divider-line"></li>
+        <li>
+          <span class="first-name">Cristian</span>
+          <span class="last-name">Maida</span>
+        </li>
+        <li class="divider-line"></li>
+        <li>
+          <span class="first-name">Kevin</span>
+          <span class="last-name">Plucci</span>
+        </li>
+        <li class="divider-line"></li>
       </ul>
     </div>
   </div>
