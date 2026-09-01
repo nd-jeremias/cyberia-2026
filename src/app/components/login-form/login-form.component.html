@@ -3,10 +3,10 @@
   <!-- 1. Cabecera con Isotipo -->
   <header class="cabecera">
     <div class="isotipo-icono">
-      <ion-icon name="restaurant-outline"></ion-icon>
+      <img src="../../../assets/old.splash-logo.webp">
+      <!-- <ion-icon name="restaurant-outline"></ion-icon> -->
     </div>
-    <h1>Sistema de gestión gastronómica</h1>
-    <p>Ingresá con tu cuenta</p>
+    <h1>Iniciar sesión</h1>
   </header>
 
   <!-- 2. Formulario Principal -->
@@ -53,45 +53,45 @@
       </div>
 
       <!-- Botón Principal -->
-      <button type="submit" class="btn-principal">
-        Iniciar sesión
-      </button>
+      
 
       <!-- Enlaces secundarios -->
-      <div class="enlaces-secundarios">
-        <p>¿No tenés cuenta? <a routerLink="/registrarse">Registrate</a></p>
-        <button type="button" class="btn-link-anonimo" routerLink="/ingresoAnonimo">
-          O continuar como <strong>Invitado / Anónimo</strong>
+      <div class="enlaces-secundarios"> 
+        <button type="submit" class="btn-principal">
+          Iniciar sesión
+        </button>
+        <button routerLink="/registrarse" class="btn-secundario">Crear cuenta</button>
+        <button type="button" class="btn-secundario" (click)="ingresoAnonimo()">
+          Continuar como Invitado
         </button>
       </div>
 
     </form>
   </section>
 
-  <!-- 3. Accesos Rápidos Demo -->
-  <footer class="seccion-demo">
-    <div class="divisor-demo">
-      <span>Acceso rápido · demo</span>
-    </div>
-
-    <div class="grilla-perfiles">
-      @for (perfil of usuariosValidos; track perfil.email) {
-        <button 
-          type="button" 
-          class="card-perfil" 
-          (click)="cargarCredenciales(perfil.email, perfil.pass)">
-          <div class="icono-perfil-wrapper">
-            <ion-icon [name]="perfil.icono"></ion-icon>
-          </div>
-          <div class="textos-perfil">
-            <span class="rol">{{ perfil.rol }}</span>
-            <span class="email">{{ perfil.email }}</span>
-          </div>
-        </button>
-      }
-    </div>
-
-    <small class="pie-ayuda">Tocá un perfil para autocompletar las credenciales</small>
-  </footer>
+  
 
 </div>
+
+<!-- 3. Accesos Rápidos Demo -->
+<footer class="seccion-demo">
+  <div class="divisor-demo">
+    <span>Acceso rápido · demo</span>
+  </div>
+
+  <div class="grilla-perfiles">
+    @for (perfil of usuariosValidos; track perfil.email) {
+      <button 
+        type="button" 
+        class="card-perfil" 
+        (click)="cargarCredenciales(perfil.email, perfil.pass)">
+        <div class="icono-perfil-wrapper">
+          <ion-icon [name]="perfil.icono"></ion-icon>
+        </div>
+        <div class="textos-perfil">
+          <span class="rol">{{ perfil.rol }}</span>
+        </div>
+      </button>
+    }
+  </div>
+</footer>
