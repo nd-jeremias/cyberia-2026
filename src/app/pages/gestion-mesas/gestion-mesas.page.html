@@ -1,5 +1,6 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
+        <app-boton-atras [rutaPorDefecto]="'/inicio'"></app-boton-atras>
         <ion-title>gestion-mesas</ion-title>
     </ion-toolbar>
 </ion-header>
@@ -10,4 +11,5 @@
             <ion-title size="large">gestion-mesas</ion-title>
         </ion-toolbar>
     </ion-header>
+    <ion-button expand="block" class="boton-home" routerLink="/gestion-mesas/alta"> Agregar Mesa </ion-button>
 </ion-content>

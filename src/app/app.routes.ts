@@ -65,6 +65,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/gestion-mesas/gestion-mesas.page').then((m) => m.GestionMesasPage),
     },
     {
+        path: 'gestion-mesas/alta',
+        loadComponent: () => import('./pages/gestion-mesas/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
+    },
+    {
         path: 'gestion-clientes',
         loadComponent: () =>
             import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
@@ -83,5 +87,4 @@ export const routes: Routes = [
         path: 'asignar-mesas',
         loadComponent: () => import('./pages/asignar-mesas/asignar-mesas.page').then((m) => m.AsignarMesasPage),
     },
-    
 ];
