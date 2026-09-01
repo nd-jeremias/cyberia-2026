@@ -1,10 +1,11 @@
 ion-content {
-    /* Fondo azul oscuro permanente */
-    --background: #000730;
+    /* El tono azul oscuro profundo de tu fondo definitivo */
+    --background: #000a21;
 }
 
-/* --- CAPA 1: LOGO ANIMADO --- */
+/* --- CAPA 1: LOGO ANIMADO Y PATRÓN --- */
 .layer-animated {
+    background-color: #000a21;
     position: absolute;
     top: 0;
     left: 0;
@@ -14,20 +15,46 @@ ion-content {
     justify-content: center;
     align-items: center;
     z-index: 2;
-    animation: fadeOutLayer 0.5s ease-out 2s forwards;
+    /* Mantenemos tu salida: desaparece a los 2.5s para dar tiempo al latido */
+    animation: fadeOutLayer 0.5s ease-out 2.5s forwards; 
+}
+
+/* El patrón gastronómico sutil que pediste */
+.background-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../../assets/patron_splash_blanco.png'); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover; 
+    opacity: 0.25; /* Súper tenue para que no compita visualmente */
+    z-index: 1;
 }
 
 .animated-logo {
+    position: relative;
+    z-index: 2;
     width: 75vw;
-    max-width: 500px;
+    max-width: 420px;
     height: auto;
     opacity: 0;
-    transform: scale(0.9);
-    animation: logoEntrance 1.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards;
+    
+    /* Resplandor tecnológico azulado sobre el logo */
+    filter: drop-shadow(0px 0px 25px rgba(0, 162, 255, 0.45));
+    
+    /* TRUCO CLAVE: Encadenamos la animación de Entrada (ejecuta una vez) 
+       y la animación de Latido (corre en bucle infinito tras 0.8 segundos) */
+    animation: 
+        logoEntrance 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards,
+        latidoCyberia 2.5s ease-in-out 0.9s infinite;
 }
 
 /* --- CAPA 2: LISTA DE NOMBRES HTML --- */
 .layer-html-credits {
+    background-color: #000a21;
     position: absolute;
     top: 0;
     left: 0;
@@ -58,7 +85,8 @@ ion-content {
     letter-spacing: 4px;
     margin: 0;
     opacity: 0;
-    animation: fadeInText 0.5s ease-out 2s forwards;
+    /* Sincronizado para aparecer justo cuando la capa 1 empieza a desvanecerse */
+    animation: fadeInText 0.5s ease-out 2.5s forwards;
 }
 
 .names-list {
@@ -71,14 +99,12 @@ ion-content {
     flex-direction: column;
     justify-content: space-evenly;
 
-    /* ATENCIÓN AQUÍ: Cambiamos 'li' por 'li:not(.divider-line)' 
-       para que las propiedades de texto NO pisen a la línea separadora */
     li:not(.divider-line) {
         display: flex;
         flex-direction: column;
         gap: 4px;
         opacity: 0;
-        animation: fadeInText 0.5s ease-out 2.3s forwards;
+        animation: fadeInText 0.5s ease-out 2.8s forwards;
 
         background: linear-gradient(to bottom, #ffffff 40%, #b0c4de 100%);
         -webkit-background-clip: text;
@@ -87,18 +113,16 @@ ion-content {
 }
 
 .names-list li.divider-line {
-    width: 45%; /* Un poco más larga para que luzca mejor */
-    height: 2px; /* 2px le da un grosor físico visible en móviles */
+    width: 45%; 
+    height: 2px; 
     align-self: center;
-    display: block; /* Forzamos su renderizado como bloque */
+    display: block; 
     opacity: 0;
-    animation: fadeInText 0.5s ease-out 2.3s forwards;
+    animation: fadeInText 0.5s ease-out 2.8s forwards;
 
-    /* Removemos los efectos de texto heredados para asegurar su visibilidad */
     -webkit-background-clip: initial !important;
     -webkit-text-fill-color: initial !important;
 
-    /* Subimos la opacidad a 0.5 (50%) en el centro para que se aprecie con nitidez */
     background: linear-gradient(
         to right,
         rgba(255, 255, 255, 0) 0%,
@@ -107,14 +131,8 @@ ion-content {
     ) !important;
 }
 
-/* Estilos de fuentes agrandadas */
-.first-name {
-    font-size: 1.8rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-}
-
-.last-name {
+/* Estilos de fuentes */
+.first-name, .last-name {
     font-size: 1.8rem;
     font-weight: 600;
     letter-spacing: 2px;
@@ -126,14 +144,17 @@ ion-content {
         opacity: 0;
         transform: scale(0.6);
     }
-    60% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
     100% {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+/* Nueva animación de latido cíclico */
+@keyframes latidoCyberia {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); } /* Engorda un 5% de manera sutil */
+    100% { transform: scale(1); }
 }
 
 @keyframes fadeOutLayer {
