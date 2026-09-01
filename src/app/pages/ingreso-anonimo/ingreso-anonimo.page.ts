@@ -40,7 +40,7 @@ export class IngresoAnonimoPage {
                 `${cliente.nombres}, ya podés escanear el código QR de ingreso.`
             );
 
-            this.router.navigate(['/home']);
+            this.router.navigate(['/inicio']);
         } finally {
             this.spinner.hide();
         }

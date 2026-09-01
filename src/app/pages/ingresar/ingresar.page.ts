@@ -29,7 +29,7 @@ export class IngresarPage {
             // Recien ahora hay sesion, asi que el token puede asociarse al usuario.
             await this.notificaciones.sincronizarToken();
 
-            this.router.navigate(['/home']);
+            this.router.navigate(['/inicio']);
         } catch (error: any) {
             // 1. Mostramos el mensaje amigable en la interfaz
 

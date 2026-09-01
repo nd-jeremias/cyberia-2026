@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
+import { BotonAtrasComponent } from '../../components/boton-atras/boton-atras.component';
 
 /**
  * Alta y administración de empleados (punto 1).
@@ -14,6 +15,6 @@ import { RouterLink } from '@angular/router';
     selector: 'app-gestion-empleados',
     templateUrl: './gestion-empleados.page.html',
     styleUrls: ['./gestion-empleados.page.scss'],
-    imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RouterLink],
+    imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, RouterLink, BotonAtrasComponent],
 })
 export class GestionEmpleadosPage {}

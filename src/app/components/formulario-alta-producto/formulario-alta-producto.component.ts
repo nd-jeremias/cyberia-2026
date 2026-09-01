@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import {
     FormControl,
     FormGroup,
@@ -15,13 +15,13 @@ import {
     IonItem,
     IonTextarea,
 } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import {
     Producto,
     ProductoAltaInterface,
     TipoProducto,
 } from '../../interfaces/producto.interface';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
+import { ModalService } from '../../services/modal.service';
 
 // La tabla `productos` tiene un CHECK que exige exactamente tres fotos. Se
 // valida acá también para no llegar a la base con un alta que va a rebotar.
