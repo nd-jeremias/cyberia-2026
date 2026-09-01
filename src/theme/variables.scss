@@ -1,4 +1,36 @@
 :root {
+  --bg-darkblue:#293241;
+  --bg-blue:#3d5a80;
+  --bg-cyan:#98c1d9;
+  --bg-lightblue:#e0fbfc;
+  --bg-orange:rgb(236,68,81);
+  --bg-red:#ee6c4d;
+  --bg-black:#1e1e1e;
+  --bg-splash:#000a21;
+
+  --bg-app: #0B1A2E;
+  --surface-field: #0E1D33;
+  --border-field: rgba(255,255,255,0.10);
+  --border-card: rgba(255,255,255,0.08);
+  --divider: rgba(255,255,255,0.12);
+
+  --text-primary: #E8EEF6;
+  --text-secondary: #8AA0B8;
+  --text-placeholder: #6B84A0;
+
+  --accent-primary: #2D8CF0;
+  --accent-on-primary: #042C53;
+  --accent-link: #6FB0F5;
+
+  --badge-bg: rgba(29,158,117,0.18);
+  --badge-text: #9FE1CB;
+
+  --icon-dueno: #EF9F27;
+  --icon-supervisor: #7F77DD;
+  --icon-maitre: #85B7EB;
+  --icon-mozo: #5DCAA5;
+  --icon-cocinero: #F0997B;
+  --icon-cliente: #ED93B1;
   /* Fondo general: Azul profundo medio (sin blanco ni negro) */
   --ion-background-color: #1a3a60;
   --ion-text-color: #ffffff;
