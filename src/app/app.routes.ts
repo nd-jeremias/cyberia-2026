@@ -13,7 +13,7 @@ export const routes: Routes = [
         canActivate: [guestGuard],
     },
     {
-        path: 'home',
+        path: 'inicio',
         loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
         canActivate: [authGuard],
     },
@@ -56,6 +56,11 @@ export const routes: Routes = [
             import('./pages/gestion-empleados/gestion-empleados.page').then((m) => m.GestionEmpleadosPage),
     },
     {
+        path: 'gestion-empleados/alta',
+        loadComponent: () =>
+            import('./pages/gestion-empleados/alta-empleado/alta-empleado.page').then((m) => m.AltaEmpleadoPage),
+    },
+    {
         path: 'gestion-mesas',
         loadComponent: () => import('./pages/gestion-mesas/gestion-mesas.page').then((m) => m.GestionMesasPage),
     },
@@ -78,4 +83,5 @@ export const routes: Routes = [
         path: 'asignar-mesas',
         loadComponent: () => import('./pages/asignar-mesas/asignar-mesas.page').then((m) => m.AsignarMesasPage),
     },
+    
 ];

@@ -270,8 +270,8 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Servicio de Lectura y Generación de QR + lectura DNI                                         |   26/08/2026    | 26/08/2026 | Completado | Verificar la funcionalidad del lector de DNI |
 | Servicio de registro                                                                         |   --/--/----    | 26/08/2026 | Completado |                                              |
 | Servicio para manejo de "Carrito"                                                            |   27/08/2026    | 29/08/2026 | Completado |                                              |
-| páginas dueño/supervisor + componentes necesarios                                            |   04/09/2026    | --/-/----  | Pendiente  |                                              |
-| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   04/09/2026    | --/--/---- | Pendiente  |                                              |
+| páginas dueño/supervisor + componentes necesarios                                            |   02/09/2026    | --/-/----  | Pendiente  |                                              |
+| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | --/--/---- | Pendiente  |                                              |
 | Servicio de Chat Mozo-Cliente                                                                |   --/--/----    | --/--/---- | Pendiente  |                                              |
 | **Puntos del TP a realizar:** |
 | 1.- Agregar un empleado                                                                      |   02/09/2026    | --/--/---- | ---------  |                                              |
