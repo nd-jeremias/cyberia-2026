@@ -1,6 +1,6 @@
 <ion-card>
     <ion-card-header>
-        <ion-card-title>Alta de producto ({{ tipo() }})</ion-card-title>
+        <ion-card-title>{{ tituloFormulario() }}</ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -50,21 +50,24 @@
                 ></ion-input>
             </ion-item>
 
-            <ion-item>
-                <label class="input-archivo">
-                    Fotos del producto (3 requeridas)
-                    <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        (change)="onFotosSeleccionadas($event)"
-                    />
-                </label>
+            <ion-item lines="none">
+                <div class="fotos-contenedor">
+                    <p class="fotos-etiqueta">
+                        @if (modoEdicion()) {
+                            Fotos del producto (dejá vacío para mantener las actuales, o subí las 3 nuevas para reemplazarlas)
+                        } @else {
+                            Fotos del producto (3 requeridas)
+                        }
+                    </p>
+                    <app-subida-imagenes
+                        [maxImages]="3"
+                        modo="galeria"
+                        (imagenesChange)="onFotosSeleccionadas($event)"
+                    ></app-subida-imagenes>
+                </div>
             </ion-item>
 
-            <ion-button expand="full" fill="outline" type="submit"
-                >Dar de alta</ion-button
-            >
+            <ion-button expand="full" fill="outline" type="submit">{{ textoBoton() }}</ion-button>
         </form>
     </ion-card-content>
 </ion-card>

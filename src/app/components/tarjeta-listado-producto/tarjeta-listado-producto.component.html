@@ -9,7 +9,10 @@
         <app-tarjeta-producto
           class="item-lista"
           [producto]="producto"
+          [modo]="modo()"
           (agregarCarrito)="onAgregarCarrito($event)"
+          (editar)="onEditar($event)"
+          (eliminar)="onEliminar($event)"
         ></app-tarjeta-producto>
       }
     </div>
