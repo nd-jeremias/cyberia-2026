@@ -12,33 +12,34 @@ ion-modal.modal-personalizado {
 ion-modal.modal-personalizado ion-header ion-toolbar {
     --padding-top: 16px;
     --padding-bottom: 16px;
-    --background: var(--bg-dark); /* Ajusta a tu paleta de color si es necesario */
+    --background: var(--bg-petrol);
 }
 
 /* Contenido con Padding correcto */
 .contenido {
-    /* Quitamos el min-height excesivo para que el fit-content del modal funcione bien */
     min-height: 300px;
     --padding-start: 20px;
     --padding-end: 20px;
     --padding-top: 20px;
     --padding-bottom: 20px;
+    background-color: var(--bg-blue-petrol);
 }
 
 /* Footer y Botón Centrado */
 ion-modal.modal-personalizado ion-footer {
-    background: var(--bg-light);
     padding-top: 12px;
     padding-bottom: 16px;
+    background-color: var(--bg-blue-petrol);
 }
 
 .botonContainer {
     display: flex;
-    justify-content: center; /* Centra el botón horizontalmente */
+    justify-content: center; 
     width: 100%;
 }
 
 .botonCerrar {
+    color: var(--text-light);
     --border-radius: 8px;
     --padding-start: 24px;
     --padding-end: 24px;
