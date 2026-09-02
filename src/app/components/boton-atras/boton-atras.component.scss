@@ -7,10 +7,10 @@
     --ripple-color: transparent;
     height: auto;
     width: auto;
-  }
-  
-  // Cuadrado exterior azul intermedio (#3d5a80)
-  .contenedor-atras {
+}
+
+// Cuadrado exterior azul intermedio (#3d5a80)
+.contenedor-atras {
     background-color: #3d5a80;
     width: 48px;
     height: 48px;
@@ -19,10 +19,10 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  }
-  
-  // Círculo interior azul oscuro (#293241)
-  .circulo-icono {
+}
+
+// Círculo interior azul oscuro (#293241)
+.circulo-icono {
     background-color: #293241;
     width: 34px;
     height: 34px;
@@ -30,13 +30,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  
+
     // Icono triangular apuntando a la izquierda en color claro (#e0fbfc)
     ion-icon {
-      color: #e0fbfc;
-      font-size: 16px;
-      transform: rotate(-90deg); // Rotamos el triángulo de Ionic para que apunte a la izquierda
-      margin-right: 2px; // Ajuste milimétrico para centrar visualmente el triángulo
+        color: #e0fbfc;
+        font-size: 16px;
+        transform: rotate(-90deg); // Rotamos el triángulo de Ionic para que apunte a la izquierda
+        margin-right: 2px; // Ajuste milimétrico para centrar visualmente el triángulo
     }
-  }
-  
+}

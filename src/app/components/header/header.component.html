@@ -1,0 +1,16 @@
+<ion-header class="container" [translucent]="true">
+    <ion-toolbar>
+        @if(mostrarBotonVolver()){
+        <app-boton-atras [rutaPorDefecto]="defaultHref()"> </app-boton-atras>
+        }
+        <ion-title>Perfil: {{ perfil() }}</ion-title>
+        <ion-buttons slot="end">
+            <ion-button
+                (click)="cerrarSesion()"
+                aria-label="Cerrar sesión"
+                style="--background: red; --color: var(--ion-color-danger)"
+            >
+            </ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
