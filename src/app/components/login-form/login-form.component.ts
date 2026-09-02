@@ -62,7 +62,8 @@ export class LoginFormComponent {
    */
   usuariosValidos = [
     { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', icono: 'shield-checkmark-outline' },
-    { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', icono: 'shield-checkmark-outline' },
+    // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', icono: 'shield-checkmark-outline' },
+    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', icono: 'shield-checkmark-outline' },
     { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', icono: 'people-outline' },
     { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', icono: 'restaurant-outline' },
     { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', icono: 'fast-food-outline' },
