@@ -5,6 +5,8 @@
     width: 100%;
     flex-wrap: wrap;
     align-items: center;
+    background-color: transparent;
+    margin: 0.5rem;
 }
 
 .slot-container{
@@ -19,8 +21,8 @@
 .image-slot {
     position: relative;
 
-    width: 100px;
-    height: 100px;
+    width: 250px;
+    height: 250px;
 
     border: 2px dashed var(--ion-color-medium);
     border-radius: 10px;

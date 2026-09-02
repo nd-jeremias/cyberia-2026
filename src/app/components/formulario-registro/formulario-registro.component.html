@@ -1,10 +1,9 @@
 <div class="pantalla-registro">
     <div class="cabecera">
         <div class="isotipo-icono">
-            <ion-icon name="restaurant-outline"></ion-icon>
+            <img src="../../../assets/logo.png" />
         </div>
         <h1>{{ esDueno() ? "Registrar Colaborador" : "Crear Cuenta" }}</h1>
-        <p>Completá los datos para el sistema gastronómico</p>
     </div>
 
     <div class="seccion-form">
@@ -119,7 +118,7 @@
             </div>
             }
 
-            <ion-item>
+            <div class="img-preview">
                 <app-subida-imagenes
                     [label]="'Foto de perfil'"
                     [maxImages]="1"
@@ -131,7 +130,7 @@
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
                 <span>Debe cargar 3 imagenes del producto</span>
                 }
-            </ion-item>
+            </div>
 
             <!-- Correo Electrónico -->
             <div class="grupo-input">
@@ -197,23 +196,21 @@
                 <span class="mensaje-error">Las contraseñas no coinciden.</span>
                 }
             </div>
+            <div class="enlaces-secundarios">
+                <!-- Botón de acción dinámico -->
+                <ion-button expand="full" fill="outline" type="submit" class="btn-principal">{{
+                    esDueno() ? "Registrar Empleado" : "Registrarse"
+                }}</ion-button>
 
-            <!-- Botón de acción dinámico -->
-            <ion-button
-                [disabled]="formulario.invalid"
-                expand="full"
-                fill="outline"
-                type="submit"
-                class="boton-primario"
-                >{{ esDueno() ? "Registrar Empleado" : "Registrarse" }}</ion-button
-            >
+                <!-- Redirección al Login -->
+                @if (!esDueno()) {
+                <div class="divisor">
+                    <span class="estaRegistrado"> ¿Ya tenés una cuenta? </span>
+                </div>
+                <button routerLink="/ingresar" class="btn-secundario">Ingresar</button>
+
+                }
+            </div>
         </form>
     </div>
-
-    <!-- Redirección al Login -->
-    @if (!esDueno()) {
-    <div class="enlaces-secundarios">
-        <p>¿Ya tenés una cuenta? <a routerLink="/ingresar">Ingresar</a></p>
-    </div>
-    }
 </div>
