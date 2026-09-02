@@ -1,13 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonBackButton,
-} from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
@@ -18,7 +11,7 @@ import { EmailService } from '../../services/email.service';
     selector: 'app-registrarse',
     templateUrl: './registrarse.page.html',
     styleUrls: ['./registrarse.page.scss'],
-    imports: [IonHeader, IonToolbar, IonTitle, IonButtons, IonBackButton, IonContent, FormularioRegistroComponent],
+    imports: [IonContent, FormularioRegistroComponent],
 })
 export class RegistrarsePage {
     private router = inject(Router);
@@ -38,7 +31,7 @@ export class RegistrarsePage {
 
             // 3. Disparar el aviso automático de registro pendiente
             if (correo && nombres) {
-              await this.emailService.enviarAvisoRegistroPendiente(correo, nombres);
+                await this.emailService.enviarAvisoRegistroPendiente(correo, nombres);
             }
 
             this.spinner.hide();
@@ -51,4 +44,3 @@ export class RegistrarsePage {
         }
     }
 }
-
