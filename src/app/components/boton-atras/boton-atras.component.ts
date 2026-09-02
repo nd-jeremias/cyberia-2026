@@ -1,20 +1,18 @@
 import { Component, input, OnInit } from '@angular/core';
-import { IonBackButton, IonButtons, IonIcon } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { triangleSharp } from 'ionicons/icons';
+import { IonBackButton, IonButtons } from '@ionic/angular';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { remixArrowGoBackFill } from '@ng-icons/remixicon';
 
 @Component({
     selector: 'app-boton-atras',
     templateUrl: './boton-atras.component.html',
     styleUrls: ['./boton-atras.component.scss'],
-    imports: [IonButtons, IonBackButton, IonIcon],
+    providers: [provideIcons({ remixArrowGoBackFill })],
+    imports: [IonButtons, IonBackButton, NgIcon],
 })
 export class BotonAtrasComponent implements OnInit {
-    constructor() {
-        addIcons({ triangleSharp });
-    }
+    constructor() {}
 
     ngOnInit() {}
-    rutaPorDefecto = input<string>('/inicio'); 
-
+    rutaPorDefecto = input<string>('/inicio');
 }

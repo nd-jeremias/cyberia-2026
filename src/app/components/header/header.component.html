@@ -1,16 +1,21 @@
-<ion-header class="container" [translucent]="true">
-    <ion-toolbar>
-        @if(mostrarBotonVolver()){
-        <app-boton-atras [rutaPorDefecto]="defaultHref()"> </app-boton-atras>
-        }
-        <ion-title>Perfil: {{ perfil() }}</ion-title>
-        <ion-buttons slot="end">
-            <ion-button
-                (click)="cerrarSesion()"
-                aria-label="Cerrar sesión"
-                style="--background: red; --color: var(--ion-color-danger)"
-            >
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
+<header class="app-header-container">
+    <div class="header-content">
+        <!-- Contenedor Izquierdo: Botón Volver -->
+        <div class="header-left">
+            @if(mostrarBotonVolver()){
+            <app-boton-atras [rutaPorDefecto]="defaultHref()"></app-boton-atras>
+            }
+        </div>
+
+        <!-- Contenedor Central: Título -->
+        <!-- <h1 class="header-title">Perfil: {{ perfil() }}</h1> -->
+        <h1 class="header-title">{{ tituloHeader() }}</h1>
+        
+        <!-- Contenedor Derecho: Botón Cerrar Sesión -->
+        <div class="header-right">
+            <button class="logout-html-btn" (click)="cerrarSesion()" aria-label="Cerrar sesión">
+                <ng-icon class="logoutIcon" name="remixLogoutCircleLine" />
+            </button>
+        </div>
+    </div>
+</header>

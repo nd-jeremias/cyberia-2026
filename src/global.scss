@@ -39,13 +39,14 @@
 @import "@ionic/angular/css/palettes/dark.system.css";
 
 /* Estilos de layout globales */
+
 html,
 body {
+    --ion-background-color: var(--bg-sky);
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    --ion-background-color: var(--bg-sky); 
 }
 
 // ion-card {
