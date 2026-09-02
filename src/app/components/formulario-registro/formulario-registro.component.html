@@ -3,7 +3,7 @@
         <div class="isotipo-icono">
             <img src="../../../assets/logo.png" />
         </div>
-        <h1>{{ esDueno() ? "Registrar Colaborador" : "Crear Cuenta" }}</h1>
+        <h1>{{ esDueno() ? "Registrar empleado" : "Crear Cuenta" }}</h1>
     </div>
 
     <div class="seccion-form">
@@ -76,23 +76,50 @@
             @if (esDueno()) {
             <div class="grupo-input">
                 <label class="input-label">CUIL</label>
-                <div class="caja-input">
-                    <ion-icon name="briefcase-outline" class="icono-campo"></ion-icon>
-                    <ion-input
-                        formControlName="cuil"
-                        type="text"
-                        inputmode="numeric"
-                        label="CUIL"
-                        labelPlacement="floating"
-                        placeholder="20123456783"
-                    ></ion-input>
+
+                <!-- Contenedor alineado horizontalmente -->
+                <div style="display: flex; gap: 8px; align-items: center">
+                    <!-- Prefijo (Escribe directo a la signal local) -->
+                    <div class="caja-input" style="flex: 1">
+                        <ion-input
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="2"
+                            placeholder="20"
+                            [value]="cuilPrefijo()"
+                            (ionInput)="cuilPrefijo.set($event.target.value?.toString() ?? '')"
+                        ></ion-input>
+                    </div>
+
+                    <span>-</span>
+
+                    <!-- Central (Muestra el computed que se alimenta del DNI - Deshabilitado) -->
+                    <div class="caja-input" style="flex:3; opacity: 0.8">
+                        <ion-icon name="briefcase-outline" class="icono-campo"></ion-icon>
+                        <ion-input type="text" [disabled]="true" [value]="cuilCentral()" placeholder="DNI"></ion-input>
+                    </div>
+
+                    <span>-</span>
+
+                    <!-- Sufijo (Escribe directo a la signal local) -->
+                    <div class="caja-input" style="flex: 1">
+                        <ion-input
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="1"
+                            placeholder="3"
+                            [value]="cuilSufijo()"
+                            (ionInput)="cuilSufijo.set($event.target.value?.toString() ?? '')"
+                        ></ion-input>
+                    </div>
                 </div>
-                @let cuilControl = formulario.get("cuil"); @if (cuilControl?.touched) { @if
-                (cuilControl?.errors?.["required"]) {
-                <span class="mensaje-error">Debe ingresar el CUIL</span>
-                } @if (cuilControl?.errors?.["pattern"]) {
-                <span class="mensaje-error">El CUIL debe tener entre 10 y 11 dígitos</span>
-                } }
+
+                <!-- Validaciones unificadas del grupo CUIL -->
+                @let prefijoControl = formulario.get("cuilPrefijo"); @let sufijoControl = formulario.get("cuilSufijo");
+                @if ((prefijoControl?.touched || sufijoControl?.touched) && (prefijoControl?.errors?.["required"] ||
+                sufijoControl?.errors?.["required"])) {
+                <span class="mensaje-error">Debe completar los campos del CUIL</span>
+                }
             </div>
 
             <!-- Tipo de Empleado (Solo si es Dueño) -->
