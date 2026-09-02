@@ -1,5 +1,46 @@
-.botonContainer {
-    display: flex;
-    justify-content: center;
+/* Configuración estructural del Modal */
+ion-modal.modal-personalizado {
+    --width: 85%;
+    --max-width: 400px;
+    --height: fit-content;
+    --border-radius: 16px;
+    --backdrop-opacity: 0.6;
+    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+/* Header más alto */
+ion-modal.modal-personalizado ion-header ion-toolbar {
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    --background: var(--bg-dark); /* Ajusta a tu paleta de color si es necesario */
+}
+
+/* Contenido con Padding correcto */
+.contenido {
+    /* Quitamos el min-height excesivo para que el fit-content del modal funcione bien */
+    min-height: 300px;
+    --padding-start: 20px;
+    --padding-end: 20px;
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+}
+
+/* Footer y Botón Centrado */
+ion-modal.modal-personalizado ion-footer {
+    background: var(--bg-light);
+    padding-top: 12px;
+    padding-bottom: 16px;
+}
+
+.botonContainer {
+    display: flex;
+    justify-content: center; /* Centra el botón horizontalmente */
+    width: 100%;
+}
+
+.botonCerrar {
+    --border-radius: 8px;
+    --padding-start: 24px;
+    --padding-end: 24px;
+    font-weight: 600;
+}

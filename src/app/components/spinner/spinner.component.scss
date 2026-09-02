@@ -5,13 +5,10 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    
-    // Capa visual superior (por encima de modales e inputs)
-    z-index: 9999; 
-    
+    z-index: 9999; /* Se asegura de tapar todo, incluso headers y tabs */
     // Fondo oscuro semi-transparente
-    background-color: rgba(0, 0, 0, 0.5); 
-    
+    background-color: rgba(0, 0, 0, 0.5);
+
     // Centrado absoluto del contenido
     display: flex;
     justify-content: center;
@@ -27,7 +24,7 @@
 
 ion-spinner {
     // Puedes agrandar el spinner cambiando su escala
-    transform: scale(1.5); 
+    transform: scale(1.5);
 }
 
 .spinner-text {
@@ -35,4 +32,5 @@ ion-spinner {
     font-size: 1rem;
     font-weight: 500;
     margin: 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Mejora la legibilidad */
 }

@@ -25,10 +25,10 @@
           </ion-input>
         </div>
         @if (hayError('email', 'required')) {
-          <small class="mensaje-error">Ingrese su correo electrónico.</small>
+          <span class="mensaje-error">Ingrese su correo electrónico.</span>
         }
         @if (hayError('email', 'email')) {
-          <small class="mensaje-error">El correo electrónico no es válido.</small>
+          <span class="mensaje-error">El correo electrónico no es válido.</span>
         }
       </div>
 
@@ -45,10 +45,10 @@
           </ion-input>
         </div>
         @if (hayError('password', 'required')) {
-          <small class="mensaje-error">Ingrese su contraseña.</small>
+          <span class="mensaje-error">Ingrese su contraseña.</span>
         }
         @if (hayError('password', 'minlength')) {
-          <small class="mensaje-error">La contraseña debe tener al menos 8 caracteres.</small>
+          <span class="mensaje-error">La contraseña debe tener al menos 8 caracteres.</span>
         }
       </div>
 
