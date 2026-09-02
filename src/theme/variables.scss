@@ -2,20 +2,20 @@
     --bg-dark: #000a21;
     --bg-darkblue: #2d394d;
     --bg-blue-petrol: #3d5a80;
-    --bg-blue: #44A6EC;
+    --bg-blue: #44a6ec;
     --bg-petrol: #0c5678;
-    --bg-sky: #BAD8FD;
-    --bg-lightblue: #E6F1FE;
-    
-    --color-darkred: #BE1321;
-    --color-red: #EC4452;
+    --bg-sky: #bad8fd;
+    --bg-lightblue: #e6f1fe;
+
+    --color-darkred: #be1321;
+    --color-red: #ec4452;
     --color-orange: #ee6c4d;
-    
+
     --text-dark: #1e1e1e;
-    --text-light: #E6F1FE;
+    --text-light: #e6f1fe;
     --text-secondary: #8aa0b8;
     --text-placeholder: #6b84a0;
-    
+
     // --border-field: rgba(255, 255, 255, 0.1);
     // --border-card: rgba(255, 255, 255, 0.08);
     // --divider: rgba(255, 255, 255, 0.12);
@@ -33,13 +33,12 @@
     --icon-cocinero: #f0997b;
     --icon-cliente: #ed93b1;
     /* Fondo general: Azul profundo medio (sin blanco ni negro) */
-    
-    
+
     /* Éxito y peligro */
-    --ion-color-success: #44EC8A;
-    --ion-color-danger: #EC4451;
-    --ion-color-info: #44A6EC;
-    --ion-color-warning: #ECDE44;
+    --ion-color-success: #44ec8a;
+    --ion-color-danger: #ec4451;
+    --ion-color-info: #44a6ec;
+    --ion-color-warning: #ecde44;
 
     // /* Colores de Perfiles Rápidos */
     // --color-duenio: #d97706; /* Ámbar */
@@ -48,6 +47,8 @@
     // --color-cocinero: #ea580c; /* Naranja terracota */
     // --color-metre: #7c3aed; /* Violeta */
     // --color-cliente: #16a34a; /* Verde esmeralda */
+    --ion-background-color: #bad8fd; /* Ionic pinta el fondo de la app con esto */
+    --ion-text-color: var(--text-dark); /* Ionic pinta el texto general con esto */
 }
 
 /* Forzar que no aplique temas claros u oscuros del sistema operativo */
