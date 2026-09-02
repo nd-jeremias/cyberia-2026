@@ -1,72 +1,60 @@
 :root {
-  --bg-darkblue:#293241;
-  --bg-blue:#3d5a80;
-  --bg-cyan:#98c1d9;
-  --bg-lightblue:#e0fbfc;
-  --bg-orange:rgb(236,68,81);
-  --bg-red:#ee6c4d;
-  --bg-black:#1e1e1e;
-  --bg-splash:#000a21;
+    --bg-dark: #000a21;
+    --bg-darkblue: #2d394d;
+    --bg-blue-petrol: #3d5a80;
+    --bg-blue: #44A6EC;
+    --bg-petrol: #0c5678;
+    --bg-sky: #BAD8FD;
+    --bg-lightblue: #E6F1FE;
+    
+    --color-darkred: #BE1321;
+    --color-red: #EC4452;
+    --color-orange: #ee6c4d;
+    
+    --text-dark: #1e1e1e;
+    --text-light: #E6F1FE;
+    --text-secondary: #8aa0b8;
+    --text-placeholder: #6b84a0;
+    
+    // --border-field: rgba(255, 255, 255, 0.1);
+    // --border-card: rgba(255, 255, 255, 0.08);
+    // --divider: rgba(255, 255, 255, 0.12);
+    // --accent-primary: #2d8cf0;
+    // --accent-on-primary: #042c53;
+    // --accent-link: #6fb0f5;
 
-  --bg-app: #0B1A2E;
-  --surface-field: #0E1D33;
-  --border-field: rgba(255,255,255,0.10);
-  --border-card: rgba(255,255,255,0.08);
-  --divider: rgba(255,255,255,0.12);
+    --badge-bg: rgba(29, 158, 117, 0.18);
+    --badge-text: #9fe1cb;
 
-  --text-primary: #E8EEF6;
-  --text-secondary: #8AA0B8;
-  --text-placeholder: #6B84A0;
+    --icon-dueno: #ef9f27;
+    --icon-supervisor: #7f77dd;
+    --icon-maitre: #85b7eb;
+    --icon-mozo: #5dcaa5;
+    --icon-cocinero: #f0997b;
+    --icon-cliente: #ed93b1;
+    /* Fondo general: Azul profundo medio (sin blanco ni negro) */
+    
+    
+    /* Éxito y peligro */
+    --ion-color-success: #44EC8A;
+    --ion-color-danger: #EC4451;
+    --ion-color-info: #44A6EC;
+    --ion-color-warning: #ECDE44;
 
-  --accent-primary: #2D8CF0;
-  --accent-on-primary: #042C53;
-  --accent-link: #6FB0F5;
-
-  --badge-bg: rgba(29,158,117,0.18);
-  --badge-text: #9FE1CB;
-
-  --icon-dueno: #EF9F27;
-  --icon-supervisor: #7F77DD;
-  --icon-maitre: #85B7EB;
-  --icon-mozo: #5DCAA5;
-  --icon-cocinero: #F0997B;
-  --icon-cliente: #ED93B1;
-  /* Fondo general: Azul profundo medio (sin blanco ni negro) */
-  --ion-background-color: #1a3a60;
-  --ion-text-color: #ffffff;
-
-  /* Contenedores y tarjetas: Tono cobalto intermedio */
-  --ion-card-background: #254d7d;
-  --ion-item-background: #1e426d;
-
-  /* Botones de acción principal */
-  --ion-color-primary: #0284c7;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-shade: #0369a1;
-  --ion-color-primary-tint: #38bdf8;
-
-/* Acciones secundarias */
-  --ion-color-secondary: #334155;
-  --ion-color-secondary-contrast: #ffffff;
-
-  /* Éxito y peligro */
-  --ion-color-success: #16a34a;
-  --ion-color-danger: #dc2626;
-
-  /* Colores de Perfiles Rápidos */
-  --color-duenio: #d97706;        /* Ámbar */
-  --color-supervisor: #0d9488;    /* Verde azulado */
-  --color-mozo: #e11d48;          /* Carmesí */
-  --color-cocinero: #ea580c;      /* Naranja terracota */
-  --color-metre: #7c3aed;         /* Violeta */
-  --color-cliente: #16a34a;       /* Verde esmeralda */
+    // /* Colores de Perfiles Rápidos */
+    // --color-duenio: #d97706; /* Ámbar */
+    // --color-supervisor: #0d9488; /* Verde azulado */
+    // --color-mozo: #e11d48; /* Carmesí */
+    // --color-cocinero: #ea580c; /* Naranja terracota */
+    // --color-metre: #7c3aed; /* Violeta */
+    // --color-cliente: #16a34a; /* Verde esmeralda */
 }
 
 /* Forzar que no aplique temas claros u oscuros del sistema operativo */
-@media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
-  :root {
-    --ion-background-color: #1a3a60 !important;
-    --ion-text-color: #ffffff !important;
-    --ion-card-background: #254d7d !important;
-  }
-}
+// @media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
+//     :root {
+//         --ion-background-color: #1a3a60 !important;
+//         --ion-text-color: #ffffff !important;
+//         --ion-card-background: #254d7d !important;
+//     }
+// }

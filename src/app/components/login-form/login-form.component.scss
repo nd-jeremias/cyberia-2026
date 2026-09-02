@@ -7,8 +7,7 @@
     padding: 0.75rem;
     box-sizing: border-box;
     flex-direction: column;
-    background-color: var(--bg-splash);
-    // background-color: var(--bg-darkblue);
+    background-color: var(--bg-dark);
 }
 
 .pantalla-login {
@@ -18,15 +17,9 @@
     flex-direction: column;
     width: 100%;
     max-width: 32rem;
-    // background-color: var(--ion-card-background, #254d7d);
-    // background-color: var(--bg-blue);
-    // border: 0.093rem solid var(--bg-cyan);
-    // border: 0.093rem solid #3b6b9e;
     border-radius: 1rem;
-    // box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.35);
     box-sizing: border-box;
     gap: 2rem;
-    // flex-grow: 1;
 }
 
 /* 1. Cabecera con Isotipo */
@@ -43,15 +36,13 @@
     h1 {
         font-size: 1.25rem;
         font-weight: 800;
-        color: var(--bg-lightblue);
-        // color: #ffffff;
+        color: var(--text-light);
         margin: 0;
     }
 
     p {
         font-size: 0.88rem;
-        // color: #cbd5e1;
-        color: var(--bg-cyan);
+        color: var(--text-light);
         margin: 0.125rem 0 0 0;
     }
 }
@@ -82,24 +73,20 @@
     align-items: center;
     background-color: var(--bg-darkblue);
     border: 0.093rem solid var(--bg-cyan);
-    // background-color: #1a3a60;
-    // border: 0.093rem solid #4a77ab;
     border-radius: 0.5rem;
     padding: 0 0.625rem;
     min-height: 3rem;
+    color: var(--text-placeholder);
 
     .icono-campo {
         font-size: 1.25rem;
         color: var(--bg-lightblue);
-        // color: #94a3b8;
         margin-right: 0.5rem;
     }
 
     ion-input {
         --color: var(--bg-lightblue);
-        --placeholder-color: var(--bg-cyan);
-        // --color: #ffffff;
-        // --placeholder-color: #94a3b8;
+        --placeholder-color: var(--text-placeholder);
         --padding-start: 0;
         font-size: 0.95rem;
         font-weight: 600;
@@ -110,20 +97,17 @@
 .btn-secundario {
     width: 100%;
     min-height: 3rem;
-    border: 0.093rem solid var(--bg-cyan);
-    // border: 0.093rem solid #38bdf8;
+    border: 0.093rem solid var(--bg-sky);
     border-radius: 0.5rem;
     font-weight: 800;
     font-size: 1.05rem;
     cursor: pointer;
     margin-top: 0.25rem;
     color: var(--bg-lightblue);
-    // color: #ffffff;
 }
 
 .btn-principal {
-    background-color: var(--bg-orange);
-    // background-color: #0284c7;
+    background-color: var(--color-red);
 }
 
 .btn-secundario {
