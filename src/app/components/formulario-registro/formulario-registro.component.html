@@ -124,7 +124,8 @@
                     [label]="'Foto de perfil'"
                     [maxImages]="1"
                     (imagenesChange)="recibirImagenes($event)"
-                    [modo]="'galeria'"
+                    [modoCamara]="'camara'"
+                    [direccionCamara]="direccionCamara()"
                 >
                 </app-subida-imagenes>
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {

@@ -29,7 +29,8 @@ export class SubidaImagenesComponent {
 
     imagenesChange = output<File[]>();
     maxImages = input<number>(3);
-    modo = input<'camara' | 'galeria'>('galeria')
+    modoCamara = input<'camara' | 'galeria'>('galeria')
+    direccionCamara = input<'frontal' | 'trasera'>('frontal')
     label = input<string>("")
 
     imageSlots: ImageSlot[] = [{ file: null, previewUrl: null }]; // Array que maneja los slots de imágenes (empieza con uno vacío)
@@ -37,7 +38,7 @@ export class SubidaImagenesComponent {
     faSquarePlus = faSquarePlus;
     faSquareMinus = faSquareMinus;
 
-    async subirImagen(index: number, modo: 'camara' | 'galeria', direccion?: 'frontal' | 'trasera') {
+    async subirImagen(index: number, modoCamara: 'camara' | 'galeria', direccionCamara?: 'frontal' | 'trasera') {
         
         if (this.imageSlots.length > this.maxImages()) {
             this.modal.setOpen(
@@ -48,14 +49,14 @@ export class SubidaImagenesComponent {
         }
 
         if (!this.platform.is('hybrid')){
-            modo = 'galeria'
+            modoCamara = 'galeria'
         }
         
         try {
             let results = null;
             let item = null;
 
-            if (modo === 'galeria') {
+            if (modoCamara === 'galeria') {
                 results = await this.galeriaService.subirImagen(1);
 
                 if (results && results.length > 0) {
@@ -81,7 +82,7 @@ export class SubidaImagenesComponent {
                     this.emitirImagenes();
                 }
             } else {
-                results = await this.camaraService.tomarFoto(direccion ?? 'frontal');
+                results = await this.camaraService.tomarFoto(direccionCamara ?? 'frontal');
                 if (results) {
                     // this.fotoPreview = results.previewUrl; // Usar en <img [src]="fotoPreview">
                     // Convertimos el Blob en un File con nombre y tipo explícito

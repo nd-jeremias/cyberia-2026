@@ -65,7 +65,8 @@ export class FormularioRegistroComponent {
     qrService = inject(QrService);
     modal = inject(ModalService);
     fileService = inject(FileService);
-
+    
+    direccionCamara = input<'frontal' | 'trasera'>('frontal')
     registroSubmit = output<FormData>();
 
     tiposEmpleado = ['dueño', 'supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
