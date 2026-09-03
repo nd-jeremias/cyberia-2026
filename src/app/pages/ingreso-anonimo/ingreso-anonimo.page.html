@@ -1,11 +1,13 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>Ingreso sin registrarse</ion-title>
-    </ion-toolbar>
+<ion-header class="estilo-header" [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Ingreso sin registrarse</ion-title>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content class="estilo-content" [fullscreen]="true">
+  <div class="contenedor-formulario">
     <app-formulario-usuario-anonimo
-        (anonimoSubmit)="onIngresoAnonimo($event)"
+      (anonimoSubmit)="onIngresoAnonimo($event)"
     ></app-formulario-usuario-anonimo>
+  </div>
 </ion-content>

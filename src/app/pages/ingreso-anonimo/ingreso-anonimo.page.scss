@@ -1,0 +1,99 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+}
+
+/* Header */
+.estilo-header {
+  ion-toolbar {
+    background-color: var(--bg-darkblue);
+    border-bottom: 0.093rem solid var(--bg-cyan);
+    border-radius: 0 0 0.75rem 0.75rem;
+    padding: 0.5rem;
+
+    ion-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--bg-lightblue);
+      text-align: center;
+    }
+  }
+}
+
+/* Contenido principal */
+.estilo-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
+
+  .contenedor-formulario {
+    width: 100%;
+    max-width: 32rem;
+    background-color: var(--bg-darkblue);
+    border: 0.093rem solid var(--bg-cyan);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+}
+
+/* Inputs */
+.estilo-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  ion-input {
+    --color: var(--bg-lightblue);
+    --placeholder-color: var(--text-placeholder);
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: 0.093rem solid var(--bg-cyan);
+    border-radius: 0.5rem;
+    padding: 0.625rem;
+    background-color: var(--bg-darkblue);
+  }
+}
+
+/* Botones */
+.btn-principal {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 0.5rem;
+  font-weight: 800;
+  font-size: 1.05rem;
+  background-color: var(--color-red);
+  color: var(--bg-lightblue);
+  border: 0.093rem solid var(--bg-sky);
+  cursor: pointer;
+}
+
+.btn-secundario {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 0.5rem;
+  font-weight: 800;
+  font-size: 1.05rem;
+  background-color: transparent;
+  color: var(--bg-lightblue);
+  border: 0.093rem solid var(--bg-sky);
+  cursor: pointer;
+}
+
+/* Mensajes de error */
+.mensaje-error {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ion-color-danger, #dc2626);
+}
