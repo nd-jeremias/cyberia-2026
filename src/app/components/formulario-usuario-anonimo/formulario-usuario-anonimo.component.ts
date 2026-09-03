@@ -19,6 +19,8 @@ import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { FotoInterface } from '../../interfaces/foto.interface';
 import { CameraService } from '../../services/camera.service';
 import { ModalService } from '../../services/modal.service';
+import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
+import { FileService } from '../../services/file.service';
 
 /**
  * Alta de cliente anónimo (punto 9 del enunciado).
@@ -41,20 +43,24 @@ import { ModalService } from '../../services/modal.service';
         IonIcon,
         IonButton,
         ReactiveFormsModule,
+        SubidaImagenesComponent
     ],
 })
 export class FormularioUsuarioAnonimoComponent {
     private camara = inject(CameraService);
     private modal = inject(ModalService);
-
+    private fileService = inject(FileService);
     anonimoSubmit = output<AnonimoAltaInterface>();
 
-    foto = signal<FotoInterface | null>(null);
+    foto: File[] = [];
 
     formulario = new FormGroup({
         nombres: new FormControl('', {
             validators: [Validators.required, Validators.minLength(2)],
         }),
+        foto: new FormControl<File[]>([], {
+             validators: [this.fileService.minLengthArray(1)]
+}),
     });
 
     /**
@@ -64,33 +70,45 @@ export class FormularioUsuarioAnonimoComponent {
      * informan al usuario: el servicio ya registra el detalle técnico.
      */
     async onTomarFoto() {
-        try {
-            const capturada = await this.camara.tomarFoto('frontal');
+        // try {
+        //     const capturada = await this.camara.tomarFoto('frontal');
 
-            if (capturada) this.foto.set(capturada);
-        } catch {
-            // El servicio ya registra el detalle; aca solo avisamos al usuario.
-            this.modal.setOpen(
-                'No se pudo tomar la foto',
-                'Revise los permisos de la cámara e intente nuevamente.'
-            );
-        }
+        //     if (capturada) this.foto.set(capturada);
+        // } catch {
+        //     // El servicio ya registra el detalle; aca solo avisamos al usuario.
+        //     this.modal.setOpen(
+        //         'No se pudo tomar la foto',
+        //         'Revise los permisos de la cámara e intente nuevamente.'
+        //     );
+        // }
     }
 
     onRegistrar() {
-        const fotoActual = this.foto();
+        // const fotoActual = this.foto();
 
-        if (this.formulario.invalid || !fotoActual) {
-            this.modal.setOpen(
-                'Datos incompletos',
-                'Ingrese su nombre y tome una foto para continuar.'
-            );
-            return;
-        }
+        // if (this.formulario.invalid || !fotoActual) {
+        //     this.modal.setOpen(
+        //         'Datos incompletos',
+        //         'Ingrese su nombre y tome una foto para continuar.'
+        //     );
+        //     return;
+        // }
 
-        this.anonimoSubmit.emit({
-            nombres: this.formulario.getRawValue().nombres ?? '',
-            foto: fotoActual.blob,
-        });
+        // this.anonimoSubmit.emit({
+        //     nombres: this.formulario.getRawValue().nombres ?? '',
+        //     foto: fotoActual.blob,
+        // });
+    }
+
+    
+    recibirImagenes(imagenes: File[]) {
+        
+        this.foto = imagenes;
+
+        // Almacena el array de Files directamente en el formulario
+        this.formulario.patchValue({ foto: imagenes });
+
+        // Opcional: Marca el control como "dirty" o "touched" para la validación
+        this.formulario.get('foto')?.markAsTouched();
     }
 }

@@ -1,21 +1,45 @@
-<ion-card>
-    <ion-card-header>
-        <ion-card-title>Ingreso como cliente anónimo</ion-card-title>
-    </ion-card-header>
+<div class="pantalla-anonimo">
+    <header class="cabecera">
+        <div class="isotipo-icono">
+            <img src="../../../assets/logo.png">
+        </div>
+        <h1>Ingreso como cliente anónimo</h1>
+    </header>
 
-    <ion-card-content>
+    <section class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onRegistrar()">
-            <ion-item>
-                <ion-input
-                    formControlName="nombres"
-                    type="text"
-                    label="Nombre"
-                    labelPlacement="floating"
-                    placeholder="Juan"
-                ></ion-input>
-            </ion-item>
+            <!-- Campo Nombres -->
+            <div class="grupo-input">
+                <label class="input-label">Nombres</label>
+                <div class="caja-input">
+                    <ion-input
+                        formControlName="nombres"
+                        type="text"
+                        label="Nombre"
+                        labelPlacement="floating"
+                        placeholder="Juan"
+                    ></ion-input>
+                </div>
+                @if (hayError('nombres', 'required')) {
+                    <span class="mensaje-error">Ingrese su nombre.</span>
+                }
+            </div>
 
-            <div class="bloque-foto">
+            <div class="img-preview">
+                <app-subida-imagenes
+                    [label]="'Foto de perfil'"
+                    [maxImages]="1"
+                    (imagenesChange)="recibirImagenes($event)"
+                    [modoCamara]="'camara'"
+                    [direccionCamara]="direccionCamara()"
+                >
+                </app-subida-imagenes>
+                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
+                <span>Debe cargar 3 imagenes del producto</span>
+                }
+            </div>
+
+            <!-- <div class="bloque-foto">
                 <div class="contenedor-foto">
                     @if (foto(); as fotoTomada) {
                         <img
@@ -31,11 +55,12 @@
                     }
                 </div>
 
-                <ion-button
+                <button
                     expand="block"
                     fill="outline"
                     type="button"
                     (click)="onTomarFoto()"
+                    class="btn-secundario"
                 >
                     <ion-icon slot="start" name="camera"></ion-icon>
                     @if (foto()) {
@@ -43,12 +68,12 @@
                     } @else {
                         Tomar foto
                     }
-                </ion-button>
-            </div>
+                </button>
+            </div> -->
 
-            <ion-button expand="block" type="submit"
-                >Ingresar al local</ion-button
+            <button expand="block" type="submit" class="btn-principal"
+                >Ingresar al local</button
             >
         </form>
-    </ion-card-content>
-</ion-card>
+    </section>
+</div>
