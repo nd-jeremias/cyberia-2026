@@ -33,9 +33,16 @@ export class AuthService {
             .single();
 
         if (error) {
-            // Causa típica: existe el usuario en auth.users (ej. creado a mano
-            // desde el Dashboard) pero no tiene fila en public.usuarios.
-            console.error('No se pudo cargar el perfil del usuario', userId, error);
+            // PGRST116 = la consulta no encontró la fila. Es esperable durante
+            // el alta (signUp abre sesión un instante antes de que exista la
+            // fila en `usuarios`), y también pasa con usuarios creados a mano
+            // desde el Dashboard, que quedan en auth.users y nada más.
+            if (error.code === 'PGRST116') {
+                console.warn('El usuario todavía no tiene fila en "usuarios"', userId);
+            } else {
+                console.error('No se pudo cargar el perfil del usuario', userId, error);
+            }
+
             this.perfil.set(null);
             return;
         }
@@ -140,15 +147,8 @@ export class AuthService {
             }
 
             if (data.user) {
-                const user: LocalUserInterface = {
-                    id: data.user.id,
-                    correo,
-                    nombres,
-                };
-                this.setLocalUser(user);
-
                 const { error } = await supabase.from('usuarios').insert({
-                    id: user.id,
+                    id: data.user.id,
                     nombres,
                     apellidos,
                     dni,
@@ -161,9 +161,13 @@ export class AuthService {
 
                 if (error) throw error;
             }
-            // return session <==
-        } catch (error) {
-            throw error;
+        } finally {
+            // signUp() deja la sesión abierta, pero un registro nuevo queda en
+            // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:
+            // no tiene que quedar logueado. Va en el finally para que tampoco
+            // quede una sesión a medias si el alta falla por el camino.
+            await supabase.auth.signOut();
+            localStorage.removeItem('user');
         }
     }
 
