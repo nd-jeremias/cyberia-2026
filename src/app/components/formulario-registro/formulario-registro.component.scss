@@ -1,192 +1,62 @@
 :host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  min-height: 100%;
-  padding: 24px 12px;
-  box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    flex-direction: column;
+    background-color: var(--bg-dark);
 }
 
 .pantalla-registro {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 460px;
-  background-color: var(--ion-card-background, #254d7d);
-  border: 1.5px solid #3b6b9e;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  box-sizing: border-box;
-  gap: 16px;
-}
-
-/* 1. Cabecera */
-.cabecera {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-
-  .isotipo-icono {
-    background-color: #1a3a60;
-    border: 1.5px solid #38bdf8;
-    color: #38bdf8;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    margin-bottom: 6px;
-  }
-
-  h1 {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: #ffffff;
-    margin: 0;
-  }
-
-  p {
-    font-size: 0.88rem;
-    color: #cbd5e1;
-    margin: 2px 0 0 0;
-  }
-}
-
-/* 2. Formulario */
-.seccion-form {
-  form {
+    padding: 2rem;
+    padding-top: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-  }
-}
-
-.grupo-input {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-
-  .input-label {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #ffffff;
-  }
-}
-
-.caja-input {
-  display: flex;
-  align-items: center;
-  background-color: #1a3a60;
-  border: 1.5px solid #4a77ab;
-  border-radius: 8px;
-  padding: 0 10px;
-  min-height: 48px;
-  flex: 1;
-  width: 100%;
-  box-sizing: border-box;
-
-  .icono-campo {
-    font-size: 1.25rem;
-    color: #94a3b8;
-    margin-right: 8px;
-    flex-shrink: 0;
-  }
-
-  ion-input, ion-select {
-    --color: #ffffff;
-    --placeholder-color: #94a3b8;
-    --padding-start: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #ffffff;
     width: 100%;
-  }
+    max-width: 32rem;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    gap: 2rem;
 }
 
-/* Disposición para Input + Botón de Escaneo */
-.caja-input-accion {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  width: 100%;
+img {
+    margin-top: 2.2rem;
 }
 
-.btn-escanear {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 48px;
-  background-color: var(--ion-color-primary);
-  color: var(--ion-color-primary-contrast);
-  border: 1.5px solid var(--ion-color-primary-contrast);
-  border-radius: 8px;
-  padding: 0 14px;
-  font-weight: 700;
-  font-size: 0.88rem;
-  cursor: pointer;
-  white-space: nowrap;
-  box-sizing: border-box;
+.divisor {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%; /* Asegura que el divisor use todo el ancho disponible */
+    margin: 16px 0; /* Espaciado opcional arriba y abajo del divisor */
 
-  ion-icon {
-    font-size: 1.5rem;
-  }
-
-  &:active {
-    background-color: #234775;
-  }
-}
-
-/* Botón Principal */
-.btn-principal {
-  width: 100%;
-  min-height: 48px;
-  background-color: #0284c7;
-  color: #ffffff;
-  border: 1.5px solid #38bdf8;
-  border-radius: 8px;
-  font-weight: 800;
-  font-size: 1.05rem;
-  cursor: pointer;
-  margin-top: 8px;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-/* Enlaces inferiores */
-.enlaces-secundarios {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 4px;
-
-  p {
-    font-size: 0.85rem;
-    color: #e2e8f0;
-    margin: 0;
-
-    a {
-      color: #38bdf8;
-      font-weight: 700;
-      text-decoration: none;
+    &::before,
+    &::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #4a77ab;
     }
-  }
+
+    span {
+        padding: 0 12px; /* Un poco más de espacio al lado de la letra "o" */
+    }
 }
 
-/* Errores */
-.mensaje-error {
-  display: block;
-  margin-top: 2px;
-  padding-left: 4px;
-  font-size: 0.8rem;
-  color: var(--ion-color-danger, #dc2626);
-  font-weight: 600;
+.img-preview {
+    --background: transparent;
+}
+
+
+.btn-escanear{
+    background: transparent;
+    color: var(--text-light);
+    font-size: 42px;
 }

@@ -35,7 +35,8 @@ export class SubidaImagenesComponent {
     urlsExistentesChange = output<string[]>();
 
     maxImages = input<number>(3);
-    modo = input<'camara' | 'galeria'>('galeria')
+    modoCamara = input<'camara' | 'galeria'>('galeria')
+    direccionCamara = input<'frontal' | 'trasera'>('frontal')
     label = input<string>("")
     // URLs ya guardadas (edición): se muestran como preview desde el arranque.
     imagenesIniciales = input<string[]>([]);
@@ -63,7 +64,25 @@ export class SubidaImagenesComponent {
         });
     }
 
-    async subirImagen(index: number, modo: 'camara' | 'galeria', direccion?: 'frontal' | 'trasera') {
+    constructor() {
+        // Las imágenes iniciales llegan asincrónicamente (hay que ir a buscar
+        // el producto), así que se siembran los slots cuando aparecen.
+        effect(() => {
+            const urls = this.imagenesIniciales();
+
+            if (urls.length === 0) return;
+
+            this.imageSlots = urls.map((url) => ({ file: null, previewUrl: url, urlExistente: url }));
+
+            if (this.imageSlots.length < this.maxImages()) {
+                this.imageSlots.push({ file: null, previewUrl: null });
+            }
+
+            this.emitirImagenes();
+        });
+    }
+
+    async subirImagen(index: number, modoCamara: 'camara' | 'galeria', direccionCamara?: 'frontal' | 'trasera') {
         
         if (this.imageSlots.length > this.maxImages()) {
             this.modal.setOpen(
@@ -74,14 +93,14 @@ export class SubidaImagenesComponent {
         }
 
         if (!this.platform.is('hybrid')){
-            modo = 'galeria'
+            modoCamara = 'galeria'
         }
         
         try {
             let results = null;
             let item = null;
 
-            if (modo === 'galeria') {
+            if (modoCamara === 'galeria') {
                 results = await this.galeriaService.subirImagen(1);
 
                 if (results && results.length > 0) {
@@ -107,7 +126,7 @@ export class SubidaImagenesComponent {
                     this.emitirImagenes();
                 }
             } else {
-                results = await this.camaraService.tomarFoto(direccion ?? 'frontal');
+                results = await this.camaraService.tomarFoto(direccionCamara ?? 'frontal');
                 if (results) {
                     // this.fotoPreview = results.previewUrl; // Usar en <img [src]="fotoPreview">
                     // Convertimos el Blob en un File con nombre y tipo explícito

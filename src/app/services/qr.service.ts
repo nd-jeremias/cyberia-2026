@@ -15,6 +15,7 @@ export class QrService {
 
     mostrarQr = signal<boolean>(false);
     variableQr = signal<string>('');
+    archivoQr = signal<File | null>(null);
     showedText = signal<string>('');
 
     parseDNI(data: string | undefined): DniInterface | null {
@@ -153,73 +154,84 @@ export class QrService {
         this.showedText.set(texto);
     }
 
-    // Método auxiliar para transformar el Canvas en Blob (se mantiene igual)
+    public async shareFile(file: File): Promise<void> {
+        try {
+            // 1. Convertimos el File a una cadena Base64
+            const base64Data = await this.fileToBase64(file);
+
+            // Usamos el nombre del archivo original o uno basado en el timestamp
+            const path = `${Date.now()}_${file.name}`;
+
+            // 2. Escribimos el archivo en el directorio de Cache de Capacitor
+            const res = await Filesystem.writeFile({
+                path,
+                data: base64Data,
+                directory: Directory.Cache,
+            });
+
+            // 3. Abrimos la hoja de compartir nativa del sistema operativo
+            await Share.share({
+                url: res.uri,
+            });
+
+            // 4. Limpiamos la caché eliminando el archivo temporal
+            await Filesystem.deleteFile({
+                path,
+                directory: Directory.Cache,
+            });
+        } catch (error) {
+            console.error('Error al compartir el archivo con Capacitor:', error);
+            throw error;
+        }
+    }
+
+    // Método auxiliar para convertir un File de JS a un string Base64 limpio para Capacitor
+    private fileToBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = reader.result as string;
+                // Filesystem.writeFile requiere solo el string base64 puro,
+                // por lo que removemos el prefijo "data:image/png;base64," si existe
+                const base64Pure = result.split(',')[1] || result;
+                resolve(base64Pure);
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 1. FUNCIÓN PURA: Solo captura el HTML y genera el archivo binario
+    public async generateFileFromElement(elementId: string, fileName: string = 'qr-code.png'): Promise<File> {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            throw new Error(`No se encontró el elemento con el ID: ${elementId}`);
+        }
+
+        const canvas = await html2canvas(element);
+        const blob = await this.canvasToBlob(canvas);
+
+        // Retornamos directamente un objeto File listo para formularios o APIs
+        return new File([blob], fileName, { type: 'image/png' });
+    }
+
+    // 2. ACCIÓN: Descargar un archivo (web)
+    public downloadFile(file: File): void {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url); // Liberar memoria
+    }
+
+    // Método auxiliar para transformar el Canvas en Blob
     private canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
         return new Promise((resolve, reject) => {
             canvas.toBlob((blob) => {
                 if (blob) resolve(blob);
                 else reject(new Error('No se pudo convertir el canvas a Blob'));
             }, 'image/png');
-        });
-    }
-
-    // Captura la pantalla, ejecuta las acciones nativas y RETORNA el Blob de IMG
-    captureScreen(id: string): Promise<Blob> {
-        return new Promise((resolve, reject) => {
-            const element = document.getElementById(id) as HTMLElement;
-
-            if (!element) {
-                reject(new Error(`No se encontró el elemento con el ID: ${id}`));
-                return;
-            }
-
-            html2canvas(element)
-                .then(async (canvas: HTMLCanvasElement) => {
-                    if (this.platform.is('capacitor')) {
-                        this.shareCanvaImg(canvas);
-                    } else {
-                        this.downloadCanvaImg(canvas);
-                    }
-
-                    try {
-                        const imageBlob = await this.canvasToBlob(canvas);
-                        resolve(imageBlob);
-                    } catch (error) {
-                        reject(error);
-                    }
-                })
-                .catch((err) => reject(err));
-        });
-    }
-
-    downloadCanvaImg(canva: HTMLCanvasElement) {
-        console.log('descargando');
-        const link = document.createElement('a');
-        link.href = canva.toDataURL();
-        link.download = Date.now() + '.png';
-        link.click();
-    }
-
-    async shareCanvaImg(canva: HTMLCanvasElement) {
-        let base64 = canva.toDataURL();
-        let path = Date.now() + '.png';
-
-        await Filesystem.writeFile({
-            path,
-            data: base64,
-            directory: Directory.Cache,
-        }).then(async (res) => {
-            let uri = res.uri;
-            await Share.share({
-                // title: 'See cool stuff',
-                // text: 'Really awesome thing you need to see right meow',
-                url: uri,
-                // dialogTitle: 'Share with buddies',
-            });
-            await Filesystem.deleteFile({
-                path,
-                directory: Directory.Cache,
-            });
         });
     }
 }

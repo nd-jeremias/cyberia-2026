@@ -1,0 +1,76 @@
+/* Contenedor principal del Header */
+.app-header-container {
+    background-color: var(--bg-dark); /* Tu color oscuro */
+    width: 100%;
+    height: 6rem;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Sombra suave para separar del contenido */
+    position: sticky; /* Se queda fijo arriba al hacer scroll si tu contenedor lo permite */
+    top: 0;
+    z-index: 100;
+}
+
+/* Fila interna distribuida con Flexbox */
+.header-content {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    justify-content: space-between;
+    min-height: 56px; /* Altura estándar de una barra de navegación */
+    padding: 10px 16px;
+}
+
+/* Secciones laterales para equilibrar el título en el centro */
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    min-width: 48px; /* Espacio reservado para los botones */
+}
+
+.header-right {
+    justify-content: flex-end;
+}
+
+/* Estilo del Título Central */
+.header-title {
+    color: var(--text-light);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0;
+    text-align: center;
+    flex: 1; /* Toma el espacio disponible del centro */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Corta el texto con '...' si el perfil es muy largo */
+}
+
+/* Botón de cerrar sesión redondo (HTML Puro) */
+.logout-html-btn {
+    background-color: var(--bg-blue-petrol); /* Tu azul intermedio */
+    color: var(--text-light); /* Icono claro */
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%; /* Círculo perfecto garantizado */
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Efectos interactivos */
+.logout-html-btn:hover {
+    background-color: var(--bg-petrol); /* Cambia a tu azul petróleo al pasar el mouse */
+}
+
+.logout-html-btn:active {
+    transform: scale(0.95); /* Efecto de pulsado */
+}
+
+/* Tamaño del icono interno */
+.logoutIcon {
+    font-size: 22px;
+}

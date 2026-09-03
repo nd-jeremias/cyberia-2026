@@ -270,12 +270,11 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Servicio de Lectura y Generación de QR + lectura DNI                                         |   26/08/2026    | 26/08/2026 | Completado | Verificar la funcionalidad del lector de DNI |
 | Servicio de registro                                                                         |   --/--/----    | 26/08/2026 | Completado |                                              |
 | Servicio para manejo de "Carrito"                                                            |   27/08/2026    | 29/08/2026 | Completado |                                              |
-| páginas dueño/supervisor + componentes necesarios                                            |   02/09/2026    | --/-/----  | Pendiente  |                                              |
-| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | --/--/---- | Pendiente  |                                              |
+| páginas dueño/supervisor + componentes necesarios                                            |   02/09/2026    | --/-/----  | En proceso |                                              |
 | Servicio de Chat Mozo-Cliente                                                                |   --/--/----    | --/--/---- | Pendiente  |                                              |
 | **Puntos del TP a realizar:** |
-| 1.- Agregar un empleado                                                                      |   02/09/2026    | --/--/---- | ---------  |                                              |
-| 4.- Agregar una nueva mesa                                                                   |   02/09/2026    | --/--/---- | ---------  |                                              |
+| 1.- Agregar un empleado                                                                      |   02/09/2026    | 02/09/2026 | Completado |                                              |
+| 4.- Agregar una nueva mesa                                                                   |   02/09/2026    | --/--/---- | En proceso |                                              |
 | 6.- Verificar ingreso del cliente registrado                                                 |   05/09/2026    | --/--/---- | ---------  |                                              |
 | 7.- El dueño o supervisor rechaza a un cliente.                                              |   05/09/2026    | --/--/---- | ---------  |                                              |
 | 8.- El dueño o supervisor acepta a un cliente registrado.                                    |   05/09/2026    | --/--/---- | ---------  |                                              |
@@ -294,6 +293,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                                                              |
 | páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
+| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | 02/09/2026 | Completado |                                              |
 | **Puntos del TP a realizar:** |
 | 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
 | 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |

@@ -5,6 +5,8 @@
     width: 100%;
     flex-wrap: wrap;
     align-items: center;
+    background-color: transparent;
+    margin: 0.5rem;
 }
 
 .slot-container{
@@ -19,12 +21,8 @@
 .image-slot {
     position: relative;
 
-    // Los slots se reparten el ancho disponible en vez de quedar fijos en
-    // 100px: en el celular las previews se ven bastante más grandes.
-    flex: 1 1 0;
-    min-width: 5.5rem;
-    max-width: 11rem;
-    aspect-ratio: 1 / 1;
+    width: 250px;
+    height: 250px;
 
     border: 2px dashed var(--ion-color-medium);
     border-radius: 10px;

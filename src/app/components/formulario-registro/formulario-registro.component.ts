@@ -1,5 +1,5 @@
 import { FileService } from './../../services/file.service';
-import { Component, effect, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import {
     AbstractControl,
     FormControl,
@@ -8,15 +8,7 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import {
-    IonItem,
-    IonInput,
-    IonSelect,
-    IonSelectOption,
-    IonInputPasswordToggle,
-    IonButton,
-    IonIcon,
-} from '@ionic/angular';
+import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton, IonIcon } from '@ionic/angular';
 import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
@@ -34,6 +26,7 @@ import {
     lockClosedOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     const password = group.get('password')?.value;
@@ -49,7 +42,6 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     imports: [
         IonIcon,
         IonButton,
-        IonItem,
         IonSelect,
         IonSelectOption,
         ReactiveFormsModule,
@@ -66,7 +58,10 @@ export class FormularioRegistroComponent {
     modal = inject(ModalService);
     fileService = inject(FileService);
 
+    direccionCamara = input<'frontal' | 'trasera'>('frontal');
     registroSubmit = output<FormData>();
+    cuilPrefijo = signal<string>('');
+    cuilSufijo = signal<string>('');
 
     tiposEmpleado = ['dueño', 'supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
 
@@ -97,6 +92,9 @@ export class FormularioRegistroComponent {
         },
         { validators: [passwordsIguales] }
     );
+
+    dniSignal = toSignal(this.formulario.controls.dni.valueChanges, { initialValue: '' });
+    cuilCentral = computed(() => this.dniSignal() || '');
 
     constructor() {
         // Registramos los íconos para que se puedan renderizar en el HTML
@@ -156,6 +154,11 @@ export class FormularioRegistroComponent {
     }
 
     validateForm(form: FormGroup): boolean {
+        if (this.esDueno()) {
+            const cuilCompleto = `${this.cuilPrefijo()}${this.cuilCentral()}${this.cuilSufijo()}`;
+            this.formulario.controls.cuil.setValue(cuilCompleto);
+        }
+
         form.markAllAsTouched();
 
         if (!form.valid) {

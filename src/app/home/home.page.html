@@ -1,21 +1,8 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Perfil: {{ perfil() ?? 'sin asignar' }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrarSesion()" aria-label="Cerrar sesión" style="--background: red; --color: var(--ion-color-danger);">
-        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header tituloHeader="Inicio">
+
+</app-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Perfil: {{ perfil() ?? 'sin asignar' }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
   <div class="grilla-botones">
     @for (boton of botonesDelRol(); track boton.ruta) {
       <ion-button expand="block" class="boton-home" [routerLink]="boton.ruta">
@@ -23,7 +10,7 @@
         {{ boton.texto }}
       </ion-button>
     } @empty {
-      @if (perfil() === null) {
+      @if (authService.perfil() === null) {
         <p class="sin-botones">
           No se pudo determinar tu perfil. Verificá que tu usuario tenga una fila
           cargada en la tabla "usuarios" (con el mismo id que en auth.users).
