@@ -52,11 +52,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/alta-producto/alta-producto.page').then((m) => m.AltaProductoPage),
         canActivate: [authGuard],
     },
-    {
-        path: 'alta-mesa',
-        loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
-        canActivate: [authGuard],
-    },
     // Puntos 6, 7 y 8: el dueño o supervisor aprueba o rechaza clientes.
     {
         path: 'clientes-pendientes',

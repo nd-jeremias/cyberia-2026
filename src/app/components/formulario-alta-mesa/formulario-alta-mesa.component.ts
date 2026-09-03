@@ -2,12 +2,7 @@ import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
     IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
     IonInput,
-    IonItem,
     IonSelect,
     IonSelectOption,
 } from '@ionic/angular';
@@ -18,6 +13,7 @@ import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.comp
 import { FileService } from '../../services/file.service';
 import { QrGenerateComponent } from '../qr-generate/qr-generate.component';
 import { QrService } from '../../services/qr.service';
+import { IonIcon } from "@ionic/angular";
 
 /**
  * Formulario de alta de mesa (punto 4 del enunciado).
@@ -30,13 +26,8 @@ import { QrService } from '../../services/qr.service';
     selector: 'app-formulario-alta-mesa',
     templateUrl: './formulario-alta-mesa.component.html',
     styleUrls: ['./formulario-alta-mesa.component.scss'],
-    imports: [
-        IonCard,
-        IonCardContent,
-        IonCardHeader,
-        IonCardTitle,
+    imports: [IonIcon,
         IonInput,
-        IonItem,
         IonSelect,
         IonSelectOption,
         IonButton,
