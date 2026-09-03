@@ -34,6 +34,12 @@ export interface ProductoAltaInterface {
     precio: number;
     tipo: TipoProducto;
     fotos: File[];
+    /**
+     * Sólo en edición: fotos ya subidas que el usuario decidió conservar. Se
+     * suman a las nuevas de `fotos` y entre las dos tienen que dar las tres
+     * que exige la tabla.
+     */
+    fotosUrlsExistentes?: string[];
 }
 
 /**

@@ -99,11 +99,12 @@ export class ProductosService {
         if (error) throw error;
     }
 
-    // Si no se seleccionaron fotos nuevas (fotos.length === 0) se mantienen
-    // las que ya tenía el producto; si se seleccionaron, se suben y reemplazan
-    // a todas (la tabla exige exactamente 3, no permite un reemplazo parcial).
-    async actualizar(id: string, datos: ProductoAltaInterface, fotosUrlsExistentes: string[]): Promise<void> {
-        const fotosUrls = datos.fotos.length > 0 ? await this.subirFotos(datos.fotos) : fotosUrlsExistentes;
+    // Las fotos que el usuario conservó vienen ya como URLs y las nuevas como
+    // archivos: se suben sólo estas últimas y se guardan todas juntas (la
+    // tabla exige exactamente tres).
+    async actualizar(id: string, datos: ProductoAltaInterface): Promise<void> {
+        const urlsNuevas = await this.subirFotos(datos.fotos);
+        const fotosUrls = [...(datos.fotosUrlsExistentes ?? []), ...urlsNuevas];
 
         const { error } = await supabase
             .from('productos')

@@ -50,11 +50,11 @@
                 ></ion-input>
             </ion-item>
 
-            <ion-item lines="none">
+            <ion-item lines="none" class="item-fotos">
                 <div class="fotos-contenedor">
                     <p class="fotos-etiqueta">
                         @if (modoEdicion()) {
-                            Fotos del producto (dejá vacío para mantener las actuales, o subí las 3 nuevas para reemplazarlas)
+                            Fotos del producto (tocá el − para quitar una y el + para reemplazarla; siempre tienen que ser 3)
                         } @else {
                             Fotos del producto (3 requeridas)
                         }
@@ -62,12 +62,16 @@
                     <app-subida-imagenes
                         [maxImages]="3"
                         modo="galeria"
+                        [imagenesIniciales]="fotosIniciales()"
                         (imagenesChange)="onFotosSeleccionadas($event)"
+                        (urlsExistentesChange)="onUrlsExistentes($event)"
                     ></app-subida-imagenes>
                 </div>
             </ion-item>
 
-            <ion-button expand="full" fill="outline" type="submit">{{ textoBoton() }}</ion-button>
+            <div class="acciones">
+                <ion-button expand="block" type="submit">{{ textoBoton() }}</ion-button>
+            </div>
         </form>
     </ion-card-content>
 </ion-card>

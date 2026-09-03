@@ -63,14 +63,32 @@ export class GestionProductosPage {
 
     productos = signal<Producto[]>([]);
 
+    // Último tipo que se llegó a pedir, para no repetir la consulta cuando el
+    // efecto y el ciclo de vida de la página se solapan en la primera entrada.
+    private tipoCargado: TipoProducto | null = null;
+
     constructor() {
+        // Cubre entrar directo por URL: el perfil se resuelve asincrónicamente,
+        // así que el tipo puede llegar después de crearse la página.
         effect(() => {
             const tipo = this.tipo();
-            if (tipo) this.cargarProductos(tipo);
+            if (tipo && tipo !== this.tipoCargado) this.cargarProductos(tipo);
         });
     }
 
+    // Ionic mantiene viva la página al navegar, así que al volver del alta o
+    // de la edición no se re-crea el componente: sin este hook la lista queda
+    // con los datos viejos hasta refrescar a mano.
+    //
+    // La primera entrada la resuelve el efecto de arriba (`tipoCargado` todavía
+    // en null), así que acá sólo se recarga al volver de otra pantalla.
+    ionViewWillEnter() {
+        const tipo = this.tipo();
+        if (tipo && this.tipoCargado) this.cargarProductos(tipo);
+    }
+
     private async cargarProductos(tipo: TipoProducto) {
+        this.tipoCargado = tipo;
         this.spinner.show();
 
         try {

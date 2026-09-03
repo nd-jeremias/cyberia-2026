@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { IonButton, Platform } from '@ionic/angular';
 import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FileService } from '../../services/file.service';
@@ -11,6 +11,9 @@ import { CameraService } from '../../services/camera.service';
 interface ImageSlot {
     file: File | null;
     previewUrl: string | null;
+    // Sólo lo tienen los slots que vienen de la base (edición). Si el usuario
+    // borra el slot, esa URL deja de emitirse y la foto se da de baja.
+    urlExistente?: string | null;
 }
 @Component({
     selector: 'app-subida-imagenes',
@@ -28,14 +31,37 @@ export class SubidaImagenesComponent {
     platform = inject(Platform);
 
     imagenesChange = output<File[]>();
+    // Las que ya estaban guardadas y siguen en pie después de editar.
+    urlsExistentesChange = output<string[]>();
+
     maxImages = input<number>(3);
     modo = input<'camara' | 'galeria'>('galeria')
     label = input<string>("")
+    // URLs ya guardadas (edición): se muestran como preview desde el arranque.
+    imagenesIniciales = input<string[]>([]);
 
     imageSlots: ImageSlot[] = [{ file: null, previewUrl: null }]; // Array que maneja los slots de imágenes (empieza con uno vacío)
 
     faSquarePlus = faSquarePlus;
     faSquareMinus = faSquareMinus;
+
+    constructor() {
+        // Las imágenes iniciales llegan asincrónicamente (hay que ir a buscar
+        // el producto), así que se siembran los slots cuando aparecen.
+        effect(() => {
+            const urls = this.imagenesIniciales();
+
+            if (urls.length === 0) return;
+
+            this.imageSlots = urls.map((url) => ({ file: null, previewUrl: url, urlExistente: url }));
+
+            if (this.imageSlots.length < this.maxImages()) {
+                this.imageSlots.push({ file: null, previewUrl: null });
+            }
+
+            this.emitirImagenes();
+        });
+    }
 
     async subirImagen(index: number, modo: 'camara' | 'galeria', direccion?: 'frontal' | 'trasera') {
         
@@ -132,21 +158,36 @@ export class SubidaImagenesComponent {
         const archivos = this.imageSlots.map((slot) => slot.file).filter((file): file is File => file !== null);
 
         this.imagenesChange.emit(archivos);
+
+        const urlsExistentes = this.imageSlots
+            .map((slot) => slot.urlExistente)
+            .filter((url): url is string => !!url);
+
+        this.urlsExistentesChange.emit(urlsExistentes);
     }
 
     removeImage(index: number) {
-        // Revocar la URL para liberar memoria del navegador
-        if (this.imageSlots[index].previewUrl) {
+        // Sólo las previews locales son object URLs; las que vienen de la base
+        // son URLs públicas y no hay nada que liberar.
+        if (this.imageSlots[index].previewUrl && !this.imageSlots[index].urlExistente) {
             URL.revokeObjectURL(this.imageSlots[index].previewUrl!);
         }
 
         // Eliminar el slot del array
         this.imageSlots.splice(index, 1);
 
-        // Asegurarse de que si eliminamos todo, quede al menos un botón para agregar
+        // Siempre tiene que quedar un slot vacío al final para poder reemplazar
+        // la foto recién borrada (con 3 fotos cargadas no había ninguno).
+        const haySlotLibre = this.imageSlots.some((slot) => !slot.previewUrl);
+
+        if (!haySlotLibre && this.imageSlots.length < this.maxImages()) {
+            this.imageSlots.push({ file: null, previewUrl: null });
+        }
+
         if (this.imageSlots.length === 0) {
             this.imageSlots.push({ file: null, previewUrl: null });
         }
+
         this.emitirImagenes();
     }
 }

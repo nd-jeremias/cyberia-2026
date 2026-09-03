@@ -1,14 +1,72 @@
+/**
+ * Formulario de alta/edición de producto.
+ *
+ * La tarjeta ocupa el alto disponible de la pantalla: en el celular no debe
+ * quedar espacio muerto abajo, y el botón de guardar queda apoyado al pie.
+ */
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+ion-card {
+    display: flex;
+    flex-direction: column;
+
+    // Pisa el margen/ancho global de ion-card para poder ocupar la pantalla.
+    width: auto;
+    max-width: 40rem;
+    margin: 0.75rem;
+    min-height: calc(100% - 1.5rem);
+}
+
+ion-card-content {
+    display: flex;
+    flex: 1;
+    padding-top: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    flex: 1;
+}
+
+.item-fotos {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+}
+
 .fotos-contenedor {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
     width: 100%;
-    padding: 8px 0;
+    padding: 0.5rem 0;
 }
 
 .fotos-etiqueta {
     margin: 0;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #cbd5e1;
+    line-height: 1.35;
+    color: var(--text-secondary);
+}
+
+/* Empuja el botón al pie de la tarjeta, ocupe lo que ocupe el formulario. */
+.acciones {
+    margin-top: auto;
+    padding-top: 0.75rem;
+}
+
+.acciones ion-button {
+    --border-radius: 0.5rem;
+    min-height: 3rem;
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
 }

@@ -13,14 +13,18 @@
     gap: 0.5rem;
     flex-wrap: wrap;
     justify-content: space-around;
-    
+    width: 100%;
 }
 
 .image-slot {
     position: relative;
 
-    width: 100px;
-    height: 100px;
+    // Los slots se reparten el ancho disponible en vez de quedar fijos en
+    // 100px: en el celular las previews se ven bastante más grandes.
+    flex: 1 1 0;
+    min-width: 5.5rem;
+    max-width: 11rem;
+    aspect-ratio: 1 / 1;
 
     border: 2px dashed var(--ion-color-medium);
     border-radius: 10px;

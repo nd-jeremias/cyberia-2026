@@ -1,6 +1,13 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import {
+    IonBackButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+} from '@ionic/angular';
 import { FormularioAltaProductoComponent } from '../../components/formulario-alta-producto/formulario-alta-producto.component';
 import {
     Producto,
@@ -26,6 +33,8 @@ import { ProductosService } from '../../services/productos.service';
         IonToolbar,
         IonTitle,
         IonContent,
+        IonButtons,
+        IonBackButton,
         FormularioAltaProductoComponent,
     ],
 })
@@ -45,6 +54,8 @@ export class AltaProductoPage {
     productoId = input<string | undefined>(undefined);
 
     productoExistente = signal<Producto | null>(null);
+
+    titulo = computed(() => (this.productoId() ? 'Editar producto' : 'Alta de producto'));
 
     constructor() {
         effect(() => {
@@ -74,7 +85,7 @@ export class AltaProductoPage {
             const id = this.productoId();
 
             if (id) {
-                await this.productosService.actualizar(id, datos, this.productoExistente()?.fotosUrls ?? []);
+                await this.productosService.actualizar(id, datos);
                 this.modal.setOpen('Producto actualizado', `"${datos.nombre}" se actualizó correctamente.`);
             } else {
                 await this.productosService.crear(datos);

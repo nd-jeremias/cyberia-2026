@@ -68,8 +68,12 @@ export class FormularioAltaProductoComponent {
     modoEdicion = computed(() => this.productoExistente() !== null);
     tituloFormulario = computed(() => (this.modoEdicion() ? 'Editar producto' : `Nuevo producto (${this.tipo()})`));
     textoBoton = computed(() => (this.modoEdicion() ? 'Guardar cambios' : 'Dar de alta'));
+    fotosIniciales = computed(() => this.productoExistente()?.fotosUrls ?? []);
 
+    // Fotos nuevas elegidas ahora y fotos ya guardadas que se conservan: entre
+    // las dos tienen que sumar las tres que exige la tabla.
     fotos: File[] = [];
+    fotosUrlsExistentes: string[] = [];
 
     formulario = new FormGroup({
         nombre: new FormControl('', {
@@ -104,15 +108,28 @@ export class FormularioAltaProductoComponent {
         this.fotos = fotos;
     }
 
-    private fotosValidas(): boolean {
-        if (this.fotos.length === CANTIDAD_FOTOS_REQUERIDA) return true;
+    onUrlsExistentes(urls: string[]) {
+        this.fotosUrlsExistentes = urls;
+    }
 
-        // En edicion, dejar las fotos vacías significa "mantener las actuales".
-        return this.modoEdicion() && this.fotos.length === 0;
+    private cantidadFotos(): number {
+        return this.fotos.length + this.fotosUrlsExistentes.length;
     }
 
     onAltaProducto() {
-        if (this.formulario.invalid || !this.fotosValidas()) return;
+        if (this.formulario.invalid) {
+            this.formulario.markAllAsTouched();
+            this.modal.setOpen('Datos incompletos', 'Revisá los campos marcados antes de guardar.');
+            return;
+        }
+
+        if (this.cantidadFotos() !== CANTIDAD_FOTOS_REQUERIDA) {
+            this.modal.setOpen(
+                'Faltan fotos',
+                `El producto necesita exactamente ${CANTIDAD_FOTOS_REQUERIDA} fotos y ahora tiene ${this.cantidadFotos()}.`
+            );
+            return;
+        }
 
         const valores = this.formulario.getRawValue();
 
@@ -123,6 +140,7 @@ export class FormularioAltaProductoComponent {
             precio: Number(valores.precio),
             tipo: this.tipo(),
             fotos: this.fotos,
+            fotosUrlsExistentes: this.fotosUrlsExistentes,
         });
     }
 }
