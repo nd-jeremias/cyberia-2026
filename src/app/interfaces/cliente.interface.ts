@@ -36,5 +36,5 @@ export interface ClientePendienteInterface {
  */
 export interface AnonimoAltaInterface {
     nombres: string;
-    foto: Blob;
+    foto: File;
 }

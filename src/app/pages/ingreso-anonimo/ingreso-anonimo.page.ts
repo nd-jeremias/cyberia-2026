@@ -17,9 +17,6 @@ import { SpinnerService } from '../../services/spinner.service';
     selector: 'app-ingreso-anonimo',
     templateUrl: './ingreso-anonimo.page.html',
     imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
         IonContent,
         FormularioUsuarioAnonimoComponent,
     ],

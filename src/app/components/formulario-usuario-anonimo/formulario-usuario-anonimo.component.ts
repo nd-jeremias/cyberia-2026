@@ -1,22 +1,9 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
-    FormControl,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
-} from '@angular/forms';
-import {
-    IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonIcon,
     IonInput,
-    IonItem,
 } from '@ionic/angular';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
-import { FotoInterface } from '../../interfaces/foto.interface';
 import { CameraService } from '../../services/camera.service';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
@@ -33,18 +20,7 @@ import { FileService } from '../../services/file.service';
     selector: 'app-formulario-usuario-anonimo',
     templateUrl: './formulario-usuario-anonimo.component.html',
     styleUrls: ['./formulario-usuario-anonimo.component.scss'],
-    imports: [
-        IonCard,
-        IonCardContent,
-        IonCardHeader,
-        IonCardTitle,
-        IonInput,
-        IonItem,
-        IonIcon,
-        IonButton,
-        ReactiveFormsModule,
-        SubidaImagenesComponent
-    ],
+    imports: [IonInput, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioUsuarioAnonimoComponent {
     private camara = inject(CameraService);
@@ -52,6 +28,7 @@ export class FormularioUsuarioAnonimoComponent {
     private fileService = inject(FileService);
     anonimoSubmit = output<AnonimoAltaInterface>();
 
+    direccionCamara = input<'frontal' | 'trasera'>('frontal');
     foto: File[] = [];
 
     formulario = new FormGroup({
@@ -59,8 +36,8 @@ export class FormularioUsuarioAnonimoComponent {
             validators: [Validators.required, Validators.minLength(2)],
         }),
         foto: new FormControl<File[]>([], {
-             validators: [this.fileService.minLengthArray(1)]
-}),
+            validators: [this.fileService.minLengthArray(1)],
+        }),
     });
 
     /**
@@ -72,7 +49,6 @@ export class FormularioUsuarioAnonimoComponent {
     async onTomarFoto() {
         // try {
         //     const capturada = await this.camara.tomarFoto('frontal');
-
         //     if (capturada) this.foto.set(capturada);
         // } catch {
         //     // El servicio ya registra el detalle; aca solo avisamos al usuario.
@@ -84,8 +60,9 @@ export class FormularioUsuarioAnonimoComponent {
     }
 
     onRegistrar() {
+        // ACA HAY QUE VALIDAR EL FORMULARIO ANTES DE ENVIARLO. FINALIZA CON EMIT()
+        // 
         // const fotoActual = this.foto();
-
         // if (this.formulario.invalid || !fotoActual) {
         //     this.modal.setOpen(
         //         'Datos incompletos',
@@ -93,16 +70,13 @@ export class FormularioUsuarioAnonimoComponent {
         //     );
         //     return;
         // }
-
         // this.anonimoSubmit.emit({
         //     nombres: this.formulario.getRawValue().nombres ?? '',
         //     foto: fotoActual.blob,
         // });
     }
 
-    
     recibirImagenes(imagenes: File[]) {
-        
         this.foto = imagenes;
 
         // Almacena el array de Files directamente en el formulario

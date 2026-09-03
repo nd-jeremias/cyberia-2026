@@ -7,7 +7,6 @@ import { ModalService } from '../../services/modal.service';
 import { GaleriaService } from '../../services/galeria.service';
 import { CameraService } from '../../services/camera.service';
 
-
 interface ImageSlot {
     file: File | null;
     previewUrl: string | null;
@@ -22,12 +21,10 @@ interface ImageSlot {
     imports: [IonButton, FontAwesomeModule],
 })
 export class SubidaImagenesComponent {
-
-
     archivosService = inject(FileService);
     modal = inject(ModalService);
-    galeriaService = inject(GaleriaService)
-    camaraService = inject(CameraService)
+    galeriaService = inject(GaleriaService);
+    camaraService = inject(CameraService);
     platform = inject(Platform);
 
     imagenesChange = output<File[]>();
@@ -35,9 +32,9 @@ export class SubidaImagenesComponent {
     urlsExistentesChange = output<string[]>();
 
     maxImages = input<number>(3);
-    modoCamara = input<'camara' | 'galeria'>('galeria')
-    direccionCamara = input<'frontal' | 'trasera'>('frontal')
-    label = input<string>("")
+    modoCamara = input<'camara' | 'galeria'>('galeria');
+    direccionCamara = input<'frontal' | 'trasera'>('frontal');
+    label = input<string>('');
     // URLs ya guardadas (edición): se muestran como preview desde el arranque.
     imagenesIniciales = input<string[]>([]);
 
@@ -64,26 +61,7 @@ export class SubidaImagenesComponent {
         });
     }
 
-    constructor() {
-        // Las imágenes iniciales llegan asincrónicamente (hay que ir a buscar
-        // el producto), así que se siembran los slots cuando aparecen.
-        effect(() => {
-            const urls = this.imagenesIniciales();
-
-            if (urls.length === 0) return;
-
-            this.imageSlots = urls.map((url) => ({ file: null, previewUrl: url, urlExistente: url }));
-
-            if (this.imageSlots.length < this.maxImages()) {
-                this.imageSlots.push({ file: null, previewUrl: null });
-            }
-
-            this.emitirImagenes();
-        });
-    }
-
     async subirImagen(index: number, modoCamara: 'camara' | 'galeria', direccionCamara?: 'frontal' | 'trasera') {
-        
         if (this.imageSlots.length > this.maxImages()) {
             this.modal.setOpen(
                 'Límite de imágenes alcanzado',
@@ -92,10 +70,10 @@ export class SubidaImagenesComponent {
             return;
         }
 
-        if (!this.platform.is('hybrid')){
-            modoCamara = 'galeria'
+        if (!this.platform.is('hybrid')) {
+            modoCamara = 'galeria';
         }
-        
+
         try {
             let results = null;
             let item = null;
@@ -178,9 +156,7 @@ export class SubidaImagenesComponent {
 
         this.imagenesChange.emit(archivos);
 
-        const urlsExistentes = this.imageSlots
-            .map((slot) => slot.urlExistente)
-            .filter((url): url is string => !!url);
+        const urlsExistentes = this.imageSlots.map((slot) => slot.urlExistente).filter((url): url is string => !!url);
 
         this.urlsExistentesChange.emit(urlsExistentes);
     }

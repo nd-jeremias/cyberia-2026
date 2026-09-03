@@ -3,7 +3,7 @@
         <div class="isotipo-icono">
             <img src="../../../assets/logo.png">
         </div>
-        <h1>Ingreso como cliente anónimo</h1>
+        <h1>Ingreso anónimo</h1>
     </header>
 
     <section class="seccion-form">
@@ -20,8 +20,8 @@
                         placeholder="Juan"
                     ></ion-input>
                 </div>
-                @if (hayError('nombres', 'required')) {
-                    <span class="mensaje-error">Ingrese su nombre.</span>
+                @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
+                <span class="mensaje-error">Debe ingresar su/s nombre/s</span>
                 }
             </div>
 
