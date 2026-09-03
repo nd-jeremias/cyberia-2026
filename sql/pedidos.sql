@@ -37,16 +37,15 @@ CREATE TABLE public.pedidos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     numero_pedido SERIAL NOT NULL, -- Genera un N° autoincremental fácil de leer para el cliente
     mesa_id UUID NOT NULL REFERENCES public.mesas(id) ON DELETE RESTRICT, -- Enlace relacional robusto
-    cliente_registrado_id UUID NULL REFERENCES public.usuarios(id) ON DELETE SET NULL,
-    cliente_anonimo_id UUID NULL REFERENCES public.clientes_anonimos(id) ON DELETE SET NULL,
+    -- Registrados y anónimos son filas de `usuarios`, así que el pedido apunta
+    -- a una sola columna. RESTRICT: no se borra un cliente con pedidos hechos,
+    -- porque la factura y el historial lo necesitan.
+    cliente_id UUID NOT NULL REFERENCES public.usuarios(id) ON DELETE RESTRICT,
     estado public.estado_general_pedido NOT NULL DEFAULT 'Pendiente de Confirmación',
     precio_total_neto NUMERIC(10, 2) NOT NULL DEFAULT 0.00, -- Sumatoria total acumulada (F12)
     descuento_juego NUMERIC(5, 2) NOT NULL DEFAULT 0.00,    -- % Descuento obtenido en juegos (F14/F15)
     propina_porcentaje NUMERIC(5, 2) NOT NULL DEFAULT 0.00, -- % Propina por QR (F21)
-    fecha TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
-    
-    -- Validación para asegurar que al menos un tipo de cliente esté asociado al pedido
-    CONSTRAINT chk_cliente_existente CHECK (cliente_registrado_id IS NOT NULL OR cliente_anonimo_id IS NOT NULL)
+    fecha TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
 -- TABLA 2: Detalles/Líneas del Pedido
@@ -86,7 +85,7 @@ BEGIN
     SELECT id INTO v_prod_fernet FROM public.productos WHERE nombre = 'Fernet con Coca XL' LIMIT 1;
 
     -- 3. Insertamos el pedido utilizando la variable v_mesa_id que ahora sí tiene datos
-    INSERT INTO public.pedidos (mesa_id, cliente_registrado_id, estado, precio_total_neto)
+    INSERT INTO public.pedidos (mesa_id, cliente_id, estado, precio_total_neto)
     VALUES (v_mesa_id, v_cliente_reg_id, 'Confirmado', 10800.00)
     RETURNING id INTO v_pedido_id;
 

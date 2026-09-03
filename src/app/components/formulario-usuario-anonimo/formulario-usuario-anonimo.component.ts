@@ -23,9 +23,9 @@ import { ModalService } from '../../services/modal.service';
 /**
  * Alta de cliente anónimo (punto 9 del enunciado).
  *
- * Pide sólo nombre y foto, que es exactamente lo que guarda la tabla
- * `clientes_anonimos`. Estos clientes no requieren aprobación, a diferencia de
- * los registrados del punto 5.
+ * Pide sólo nombre y foto, que es todo lo que necesita un invitado. Estos
+ * clientes no requieren aprobación, a diferencia de los registrados del
+ * punto 5, y entran con una sesión anónima de Supabase.
  */
 @Component({
     selector: 'app-formulario-usuario-anonimo',

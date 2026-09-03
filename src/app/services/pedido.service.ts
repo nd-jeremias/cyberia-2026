@@ -52,8 +52,7 @@ interface FilaDetalle {
 interface FilaPedido {
     id: string;
     mesa_id: string;
-    cliente_registrado_id: string | null;
-    cliente_anonimo_id: string | null;
+    cliente_id: string;
     estado: EstadoPedido;
     precio_total_neto: number;
     descuento_juego: number;
@@ -68,7 +67,7 @@ interface FilaPedido {
 // que espera. Incluye el número de mesa y el nombre de cada producto, que
 // viven en otras tablas.
 const SELECT_PEDIDO =
-    'id, mesa_id, cliente_registrado_id, cliente_anonimo_id, estado, ' +
+    'id, mesa_id, cliente_id, estado, ' +
     'precio_total_neto, descuento_juego, propina_porcentaje, fecha, ' +
     'mesas ( numero_mesa ), ' +
     'pedido_detalles ( id, pedido_id, producto_id, cantidad, precio_unitario, ' +
@@ -120,8 +119,7 @@ export class PedidoService {
             id: fila.id,
             mesaId: fila.mesa_id,
             numeroMesa: fila.mesas?.numero_mesa ?? 0,
-            clienteRegistradoId: fila.cliente_registrado_id,
-            clienteAnonimoId: fila.cliente_anonimo_id,
+            clienteId: fila.cliente_id,
             estado: fila.estado,
             precioTotalNeto: Number(fila.precio_total_neto),
             descuentoJuego: Number(fila.descuento_juego),
@@ -201,8 +199,7 @@ export class PedidoService {
                 .from('pedidos')
                 .insert({
                     mesa_id: nuevo.mesaId,
-                    cliente_registrado_id: nuevo.clienteRegistradoId ?? null,
-                    cliente_anonimo_id: nuevo.clienteAnonimoId ?? null,
+                    cliente_id: nuevo.clienteId,
                     estado: 'Pendiente de Confirmación',
                     precio_total_neto: total,
                 })
@@ -300,8 +297,7 @@ export class PedidoService {
             .from('mesas')
             .update({
                 disponibilidad: 'disponible',
-                cliente_registrado_id: null,
-                cliente_anonimo_id: null,
+                cliente_id: null,
             })
             .eq('id', mesaId);
 

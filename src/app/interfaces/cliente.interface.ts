@@ -1,9 +1,10 @@
 /**
  * Contratos de clientes: registrados y anónimos.
  *
- * El enunciado distingue dos tipos que se comportan distinto y viven en tablas
- * separadas: el registrado necesita aprobación de un dueño o supervisor
- * (punto 5), mientras que el anónimo entra directo con nombre y foto (punto 9).
+ * El enunciado distingue dos tipos que se comportan distinto, pero los dos
+ * viven en `usuarios` y se diferencian por su perfil: el registrado necesita
+ * aprobación de un dueño o supervisor (punto 5), mientras que el anónimo entra
+ * directo con nombre y foto (punto 9), sin mail ni contraseña.
  */
 
 /** Espeja el ENUM `usuarios_estado` de la base. */
@@ -30,7 +31,7 @@ export interface ClientePendienteInterface {
 /**
  * Alta de cliente anónimo.
  *
- * Sólo nombre y foto, que es lo único que guarda `clientes_anonimos`. La foto
+ * Sólo nombre y foto: son los únicos datos que se le piden (punto 9). La foto
  * viaja como Blob porque así la entrega la cámara, lista para subir al bucket.
  */
 export interface AnonimoAltaInterface {

@@ -36,8 +36,7 @@ export interface PedidoInterface {
     id: string;
     mesaId: string;
     numeroMesa: number;
-    clienteRegistradoId: string | null;
-    clienteAnonimoId: string | null;
+    clienteId: string;
     estado: EstadoPedido;
     precioTotalNeto: number;
     descuentoJuego: number;
@@ -55,13 +54,12 @@ export interface ItemNuevoPedido {
 /**
  * Pedido a crear.
  *
- * Los dos campos de cliente son excluyentes: el pedido es de un registrado o
- * de un anónimo. El total no se envía: lo calcula el servicio a partir de los
- * ítems, para que no dependa de lo que informe la pantalla.
+ * `clienteId` es el usuario que pide, registrado o anónimo. El total no se
+ * envía: lo calcula el servicio a partir de los ítems, para que no dependa de
+ * lo que informe la pantalla.
  */
 export interface NuevoPedidoInterface {
     mesaId: string;
-    clienteRegistradoId?: string;
-    clienteAnonimoId?: string;
+    clienteId: string;
     items: ItemNuevoPedido[];
 }

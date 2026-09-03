@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 import { FormularioUsuarioAnonimoComponent } from '../../components/formulario-usuario-anonimo/formulario-usuario-anonimo.component';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
+import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 
@@ -27,13 +28,13 @@ export class IngresoAnonimoPage {
     private router = inject(Router);
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
+    private authService = inject(AuthService);
 
     async onIngresoAnonimo(cliente: AnonimoAltaInterface) {
         this.spinner.show();
 
         try {
-            // TODO: insertar en clientes_anonimos y subir la foto al bucket.
-            await new Promise((resolve) => setTimeout(resolve, 400));
+            await this.authService.ingresarComoAnonimo(cliente);
 
             this.modal.setOpen(
                 'Bienvenido',
@@ -41,6 +42,13 @@ export class IngresoAnonimoPage {
             );
 
             this.router.navigate(['/inicio']);
+        } catch (error) {
+            const mensaje =
+                error instanceof Error
+                    ? error.message
+                    : 'No se pudo ingresar como invitado.';
+
+            this.modal.setOpen('Error', mensaje);
         } finally {
             this.spinner.hide();
         }

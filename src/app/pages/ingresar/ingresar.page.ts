@@ -20,6 +20,11 @@ export class IngresarPage {
     private authService = inject(AuthService);
     private notificaciones = inject(NotificacionesService);
 
+    /** Punto 9: el invitado no se loguea acá, va a cargar su nombre y su foto. */
+    irAIngresoAnonimo() {
+        this.router.navigate(['/ingreso-anonimo']);
+    }
+
     async handleLogin(credentials: LoginInterface) {
         this.spinner.show();
 

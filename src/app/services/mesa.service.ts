@@ -22,8 +22,7 @@ interface FilaMesa {
     cantidad_lugares: number;
     tipo: TipoMesa;
     disponibilidad: DisponibilidadMesa;
-    cliente_registrado_id: string | null;
-    cliente_anonimo_id: string | null;
+    cliente_id: string | null;
     qr_url: string;
     foto_url: string;
 }
@@ -32,7 +31,7 @@ interface FilaMesa {
 // devuelvan la misma forma.
 const SELECT_MESA =
     'id, numero_mesa, cantidad_lugares, tipo, disponibilidad, ' +
-    'cliente_registrado_id, cliente_anonimo_id, qr_url, foto_url';
+    'cliente_id, qr_url, foto_url';
 
 @Service()
 export class MesaService {
@@ -60,8 +59,7 @@ export class MesaService {
             cantidadLugares: fila.cantidad_lugares,
             tipo: fila.tipo,
             disponibilidad: fila.disponibilidad,
-            clienteRegistradoId: fila.cliente_registrado_id,
-            clienteAnonimoId: fila.cliente_anonimo_id,
+            clienteId: fila.cliente_id,
             qrUrl: fila.qr_url,
             fotoUrl: fila.foto_url,
         };
@@ -100,13 +98,7 @@ export class MesaService {
     // Devuelve la mesa que ya tiene asignada el cliente, si es que tiene.
     // El punto 10 pide poder indicarle cual es en vez de solo negarle el paso.
     mesaDelCliente(clienteId: string): MesaInterface | null {
-        return (
-            this.mesas().find(
-                (m) =>
-                    m.clienteRegistradoId === clienteId ||
-                    m.clienteAnonimoId === clienteId
-            ) ?? null
-        );
+        return this.mesas().find((m) => m.clienteId === clienteId) ?? null;
     }
 
     /**
@@ -117,11 +109,7 @@ export class MesaService {
      *  - esa mesa no se le puede asignar a un segundo cliente;
      *  - se le indica al metre cual es la mesa que ya tiene.
      */
-    async asignarCliente(
-        mesaId: string,
-        clienteId: string,
-        esAnonimo = false
-    ): Promise<boolean> {
+    async asignarCliente(mesaId: string, clienteId: string): Promise<boolean> {
         // Verificación 1: el cliente no puede tener otra mesa. Si la tiene, se
         // le indica cuál es en vez de sólo negarle el paso.
         const yaAsignada = this.mesaDelCliente(clienteId);
@@ -145,10 +133,7 @@ export class MesaService {
 
         // Verificación 2: la mesa no puede estar tomada por otro cliente.
         const ocupadaPorOtro =
-            (mesa.clienteRegistradoId !== null &&
-                mesa.clienteRegistradoId !== clienteId) ||
-            (mesa.clienteAnonimoId !== null &&
-                mesa.clienteAnonimoId !== clienteId);
+            mesa.clienteId !== null && mesa.clienteId !== clienteId;
 
         if (ocupadaPorOtro || mesa.disponibilidad === 'ocupada') {
             this.modal.setOpen(
@@ -162,15 +147,11 @@ export class MesaService {
         this.cargando.set(true);
 
         try {
-            const asignacion = esAnonimo
-                ? { cliente_anonimo_id: clienteId, cliente_registrado_id: null }
-                : { cliente_registrado_id: clienteId, cliente_anonimo_id: null };
-
             // El filtro por disponibilidad evita que dos metres asignen la
             // misma mesa a la vez: el segundo update no afecta ninguna fila.
             const { data, error } = await supabase
                 .from('mesas')
-                .update({ ...asignacion, disponibilidad: 'ocupada' })
+                .update({ cliente_id: clienteId, disponibilidad: 'ocupada' })
                 .eq('id', mesaId)
                 .eq('disponibilidad', 'disponible')
                 .select('id');
@@ -210,8 +191,7 @@ export class MesaService {
                 .from('mesas')
                 .update({
                     disponibilidad: 'disponible',
-                    cliente_registrado_id: null,
-                    cliente_anonimo_id: null,
+                    cliente_id: null,
                 })
                 .eq('id', mesaId);
 

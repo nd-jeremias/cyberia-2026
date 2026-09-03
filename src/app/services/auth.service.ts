@@ -1,6 +1,7 @@
 import { Service, signal } from '@angular/core';
 import { AuthResponse, Session } from '@supabase/supabase-js';
 import { LoginInterface, RegisterInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
+import { AnonimoAltaInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
 
 @Service()
@@ -25,7 +26,10 @@ export class AuthService {
         });
     }
 
-    private async cargarPerfil(userId: string) {
+    // Pública porque los altas (registro e ingreso anónimo) tienen que pedirla
+    // a mano: la sesión se abre un instante antes de que exista la fila en
+    // `usuarios`, así que el listener de arriba llega demasiado temprano.
+    async cargarPerfil(userId: string) {
         const { data, error } = await supabase
             .from('usuarios')
             .select('perfil')
@@ -110,6 +114,56 @@ export class AuthService {
         if (error) throw error;
 
         localStorage.removeItem('user');
+    }
+
+    /**
+     * Ingreso de cliente anónimo (punto 9 del enunciado).
+     *
+     * `signInAnonymously()` crea un usuario real en auth.users (sin mail ni
+     * contraseña) y abre una sesión como cualquier otra: se persiste sola en
+     * Capacitor Preferences y se renueva sola. Por eso el cliente puede cerrar
+     * la app en medio de la comida y al volver sigue con su mesa y su pedido.
+     *
+     * El perfil va a `usuarios` como el de cualquier otro rol, así que los
+     * guards, `perfil()` y los botones del home funcionan sin nada especial.
+     */
+    async ingresarComoAnonimo({ nombres, foto }: AnonimoAltaInterface): Promise<void> {
+        const { data, error } = await supabase.auth.signInAnonymously();
+
+        if (error) throw error;
+
+        if (!data.user) {
+            throw new Error('No se pudo iniciar la sesión de invitado.');
+        }
+
+        try {
+            // La cámara entrega un Blob y `subirImagen` espera un File.
+            const archivo = new File([foto], `anonimo_${data.user.id}.jpg`, {
+                type: foto.type || 'image/jpeg',
+            });
+
+            const fotoUrl = await this.subirImagen(archivo);
+
+            const { error: errorPerfil } = await supabase.from('usuarios').insert({
+                id: data.user.id,
+                nombres,
+                foto_url: fotoUrl,
+                perfil: 'cliente anónimo',
+                estado: 'Activo', // No requiere aprobación, a diferencia del punto 5.
+            });
+
+            if (errorPerfil) throw errorPerfil;
+        } catch (error) {
+            // Sin fila en `usuarios` la sesión no sirve para nada y dejaría un
+            // usuario huérfano en Auth: se cierra para poder reintentar limpio.
+            await supabase.auth.signOut();
+
+            throw error;
+        }
+
+        // El listener de onAuthStateChange corrió antes de que existiera la
+        // fila, así que el perfil se pide ahora.
+        await this.cargarPerfil(data.user.id);
     }
 
     async register(form: FormData): Promise<void> {

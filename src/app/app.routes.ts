@@ -43,6 +43,9 @@ export const routes: Routes = [
     {
         path: 'ingreso-anonimo',
         loadComponent: () => import('./pages/ingreso-anonimo/ingreso-anonimo.page').then((m) => m.IngresoAnonimoPage),
+        // Con sesión abierta no tiene sentido: evita que un invitado que ya
+        // entró se cree una segunda cuenta anónima y pierda su mesa.
+        canActivate: [guestGuard],
     },
     // ---------------------------------------------------------------
     // Altas: puntos 2, 3 y 4 del enunciado

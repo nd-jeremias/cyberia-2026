@@ -22,9 +22,8 @@ export type DisponibilidadMesa = 'disponible' | 'Reservada' | 'ocupada';
 /**
  * Mesa completa tal como vive en la base.
  *
- * Los dos campos de cliente son excluyentes: una mesa la ocupa un registrado o
- * un anónimo, nunca ambos. La base lo permite por tener columnas separadas, así
- * que la regla la sostiene `MesaService`.
+ * `clienteId` apunta a `usuarios`, sea el cliente registrado o anónimo: los dos
+ * son usuarios de Auth. En NULL, la mesa está libre.
  */
 export interface MesaInterface {
     id: string;
@@ -32,8 +31,7 @@ export interface MesaInterface {
     cantidadLugares: number;
     tipo: TipoMesa;
     disponibilidad: DisponibilidadMesa;
-    clienteRegistradoId: string | null;
-    clienteAnonimoId: string | null;
+    clienteId: string | null;
     qrUrl: string;
     fotoUrl: string;
 }
