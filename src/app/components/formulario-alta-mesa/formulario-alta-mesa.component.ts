@@ -1,10 +1,5 @@
-import { Component, inject, output } from '@angular/core';
-import {
-    FormControl,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
-} from '@angular/forms';
+import { Component, inject, input, output } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
     IonButton,
     IonCard,
@@ -19,6 +14,10 @@ import {
 import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
+import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
+import { FileService } from '../../services/file.service';
+import { QrGenerateComponent } from '../qr-generate/qr-generate.component';
+import { QrService } from '../../services/qr.service';
 
 /**
  * Formulario de alta de mesa (punto 4 del enunciado).
@@ -42,10 +41,16 @@ import { ModalService } from '../../services/modal.service';
         IonSelectOption,
         IonButton,
         ReactiveFormsModule,
+        SubidaImagenesComponent,
+        QrGenerateComponent
     ],
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
+    private fileService = inject(FileService);
+    private qrService = inject(QrService);
+
+    direccionCamara = input<'frontal' | 'trasera'>('frontal');
 
     /** Se dispara sólo con datos ya validados. */
     mesaSubmit = output<MesaAltaInterface>();
@@ -57,7 +62,8 @@ export class FormularioAltaMesaComponent {
      * La foto se maneja aparte del FormGroup: un `<input type="file">` no se
      * integra bien con Reactive Forms, así que se valida a mano en el submit.
      */
-    foto: File | null = null;
+    // foto: File | null = null;
+    fotos: File[] = [];
 
     formulario = new FormGroup({
         // Los mínimos replican los CHECK (> 0) que ya impone la tabla `mesas`.
@@ -71,12 +77,23 @@ export class FormularioAltaMesaComponent {
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],
         }),
+        fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(3)] }),
     });
 
     /** Guarda la foto elegida; si el usuario cancela, queda en null. */
-    onFotoSeleccionada(event: Event) {
-        const input = event.target as HTMLInputElement;
-        this.foto = input.files?.[0] ?? null;
+    // onFotoSeleccionada(event: Event) {
+    //     const input = event.target as HTMLInputElement;
+    //     this.foto = input.files?.[0] ?? null;
+    // }
+
+    recibirImagenes(imagenes: File[]) {
+        this.fotos = imagenes;
+
+        // Almacena el array de Files directamente en el formulario
+        this.formulario.patchValue({ fotos: imagenes });
+
+        // Opcional: Marca el control como "dirty" o "touched" para la validación
+        this.formulario.get('imagenes')?.markAsTouched();
     }
 
     /**
@@ -91,6 +108,14 @@ export class FormularioAltaMesaComponent {
         return !!campo && campo.touched && campo.hasError(error);
     }
 
+    generarImgQr(){
+        try {
+            this.qrService.generateQr('data','texto')
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     /**
      * Valida y, si todo está bien, emite los datos de la mesa.
      *
@@ -98,7 +123,7 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
-        if (this.formulario.invalid || !this.foto) {
+        if (this.formulario.invalid || !this.fotos) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
             // nunca visitó.
             this.formulario.markAllAsTouched();
@@ -107,7 +132,7 @@ export class FormularioAltaMesaComponent {
 
             this.modal.setOpen(
                 'Datos inválidos',
-                !this.foto
+                !this.fotos
                     ? 'Debe cargar una foto de la mesa para continuar.'
                     : 'Revise los datos ingresados antes de continuar.'
             );
@@ -123,7 +148,7 @@ export class FormularioAltaMesaComponent {
             numeroMesa: Number(valores.numeroMesa),
             cantidadLugares: Number(valores.cantidadLugares),
             tipo: valores.tipo as TipoMesa,
-            foto: this.foto,
+            fotos: this.fotos,
         });
     }
 }

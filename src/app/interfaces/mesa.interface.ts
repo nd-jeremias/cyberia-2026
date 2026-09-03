@@ -13,7 +13,7 @@ export interface MesaAltaInterface {
     numeroMesa: number;
     cantidadLugares: number;
     tipo: TipoMesa;
-    foto: File;
+    fotos: File[];
 }
 
 // Refleja el ENUM disponibilidad_mesa de sql/mesas.sql.
