@@ -91,7 +91,9 @@
             </div>
 
             <div class="img-preview">
-                <button class="btn-secundario" (click)="generarImgQr()">Generar QR</button>
+                @if (!qrService.variableQr()) {
+                    <button class="btn-secundario" (click)="generarImgQr()">Generar QR</button>
+                }
                 <app-qr-generate></app-qr-generate>
             </div>
 

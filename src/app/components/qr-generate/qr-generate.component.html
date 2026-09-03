@@ -8,8 +8,9 @@
     </div>
     <h4>{{ this.qrService.showedText() }}</h4>
 </div>
-<button class="btn-principal" (click)="this.qrService.captureScreen('qr-container')">
+@if(qrService.archivoQr()){
+<button class="btn-principal" (click)="this.qrService.downloadFile(qrService.archivoQr()!)">
     Descargar imagen QR
     <fa-icon class="fa-regular fa-square-plus" [icon]="faShareNodes"></fa-icon>
 </button>
-}
+} }

@@ -14,6 +14,7 @@ export interface MesaAltaInterface {
     cantidadLugares: number;
     tipo: TipoMesa;
     fotos: File[];
+    qrFile: File; // o url, corregir cuando sea necesario
 }
 
 // Refleja el ENUM disponibilidad_mesa de sql/mesas.sql.

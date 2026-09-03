@@ -39,7 +39,7 @@ import { IonIcon } from "@ionic/angular";
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
     private fileService = inject(FileService);
-    private qrService = inject(QrService);
+    qrService = inject(QrService);
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
 
@@ -140,6 +140,7 @@ export class FormularioAltaMesaComponent {
             cantidadLugares: Number(valores.cantidadLugares),
             tipo: valores.tipo as TipoMesa,
             fotos: this.fotos,
+            qrFile: this.fotos[0], // cambiar
         });
     }
 }
