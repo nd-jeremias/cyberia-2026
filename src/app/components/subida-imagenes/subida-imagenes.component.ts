@@ -1,5 +1,5 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Component, effect, inject, input, output } from '@angular/core';
+import { ChangeDetectorRef, Component, effect, inject, input, NgZone, output } from '@angular/core';
 import { IonButton, Platform } from '@ionic/angular';
 import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FileService } from '../../services/file.service';
@@ -43,6 +43,9 @@ export class SubidaImagenesComponent {
     faSquarePlus = faSquarePlus;
     faSquareMinus = faSquareMinus;
 
+    private zone = inject(NgZone);
+    private cdr = inject(ChangeDetectorRef);
+
     constructor() {
         // Las imágenes iniciales llegan asincrónicamente (hay que ir a buscar
         // el producto), así que se siembran los slots cuando aparecen.
@@ -70,12 +73,15 @@ export class SubidaImagenesComponent {
             return;
         }
 
+        console.log(`direccion: ${direccionCamara} modo: ${modoCamara}`);
+        console.log(`MODAL - direccion: ${this.direccionCamara()} modo: ${this.modoCamara()}`);
+
         if (!this.platform.is('hybrid')) {
             modoCamara = 'galeria';
         }
 
         try {
-            let results = null;
+            let results: any = null;
             let item = null;
 
             if (modoCamara === 'galeria') {
@@ -104,19 +110,35 @@ export class SubidaImagenesComponent {
                     this.emitirImagenes();
                 }
             } else {
-                results = await this.camaraService.tomarFoto(direccionCamara ?? 'frontal');
+                
+                const direccion = direccionCamara ? direccionCamara : 'frontal';
+                results = await this.camaraService.tomarFoto(direccion);
+
                 if (results) {
-                    // this.fotoPreview = results.previewUrl; // Usar en <img [src]="fotoPreview">
-                    // Convertimos el Blob en un File con nombre y tipo explícito
                     const archivoFoto = new File([results.blob], `selfie_${Date.now()}.jpg`, {
                         type: 'image/jpeg',
                     });
 
-                    this.imageSlots[index] = { file: archivoFoto, previewUrl: results.previewUrl };
+                    // Forzamos a Angular a procesar la respuesta en la zona correcta
+                    this.zone.run(() => {
+                        const nuevosSlots = [...this.imageSlots];
+                        nuevosSlots[index] = { file: archivoFoto, previewUrl: results.previewUrl };
+                        this.imageSlots = nuevosSlots;
+
+                        // Forzar el renderizado inmediato del HTML
+                        this.cdr.detectChanges();
+
+                        const archivosAEnviar = this.imageSlots
+                            .map((slot) => slot.file)
+                            .filter((file): file is File => file !== null); // Evita enviar nulos si hay slots vacíos
+
+                        this.imagenesChange.emit(archivosAEnviar);
+                    });
                 }
             }
         } catch (error) {
             console.error('Error procesando la imagen:', error);
+            throw error;
         }
     }
 

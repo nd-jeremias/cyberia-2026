@@ -3,7 +3,7 @@
     <label>{{label()}}</label>
 
     <div class="slot-container">
-        @for (slot of imageSlots; track slot; let idx = $index) {
+        @for (slot of imageSlots; track idx; let idx = $index) {
         <!-- CASO A: El slot está vacío -> Muestra botón para agregar -->
         <!-- 1. El botón visual que verá el usuario -->
         @if (slot.previewUrl || idx < maxImages()) {
