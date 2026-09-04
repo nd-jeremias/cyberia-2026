@@ -4,7 +4,6 @@ import {
     IonInput,
 } from '@ionic/angular';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
-import { CameraService } from '../../services/camera.service';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
@@ -23,7 +22,6 @@ import { FileService } from '../../services/file.service';
     imports: [IonInput, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioUsuarioAnonimoComponent {
-    private camara = inject(CameraService);
     private modal = inject(ModalService);
     private fileService = inject(FileService);
     anonimoSubmit = output<AnonimoAltaInterface>();
@@ -40,40 +38,35 @@ export class FormularioUsuarioAnonimoComponent {
         }),
     });
 
-    /**
-     * Toma la foto con la cámara frontal.
-     *
-     * Es frontal porque se trata de una selfie de ingreso. Los fallos se
-     * informan al usuario: el servicio ya registra el detalle técnico.
-     */
-    async onTomarFoto() {
-        // try {
-        //     const capturada = await this.camara.tomarFoto('frontal');
-        //     if (capturada) this.foto.set(capturada);
-        // } catch {
-        //     // El servicio ya registra el detalle; aca solo avisamos al usuario.
-        //     this.modal.setOpen(
-        //         'No se pudo tomar la foto',
-        //         'Revise los permisos de la cámara e intente nuevamente.'
-        //     );
-        // }
-    }
-
     onRegistrar() {
-        // ACA HAY QUE VALIDAR EL FORMULARIO ANTES DE ENVIARLO. FINALIZA CON EMIT()
-        // 
-        // const fotoActual = this.foto();
-        // if (this.formulario.invalid || !fotoActual) {
-        //     this.modal.setOpen(
-        //         'Datos incompletos',
-        //         'Ingrese su nombre y tome una foto para continuar.'
-        //     );
-        //     return;
-        // }
-        // this.anonimoSubmit.emit({
-        //     nombres: this.formulario.getRawValue().nombres ?? '',
-        //     foto: fotoActual.blob,
-        // });
+        if (this.formulario.invalid) {
+            this.formulario.markAllAsTouched();
+
+            this.modal.setOpen(
+                'Datos incompletos',
+                'Ingrese su nombre y tome una foto para continuar.'
+            );
+
+            return;
+        }
+
+        // El componente de subida trabaja con un arreglo aunque acá el máximo
+        // sea una sola foto, así que se toma la primera.
+        const [foto] = this.foto;
+
+        if (!foto) {
+            this.modal.setOpen(
+                'Falta la foto',
+                'Tome una foto para poder ingresar al local.'
+            );
+
+            return;
+        }
+
+        this.anonimoSubmit.emit({
+            nombres: this.formulario.getRawValue().nombres ?? '',
+            foto,
+        });
     }
 
     recibirImagenes(imagenes: File[]) {

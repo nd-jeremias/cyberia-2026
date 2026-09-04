@@ -30,22 +30,29 @@ export class AuthService {
     // a mano: la sesión se abre un instante antes de que exista la fila en
     // `usuarios`, así que el listener de arriba llega demasiado temprano.
     async cargarPerfil(userId: string) {
+        // `maybeSingle` y no `single`: que el usuario todavía no tenga fila es
+        // un caso previsto (durante el alta la sesión se abre un instante
+        // antes de insertarla), y `single` lo trata como error devolviendo un
+        // 406 que ensucia la consola sin aportar nada.
         const { data, error } = await supabase
             .from('usuarios')
             .select('perfil')
             .eq('id', userId)
-            .single();
+            .maybeSingle();
 
         if (error) {
-            // PGRST116 = la consulta no encontró la fila. Es esperable durante
-            // el alta (signUp abre sesión un instante antes de que exista la
-            // fila en `usuarios`), y también pasa con usuarios creados a mano
-            // desde el Dashboard, que quedan en auth.users y nada más.
-            if (error.code === 'PGRST116') {
-                console.warn('El usuario todavía no tiene fila en "usuarios"', userId);
-            } else {
-                console.error('No se pudo cargar el perfil del usuario', userId, error);
-            }
+            console.error('No se pudo cargar el perfil del usuario', userId, error);
+
+            this.perfil.set(null);
+            return;
+        }
+
+        if (!data) {
+            // Existe en auth.users pero no en `usuarios`. Pasa con cuentas
+            // creadas a mano desde el Dashboard, y con las que quedaron
+            // huérfanas si se volvió a correr sql/usuarios.sql (ese script
+            // recrea la tabla y sólo repone los usuarios de prueba).
+            console.warn('El usuario no tiene fila en "usuarios"', userId);
 
             this.perfil.set(null);
             return;

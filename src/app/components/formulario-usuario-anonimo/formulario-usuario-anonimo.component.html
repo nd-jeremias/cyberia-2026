@@ -34,8 +34,8 @@
                     [direccionCamara]="direccionCamara()"
                 >
                 </app-subida-imagenes>
-                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <span>Debe cargar 3 imagenes del producto</span>
+                @if (formulario.get("foto")?.errors?.["minLengthArray"] && formulario.get("foto")?.touched) {
+                <span class="mensaje-error">Debe tomar una foto para poder ingresar.</span>
                 }
             </div>
 
