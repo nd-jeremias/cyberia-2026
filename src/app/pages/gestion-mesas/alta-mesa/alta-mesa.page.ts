@@ -1,3 +1,4 @@
+import { MesaDbService } from './../../../services/mesa.db.service';
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +19,7 @@ export class AltaMesaPage implements OnInit {
 
     private spinner = inject(SpinnerService)
     private modal = inject(ModalService)
+    private mesaDbService = inject(MesaDbService)
 
     constructor() {}
 
@@ -27,9 +29,7 @@ export class AltaMesaPage implements OnInit {
         this.spinner.show();
 
         try {
-            // TODO: persistir en Supabase y generar el QR de la mesa.
-            await new Promise((resolve) => setTimeout(resolve, 400));
-
+            await this.mesaDbService.altaMesa(mesa)
             this.modal.setOpen(
                 'Mesa cargada',
                 `La mesa N° ${mesa.numeroMesa} se registró correctamente.`

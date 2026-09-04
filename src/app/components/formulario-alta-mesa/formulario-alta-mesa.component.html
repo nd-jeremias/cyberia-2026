@@ -90,13 +90,6 @@
                 }
             </div>
 
-            <div class="img-preview">
-                @if (!qrService.variableQr()) {
-                    <button class="btn-secundario" (click)="generarImgQr()">Generar QR</button>
-                }
-                <app-qr-generate></app-qr-generate>
-            </div>
-
             <div class="enlaces-secundarios">
                 <ion-button expand="full" fill="outline" type="submit" class="btn-principal">Agregar mesa</ion-button>
             </div>

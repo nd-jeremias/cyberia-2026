@@ -1,5 +1,4 @@
 import { Component, effect, inject, input } from '@angular/core';
-import { QrCodeComponent } from 'ng-qrcode';
 import { QrService } from '../../services/qr.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faShareNodes } from '@fortawesome/free-solid-svg-icons';
@@ -8,7 +7,7 @@ import { faShareNodes } from '@fortawesome/free-solid-svg-icons';
     selector: 'app-qr-generate',
     templateUrl: './qr-generate.component.html',
     styleUrls: ['./qr-generate.component.scss'],
-    imports: [FontAwesomeModule, QrCodeComponent],
+    imports: [FontAwesomeModule],
 })
 export class QrGenerateComponent {
     faShareNodes = faShareNodes;

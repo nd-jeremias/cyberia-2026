@@ -1,11 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-    IonButton,
-    IonInput,
-    IonSelect,
-    IonSelectOption,
-} from '@ionic/angular';
+import { IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
@@ -13,7 +8,7 @@ import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.comp
 import { FileService } from '../../services/file.service';
 import { QrGenerateComponent } from '../qr-generate/qr-generate.component';
 import { QrService } from '../../services/qr.service';
-import { IonIcon } from "@ionic/angular";
+import { IonIcon } from '@ionic/angular';
 
 /**
  * Formulario de alta de mesa (punto 4 del enunciado).
@@ -26,15 +21,7 @@ import { IonIcon } from "@ionic/angular";
     selector: 'app-formulario-alta-mesa',
     templateUrl: './formulario-alta-mesa.component.html',
     styleUrls: ['./formulario-alta-mesa.component.scss'],
-    imports: [IonIcon,
-        IonInput,
-        IonSelect,
-        IonSelectOption,
-        IonButton,
-        ReactiveFormsModule,
-        SubidaImagenesComponent,
-        QrGenerateComponent
-    ],
+    imports: [IonIcon, IonInput, IonSelect, IonSelectOption, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
@@ -69,6 +56,7 @@ export class FormularioAltaMesaComponent {
             validators: [Validators.required],
         }),
         fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(3)] }),
+        qr: new FormControl<File | null>(null, { validators: [Validators.required] }),
     });
 
     /** Guarda la foto elegida; si el usuario cancela, queda en null. */
@@ -84,7 +72,7 @@ export class FormularioAltaMesaComponent {
         this.formulario.patchValue({ fotos: imagenes });
 
         // Opcional: Marca el control como "dirty" o "touched" para la validación
-        this.formulario.get('imagenes')?.markAsTouched();
+        this.formulario.get('fotos')?.markAsTouched();
     }
 
     /**
@@ -99,14 +87,6 @@ export class FormularioAltaMesaComponent {
         return !!campo && campo.touched && campo.hasError(error);
     }
 
-    generarImgQr(){
-        try {
-            this.qrService.generateQr('data','texto')
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     /**
      * Valida y, si todo está bien, emite los datos de la mesa.
      *
@@ -114,6 +94,9 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
+        const archivo: File = await this.qrService.generateQrFile('data', 'texto');
+        this.formulario.patchValue({ qr: archivo });
+
         if (this.formulario.invalid || !this.fotos) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
             // nunca visitó.
@@ -135,12 +118,15 @@ export class FormularioAltaMesaComponent {
 
         // Los <ion-input type="number"> devuelven texto: se convierte acá para
         // que quien reciba el evento no tenga que desconfiar de los tipos.
-        this.mesaSubmit.emit({
+        const mesa: MesaAltaInterface = {
             numeroMesa: Number(valores.numeroMesa),
             cantidadLugares: Number(valores.cantidadLugares),
             tipo: valores.tipo as TipoMesa,
             fotos: this.fotos,
-            qrFile: this.fotos[0], // cambiar
-        });
+            qrFile: this.formulario.value.qr!,
+        };
+        console.log(mesa)
+        this.mesaSubmit.emit(mesa);
+        this.formulario.reset();
     }
 }

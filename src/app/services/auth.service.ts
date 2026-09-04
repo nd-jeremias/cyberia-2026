@@ -1,8 +1,9 @@
-import { Service, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { AuthResponse, Session } from '@supabase/supabase-js';
 import { LoginInterface, RegisterInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
 import { AnonimoAltaInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
+import { GaleriaService } from './galeria.service';
 
 @Service()
 export class AuthService {
@@ -13,6 +14,8 @@ export class AuthService {
     // El rol no viene en la sesión de Auth: hay que pedirlo aparte a "usuarios".
     // Se resuelve solo cada vez que cambia la sesión (login/logout/refresh).
     perfil = signal<PerfilUsuario | null>(null);
+
+    galeriaService = inject(GaleriaService)
 
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
@@ -177,7 +180,7 @@ export class AuthService {
             const tipoEmpleado = form.get('tipoEmpleado') as string;
             const fotoArchivo = form.get('foto') as File;
 
-            const publicUrl = await this.subirImagen(fotoArchivo);
+            const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
 
             if (!publicUrl) throw Error;
 
@@ -225,18 +228,5 @@ export class AuthService {
         }
     }
 
-    async subirImagen(fotoArchivo: File): Promise<string> {
-        const rutaArchivo = `usuarios/${fotoArchivo.name}`;
-
-        const { data: storageData, error: storageError } = await supabase.storage
-            .from('Fotos')
-            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: false });
-
-        if (storageError) throw storageError;
-
-        // Obtener la URL pública del archivo subido
-        const { data: urlData } = supabase.storage.from('Fotos').getPublicUrl(rutaArchivo);
-
-        return urlData.publicUrl;
-    }
+    
 }
