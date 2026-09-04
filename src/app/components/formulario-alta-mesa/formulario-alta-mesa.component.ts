@@ -55,7 +55,7 @@ export class FormularioAltaMesaComponent {
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],
         }),
-        fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(3)] }),
+        fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
         qr: new FormControl<File | null>(null, ),
     });
 
@@ -94,7 +94,8 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
-
+        console.log("Formulario: ", this.formulario.value)
+        console.log("fotos: ", this.fotos)
         if (this.formulario.invalid || !this.fotos) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
             // nunca visitó.
