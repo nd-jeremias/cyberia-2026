@@ -1,5 +1,6 @@
 import { Service } from '@angular/core';
 import { Camera, MediaResult, MediaTypeSelection } from '@capacitor/camera';
+import { supabase } from './supabase.service';
 
 // export interface ImagenGaleria {
 //     blob: Blob;
@@ -89,5 +90,21 @@ export class GaleriaService {
             console.error('chooseFromGallery failed:', message);
             throw new Error(message);
         }
+    }
+
+    async subirImagenDb(fotoArchivo: File, ruta:string, nombre?: string): Promise<string> {
+        const nombreNuevo =  nombre ? nombre : fotoArchivo.name;
+        const rutaArchivo = `${ruta}/${nombreNuevo}`;
+
+        const { data: storageData, error: storageError } = await supabase.storage
+            .from('Fotos')
+            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: false });
+
+        if (storageError) throw storageError;
+
+        // Obtener la URL pública del archivo subido
+        const { data: urlData } = supabase.storage.from('Fotos').getPublicUrl(rutaArchivo);
+
+        return urlData.publicUrl;
     }
 }

@@ -7,6 +7,7 @@ import { ModalService } from './modal.service';
 import html2canvas from 'html2canvas';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import * as QRCode from 'qrcode'; // Importamos la librería nativa
 
 @Service()
 export class QrService {
@@ -141,17 +142,35 @@ export class QrService {
         }
     }
 
-    generateQr(data: string, texto: string) {
-        if (data.trim().length == 0) {
-            this.modal.setOpen(
-                'Error recibiendo informacion',
-                'No se ha recibido información para generar el código QR, por favor intente nuevamente.'
-            );
-            return;
+    public async generateQrFile(text: string, fileName: string = 'qr-code.png'): Promise<File> {
+        if (!text) {
+            throw new Error('El texto para el QR no puede estar vacío');
         }
-        this.variableQr.set(data);
-        this.mostrarQr.set(true);
-        this.showedText.set(texto);
+
+        try {
+            // 1. Generamos el QR directamente como una URL Base64 en memoria
+            // Puedes pasarle un objeto de configuración para ajustar tamaño, colores, etc.
+            const base64Data = await QRCode.toDataURL(text, {
+                width: 300,
+                margin: 2,
+                errorCorrectionLevel: 'M',
+            });
+
+            // 2. Convertimos el string Base64 a un Blob binario
+            const blob = await this.base64ToBlob(base64Data);
+
+            // 3. Retornamos el objeto File listo para enviar a Supabase
+            return new File([blob], fileName, { type: 'image/png' });
+        } catch (error) {
+            console.error('Error al generar el QR programático:', error);
+            throw error;
+        }
+    }
+
+    // Método auxiliar para convertir Base64 a Blob de forma eficiente
+    private async base64ToBlob(base64WithHeader: string): Promise<Blob> {
+        const response = await fetch(base64WithHeader);
+        return await response.blob();
     }
 
     public async shareFile(file: File): Promise<void> {
