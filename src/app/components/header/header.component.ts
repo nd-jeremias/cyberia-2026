@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
 
     perfil = computed(() => this.authService.perfil() ?? 'No se encontro perfil.');
     defaultHref = input<string>('/inicio');
-    tituloHeader = input<string>('/inicio');
+    tituloHeader = input<string>('Inicio');
 
     // 1. Convertimos los eventos del router en una Signal que contiene la URL actual
     private urlActual = toSignal(

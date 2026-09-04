@@ -8,6 +8,7 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { MesaAltaInterface } from '../../../interfaces/mesa.interface';
 import { SpinnerService } from '../../../services/spinner.service';
 import { ModalService } from '../../../services/modal.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-alta-mesa',
@@ -20,6 +21,7 @@ export class AltaMesaPage implements OnInit {
     private spinner = inject(SpinnerService)
     private modal = inject(ModalService)
     private mesaDbService = inject(MesaDbService)
+    private router = inject(Router)
 
     constructor() {}
 
@@ -34,7 +36,9 @@ export class AltaMesaPage implements OnInit {
                 'Mesa cargada',
                 `La mesa N° ${mesa.numeroMesa} se registró correctamente.`
             );
+            console.log("MESA: ",mesa)
         } finally {
+            this.router.navigate(['/gestion-mesas']);
             this.spinner.hide();
         }
     }

@@ -4,6 +4,7 @@ import { LoginInterface, RegisterInterface, LocalUserInterface, PerfilUsuario } 
 import { AnonimoAltaInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
 import { GaleriaService } from './galeria.service';
+import { ModalService } from './modal.service';
 
 @Service()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     perfil = signal<PerfilUsuario | null>(null);
 
     galeriaService = inject(GaleriaService)
+    modal = inject(ModalService)
 
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
@@ -145,7 +147,7 @@ export class AuthService {
                 type: foto.type || 'image/jpeg',
             });
 
-            const fotoUrl = await this.subirImagen(archivo);
+            const fotoUrl = await this.galeriaService.subirImagenDb(archivo, 'usuarios');
 
             const { error: errorPerfil } = await supabase.from('usuarios').insert({
                 id: data.user.id,
@@ -218,6 +220,9 @@ export class AuthService {
 
                 if (error) throw error;
             }
+        } catch (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudo crear el usuario.';
+            this.modal.setOpen('Error', mensaje);
         } finally {
             // signUp() deja la sesión abierta, pero un registro nuevo queda en
             // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:

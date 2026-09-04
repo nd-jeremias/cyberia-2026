@@ -26,21 +26,21 @@ export class MesaDbService {
             // Ejecutamos las subidas en paralelo
             const urlsPublicas = await Promise.all(promesasDeSubida);
 
-            console.log('Todas las URLs subidas:', urlsPublicas);
+            if(!urlsPublicas) throw Error;
 
-            // Guardar en la base de datos pasándole el array completo de URLs
-            // await this.guardarUrlsEnBaseDeDatos(idMesa, urlsPublicas);
+            const { error } = await supabase.from('mesas').insert({
+                numero_mesa: mesa.numeroMesa,
+                cantidad_lugares: mesa.cantidadLugares,
+                tipo: mesa.tipo,
+                disponibilidad: 'disponible',
+                qr_url: publicQrUrl,
+                foto_url: urlsPublicas
+            })
+
+            if (error) throw error;
         } catch (error) {
             console.log(error)
         }
 
-        // const { data, error } = await supabase.from('mesas').insert({
-        //     numero_mesa: mesa.numeroMesa,
-        //     cantidad_lugares: mesa.cantidadLugares,
-        //     tipo: mesa.tipo,
-        //     disponibilidad: 'disponible',
-        //     qr_url: mesa.qrFile
-        //     foto_url: mesa.fotos
-        // })
     }
 }

@@ -56,7 +56,7 @@ export class FormularioAltaMesaComponent {
             validators: [Validators.required],
         }),
         fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(3)] }),
-        qr: new FormControl<File | null>(null, { validators: [Validators.required] }),
+        qr: new FormControl<File | null>(null, ),
     });
 
     /** Guarda la foto elegida; si el usuario cancela, queda en null. */
@@ -94,8 +94,6 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
-        const archivo: File = await this.qrService.generateQrFile('data', 'texto');
-        this.formulario.patchValue({ qr: archivo });
 
         if (this.formulario.invalid || !this.fotos) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
@@ -107,14 +105,26 @@ export class FormularioAltaMesaComponent {
             this.modal.setOpen(
                 'Datos inválidos',
                 !this.fotos
-                    ? 'Debe cargar una foto de la mesa para continuar.'
+                    ? 'Debe cargar tres fotos de la mesa para continuar.'
                     : 'Revise los datos ingresados antes de continuar.'
             );
 
             return;
         }
-
+        
         const valores = this.formulario.getRawValue();
+
+        const datosMesa = {
+            numeroMesa: valores.numeroMesa,
+            cantidadLugares: valores.cantidadLugares,
+            tipo: valores.tipo,
+        };
+        
+        const data = JSON.stringify(datosMesa);
+        const filename = `mesa_${valores.numeroMesa}_qr.png`;
+
+        const archivo: File = await this.qrService.generateQrFile(data, filename);
+        this.formulario.patchValue({ qr: archivo });
 
         // Los <ion-input type="number"> devuelven texto: se convierte acá para
         // que quien reciba el evento no tenga que desconfiar de los tipos.
@@ -125,7 +135,6 @@ export class FormularioAltaMesaComponent {
             fotos: this.fotos,
             qrFile: this.formulario.value.qr!,
         };
-        console.log(mesa)
         this.mesaSubmit.emit(mesa);
         this.formulario.reset();
     }
