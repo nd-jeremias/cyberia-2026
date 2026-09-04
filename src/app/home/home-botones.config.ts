@@ -27,7 +27,7 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
 
     metre: [
         { texto: 'Asignar mesas', icono: 'easel-outline', ruta: '/asignar-mesas' },
-        { texto: 'Registrar cliente', icono: 'person-add-outline', ruta: '/registrarse' },
+        { texto: 'Registrar cliente', icono: 'person-add-outline', ruta: '/metre-registrar-cliente' },
     ],
 
     mozo: [

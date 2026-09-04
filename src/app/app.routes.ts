@@ -113,4 +113,11 @@ export const routes: Routes = [
         path: 'asignar-mesas',
         loadComponent: () => import('./pages/asignar-mesas/asignar-mesas.page').then((m) => m.AsignarMesasPage),
     },
+    {
+        path: 'metre-registrar-cliente',
+        loadComponent: () =>
+            import('./pages/metre-registrar-cliente/metre-registrar-cliente.page').then(
+                (m) => m.MetreRegistrarClientePage
+            ),
+    },
 ];
