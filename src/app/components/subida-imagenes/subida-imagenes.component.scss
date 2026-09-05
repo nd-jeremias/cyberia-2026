@@ -71,6 +71,34 @@
     }
 }
 
+/**
+ * Slot vacío: el botón grande abre la cámara y, donde está permitido, debajo
+ * queda el atajo a la galería. El "+" se lleva el alto sobrante para seguir
+ * siendo el área de toque principal.
+ */
+.slot-vacio {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.slot-vacio .add-button {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+}
+
+.galeria-button {
+    margin: 0;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    text-transform: none;
+    letter-spacing: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+}
+
 .add-button {
     --background: transparent;
     --background-activated: rgba(0, 0, 0, 0.05); // Breve efecto al pulsar
