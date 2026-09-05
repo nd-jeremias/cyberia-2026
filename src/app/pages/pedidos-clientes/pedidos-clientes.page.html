@@ -1,13 +1,22 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>pedidos-clientes</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos de clientes'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">pedidos-clientes</ion-title>
-        </ion-toolbar>
-    </ion-header>
+    <div class="pantalla-preparacion">
+        <img class="logo-preparacion" src="assets/logo.png" alt="Cyberia Restó" />
+
+        <div class="tarjeta-preparacion">
+            <span class="sello-preparacion">
+                <ion-icon name="time-outline"></ion-icon>
+                En preparación
+            </span>
+
+            <h2>Pedidos del salón</h2>
+            <p>Acá el mozo va a confirmar o rechazar los pedidos que llegan de las mesas, y a derivar cada parte al sector que corresponda: cocina o barra.</p>
+
+            <span class="referencia-enunciado">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Puntos 12, 13 y 14 del enunciado
+            </span>
+        </div>
+    </div>
 </ion-content>

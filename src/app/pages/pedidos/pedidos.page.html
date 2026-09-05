@@ -1,27 +1,43 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/inicio" text=""></ion-back-button>
+        </ion-buttons>
         <ion-title>Pedidos</ion-title>
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="pantalla-pedidos">
     <section class="grupo">
-        <h2 class="titulo-grupo">Esperando confirmación</h2>
+        <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
 
         @if (pendientes().length === 0) {
-            <p class="vacio">No hay pedidos esperando confirmación.</p>
+            <div class="estado-vacio">
+                <ion-icon name="receipt-outline"></ion-icon>
+                <p>No hay pedidos esperando confirmación.</p>
+            </div>
         } @else {
             @for (pedido of pendientes(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
-                        <h3>Mesa N° {{ pedido.numeroMesa }}</h3>
+                        <span class="ficha-mesa">
+                            <span class="ficha-mesa-rotulo">Mesa</span>
+                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                        </span>
                         <ion-badge color="warning">{{ pedido.estado }}</ion-badge>
                     </div>
 
-                    <p class="dato">{{ fechaFormateada(pedido) }}</p>
-                    <p class="dato">
-                        Tiempo estimado: {{ tiempoEstimado(pedido) }} minutos
-                    </p>
+                    <div class="datos-pedido">
+                        <span class="dato">
+                            <ion-icon name="time-outline"></ion-icon>
+                            {{ fechaFormateada(pedido) }}
+                        </span>
+                        <span class="dato">
+                            <ion-icon name="restaurant-outline"></ion-icon>
+                            {{ tiempoEstimado(pedido) }} minutos estimados
+                        </span>
+                    </div>
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
@@ -32,7 +48,10 @@
                         }
                     </ul>
 
-                    <p class="total">Total: {{ totalFormateado(pedido) }}</p>
+                    <p class="total">
+                        <span class="total-rotulo">Total</span>
+                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                    </p>
 
                     <div class="acciones">
                         <ion-button
@@ -64,19 +83,30 @@
     </section>
 
     <section class="grupo">
-        <h2 class="titulo-grupo">Listos para entregar</h2>
+        <h2 class="titulo-grupo titulo-seccion">Listos para entregar</h2>
 
         @if (listos().length === 0) {
-            <p class="vacio">Todavía no hay pedidos listos.</p>
+            <div class="estado-vacio">
+                <ion-icon name="time-outline"></ion-icon>
+                <p>Todavía no hay pedidos listos.</p>
+            </div>
         } @else {
             @for (pedido of listos(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
-                        <h3>Mesa N° {{ pedido.numeroMesa }}</h3>
+                        <span class="ficha-mesa">
+                            <span class="ficha-mesa-rotulo">Mesa</span>
+                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                        </span>
                         <ion-badge color="success">{{ pedido.estado }}</ion-badge>
                     </div>
 
-                    <p class="dato">{{ fechaFormateada(pedido) }}</p>
+                    <div class="datos-pedido">
+                        <span class="dato">
+                            <ion-icon name="time-outline"></ion-icon>
+                            {{ fechaFormateada(pedido) }}
+                        </span>
+                    </div>
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
@@ -87,7 +117,10 @@
                         }
                     </ul>
 
-                    <p class="total">Total: {{ totalFormateado(pedido) }}</p>
+                    <p class="total">
+                        <span class="total-rotulo">Total</span>
+                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                    </p>
 
                     <ion-button
                         expand="block"
@@ -101,4 +134,5 @@
             }
         }
     </section>
+  </div>
 </ion-content>

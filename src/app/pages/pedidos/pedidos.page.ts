@@ -1,7 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import {
+    IonBackButton,
     IonBadge,
     IonButton,
+    IonButtons,
     IonContent,
     IonHeader,
     IonIcon,
@@ -26,6 +28,8 @@ import { PedidoService } from '../../services/pedido.service';
         IonHeader,
         IonToolbar,
         IonTitle,
+        IonButtons,
+        IonBackButton,
         IonContent,
         IonButton,
         IonBadge,

@@ -11,6 +11,7 @@ import { NotificacionesService } from '../../services/notificaciones.service';
 @Component({
     selector: 'app-ingresar',
     templateUrl: './ingresar.page.html',
+    styleUrls: ['./ingresar.page.scss'],
     imports: [IonContent, LoginFormComponent],
 })
 export class IngresarPage {

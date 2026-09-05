@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { IonIcon } from '@ionic/angular';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import {
     AccionTarjetaUsuario,
@@ -37,7 +38,7 @@ const ACCIONES: AccionTarjetaUsuario[] = [
     selector: 'app-listado-clientes-pendientes',
     templateUrl: './listado-clientes-pendientes.component.html',
     styleUrls: ['./listado-clientes-pendientes.component.scss'],
-    imports: [TarjetaUsuarioComponent],
+    imports: [IonIcon, TarjetaUsuarioComponent],
 })
 export class ListadoClientesPendientesComponent {
     /** Los clientes los provee la página; este componente no consulta la base. */

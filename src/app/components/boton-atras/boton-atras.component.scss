@@ -1,41 +1,54 @@
-// Removemos los márgenes y fondos por defecto de Ionic
+/**
+ * Botón de volver.
+ *
+ * Pastilla de vidrio con la flecha en cian, del mismo tamaño y con el mismo
+ * relieve que el botón de cerrar sesión del otro extremo de la barra. Que los
+ * dos extremos pesen igual es lo que mantiene el título centrado de verdad.
+ *
+ * Se estiliza `ion-back-button` en sí y no un contenido propio, porque el
+ * componente de Ionic no renderiza hijos (ver el comentario del HTML).
+ */
+
+:host {
+    display: flex;
+    align-items: center;
+}
+
+ion-buttons {
+    margin: 0;
+}
+
 .boton-personalizado {
-    --background: transparent;
-    --background-activated: transparent;
-    --background-focused: transparent;
-    --background-hover: transparent;
-    --ripple-color: transparent;
-    height: auto;
-    width: auto;
-}
+    --background: linear-gradient(150deg, var(--superficie-elevada) 0%, var(--superficie-campo) 100%);
+    --background-hover: var(--superficie-elevada);
+    --background-focused: var(--superficie-elevada);
+    --color: var(--neon-cian);
+    --color-hover: var(--tinta-alta);
+    --border-radius: var(--radio-chico);
+    --icon-font-size: 1.5rem;
+    --padding-start: 0;
+    --padding-end: 0;
+    --min-width: 2.75rem;
+    --ripple-color: var(--neon-cian);
 
-// Cuadrado exterior azul intermedio (#3d5a80)
-.contenedor-atras {
-    background-color: #3d5a80;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px; // Bordes redondeados suaves estilo app móvil
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: 0;
 
-// Círculo interior azul oscuro (#293241)
-.circulo-icono {
-    background-color: #293241;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 0.0938rem solid var(--velo-fuerte);
+    border-radius: var(--radio-chico);
+    box-shadow: var(--sombra-apoyada);
+    overflow: hidden;
 
-    // Icono triangular apuntando a la izquierda en color claro (#e0fbfc)
-    ion-icon {
-        color: #e0fbfc;
-        font-size: 16px;
-        transform: rotate(-90deg); // Rotamos el triángulo de Ionic para que apunte a la izquierda
-        margin-right: 2px; // Ajuste milimétrico para centrar visualmente el triángulo
+    transition:
+        transform 0.14s ease,
+        border-color 0.18s ease;
+
+    &:hover {
+        border-color: var(--neon-cian);
+    }
+
+    &:active {
+        transform: scale(0.92);
     }
 }

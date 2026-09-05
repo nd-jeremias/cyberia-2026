@@ -1,23 +1,82 @@
-<app-header tituloHeader="Inicio">
-
-</app-header>
+<app-header tituloHeader="Inicio"></app-header>
 
 <ion-content [fullscreen]="true">
-  <div class="grilla-botones">
-    @for (boton of botonesDelRol(); track boton.ruta) {
-      <ion-button expand="block" class="boton-home" [routerLink]="boton.ruta">
-        <ion-icon [name]="boton.icono" slot="start"></ion-icon>
-        {{ boton.texto }}
-      </ion-button>
-    } @empty {
-      @if (authService.perfil() === null) {
-        <p class="sin-botones">
-          No se pudo determinar tu perfil. Verificá que tu usuario tenga una fila
-          cargada en la tabla "usuarios" (con el mismo id que en auth.users).
-        </p>
-      } @else {
-        <p class="sin-botones">Todavía no hay funciones asignadas a tu perfil.</p>
-      }
-    }
-  </div>
+    <div class="pantalla-inicio">
+        <!-- Bienvenida: identifica al usuario y a su rol de un vistazo -->
+        <section class="bienvenida">
+            <div class="bienvenida-texto">
+                <p class="saludo">{{ saludo() }},</p>
+                <h2 class="nombre">{{ nombreUsuario() }}</h2>
+                <span class="chip chip-perfil">
+                    <ion-icon name="person-circle-outline"></ion-icon>
+                    {{ perfilVisible() }}
+                </span>
+            </div>
+
+            <img class="marca-agua" src="assets/logo.png" alt="" aria-hidden="true" />
+        </section>
+
+        <!-- Accesos del rol -->
+        <section class="seccion-acciones">
+            <h2 class="titulo-seccion">¿Qué querés hacer?</h2>
+
+            <div class="grilla-acciones">
+                @for (boton of botonesDelRol(); track boton.ruta) {
+                <a class="tarjeta-accion" [routerLink]="boton.ruta">
+                    <span class="medallon">
+                        <ion-icon [name]="boton.icono"></ion-icon>
+                    </span>
+
+                    <span class="textos-accion">
+                        <span class="titulo-accion">{{ boton.texto }}</span>
+                        @if (boton.descripcion) {
+                        <span class="detalle-accion">{{ boton.descripcion }}</span>
+                        }
+                    </span>
+
+                    <ion-icon class="flecha-accion" name="chevron-forward-outline"></ion-icon>
+                </a>
+                } @empty {
+                <div class="estado-vacio">
+                    <ion-icon name="alert-circle-outline"></ion-icon>
+                    @if (authService.perfilError(); as motivo) {
+                    <p>
+                        No se pudo consultar tu perfil: {{ motivo }}. Volvé a iniciar sesión; si sigue pasando,
+                        revisá la conexión.
+                    </p>
+                    } @else if (authService.perfil() === null) {
+                    <p>
+                        No se pudo determinar tu perfil. Verificá que tu usuario tenga una fila cargada en la tabla
+                        "usuarios", con el mismo identificador que en la tabla de autenticación.
+                    </p>
+                    } @else {
+                    <p>Todavía no hay funciones asignadas a tu perfil.</p>
+                    }
+                </div>
+                }
+            </div>
+        </section>
+
+        <!-- Recordatorio del circuito del rol: contenido útil que además ocupa
+             el alto sobrante cuando el rol tiene pocos accesos -->
+        @if (guiaDelRol().length > 0) {
+        <aside class="guia-rol">
+            <h3>
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Tu circuito de trabajo
+            </h3>
+            <ol>
+                @for (paso of guiaDelRol(); track paso) {
+                <li>{{ paso }}</li>
+                }
+            </ol>
+        </aside>
+        }
+
+        <!-- Pie de marca: cierra la pantalla en lugar de dejar el fondo suelto -->
+        <footer class="pie-marca">
+            <span class="linea-neon"></span>
+            <p>Cyberia Restó · Gestión integral del salón</p>
+        </footer>
+    </div>
 </ion-content>

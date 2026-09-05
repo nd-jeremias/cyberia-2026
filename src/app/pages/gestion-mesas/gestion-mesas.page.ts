@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonButton, IonContent } from '@ionic/angular';
+import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 
@@ -15,6 +15,6 @@ import { HeaderComponent } from '../../components/header/header.component';
     selector: 'app-gestion-mesas',
     templateUrl: './gestion-mesas.page.html',
     styleUrls: ['./gestion-mesas.page.scss'],
-    imports: [IonContent, CommonModule, FormsModule, IonButton, RouterLink, HeaderComponent],
+    imports: [IonContent, IonIcon, CommonModule, FormsModule, RouterLink, HeaderComponent],
 })
 export class GestionMesasPage {}

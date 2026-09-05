@@ -11,7 +11,9 @@ import {
   peopleOutline, 
   wineOutline, 
   fastFoodOutline, 
-  personOutline 
+  personOutline,
+  logInOutline,
+  personAddOutline
 } from 'ionicons/icons';
 import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
@@ -46,6 +48,8 @@ export class LoginFormComponent {
       'wine-outline': wineOutline,
       'fast-food-outline': fastFoodOutline,
       'person-outline': personOutline,
+      'log-in-outline': logInOutline,
+      'person-add-outline': personAddOutline,
     });
   }
 
@@ -61,13 +65,13 @@ export class LoginFormComponent {
    * Son datos de prueba: no deberían quedar en una versión de producción.
    */
   usuariosValidos = [
-    { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', icono: 'shield-checkmark-outline' },
-    // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', icono: 'shield-checkmark-outline' },
-    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', icono: 'shield-checkmark-outline' },
-    { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', icono: 'people-outline' },
-    { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', icono: 'restaurant-outline' },
-    { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', icono: 'fast-food-outline' },
-    { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', icono: 'person-outline' },
+    { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', clave: 'duenio', icono: 'shield-checkmark-outline' },
+    // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', clave: 'supervisor', icono: 'shield-checkmark-outline' },
+    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', clave: 'cantinero', icono: 'wine-outline' },
+    { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', clave: 'metre', icono: 'people-outline' },
+    { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', clave: 'mozo', icono: 'restaurant-outline' },
+    { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', clave: 'cocinero', icono: 'fast-food-outline' },
+    { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', clave: 'cliente', icono: 'person-outline' },
   ];
 
   /** Completa el formulario con un perfil de prueba, listo para enviar. */

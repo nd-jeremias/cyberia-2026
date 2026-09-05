@@ -1,85 +1,157 @@
+/**
+ * Tarjeta de usuario.
+ *
+ * Se usa en el listado de clientes pendientes de aprobación (puntos 6, 7 y 8)
+ * y en la asignación de mesas del metre (punto 10).
+ *
+ * Cambio principal de disposición: la foto pasó de ocupar todo el ancho en
+ * formato 4:3 a ser un retrato cuadrado al costado de los datos. Motivos:
+ *
+ *  - el enunciado pide que "cada foto se vea con buen tamaño y relacionada con
+ *    los nombres y apellidos de cada cliente": lado a lado esa relación es
+ *    inmediata, mientras que apiladas hay que asociarlas por cercanía;
+ *  - con la foto arriba, cada tarjeta medía casi una pantalla y en el listado
+ *    solo entraba un cliente por vez;
+ *  - `object-fit: cover` sobre un cuadrado encuadra bien un rostro, que es lo
+ *    que siempre son estas fotos.
+ */
+
 :host {
-  display: block;
-  width: 100%;
+    display: block;
+    width: 100%;
 }
 
 .tarjeta-usuario {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 14px;
-  background-color: var(--ion-card-background, #254d7d);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+        "foto datos"
+        "acciones acciones";
+    gap: 0.875rem 1rem;
+
+    padding: 1rem;
+    box-sizing: border-box;
+
+    background: var(--grad-tarjeta);
+    border: var(--borde-sutil);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:hover {
+        border-color: var(--velo-fuerte);
+        box-shadow: var(--sombra-elevada);
+    }
 }
 
 /* ----- Foto ----- */
+
 .contenedor-foto {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #12294a;
+    grid-area: foto;
+
+    width: 5.5rem;
+    height: 5.5rem;
+    overflow: hidden;
+
+    border-radius: var(--radio);
+    border: 0.125rem solid var(--velo-fuerte);
+    background: var(--superficie-campo);
+    box-shadow: var(--sombra-apoyada);
 }
 
 .foto-usuario {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .foto-ausente {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.55);
-}
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.foto-ausente ion-icon {
-  font-size: 4rem;
+    color: var(--tinta-baja);
+    opacity: 0.7;
+
+    ion-icon {
+        font-size: 2.5rem;
+    }
 }
 
 /* ----- Datos ----- */
+
 .datos-usuario {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+    grid-area: datos;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3125rem;
+    min-width: 0;
 }
 
 .nombre-usuario {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--ion-text-color, #ffffff);
+    margin: 0;
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--tinta-alta);
+
+    /* El enunciado no admite texto cortado: los nombres largos bajan de
+       renglón en lugar de terminar en puntos suspensivos. */
+    overflow-wrap: anywhere;
 }
 
 .dato {
-  margin: 0;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.88);
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    line-height: 1.35;
+    color: var(--tinta-media);
+    overflow-wrap: anywhere;
 }
 
 .fecha {
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* ----- Acciones ----- */
-.acciones {
-  display: flex;
-  gap: 10px;
-}
-
-.acciones ion-button {
-  flex: 1 1 0;
-  margin: 0;
+    color: var(--tinta-baja);
 }
 
 ion-badge {
-  align-self: flex-start;
-  margin-bottom: 2px;
+    align-self: flex-start;
+}
+
+/* ----- Acciones ----- */
+
+.acciones {
+    grid-area: acciones;
+
+    display: flex;
+    gap: 0.625rem;
+    padding-top: 0.75rem;
+    border-top: 0.0625rem solid var(--velo-medio);
+
+    ion-button {
+        flex: 1 1 0;
+        margin: 0;
+        min-height: 3rem;
+        font-size: var(--texto-apoyo);
+        font-weight: 800;
+    }
+}
+
+/* En pantallas muy angostas la foto se achica para que el nombre no quede
+   apretado contra el borde. */
+@media (max-width: 22.5rem) {
+    .contenedor-foto {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+
+    .nombre-usuario {
+        font-size: var(--texto-cuerpo);
+    }
 }

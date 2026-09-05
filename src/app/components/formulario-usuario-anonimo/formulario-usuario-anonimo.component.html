@@ -1,17 +1,19 @@
 <div class="pantalla-anonimo">
     <header class="cabecera">
         <div class="isotipo-icono">
-            <img src="../../../assets/logo.png">
+            <img src="../../../assets/logo.png" alt="Cyberia Restó" />
         </div>
         <h1>Ingreso anónimo</h1>
+        <p>Entrá al local sin crear una cuenta</p>
     </header>
 
-    <section class="seccion-form">
+    <section class="seccion-form panel">
         <form [formGroup]="formulario" (ngSubmit)="onRegistrar()">
             <!-- Campo Nombres -->
             <div class="grupo-input">
                 <label class="input-label">Nombres</label>
                 <div class="caja-input">
+                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="nombres"
                         type="text"
@@ -39,41 +41,20 @@
                 }
             </div>
 
-            <!-- <div class="bloque-foto">
-                <div class="contenedor-foto">
-                    @if (foto(); as fotoTomada) {
-                        <img
-                            class="foto-previa"
-                            [src]="fotoTomada.previewUrl"
-                            alt="Foto del cliente anónimo"
-                        />
-                    } @else {
-                        <div class="foto-ausente">
-                            <ion-icon name="camera"></ion-icon>
-                            <span>Todavía no tomaste tu foto</span>
-                        </div>
-                    }
-                </div>
-
-                <button
-                    expand="block"
-                    fill="outline"
-                    type="button"
-                    (click)="onTomarFoto()"
-                    class="btn-secundario"
-                >
-                    <ion-icon slot="start" name="camera"></ion-icon>
-                    @if (foto()) {
-                        Tomar otra foto
-                    } @else {
-                        Tomar foto
-                    }
-                </button>
-            </div> -->
-
-            <button expand="block" type="submit" class="btn-principal"
-                >Ingresar al local</button
-            >
+            <button type="submit" class="btn-principal">
+                <ion-icon name="enter-outline"></ion-icon>
+                Ingresar al local
+            </button>
         </form>
     </section>
+
+    <!-- Explica el paso siguiente: además de informar, ocupa el espacio que
+         antes quedaba vacío bajo el botón. -->
+    <aside class="nota-anonimo">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <p>
+            Como invitado no necesitás aprobación. Al ingresar vas a poder escanear el código QR de la entrada para
+            anotarte en la lista de espera y ver los resultados de las encuestas.
+        </p>
+    </aside>
 </div>

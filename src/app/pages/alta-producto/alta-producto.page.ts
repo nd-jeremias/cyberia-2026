@@ -28,6 +28,7 @@ import { ProductosService } from '../../services/productos.service';
 @Component({
     selector: 'app-alta-producto',
     templateUrl: './alta-producto.page.html',
+    styleUrls: ['./alta-producto.page.scss'],
     imports: [
         IonHeader,
         IonToolbar,

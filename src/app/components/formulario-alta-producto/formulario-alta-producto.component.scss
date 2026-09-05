@@ -1,72 +1,124 @@
 /**
- * Formulario de alta/edición de producto.
+ * Alta y edición de producto (puntos 2 y 3 del enunciado).
  *
- * La tarjeta ocupa el alto disponible de la pantalla: en el celular no debe
- * quedar espacio muerto abajo, y el botón de guardar queda apoyado al pie.
+ * Antes el formulario vivía dentro de un `ion-card` con `ion-item` por campo,
+ * que es el aspecto de fábrica de Ionic y no se parecía en nada al resto de los
+ * formularios de la aplicación. Ahora usa el mismo kit que el registro y el
+ * alta de mesa: cabecera, panel elevado y campos hundidos con icono.
+ *
+ * Tiempo y precio comparten fila porque son dos valores cortos: en renglones
+ * separados dejaban media línea vacía cada uno.
  */
 
 :host {
     display: block;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    padding: 1.25rem 1rem 2rem;
+    box-sizing: border-box;
 }
 
-ion-card {
+.pantalla-alta-producto {
     display: flex;
     flex-direction: column;
+    gap: 1.25rem;
 
-    // Pisa el margen/ancho global de ion-card para poder ocupar la pantalla.
-    width: auto;
-    max-width: 40rem;
-    margin: 0.75rem;
-    min-height: calc(100% - 1.5rem);
+    width: 100%;
+    max-width: 34rem;
+    margin: 0 auto;
+    box-sizing: border-box;
 }
 
-ion-card-content {
+/* --------------------------------------------------------------------------
+   Cabecera
+   -------------------------------------------------------------------------- */
+
+.cabecera-producto {
     display: flex;
-    flex: 1;
-    padding-top: 0;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    h2 {
+        margin: 0;
+        font-size: var(--texto-titulo-grande);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--tinta-alta);
+    }
+
+    p {
+        margin: 0;
+        font-size: var(--texto-apoyo);
+        color: var(--tinta-baja);
+    }
 }
 
-form {
+/* --------------------------------------------------------------------------
+   Formulario
+   -------------------------------------------------------------------------- */
+
+.seccion-form {
+    padding: 1.5rem 1.25rem;
+}
+
+/* La descripción puede crecer: el campo se alinea arriba para que el icono no
+   quede flotando en el medio cuando el texto ocupa varios renglones. */
+.caja-input-alta {
+    align-items: flex-start;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+
+    .icono-campo {
+        margin-top: 0.125rem;
+    }
+
+    ion-textarea {
+        --padding-top: 0;
+        --padding-bottom: 0;
+    }
+}
+
+.fila-doble {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (max-width: 22.5rem) {
+    .fila-doble {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Bloque de fotos
+   -------------------------------------------------------------------------- */
+
+.bloque-fotos {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    width: 100%;
-    flex: 1;
-}
 
-.item-fotos {
-    --padding-start: 0;
-    --inner-padding-end: 0;
-}
+    padding: 0.875rem;
+    box-sizing: border-box;
 
-.fotos-contenedor {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-    padding: 0.5rem 0;
+    background: rgba(255, 255, 255, 0.05);
+    border: var(--borde-sutil);
+    border-radius: var(--radio);
 }
 
 .fotos-etiqueta {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: var(--texto-epigrafe);
     font-weight: 600;
-    line-height: 1.35;
-    color: var(--text-secondary);
+    line-height: 1.4;
+    color: var(--tinta-baja);
 }
 
-/* Empuja el botón al pie de la tarjeta, ocupe lo que ocupe el formulario. */
+/* --------------------------------------------------------------------------
+   Acciones
+   -------------------------------------------------------------------------- */
+
 .acciones {
-    margin-top: auto;
-    padding-top: 0.75rem;
-}
-
-.acciones ion-button {
-    --border-radius: 0.5rem;
-    min-height: 3rem;
-    font-weight: 800;
-    text-transform: none;
-    letter-spacing: 0;
+    margin-top: 0.25rem;
 }

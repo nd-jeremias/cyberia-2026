@@ -1,8 +1,8 @@
 import { Component, inject, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-    IonInput,
-} from '@ionic/angular';
+import { IonIcon, IonInput } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { personOutline, enterOutline, informationCircleOutline } from 'ionicons/icons';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
@@ -19,7 +19,7 @@ import { FileService } from '../../services/file.service';
     selector: 'app-formulario-usuario-anonimo',
     templateUrl: './formulario-usuario-anonimo.component.html',
     styleUrls: ['./formulario-usuario-anonimo.component.scss'],
-    imports: [IonInput, ReactiveFormsModule, SubidaImagenesComponent],
+    imports: [IonIcon, IonInput, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioUsuarioAnonimoComponent {
     private modal = inject(ModalService);
@@ -28,6 +28,14 @@ export class FormularioUsuarioAnonimoComponent {
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
     foto: File[] = [];
+
+    constructor() {
+        addIcons({
+            'person-outline': personOutline,
+            'enter-outline': enterOutline,
+            'information-circle-outline': informationCircleOutline,
+        });
+    }
 
     formulario = new FormGroup({
         nombres: new FormControl('', {

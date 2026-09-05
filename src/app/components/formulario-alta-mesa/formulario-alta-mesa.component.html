@@ -3,15 +3,16 @@
         <div class="isotipo-icono">
             <img src="../../../assets/logo.png" />
         </div>
-        <h1>Crear Mesa</h1>
+        <h1>Crear mesa</h1>
+        <p>Cargá los datos y la foto de la nueva mesa</p>
     </div>
-    <div class="seccion-form">
+    <div class="seccion-form panel">
         <form [formGroup]="formulario" (ngSubmit)="onAltaMesa()" class="formulario-cuerpo">
             <!-- Numero de Mesa -->
             <div class="grupo-input">
                 <label class="input-label">Número de mesa</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <ion-icon name="grid-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="numeroMesa"
                         type="number"
@@ -32,7 +33,7 @@
             <div class="grupo-input">
                 <label class="input-label">Cantidad de lugares</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <ion-icon name="people-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="cantidadLugares"
                         type="number"
@@ -53,7 +54,7 @@
             <div class="grupo-input">
                 <label class="input-label">Tipo de mesa</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
                     <ion-select
                         formControlName="tipo"
                         label="Tipo de mesa"
@@ -78,7 +79,7 @@
             </ion-item> -->
             <div class="img-preview">
                 <app-subida-imagenes
-                    [label]="'Foto: '"
+                    [label]="'Foto de la mesa'"
                     [maxImages]="1"
                     (imagenesChange)="recibirImagenes($event)"
                     [modoCamara]="'camara'"
@@ -86,12 +87,12 @@
                 >
                 </app-subida-imagenes>
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <span>Debe cargar 3 fotos de la mesa</span>
+                <span>Debe cargar la foto de la mesa</span>
                 }
             </div>
 
             <div class="enlaces-secundarios">
-                <ion-button expand="full" fill="outline" type="submit" class="btn-principal">Agregar mesa</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal">Agregar mesa</ion-button>
             </div>
         </form>
     </div>

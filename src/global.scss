@@ -1,302 +1,963 @@
 @use "theme/variables.scss";
 
 /*
- * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
+ * ============================================================================
+ * Cyberia Restó — Hoja de estilos global
+ * ============================================================================
+ *
+ * Acá vive el "kit" que comparten todas las pantallas: el fondo de la
+ * aplicación, los campos de formulario, los botones, las tarjetas y los
+ * componentes de Ionic. Una pantalla nueva que use estas clases ya sale con
+ * el aspecto correcto sin escribir una línea de estilo propia.
+ *
+ * Índice
+ *   1. Núcleo de Ionic
+ *   2. Fondo de la aplicación (profundidad y atmósfera)
+ *   3. Tipografía base
+ *   4. Piezas reutilizables (paneles, tarjetas, títulos, medallones)
+ *   5. Kit de formularios
+ *   6. Botones
+ *   7. Componentes de Ionic
+ *   8. Utilidades y accesibilidad
  */
 
-/* Core CSS required for Ionic components to work properly */
+/* ===========================================================================
+   1. NÚCLEO DE IONIC
+   =========================================================================== */
+
 @import "@ionic/angular/css/core.css";
 
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
+/*
+ * El enunciado no admite modo oscuro: la aplicación tiene que verse igual en
+ * un teléfono con tema claro que en uno con tema oscuro. Por eso NO se importa
+ * "palettes/dark.system.css" (antes sí estaba, y hacía que Ionic repintara
+ * fondos y textos por su cuenta según la configuración del sistema).
  */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* ===========================================================================
+   2. FONDO DE LA APLICACIÓN
+   ---------------------------------------------------------------------------
+   Cuatro capas apiladas en una sola declaración. De arriba hacia abajo:
+     1) textura diagonal finísima, para que la superficie no sea un plano liso;
+     2) resplandor ámbar arriba a la derecha (la "luz cálida" del salón);
+     3) resplandor cian abajo a la izquierda (el reflejo del cartel de neón);
+     4) degradado de petróleo, que es el color de base.
 
-/* Estilos de layout globales */
+   Ninguna se percibe por separado: juntas hacen que el fondo tenga aire y
+   dirección de luz. Es lo que separa una pantalla "pintada" de una
+   "iluminada", y el motivo principal por el que la aplicación dejaba de
+   parecer una calculadora.
+   =========================================================================== */
 
 html,
 body {
-    --ion-background-color: var(--bg-sky);
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
+
+    background-color: var(--superficie-fondo-a);
+    background-image:
+        repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.016) 0,
+            rgba(255, 255, 255, 0.016) 0.0625rem,
+            transparent 0.0625rem,
+            transparent 0.375rem
+        ),
+        var(--luz-calida),
+        var(--luz-fria),
+        linear-gradient(178deg, var(--superficie-fondo-b) 0%, var(--superficie-fondo-a) 58%, #24405f 100%);
+    background-attachment: fixed;
+    background-size: cover;
+
+    color: var(--tinta-alta);
+    font-family: var(--fuente);
+    -webkit-font-smoothing: antialiased;
 }
 
-// ion-card {
-//   --background: var(--ion-card-background);
-//   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-//   border-radius: 12px;
-//   margin: 16px auto;
-//   max-width: 500px;
-// }
-
-// ion-item {
-//   --background: transparent;
-//   --highlight-color-focused: var(--ion-color-primary);
-//   margin-bottom: 8px;
-// }
-
-// /* Botones principales con espaciado consistente */
-// ion-button {
-//   --border-radius: 8px;
-//   font-weight: 600;
-//   margin-top: 12px;
-
-//   &[fill="outline"] {
-//     --border-color: var(--ion-color-primary);
-//     --color: var(--ion-color-primary);
-//   }
-// }
-
-/* Ocultar scrollbar si no es necesario */
-ion-content::part(scroll) {
-    scrollbar-width: none;
+/* ion-app y ion-content van transparentes para dejar pasar el fondo de arriba:
+   si cada pantalla pintara su propio color sólido, el degradado se cortaría al
+   navegar y volveríamos a ver rectángulos planos. */
+ion-app,
+ion-router-outlet,
+ion-content {
+    --background: transparent;
+    background: transparent;
 }
 
-// ========= Estilos Formulario ============= \\
-/* 1. Cabecera con Isotipo */
+ion-content::part(background) {
+    background: transparent;
+}
+
+/* Aire al pie: en un celular con gesto de navegación, el último elemento de
+   una lista quedaba pegado al borde inferior. */
+ion-content {
+    --padding-bottom: 1.25rem;
+}
+
+/* ===========================================================================
+   3. TIPOGRAFÍA BASE
+   ---------------------------------------------------------------------------
+   El enunciado pide que ningún texto quede chico ni abreviado. El cuerpo
+   arranca en 16px y los títulos bajan de peso a medida que bajan de tamaño,
+   para que la jerarquía se lea aunque los tamaños sean parecidos.
+   =========================================================================== */
+
+body {
+    font-size: var(--texto-cuerpo);
+    line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--tinta-alta);
+    line-height: 1.25;
+    text-wrap: balance;
+}
+
+p {
+    line-height: 1.55;
+}
+
+/* ===========================================================================
+   4. PIEZAS REUTILIZABLES
+   =========================================================================== */
+
+/**
+ * Panel / tarjeta.
+ *
+ * El degradado sutil más el filo interior claro de la sombra hacen que la
+ * pieza se lea como una superficie física apoyada sobre el fondo, con la luz
+ * pegándole desde arriba.
+ */
+.panel,
+.tarjeta {
+    background: var(--grad-tarjeta);
+    border: var(--borde-sutil);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+    box-sizing: border-box;
+}
+
+/**
+ * Título de sección con riel de neón.
+ *
+ * La barrita vertical con el degradado del logotipo cumple dos funciones:
+ * ancla la vista al inicio del bloque y mete el color de marca en pantallas
+ * que, si no, serían solo texto sobre azul.
+ */
+.titulo-seccion {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    margin: 0;
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: var(--tinta-alta);
+
+    &::before {
+        content: "";
+        flex: 0 0 auto;
+        width: 0.3125rem;
+        height: 1.5rem;
+        border-radius: 0.25rem;
+        background: var(--grad-neon);
+        box-shadow: 0 0 0.75rem var(--neon-cian-tenue);
+    }
+}
+
+/* Bajada que acompaña a un título de sección. */
+.bajada-seccion {
+    margin: 0.25rem 0 0 1.0625rem;
+    font-size: var(--texto-apoyo);
+    color: var(--tinta-baja);
+}
+
+/**
+ * Estado vacío.
+ *
+ * Borde punteado y fondo apenas marcado: comunica "todavía no hay nada acá"
+ * en lugar de parecer una tarjeta que no terminó de cargar.
+ */
+.estado-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+
+    margin: 0;
+    padding: 2.25rem 1.5rem;
+    text-align: center;
+
+    font-size: var(--texto-cuerpo);
+    font-weight: 600;
+    color: var(--tinta-media);
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.125rem dashed var(--velo-fuerte);
+    border-radius: var(--radio-grande);
+
+    ion-icon {
+        font-size: 2.75rem;
+        color: var(--neon-cian);
+        opacity: 0.75;
+    }
+}
+
+/**
+ * Medallón de icono.
+ *
+ * Círculo con degradado propio detrás de cada icono. Es el recurso que usan
+ * casi todas las aplicaciones de delivery para que una lista de opciones no
+ * sea una columna de renglones iguales.
+ */
+.medallon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+
+    background: linear-gradient(150deg, var(--superficie-elevada) 0%, var(--superficie-campo) 100%);
+    border: 0.0625rem solid var(--velo-fuerte);
+    box-shadow: var(--sombra-apoyada);
+
+    font-size: 1.5rem;
+    color: var(--tinta-alta);
+}
+
+/* Insignia de texto (chip). */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    padding: 0.3125rem 0.75rem;
+    border-radius: 999px;
+
+    background: var(--velo-claro);
+    border: 0.0625rem solid var(--velo-fuerte);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    color: var(--tinta-alta);
+    white-space: nowrap;
+}
+
+/* Separador con texto centrado. */
+.divisor,
+.divisor-demo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    width: 100%;
+    margin: 0;
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tinta-baja);
+    text-align: center;
+
+    &::before,
+    &::after {
+        content: "";
+        flex: 1;
+        height: 0.0625rem;
+        background: linear-gradient(90deg, transparent, var(--velo-fuerte), transparent);
+    }
+
+    span {
+        padding: 0;
+    }
+}
+
+/* ===========================================================================
+   5. KIT DE FORMULARIOS
+   =========================================================================== */
+
+/**
+ * Cabecera con isotipo.
+ *
+ * El logotipo es un neón: se le agrega un resplandor real con drop-shadow
+ * para que se lea como un cartel encendido y no como un PNG pegado.
+ */
 .cabecera {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: 0.5rem;
 
     .isotipo-icono {
-        width: 8rem;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+
+        img {
+            width: 11rem;
+            max-width: 60%;
+            height: auto;
+            filter: drop-shadow(0 0 1.5rem rgba(87, 216, 234, 0.45)) drop-shadow(0 0.5rem 1rem rgba(11, 24, 40, 0.4));
+        }
     }
 
     h1 {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: var(--text-light);
         margin: 0;
+        font-size: var(--texto-titulo-grande);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        color: var(--tinta-alta);
+        text-shadow: 0 0.125rem 0.75rem rgba(11, 24, 40, 0.45);
     }
 
     p {
-        font-size: 0.88rem;
-        color: var(--text-light);
-        margin: 0.125rem 0 0 0;
+        margin: 0;
+        font-size: var(--texto-apoyo);
+        color: var(--tinta-baja);
     }
 }
 
-.seccion-form {
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.625rem;
-    }
+.seccion-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
 }
 
 .grupo-input {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
 
     .input-label {
-        font-size: 0.85rem;
+        padding-left: 0.25rem;
+        font-size: var(--texto-epigrafe);
         font-weight: 700;
-        color: #ffffff;
+        letter-spacing: 0.02em;
+        color: var(--tinta-media);
     }
 }
 
+/**
+ * Campo de texto.
+ *
+ * Va un escalón MÁS OSCURO que la superficie que lo contiene y con sombra
+ * interior: así se lee como un hueco donde se escribe, no como otro bloque
+ * apoyado encima. Es el mismo recurso de relieve que usan los formularios de
+ * Mercado Pago o Rappi.
+ */
 .caja-input {
     display: flex;
     align-items: center;
-    background-color: var(--bg-darkblue);
-    border: 0.093rem solid var(--bg-cyan);
-    border-radius: 0.5rem;
-    padding: 0 0.625rem;
-    min-height: 3rem;
-    color: var(--text-placeholder);
+    gap: 0.625rem;
+
+    min-height: 3.5rem;
+    padding: 0 1rem;
+    box-sizing: border-box;
+
+    background: var(--grad-campo);
+    border: 0.0938rem solid var(--velo-medio);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-hundida);
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+
+    /* Foco: el filo se enciende en cian. Además del color hay un halo, para
+       que se note también con poca luz o con la pantalla al mínimo. */
+    &:focus-within {
+        border-color: var(--neon-cian);
+        box-shadow:
+            var(--sombra-hundida),
+            0 0 0 0.1875rem var(--neon-cian-tenue);
+    }
 
     .icono-campo {
-        font-size: 1.25rem;
-        color: var(--bg-lightblue);
-        margin-right: 0.5rem;
+        flex-shrink: 0;
+        font-size: 1.375rem;
+        color: var(--neon-cian);
     }
 
-    ion-input {
-        --color: var(--bg-lightblue);
+    ion-input,
+    ion-select,
+    ion-textarea {
+        --color: var(--tinta-alta);
         --placeholder-color: var(--text-placeholder);
+        --placeholder-opacity: 1;
         --padding-start: 0;
-        font-size: 0.95rem;
+        --padding-end: 0;
+        --background: transparent;
+
+        font-size: var(--texto-cuerpo);
         font-weight: 600;
     }
+
+    /* Etiqueta flotante de Ionic dentro del campo. */
+    ion-input::part(label),
+    ion-select::part(label) {
+        color: var(--tinta-baja);
+        font-weight: 600;
+        opacity: 1;
+    }
 }
 
-.btn-principal,
-.btn-secundario {
-    width: 100%;
-    min-height: 3rem;
-    border: 0.093rem solid var(--bg-sky);
-    border-radius: 0.5rem;
-    font-weight: 800;
-    font-size: 1.05rem;
-    cursor: pointer;
-    margin-top: 0.25rem;
-    color: var(--bg-lightblue);
+/* Campo deshabilitado: se atenúa pero sigue siendo legible. */
+.caja-input:has(ion-input[disabled]) {
+    opacity: 0.7;
 }
 
-.btn-principal {
-    background-color: var(--color-red);
+/* Mensajes de validación bajo cada campo. */
+.mensaje-error {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    margin-top: 0.125rem;
+    padding: 0.375rem 0.625rem;
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: #ffd2d8;
+
+    background: rgba(255, 96, 114, 0.16);
+    border-left: 0.1875rem solid var(--peligro);
+    border-radius: 0.375rem;
+
+    /* Entra desde arriba: el movimiento avisa que apareció algo nuevo, sin
+       necesidad de que el usuario esté mirando justo ese campo. */
+    animation: aparecer-error 0.22s ease-out;
 }
 
-.btn-secundario {
-    background-color: transparent;
-    color: var(--bg-lightblue);
+@keyframes aparecer-error {
+    from {
+        opacity: 0;
+        transform: translateY(-0.25rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .enlaces-secundarios {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
+    gap: 0.875rem;
     margin-top: 0.25rem;
 
     p {
-        font-size: 0.85rem;
-        color: var(--bg-lightblue);
-        // color: #e2e8f0;
         margin: 0;
+        text-align: center;
+        font-size: var(--texto-apoyo);
+        color: var(--tinta-media);
 
         a {
-            color: var(--bg-orange);
-            // color: #38bdf8;
+            color: var(--ambar);
             font-weight: 700;
             text-decoration: none;
         }
     }
-
-    .btn-link-anonimo {
-        background: transparent;
-        border: none;
-        color: #94a3b8;
-        font-size: 0.8rem;
-        cursor: pointer;
-        padding: 0.125rem;
-
-        strong {
-            color: #14b8a6;
-        }
-    }
-}
-/* Mensajes de validación bajo cada campo */
-.mensaje-error {
-    display: block;
-    margin-top: 0.25rem;
-    padding-left: 0.25rem;
-    font-size: 0.8rem;
-    color: var(--ion-color-danger, #dc2626);
 }
 
-/* Estilo universal para todos los Alerts de la app */
-ion-alert {
+/* ===========================================================================
+   6. BOTONES
+   ---------------------------------------------------------------------------
+   Tres jerarquías y nada más:
+     .btn-principal  ámbar, una sola vez por pantalla;
+     .btn-secundario contorno, para la alternativa;
+     .btn-fantasma   solo texto, para lo accesorio.
+
+   Cada uno se define dos veces: para <button> nativo y para <ion-button>,
+   porque en el segundo caso el botón real vive dentro del shadow DOM y solo
+   responde a las variables --background / --color.
+   =========================================================================== */
+
+.btn-principal,
+.btn-secundario,
+.btn-fantasma {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
     width: 100%;
-    /* 1. El contenedor principal del Alert */
+    min-height: 3.5rem;
+    padding: 0 1.25rem;
+    box-sizing: border-box;
+
+    border-radius: var(--radio);
+    font-family: var(--fuente);
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+
+    transition:
+        transform 0.14s ease,
+        box-shadow 0.18s ease,
+        background-color 0.18s ease;
+
+    /* Al presionar se hunde apenas: devuelve la sensación de botón físico. */
+    &:active {
+        transform: translateY(0.0625rem) scale(0.99);
+    }
+}
+
+/* --- Principal: ámbar con tinta oscura encima (contraste ~9:1) ----------- */
+.btn-principal {
+    background: var(--grad-ambar);
+    border: none;
+    color: var(--tinta-sobre-ambar);
+    box-shadow: var(--sombra-ambar), inset 0 0.0625rem 0 rgba(255, 255, 255, 0.45);
+
+    &:active {
+        box-shadow: 0 0.1875rem 0.625rem rgba(221, 134, 34, 0.4);
+    }
+}
+
+ion-button.btn-principal {
+    --background: var(--grad-ambar);
+    --background-activated: var(--ambar-hondo);
+    --background-hover: var(--ambar-claro);
+    --background-focused: var(--ambar-hondo);
+    --color: var(--tinta-sobre-ambar);
+    --border-radius: var(--radio);
+    --border-width: 0;
+    --box-shadow: var(--sombra-ambar);
+    --padding-top: 1rem;
+    --padding-bottom: 1rem;
+
+    width: 100%;
+    min-height: 3.5rem;
+    margin: 0;
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* --- Secundario: contorno sobre el fondo -------------------------------- */
+.btn-secundario {
+    background: rgba(255, 255, 255, 0.07);
+    border: 0.125rem solid var(--velo-fuerte);
+    color: var(--tinta-alta);
+    box-shadow: inset 0 0.0625rem 0 rgba(255, 255, 255, 0.12);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.13);
+        border-color: var(--neon-cian);
+    }
+}
+
+ion-button.btn-secundario {
+    --background: rgba(255, 255, 255, 0.07);
+    --background-activated: rgba(255, 255, 255, 0.18);
+    --background-hover: rgba(255, 255, 255, 0.13);
+    --color: var(--tinta-alta);
+    --border-radius: var(--radio);
+    --border-width: 0.125rem;
+    --border-style: solid;
+    --border-color: var(--velo-fuerte);
+
+    width: 100%;
+    min-height: 3.5rem;
+    margin: 0;
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* --- Fantasma: solo texto ----------------------------------------------- */
+.btn-fantasma {
+    min-height: 2.75rem;
+    background: transparent;
+    border: none;
+    color: var(--tinta-baja);
+    font-size: var(--texto-apoyo);
+    font-weight: 700;
+
+    strong {
+        color: var(--neon-cian);
+    }
+}
+
+/* ===========================================================================
+   7. COMPONENTES DE IONIC
+   =========================================================================== */
+
+/* --- Botones genéricos --------------------------------------------------- */
+ion-button {
+    --border-radius: var(--radio);
+    --box-shadow: var(--sombra-apoyada);
+    --padding-top: 0.875rem;
+    --padding-bottom: 0.875rem;
+
+    min-height: 3.25rem;
+    font-size: var(--texto-cuerpo);
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+/* Un botón "outline" de Ionic sobre fondo oscuro necesita el filo más marcado
+   que el que trae de fábrica, o directamente no se ve. */
+ion-button[fill="outline"] {
+    --border-width: 0.125rem;
+    --box-shadow: none;
+}
+
+ion-button[fill="clear"] {
+    --box-shadow: none;
+}
+
+/* --- Barras superiores --------------------------------------------------- */
+ion-toolbar {
+    --background: var(--grad-barra);
+    --color: var(--tinta-alta);
+    --border-width: 0;
+    --min-height: 3.75rem;
+    --padding-top: 0.375rem;
+    --padding-bottom: 0.375rem;
+    --padding-start: 0.5rem;
+    --padding-end: 0.5rem;
+}
+
+ion-title {
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+/* La línea de neón bajo la barra reemplaza a la sombra: sobre un fondo azul
+   una sombra no se percibe, un filo de color sí. */
+ion-header {
+    &::after {
+        display: none;
+    }
+
+    ion-toolbar:last-of-type {
+        border-bottom: 0.125rem solid transparent;
+        border-image: var(--grad-neon) 1;
+        box-shadow: 0 0.5rem 1.5rem rgba(11, 24, 40, 0.35);
+    }
+}
+
+/**
+ * Botón de volver de las barras `ion-toolbar`.
+ *
+ * Misma pastilla de vidrio que usa el componente `app-boton-atras`, para que la
+ * flecha se vea igual venga de donde venga: hay pantallas armadas con
+ * `app-header` y otras con `ion-header`, y antes cada una mostraba un botón
+ * distinto.
+ */
+ion-back-button {
+    --background: linear-gradient(150deg, var(--superficie-elevada) 0%, var(--superficie-campo) 100%);
+    --background-hover: var(--superficie-elevada);
+    --background-focused: var(--superficie-elevada);
+    --color: var(--neon-cian);
+    --color-hover: var(--tinta-alta);
+    --border-radius: var(--radio-chico);
+    --icon-font-size: 1.5rem;
+    --padding-start: 0;
+    --padding-end: 0;
+    --min-width: 2.75rem;
+
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-inline: 0.25rem;
+
+    border: 0.0938rem solid var(--velo-fuerte);
+    border-radius: var(--radio-chico);
+    box-shadow: var(--sombra-apoyada);
+    overflow: hidden;
+
+    transition:
+        transform 0.14s ease,
+        border-color 0.18s ease;
+
+    &:hover {
+        border-color: var(--neon-cian);
+    }
+
+    &:active {
+        transform: scale(0.92);
+    }
+}
+
+/* --- Tarjetas ------------------------------------------------------------ */
+ion-card {
+    margin: 1rem;
+    background: var(--grad-tarjeta);
+    border: var(--borde-sutil);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+ion-card-title {
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    color: var(--tinta-alta);
+}
+
+ion-card-subtitle {
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--neon-cian);
+}
+
+ion-card-content {
+    color: var(--tinta-media);
+    font-size: var(--texto-apoyo);
+}
+
+/* --- Ítems y listas ------------------------------------------------------ */
+ion-item {
+    --background: transparent;
+    --background-hover: rgba(255, 255, 255, 0.06);
+    --color: var(--tinta-alta);
+    --border-color: var(--velo-medio);
+    --highlight-color-focused: var(--neon-cian);
+    --highlight-color-valid: var(--exito);
+    --highlight-color-invalid: var(--peligro);
+    --padding-start: 0.75rem;
+    --inner-padding-end: 0.75rem;
+    --min-height: 3.5rem;
+}
+
+ion-list {
+    background: transparent;
+}
+
+ion-label {
+    color: var(--tinta-alta);
+}
+
+/* --- Campos sueltos (fuera de .caja-input) ------------------------------- */
+ion-input,
+ion-textarea,
+ion-select {
+    --color: var(--tinta-alta);
+    --placeholder-color: var(--text-placeholder);
+    --placeholder-opacity: 1;
+    font-size: var(--texto-cuerpo);
+}
+
+ion-select::part(icon) {
+    color: var(--neon-cian);
+    opacity: 1;
+}
+
+/* --- Insignias ----------------------------------------------------------- */
+ion-badge {
+    padding: 0.375rem 0.6875rem;
+    border-radius: 999px;
+    font-size: var(--texto-epigrafe);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+    box-shadow: var(--sombra-apoyada);
+}
+
+/* --- Indicador de carga -------------------------------------------------- */
+ion-spinner {
+    --color: var(--ambar);
+}
+
+/* --- Popover del ion-select --------------------------------------------- */
+ion-popover {
+    --background: var(--superficie-tarjeta);
+    --color: var(--tinta-alta);
+    --border-radius: var(--radio);
+    --box-shadow: var(--sombra-elevada);
+
+    ion-item {
+        --background: transparent;
+        --color: var(--tinta-alta);
+        font-size: var(--texto-cuerpo);
+        font-weight: 600;
+    }
+
+    ion-radio {
+        --color: var(--tinta-baja);
+        --color-checked: var(--ambar);
+    }
+}
+
+/* --- Barra de desplazamiento -------------------------------------------- */
+ion-content::part(scroll) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--velo-fuerte) transparent;
+}
+
+/* ===========================================================================
+   ALERTAS
+   ---------------------------------------------------------------------------
+   El enunciado prohíbe los alert() del navegador, pero los ion-alert (que son
+   controles propios de la aplicación) sí se usan para elegir opciones. Se los
+   viste con la misma paleta para que no aparezca de golpe una ventana blanca
+   de sistema en el medio de la aplicación.
+   =========================================================================== */
+
+ion-alert {
+    --backdrop-opacity: 0.65;
+
     .alert-wrapper {
-        background: var(--bg-blue-petrol) !important; /* Fondo del cuadro */
-        border-radius: 15px !important; /* Bordes redondeados */
-        width: 80% !important; /* Ocupa el 90% del ancho de la pantalla */
-        height: 50vh !important; /* Fuerza al alert a medir exactamente el 50% del alto de la pantalla */
-        max-width: 450px !important; /* Límite máximo para que no se deforme en tablets o web */
-        /* Convertimos el contenedor en Flexbox para distribuir sus partes */
+        width: 88% !important;
+        max-width: 26rem !important;
+
+        background: var(--grad-tarjeta) !important;
+        border: var(--borde-sutil) !important;
+        border-radius: var(--radio-panel) !important;
+        box-shadow: var(--sombra-elevada) !important;
+
         display: flex !important;
         flex-direction: column !important;
-    }
-    .alert-head, .alert-message {
-        background: var(--bg-darkblue);
+        overflow: hidden !important;
     }
 
-    .alert-head + .alert-scrollable-container {
-        flex: 1 !important; /* Ocupa todo el espacio central disponible */
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important; /* Centra verticalmente las opciones */
-        overflow-y: auto !important; /* Mantiene el scroll si los ítems superan el espacio */
+    .alert-head {
+        padding: 1.25rem 1.5rem 0.75rem;
+        background: transparent;
+        text-align: center;
     }
 
-    /* Forzamos a la lista interna a centrar también sus elementos */
-    .alert-radio-group {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: center !important;
-        width: 100% !important;
-    }
-
-    .alert-scrollable-container {
-        max-height: 60vh !important; /* Le da más espacio interno a la lista de opciones */
-    }
-
-    /* 2. Título y Subtítulo */
     .alert-title {
-        color: var(--text-light) !important;
-        font-size: 1.5rem !important;
-        font-weight: bold !important;
+        font-size: var(--texto-titulo) !important;
+        font-weight: 800 !important;
+        color: var(--tinta-alta) !important;
     }
+
     .alert-sub-title {
-        color: var(--text-light) !important;
+        font-size: var(--texto-apoyo) !important;
+        color: var(--tinta-baja) !important;
     }
 
-    /* 3. El texto de las opciones (filas del select) */
-    .alert-radio-label {
-        color: var(--text-light) !important;
-        font-size: 1.2rem !important;
-        padding-top: 14px !important; /* Más espacio arriba de cada opción */
-        padding-bottom: 14px !important; /* Más espacio abajo de cada opción */
+    .alert-message {
+        padding: 0 1.5rem 1rem !important;
+        font-size: var(--texto-cuerpo) !important;
+        color: var(--tinta-media) !important;
     }
 
-    /* 4. La opción que está actualmente seleccionada */
+    .alert-radio-group,
+    .alert-checkbox-group {
+        border: none !important;
+        max-height: 55vh !important;
+    }
+
+    .alert-radio-label,
+    .alert-checkbox-label {
+        font-size: var(--texto-cuerpo) !important;
+        font-weight: 600 !important;
+        color: var(--tinta-media) !important;
+        padding-top: 0.875rem !important;
+        padding-bottom: 0.875rem !important;
+        white-space: normal !important;
+    }
+
+    /* La opción elegida cambia color Y peso: no depende solo del color. */
     [aria-checked="true"] .alert-radio-label {
-        color: var(--bg-blue) !important;
-        font-weight: bold !important;
+        color: var(--ambar) !important;
+        font-weight: 800 !important;
     }
 
-    /* 5. El círculo/check de selección */
     .alert-radio-icon {
-        --color: var(--text-secondary); /* Color desmarcado */
-        --color-checked: var(--bg-blue); /* Color marcado */
+        --color: var(--tinta-baja);
+        --color-checked: var(--ambar);
     }
 
-    /* 6. Los botones de abajo (Cancelar / OK) */
     .alert-button-group {
-        margin-top: auto !important; /* Empuja los botones al fondo del contenedor */
-        background: var(--bg-darkblue) !important;
-        width: 100% !important;
-        .alert-button {
-            color: var(--bg-blue) !important;
-            font-weight: 600 !important;
+        padding: 0.75rem 1rem 1rem !important;
+        background: rgba(11, 24, 40, 0.22) !important;
+        border-top: var(--borde-sutil) !important;
+        gap: 0.625rem;
+    }
 
-            /* Botón de la izquierda (usualmente Cancelar) */
-            &:first-child {
-                color: var(--color-orange) !important;
-            }
+    .alert-button {
+        flex: 1;
+        min-height: 2.875rem;
+        border-radius: var(--radio-chico) !important;
+
+        background: var(--grad-ambar) !important;
+        color: var(--tinta-sobre-ambar) !important;
+        font-size: var(--texto-cuerpo) !important;
+        font-weight: 800 !important;
+        text-transform: none !important;
+
+        /* El primero suele ser "Cancelar": va en contorno para que el ámbar
+           siga marcando una sola acción principal. */
+        &:first-child {
+            background: rgba(255, 255, 255, 0.09) !important;
+            border: 0.125rem solid var(--velo-fuerte) !important;
+            color: var(--tinta-alta) !important;
         }
+
+        &:only-child {
+            background: var(--grad-ambar) !important;
+            border: none !important;
+            color: var(--tinta-sobre-ambar) !important;
+        }
+    }
+}
+
+/* ===========================================================================
+   8. UTILIDADES Y ACCESIBILIDAD
+   =========================================================================== */
+
+/* Contenedor de ancho cómodo y centrado, para que en tablet el contenido no
+   se estire de borde a borde. */
+.contenedor {
+    width: 100%;
+    max-width: 34rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.contenedor-ancho {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Foco visible por teclado en cualquier elemento interactivo. */
+:focus-visible {
+    outline: 0.1875rem solid var(--neon-cian);
+    outline-offset: 0.125rem;
+    border-radius: 0.25rem;
+}
+
+/* Respeta la preferencia del sistema de reducir animaciones. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }

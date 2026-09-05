@@ -1,13 +1,22 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>consultas-clientes</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Consultas de clientes'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">consultas-clientes</ion-title>
-        </ion-toolbar>
-    </ion-header>
+    <div class="pantalla-preparacion">
+        <img class="logo-preparacion" src="assets/logo.png" alt="Cyberia Restó" />
+
+        <div class="tarjeta-preparacion">
+            <span class="sello-preparacion">
+                <ion-icon name="time-outline"></ion-icon>
+                En preparación
+            </span>
+
+            <h2>Sala de conversación</h2>
+            <p>Va a ser la sala de conversación entre los mozos y los clientes del salón, con el número de mesa y la fecha con hora y minutos en cada mensaje.</p>
+
+            <span class="referencia-enunciado">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Punto 11 del enunciado
+            </span>
+        </div>
+    </div>
 </ion-content>

@@ -16,6 +16,10 @@ export class AuthService {
     // Se resuelve solo cada vez que cambia la sesión (login/logout/refresh).
     perfil = signal<PerfilUsuario | null>(null);
 
+    // Motivo por el que no se pudo leer el perfil, cuando la consulta falló.
+    // En null significa que la consulta anduvo (haya traído fila o no).
+    perfilError = signal<string | null>(null);
+
     galeriaService = inject(GaleriaService)
     modal = inject(ModalService)
 
@@ -46,8 +50,12 @@ export class AuthService {
             .maybeSingle();
 
         if (error) {
+            // La consulta falló: no es que falte la fila. Se guarda el motivo
+            // para que la pantalla no mande a revisar la base cuando en
+            // realidad fue la red, los permisos o el token.
             console.error('No se pudo cargar el perfil del usuario', userId, error);
 
+            this.perfilError.set(error.message);
             this.perfil.set(null);
             return;
         }
@@ -59,10 +67,12 @@ export class AuthService {
             // recrea la tabla y sólo repone los usuarios de prueba).
             console.warn('El usuario no tiene fila en "usuarios"', userId);
 
+            this.perfilError.set(null);
             this.perfil.set(null);
             return;
         }
 
+        this.perfilError.set(null);
         this.perfil.set(data.perfil);
     }
 

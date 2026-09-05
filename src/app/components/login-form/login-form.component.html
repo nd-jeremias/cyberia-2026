@@ -1,17 +1,17 @@
 <div class="pantalla-login">
-    <!-- 1. Cabecera con Isotipo -->
-    <div class="cabecera">
+    <!-- 1. Cabecera con isotipo -->
+    <header class="cabecera">
         <div class="isotipo-icono">
-            <img src="../../../assets/logo.png" />
-            <!-- <ion-icon name="restaurant-outline"></ion-icon> -->
+            <img src="../../../assets/logo.png" alt="Cyberia Restó" />
         </div>
         <h1>Iniciar sesión</h1>
-    </div>
+        <p>Bienvenido de nuevo a Cyberia Restó</p>
+    </header>
 
-    <!-- 2. Formulario Principal -->
-    <div class="seccion-form">
+    <!-- 2. Formulario principal -->
+    <div class="seccion-form panel">
         <form [formGroup]="formulario" (ngSubmit)="onLogin()">
-            <!-- Campo Email -->
+            <!-- Campo Correo electrónico -->
             <div class="grupo-input">
                 <label class="input-label">Correo electrónico</label>
                 <div class="caja-input">
@@ -41,22 +41,35 @@
                 }
             </div>
 
-            <!-- Botón Principal -->
-
-            <!-- Enlaces secundarios -->
+            <!-- Acciones -->
             <div class="enlaces-secundarios">
-                <button type="submit" class="btn-principal">Iniciar sesión</button>
+                <button type="submit" class="btn-principal">
+                    <ion-icon name="log-in-outline"></ion-icon>
+                    Iniciar sesión
+                </button>
+
                 <div class="divisor">
-                    <span> o </span>
+                    <span>o</span>
                 </div>
-                <button type="button" routerLink="/registrarse" class="btn-secundario">Crear cuenta</button>
-                <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">Continuar como Invitado</button>
+
+                <!-- Las dos alternativas comparten fila: ocupan el ancho sin
+                     dejar el hueco vacío que quedaba al apilarlas. -->
+                <div class="fila-alternativas">
+                    <button type="button" routerLink="/registrarse" class="btn-secundario">
+                        <ion-icon name="person-add-outline"></ion-icon>
+                        Crear cuenta
+                    </button>
+                    <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">
+                        <ion-icon name="fast-food-outline"></ion-icon>
+                        Invitado
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- 3. Accesos Rápidos Demo -->
+<!-- 3. Accesos rápidos por perfil -->
 <footer class="seccion-demo">
     <div class="divisor-demo">
         <span>Acceso rápido · demo</span>
@@ -64,13 +77,17 @@
 
     <div class="grilla-perfiles">
         @for (perfil of usuariosValidos; track perfil.email) {
-        <button type="button" class="card-perfil" (click)="cargarCredenciales(perfil.email, perfil.pass)">
-            <div class="icono-perfil-wrapper">
+        <button
+            type="button"
+            [class]="'card-perfil perfil-' + perfil.clave"
+            (click)="cargarCredenciales(perfil.email, perfil.pass)"
+        >
+            <span class="icono-perfil-wrapper">
                 <ion-icon [name]="perfil.icono"></ion-icon>
-            </div>
-            <div class="textos-perfil">
+            </span>
+            <span class="textos-perfil">
                 <span class="rol">{{ perfil.rol }}</span>
-            </div>
+            </span>
         </button>
         }
     </div>

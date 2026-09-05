@@ -1,0 +1,11 @@
+/**
+ * Clientes pendientes de aprobación (punto 6 del enunciado).
+ *
+ * La barra superior y el fondo salen de `global.scss`; el listado y sus
+ * tarjetas, de sus propios componentes. No hace falta nada más acá.
+ */
+
+app-listado-clientes-pendientes {
+    display: block;
+    min-height: 100%;
+}

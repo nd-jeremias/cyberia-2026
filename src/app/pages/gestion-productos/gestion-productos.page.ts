@@ -61,6 +61,11 @@ export class GestionProductosPage {
     titulo = computed(() => (this.esBebida() ? 'Gestión de bebidas' : 'Gestión de platos'));
     textoBotonCrear = computed(() => (this.esBebida() ? 'Nueva bebida' : 'Nuevo plato'));
 
+    // Título del listado. Es distinto al de la barra superior a propósito: si
+    // fueran el mismo texto, la pantalla arrancaba con el mismo título repetido
+    // dos veces, uno debajo del otro.
+    tituloListado = computed(() => (this.esBebida() ? 'Bebidas en la carta' : 'Platos en la carta'));
+
     productos = signal<Producto[]>([]);
 
     // Último tipo que se llegó a pedir, para no repetir la consulta cuando el

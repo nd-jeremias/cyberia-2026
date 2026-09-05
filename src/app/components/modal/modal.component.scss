@@ -1,47 +1,89 @@
-/* Configuración estructural del Modal */
+/**
+ * Ventana de aviso de la aplicación.
+ *
+ * El enunciado prohíbe los `alert()` del navegador: todos los mensajes de error
+ * e información salen por acá. Como es la pieza que más veces aparece, se
+ * trabajó para que se lea como parte de la aplicación y no como una ventana de
+ * sistema: panel con degradado, filo de neón arriba y botón en ámbar.
+ */
+
 ion-modal.modal-personalizado {
-    --width: 85%;
-    --max-width: 400px;
-    --height: fit-content;
-    --border-radius: 16px;
-    --backdrop-opacity: 0.6;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+    --width: 88%;
+    --max-width: 26rem;
+    --height: auto;
+    --border-radius: var(--radio-panel);
+    --backdrop-opacity: 0.65;
+    --box-shadow: var(--sombra-elevada);
+    --background: transparent;
 }
 
-/* Header más alto */
+/* La barra de título lleva el filo de neón: es la firma visual de la marca y
+   ya aparece en el encabezado de todas las pantallas. */
 ion-modal.modal-personalizado ion-header ion-toolbar {
-    --padding-top: 16px;
-    --padding-bottom: 16px;
-    --background: var(--bg-petrol);
+    --padding-top: 1rem;
+    --padding-bottom: 1rem;
+    --background: var(--superficie-barra);
+    --color: var(--tinta-alta);
+    --border-width: 0;
+
+    border-top: 0.1875rem solid transparent;
+    border-image: var(--grad-neon) 1;
 }
 
-/* Contenido con Padding correcto */
+ion-modal.modal-personalizado ion-title {
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    text-align: center;
+}
+
+/* Contenido: el mensaje centrado y con aire suficiente para leerse cómodo. */
 .contenido {
-    min-height: 300px;
-    --padding-start: 20px;
-    --padding-end: 20px;
-    --padding-top: 20px;
-    --padding-bottom: 20px;
-    background-color: var(--bg-blue-petrol);
+    --background: var(--superficie-tarjeta);
+    --padding-start: 1.5rem;
+    --padding-end: 1.5rem;
+    --padding-top: 1.5rem;
+    --padding-bottom: 1rem;
+
+    min-height: 7rem;
+
+    p {
+        margin: 0;
+        font-size: var(--texto-cuerpo);
+        line-height: 1.55;
+        color: var(--tinta-media);
+        text-align: center;
+    }
 }
 
-/* Footer y Botón Centrado */
 ion-modal.modal-personalizado ion-footer {
-    padding-top: 12px;
-    padding-bottom: 16px;
-    background-color: var(--bg-blue-petrol);
+    padding: 0.75rem 1.5rem 1.5rem;
+    background: var(--superficie-tarjeta);
+
+    &::before {
+        display: none;
+    }
 }
 
 .botonContainer {
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     width: 100%;
 }
 
+/* Único botón: va en ámbar, como toda acción principal de la aplicación. */
 .botonCerrar {
-    color: var(--text-light);
-    --border-radius: 8px;
-    --padding-start: 24px;
-    --padding-end: 24px;
-    font-weight: 600;
+    --background: var(--grad-ambar);
+    --background-activated: var(--ambar-hondo);
+    --background-hover: var(--ambar-claro);
+    --color: var(--tinta-sobre-ambar);
+    --border-radius: var(--radio);
+    --box-shadow: var(--sombra-ambar);
+    --padding-start: 2.5rem;
+    --padding-end: 2.5rem;
+
+    min-height: 3.125rem;
+    font-size: var(--texto-cuerpo);
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent } from '@ionic/angular';
+import { IonContent, IonIcon } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../components/header/header.component';
 
@@ -15,6 +15,6 @@ import { HeaderComponent } from '../../components/header/header.component';
     selector: 'app-gestion-empleados',
     templateUrl: './gestion-empleados.page.html',
     styleUrls: ['./gestion-empleados.page.scss'],
-    imports: [IonContent, CommonModule, FormsModule, RouterLink, HeaderComponent],
+    imports: [IonContent, IonIcon, CommonModule, FormsModule, RouterLink, HeaderComponent],
 })
 export class GestionEmpleadosPage {}

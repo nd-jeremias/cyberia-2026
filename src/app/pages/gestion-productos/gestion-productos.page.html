@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/inicio"></ion-back-button>
+            <ion-back-button defaultHref="/inicio" text=""></ion-back-button>
         </ion-buttons>
         <ion-title>{{ titulo() }}</ion-title>
         <ion-buttons slot="end">
@@ -16,7 +16,7 @@
 <ion-content [fullscreen]="true">
     <app-tarjeta-listado-producto
         [productos]="productos()"
-        [tituloListado]="titulo()"
+        [tituloListado]="tituloListado()"
         modo="gestion"
         (editarProducto)="onEditar($event)"
         (eliminarProducto)="onEliminar($event)"

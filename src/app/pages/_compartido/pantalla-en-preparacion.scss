@@ -1,0 +1,122 @@
+/**
+ * Pantalla de sección en preparación.
+ * ============================================================================
+ *
+ * Varias secciones todavía no están implementadas. Antes mostraban el armazón
+ * que genera Ionic al crear una página: el nombre del archivo como título
+ * ("gestion-clientes", en minúscula y con guiones) sobre una pantalla vacía.
+ *
+ * Eso no es un problema de programación sino de presentación: da la impresión
+ * de que la aplicación está rota, cuando en realidad la sección simplemente no
+ * llegó todavía. Esta hoja las deja como una pantalla intencional: título en
+ * castellano, explicación de qué va a hacer la sección y el punto del enunciado
+ * que le corresponde.
+ */
+
+.pantalla-preparacion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+
+    width: 100%;
+    max-width: 32rem;
+    min-height: 100%;
+    margin: 0 auto;
+    padding: 2rem 1.25rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.logo-preparacion {
+    width: 9rem;
+    max-width: 50%;
+    filter: drop-shadow(0 0 1.25rem rgba(87, 216, 234, 0.45));
+    animation: latido-preparacion 3s ease-in-out infinite;
+}
+
+@keyframes latido-preparacion {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.04);
+    }
+}
+
+.tarjeta-preparacion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    width: 100%;
+    padding: 1.75rem 1.5rem;
+    box-sizing: border-box;
+
+    background: var(--grad-tarjeta);
+    border: var(--borde-sutil);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+
+    h2 {
+        margin: 0;
+        font-size: var(--texto-titulo);
+        font-weight: 800;
+        color: var(--tinta-alta);
+    }
+
+    p {
+        margin: 0;
+        font-size: var(--texto-apoyo);
+        line-height: 1.55;
+        color: var(--tinta-media);
+    }
+}
+
+.sello-preparacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.4375rem 0.875rem;
+    border-radius: 999px;
+
+    background: rgba(255, 204, 85, 0.16);
+    border: 0.0938rem solid rgba(255, 204, 85, 0.45);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--alerta);
+
+    ion-icon {
+        font-size: 1.125rem;
+    }
+}
+
+/* Punto del enunciado al que corresponde la sección. */
+.referencia-enunciado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.625rem 1rem;
+    border-radius: var(--radio-chico);
+
+    background: rgba(87, 216, 234, 0.1);
+    border: 0.0625rem solid rgba(87, 216, 234, 0.32);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: var(--tinta-media);
+
+    ion-icon {
+        flex-shrink: 0;
+        font-size: 1.125rem;
+        color: var(--neon-cian);
+    }
+}

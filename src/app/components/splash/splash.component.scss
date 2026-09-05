@@ -1,70 +1,92 @@
-ion-content {
-    /* El tono azul oscuro profundo de tu fondo definitivo */
-    --background: #000a21;
+/**
+ * Pantallas de presentación (splash screens).
+ *
+ * El enunciado pide una estática y una animada, con el ícono de la aplicación,
+ * el nombre del grupo y los apellidos y nombres de cada integrante. Son dos
+ * capas superpuestas: la primera (logotipo) se desvanece a los 2,5 segundos y
+ * deja ver la segunda (créditos), que estaba debajo desde el principio.
+ *
+ * Cambios de esta versión:
+ *  - el fondo pasó del casi negro #000a21 al petróleo de la aplicación, con sus
+ *    dos resplandores. Así la presentación no arranca en negro para después
+ *    saltar a un azul medio, y se respeta la regla de no usar fondos negros;
+ *  - se agregó el nombre del grupo, que el enunciado pide y no estaba;
+ *  - los nombres entran escalonados en lugar de aparecer todos de golpe.
+ */
+
+/* Fondo compartido por las dos capas: mismo tratamiento que el resto de la
+   aplicación, con la luz cálida arriba y el reflejo de neón abajo. */
+%fondo-presentacion {
+    background-color: var(--superficie-fondo-a);
+    background-image: var(--luz-calida), var(--luz-fria),
+        linear-gradient(178deg, var(--superficie-fondo-b) 0%, var(--superficie-fondo-a) 60%, #22384f 100%);
 }
 
-/* --- CAPA 1: LOGO ANIMADO Y PATRÓN --- */
+ion-content {
+    --background: var(--superficie-fondo-a);
+}
+
+/* --- CAPA 1: LOGOTIPO ANIMADO Y TEXTURA --- */
+
 .layer-animated {
-    background-color: #000a21;
+    @extend %fondo-presentacion;
+
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
+    z-index: 2;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2;
-    /* Mantenemos tu salida: desaparece a los 2.5s para dar tiempo al latido */
-    animation: fadeOutLayer 0.5s ease-out 2.5s forwards; 
+
+    /* Se desvanece a los 2,5 s para dar tiempo al latido del logotipo. */
+    animation: fadeOutLayer 0.5s ease-out 2.5s forwards;
 }
 
-/* El patrón gastronómico sutil que pediste */
+/* Patrón gastronómico de fondo, muy tenue: da textura sin competir. */
 .background-pattern {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../../../assets/patron_splash_blanco.png'); 
+    inset: 0;
+    z-index: 1;
+
+    background-image: url("../../../assets/patron_splash_blanco.png");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: cover; 
-    opacity: 0.25; /* Súper tenue para que no compita visualmente */
-    z-index: 1;
+    background-size: cover;
+    opacity: 0.16;
 }
 
 .animated-logo {
     position: relative;
     z-index: 2;
+
     width: 75vw;
-    max-width: 420px;
+    max-width: 26rem;
     height: auto;
     opacity: 0;
-    
-    /* Resplandor tecnológico azulado sobre el logo */
-    filter: drop-shadow(0px 0px 25px rgba(0, 162, 255, 0.45));
-    
-    /* TRUCO CLAVE: Encadenamos la animación de Entrada (ejecuta una vez) 
-       y la animación de Latido (corre en bucle infinito tras 0.8 segundos) */
-    animation: 
+
+    /* Resplandor de neón sobre el logotipo. */
+    filter: drop-shadow(0 0 1.75rem rgba(87, 216, 234, 0.55));
+
+    /* Entrada (una vez) encadenada con el latido (en bucle a partir de 0,9 s). */
+    animation:
         logoEntrance 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards,
         latidoCyberia 2.5s ease-in-out 0.9s infinite;
 }
 
-/* --- CAPA 2: LISTA DE NOMBRES HTML --- */
+/* --- CAPA 2: NOMBRE DEL GRUPO E INTEGRANTES --- */
+
 .layer-html-credits {
-    background-color: #000a21;
+    @extend %fondo-presentacion;
+
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
+    z-index: 1;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 1;
     text-align: center;
 }
 
@@ -72,73 +94,128 @@ ion-content {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     width: 100%;
-    height: 75vh;
+    height: 80vh;
+    padding: 1.25rem 1rem;
     box-sizing: border-box;
-    padding: 20px 0;
 }
 
-.credits-title {
-    color: #b0c0dd;
-    font-size: 1rem;
+/* Nombre del grupo: el dato de mayor jerarquía de esta pantalla. */
+.credits-group {
+    margin: 0 0 0.25rem;
+
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 4px;
-    margin: 0;
+    color: var(--tinta-alta);
+    text-shadow: 0 0 1.5rem rgba(87, 216, 234, 0.55);
+
     opacity: 0;
-    /* Sincronizado para aparecer justo cuando la capa 1 empieza a desvanecerse */
     animation: fadeInText 0.5s ease-out 2.5s forwards;
 }
 
-.names-list {
-    list-style: none;
-    padding: 0;
+.credits-title {
     margin: 0;
-    width: 100%;
-    flex-grow: 1;
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--tinta-baja);
+
+    opacity: 0;
+    animation: fadeInText 0.5s ease-out 2.6s forwards;
+}
+
+.names-list {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
 
+    width: 100%;
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
     li:not(.divider-line) {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 0.25rem;
+
         opacity: 0;
         animation: fadeInText 0.5s ease-out 2.8s forwards;
 
-        background: linear-gradient(to bottom, #ffffff 40%, #b0c4de 100%);
+        /* Degradado sobre el texto: el nombre se lee como metal pulido, un
+           detalle que las presentaciones de marca usan mucho. */
+        background: linear-gradient(to bottom, #ffffff 40%, #b9d0e7 100%);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
+    }
+
+    /* Entrada escalonada: los nombres llegan de a uno, no todos de golpe. */
+    li:nth-of-type(1) {
+        animation-delay: 2.75s;
+    }
+    li:nth-of-type(3) {
+        animation-delay: 2.9s;
+    }
+    li:nth-of-type(5) {
+        animation-delay: 3.05s;
+    }
+    li:nth-of-type(7) {
+        animation-delay: 3.2s;
     }
 }
 
 .names-list li.divider-line {
-    width: 45%; 
-    height: 2px; 
+    display: block;
     align-self: center;
-    display: block; 
+
+    width: 45%;
+    height: 0.125rem;
+
     opacity: 0;
-    animation: fadeInText 0.5s ease-out 2.8s forwards;
+    animation: fadeInText 0.5s ease-out 2.9s forwards;
 
     -webkit-background-clip: initial !important;
+    background-clip: initial !important;
     -webkit-text-fill-color: initial !important;
 
+    /* Filo de neón entre integrantes, en lugar de una línea blanca. */
     background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.5) 50%,
-        rgba(255, 255, 255, 0) 100%
+        90deg,
+        rgba(87, 216, 234, 0) 0%,
+        rgba(87, 216, 234, 0.55) 50%,
+        rgba(87, 216, 234, 0) 100%
     ) !important;
 }
 
-/* Estilos de fuentes */
-.first-name, .last-name {
-    font-size: 1.8rem;
-    font-weight: 600;
-    letter-spacing: 2px;
+.first-name,
+.last-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.15;
 }
 
-/* --- ANIMACIONES REUTILIZABLES --- */
+/* En pantallas bajas se achica todo para que ningún nombre quede cortado. */
+@media (max-height: 40rem) {
+    .credits-group {
+        font-size: 1.5rem;
+    }
+
+    .first-name,
+    .last-name {
+        font-size: 1.375rem;
+    }
+}
+
+/* --- ANIMACIONES --- */
+
 @keyframes logoEntrance {
     0% {
         opacity: 0;
@@ -150,11 +227,15 @@ ion-content {
     }
 }
 
-/* Nueva animación de latido cíclico */
+/* Latido sutil: el logotipo respira mientras se espera. */
 @keyframes latidoCyberia {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); } /* Engorda un 5% de manera sutil */
-    100% { transform: scale(1); }
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
 }
 
 @keyframes fadeOutLayer {

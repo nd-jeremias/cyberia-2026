@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 import { ListadoClientesPendientesComponent } from '../../components/listado-clientes-pendientes/listado-clientes-pendientes.component';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import { ModalService } from '../../services/modal.service';
@@ -16,10 +16,13 @@ import { supabase } from '../../services/supabase.service';
 @Component({
     selector: 'app-clientes-pendientes',
     templateUrl: './clientes-pendientes.page.html',
+    styleUrls: ['./clientes-pendientes.page.scss'],
     imports: [
         IonHeader,
         IonToolbar,
         IonTitle,
+        IonButtons,
+        IonBackButton,
         IonContent,
         ListadoClientesPendientesComponent,
     ],

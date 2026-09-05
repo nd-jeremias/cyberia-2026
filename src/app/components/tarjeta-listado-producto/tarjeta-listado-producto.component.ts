@@ -1,4 +1,5 @@
 import { Component, input, output } from '@angular/core';
+import { IonIcon } from '@ionic/angular';
 import { TarjetaProductoComponent } from '../tarjeta-producto/tarjeta-producto.component';
 import { Producto } from '../../interfaces/producto.interface';
 
@@ -6,7 +7,7 @@ import { Producto } from '../../interfaces/producto.interface';
     selector: 'app-tarjeta-listado-producto',
     templateUrl: './tarjeta-listado-producto.component.html',
     styleUrls: ['./tarjeta-listado-producto.component.scss'],
-    imports: [TarjetaProductoComponent],
+    imports: [IonIcon, TarjetaProductoComponent],
 })
 export class TarjetaListadoProductoComponent {
     productos = input.required<Producto[]>();

@@ -1,22 +1,41 @@
 <div class="images-container">
     <!-- El label pasarlo por el componente -->
-    <label>{{ label() }}</label>
+    @if (label()) {
+    <div class="encabezado-imagenes">
+        <label>{{ label() }}</label>
+        <span class="contador-imagenes">
+            {{ maxImages() === 1 ? "1 foto" : maxImages() + " fotos" }}
+        </span>
+    </div>
+    }
 
-    <div class="slot-container">
+    <div class="slot-container" [class.slots-unico]="maxImages() === 1">
         @for (slot of imageSlots; track idx; let idx = $index) {
         <!-- CASO A: El slot está vacío -> Muestra botón para agregar -->
         <!-- 1. El botón visual que verá el usuario -->
         @if (slot.previewUrl || idx < maxImages()) {
-        <div class="image-slot">
+        <div class="image-slot" [class.image-slot-lleno]="slot.previewUrl">
             @if (!slot.previewUrl) {
             <div class="slot-vacio">
-                <ion-button class="add-button" (click)="subirImagen(idx, modoCamara(), direccionCamara() )" fill="clear">
-                    <fa-icon class="fa-regular fa-square-plus" [icon]="faSquarePlus"></fa-icon>
+                <ion-button
+                    class="add-button"
+                    (click)="subirImagen(idx, modoCamara(), direccionCamara())"
+                    fill="clear"
+                >
+                    <span class="add-contenido">
+                        <span class="add-circulo">
+                            <fa-icon class="fa-regular fa-square-plus" [icon]="faSquarePlus"></fa-icon>
+                        </span>
+                        <span class="add-texto">
+                            {{ modoCamara() === "camara" ? "Tomar foto" : "Elegir foto" }}
+                        </span>
+                    </span>
                 </ion-button>
 
                 <!-- Sólo donde el enunciado permite elegir de la galería. -->
                 @if (permitirGaleria()) {
                 <ion-button class="galeria-button" fill="clear" size="small" (click)="abrirGaleria(idx)">
+                    <ion-icon name="image-outline" slot="start"></ion-icon>
                     Elegir de galería
                 </ion-button>
                 }
@@ -26,12 +45,35 @@
             @else {
             <div class="preview-wrapper">
                 <!-- Miniatura de la imagen -->
-                <img [src]="slot.previewUrl" class="preview-img" />
+                <img [src]="slot.previewUrl" class="preview-img" [alt]="'Foto ' + (idx + 1)" />
 
-                <!-- Botón "Minus" para eliminar la imagen superpuesto -->
-                <ion-button class="remove-button" color="danger" (click)="removeImage(idx)" fill="clear">
-                    <fa-icon class="fa-regular fa-square-minus" [icon]="faSquareMinus"></fa-icon>
-                </ion-button>
+                <!-- Número de foto: ubica al usuario cuando hay varias -->
+                @if (maxImages() > 1) {
+                <span class="numero-foto">{{ idx + 1 }}</span>
+                }
+
+                <!-- Acciones sobre la foto cargada -->
+                <div class="acciones-foto">
+                    <ion-button
+                        class="cambiar-button"
+                        fill="clear"
+                        (click)="subirImagen(idx, modoCamara(), direccionCamara())"
+                    >
+                        <ion-icon name="create-outline" slot="start"></ion-icon>
+                        Cambiar
+                    </ion-button>
+
+                    <!-- Botón "Minus" para eliminar la imagen -->
+                    <ion-button
+                        class="remove-button"
+                        color="danger"
+                        (click)="removeImage(idx)"
+                        fill="clear"
+                        aria-label="Quitar foto"
+                    >
+                        <fa-icon class="fa-regular fa-square-minus" [icon]="faSquareMinus"></fa-icon>
+                    </ion-button>
+                </div>
             </div>
             }
         </div>

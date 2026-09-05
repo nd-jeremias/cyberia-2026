@@ -1,30 +1,90 @@
+/**
+ * Ingreso como cliente anónimo (punto 9 del enunciado).
+ *
+ * Es un formulario de dos campos, así que el problema no era la falta de
+ * espacio sino el sobrante: quedaba media pantalla en blanco debajo del botón.
+ * Se resuelve con `justify-content: center` sobre el alto completo más un
+ * panel que agrupa nombre y foto, y una nota al pie que explica qué pasa
+ * después de ingresar. Así la superficie queda ocupada con contenido útil.
+ */
+
 :host {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 100vh;
-    padding: 0.75rem;
-    box-sizing: border-box;
     flex-direction: column;
-    background-color: var(--bg-dark);
+    justify-content: center;
+
+    width: 100%;
+    min-height: 100%;
+    padding: 1.5rem 1.25rem 2rem;
+    box-sizing: border-box;
+
+    background: transparent;
 }
 
 .pantalla-anonimo {
-    padding: 2rem;
-    padding-top: 0;
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
+
     width: 100%;
     max-width: 32rem;
-    border-radius: 1rem;
+    margin: 0 auto;
     box-sizing: border-box;
-    gap: 2rem;
 }
 
-img {
-    margin-top: 2.2rem;
+.cabecera .isotipo-icono img {
+    width: 11rem;
+    max-width: 56%;
 }
+
+.seccion-form {
+    padding: 1.5rem 1.25rem;
+}
+
+/* Bloque de la foto: mismo tratamiento que en el registro. */
 .img-preview {
-    --background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.05);
+    border: var(--borde-sutil);
+    border-radius: var(--radio);
+}
+
+/**
+ * Nota al pie.
+ *
+ * Cuenta qué va a pasar después de tocar el botón. Además de llenar el hueco
+ * que quedaba, responde la pregunta que se hace cualquiera que entra sin
+ * cuenta: "¿y ahora qué?".
+ */
+.nota-anonimo {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    padding: 1rem;
+    box-sizing: border-box;
+
+    background: rgba(87, 216, 234, 0.1);
+    border: 0.0938rem solid rgba(87, 216, 234, 0.35);
+    border-radius: var(--radio);
+
+    ion-icon {
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+        font-size: 1.375rem;
+        color: var(--neon-cian);
+    }
+
+    p {
+        margin: 0;
+        font-size: var(--texto-epigrafe);
+        line-height: 1.45;
+        color: var(--tinta-media);
+    }
 }

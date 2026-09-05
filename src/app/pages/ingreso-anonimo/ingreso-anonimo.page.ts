@@ -17,7 +17,8 @@ import { SpinnerService } from '../../services/spinner.service';
 @Component({
     selector: 'app-ingreso-anonimo',
     templateUrl: './ingreso-anonimo.page.html',
-    imports: [IonHeader, 
+    styleUrls: ['./ingreso-anonimo.page.scss'],
+    imports: [ 
         IonContent,
         FormularioUsuarioAnonimoComponent,
     ],

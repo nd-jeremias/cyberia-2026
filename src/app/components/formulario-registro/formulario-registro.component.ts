@@ -53,7 +53,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
 })
 export class FormularioRegistroComponent {
     private titulosPorRol = {
-        cliente: 'Crear Cuenta',
+        cliente: 'Crear cuenta',
         dueño: 'Registrar empleado',
         metre: 'Registrar cliente', // Ejemplo de tercer texto
     };
@@ -61,7 +61,7 @@ export class FormularioRegistroComponent {
 
     private botonesPorRol = {
         cliente: 'Registrarse',
-        dueño: 'Registrar Empleado',
+        dueño: 'Registrar empleado',
         metre: 'Registrar cliente', // Ajusta este texto según tu necesidad
     };
     textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);

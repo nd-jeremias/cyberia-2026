@@ -4,19 +4,50 @@ export interface BotonHome {
     texto: string;
     icono: string;
     ruta: string;
+
+    /**
+     * Renglón de apoyo que se muestra bajo el título en la pantalla de inicio.
+     *
+     * No cambia el comportamiento de nada: es contenido. Está para que cada
+     * acceso ocupe el alto de una tarjeta y explique qué hace, en lugar de ser
+     * un renglón suelto. Sin él la pantalla de inicio quedaba con dos o tres
+     * botones arriba y media pantalla vacía abajo, que es justo lo que el
+     * enunciado no admite ("NO debe haber espacios neutros").
+     */
+    descripcion?: string;
 }
 
 // Botones compartidos por dueño y supervisor (mismos permisos en el enunciado).
 const BOTONES_GESTION: BotonHome[] = [
-    { texto: 'Gestión de empleados', icono: 'people-outline', ruta: '/gestion-empleados' },
-    { texto: 'Gestión de mesas', icono: 'grid-outline', ruta: '/gestion-mesas' },
-    { texto: 'Gestión de clientes', icono: 'person-circle-outline', ruta: '/gestion-clientes' },
+    {
+        texto: 'Gestión de empleados',
+        icono: 'people-outline',
+        ruta: '/gestion-empleados',
+        descripcion: 'Dar de alta al personal del local y asignarle su perfil',
+    },
+    {
+        texto: 'Gestión de mesas',
+        icono: 'grid-outline',
+        ruta: '/gestion-mesas',
+        descripcion: 'Crear mesas, definir su tipo y generar el código QR',
+    },
+    {
+        texto: 'Gestión de clientes',
+        icono: 'person-circle-outline',
+        ruta: '/gestion-clientes',
+        descripcion: 'Aprobar o rechazar las solicitudes de registro',
+    },
 ];
 
 // Cocinero y cantinero comparten las mismas pantallas (el rol decide adentro
 // si se gestionan platos o bebidas, y qué sector de pedidos se muestra).
 const BOTONES_PEDIDOS: BotonHome[] = [
-    { texto: 'Pedidos', icono: 'list-outline', ruta: '/pedidos' },
+    {
+        texto: 'Pedidos',
+        icono: 'list-outline',
+        ruta: '/pedidos',
+        descripcion: 'Ver los pedidos pendientes del sector y marcarlos listos',
+    },
 ];
 
 // Mapa único rol -> botones. Para agregar un botón nuevo alcanza con sumarlo
@@ -26,22 +57,52 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
     supervisor: BOTONES_GESTION,
 
     metre: [
-        { texto: 'Asignar mesas', icono: 'easel-outline', ruta: '/asignar-mesas' },
-        { texto: 'Registrar cliente', icono: 'person-add-outline', ruta: '/metre-registrar-cliente' },
+        {
+            texto: 'Asignar mesas',
+            icono: 'easel-outline',
+            ruta: '/asignar-mesas',
+            descripcion: 'Ubicar a los clientes de la lista de espera en una mesa',
+        },
+        {
+            texto: 'Registrar cliente',
+            icono: 'person-add-outline',
+            ruta: '/metre-registrar-cliente',
+            descripcion: 'Cargar un cliente nuevo desde el mostrador',
+        },
     ],
 
     mozo: [
-        { texto: 'Consultas de clientes', icono: 'chatbubbles-outline', ruta: '/consultas-clientes' },
-        { texto: 'Pedidos de clientes', icono: 'receipt-outline', ruta: '/pedidos-clientes' },
+        {
+            texto: 'Consultas de clientes',
+            icono: 'chatbubbles-outline',
+            ruta: '/consultas-clientes',
+            descripcion: 'Responder las consultas que llegan desde las mesas',
+        },
+        {
+            texto: 'Pedidos de clientes',
+            icono: 'receipt-outline',
+            ruta: '/pedidos-clientes',
+            descripcion: 'Confirmar, rechazar y entregar los pedidos del salón',
+        },
     ],
 
     cocinero: [
-        { texto: 'Gestión de platos', icono: 'restaurant-outline', ruta: '/gestion-productos' },
+        {
+            texto: 'Gestión de platos',
+            icono: 'restaurant-outline',
+            ruta: '/gestion-productos',
+            descripcion: 'Cargar platos nuevos con sus fotos, precio y tiempo',
+        },
         ...BOTONES_PEDIDOS,
     ],
 
     cantinero: [
-        { texto: 'Gestión de bebidas', icono: 'wine-outline', ruta: '/gestion-productos' },
+        {
+            texto: 'Gestión de bebidas',
+            icono: 'wine-outline',
+            ruta: '/gestion-productos',
+            descripcion: 'Cargar bebidas nuevas con sus fotos, precio y tiempo',
+        },
         ...BOTONES_PEDIDOS,
     ],
 
@@ -49,4 +110,71 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
     // sin botones propios en este home compartido.
     'cliente registrado': [],
     'cliente anónimo': [],
+};
+
+/**
+ * Recordatorio del circuito de trabajo de cada rol.
+ * ============================================================================
+ *
+ * Se muestra al pie de la pantalla de inicio, debajo de los accesos.
+ *
+ * Cumple dos funciones a la vez. La primera es de contenido: quien entra ve en
+ * qué consiste su tarea dentro del local sin tener que abrir cada sección. La
+ * segunda es de diseño: los roles con dos accesos dejaban media pantalla de
+ * fondo vacío debajo de las tarjetas, y el enunciado no admite espacios
+ * neutros. Este panel se lleva el alto sobrante, sea cual sea la cantidad de
+ * accesos del rol.
+ */
+export const GUIA_POR_ROL: Record<PerfilUsuario, string[]> = {
+    dueño: [
+        'Cargá a cada empleado con su perfil y su foto personal.',
+        'Creá las mesas del salón: al guardarlas se genera su código QR.',
+        'Aprobá o rechazá las solicitudes de los clientes registrados.',
+        'Seguí los pedidos y las confirmaciones de pago del salón.',
+    ],
+    supervisor: [
+        'Cargá a cada empleado con su perfil y su foto personal.',
+        'Creá las mesas del salón: al guardarlas se genera su código QR.',
+        'Aprobá o rechazá las solicitudes de los clientes registrados.',
+        'Seguí los pedidos y las confirmaciones de pago del salón.',
+    ],
+
+    metre: [
+        'Revisá quién está anotado en la lista de espera.',
+        'Asigná una mesa libre al cliente que sigue en la lista.',
+        'Registrá desde el mostrador a los clientes que llegan sin cuenta.',
+    ],
+
+    mozo: [
+        'Respondé las consultas que llegan desde las mesas.',
+        'Confirmá o rechazá cada pedido antes de derivarlo a los sectores.',
+        'Entregá el pedido completo y esperá la confirmación del cliente.',
+        'Confirmá el pago para liberar la mesa.',
+    ],
+
+    cocinero: [
+        'Cargá los platos con sus tres fotos, el precio y el tiempo de elaboración.',
+        'Mirá los pedidos pendientes agrupados por número de mesa.',
+        'Avisá cuando los platos de un pedido estén listos para entregar.',
+    ],
+
+    cantinero: [
+        'Cargá las bebidas con sus tres fotos, el precio y el tiempo de preparación.',
+        'Mirá los pedidos pendientes de la barra agrupados por número de mesa.',
+        'Avisá cuando las bebidas de un pedido estén listas para entregar.',
+    ],
+
+    'cliente registrado': [
+        'Escaneá el código QR de la entrada para anotarte en la lista de espera.',
+        'Esperá a que el metre te asigne una mesa.',
+        'Escaneá el código QR de tu mesa para ver la carta y hacer tu pedido.',
+        'Al terminar, completá la encuesta y pedí la cuenta.',
+    ],
+
+    'cliente anónimo': [
+        'Escaneá el código QR de la entrada para anotarte en la lista de espera.',
+        'Esperá a que el metre te asigne una mesa.',
+        'Escaneá el código QR de tu mesa para ver la carta y hacer tu pedido.',
+        'Podés consultar los resultados de las encuestas anteriores.',
+    ],
 };

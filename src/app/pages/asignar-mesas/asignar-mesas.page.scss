@@ -1,82 +1,172 @@
+/**
+ * Pantalla del metre: asignar mesa a un cliente (punto 10 del enunciado).
+ *
+ * La pantalla es un procedimiento de dos pasos, así que se ve como tal: cada
+ * paso numerado, con su título encabezado por el riel de neón, y la mesa
+ * representada por una ficha con el número en grande — el mismo componente
+ * visual que en la pantalla de pedidos, para que "mesa" se lea siempre igual
+ * en toda la aplicación.
+ */
+
 .paso {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 0.5rem;
+    box-sizing: border-box;
+
+    &:last-of-type {
+        padding-bottom: 2rem;
+    }
 }
 
+/* El aspecto lo aporta `.titulo-seccion` de global.scss. */
 .titulo-paso {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--ion-text-color, #ffffff);
-}
-
-.vacio {
-  margin: 0;
-  padding: 18px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.85);
-  background-color: var(--ion-card-background, #254d7d);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
 }
 
 .lista,
 .lista-mesas {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .cliente-elegido {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 }
+
+/* ---------------------------------------------------------------------------
+   Aviso de mesa ya asignada
+   ---------------------------------------------------------------------------
+   Es una advertencia, no un dato más: va en ámbar, con icono y filo lateral,
+   para que el metre no intente asignar una segunda mesa por distracción.
+   --------------------------------------------------------------------------- */
 
 .aviso-asignada {
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background-color: rgba(234, 179, 8, 0.18);
-  border: 1px solid rgba(234, 179, 8, 0.5);
-  color: #ffffff;
-  font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    margin: 0;
+    padding: 0.875rem 1rem;
+
+    background: rgba(255, 204, 85, 0.14);
+    border: 0.0625rem solid rgba(255, 204, 85, 0.42);
+    border-left: 0.25rem solid var(--alerta);
+    border-radius: var(--radio);
+
+    font-size: var(--texto-apoyo);
+    line-height: 1.45;
+    color: var(--tinta-alta);
+
+    ion-icon {
+        flex-shrink: 0;
+        margin-top: 0.0625rem;
+        font-size: 1.375rem;
+        color: var(--alerta);
+    }
 }
 
-/* ----- Tarjeta de mesa ----- */
+/* ---------------------------------------------------------------------------
+   Tarjeta de mesa
+   --------------------------------------------------------------------------- */
+
 .tarjeta-mesa {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 14px;
-  background-color: var(--ion-card-background, #254d7d);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    padding: 1rem;
+    box-sizing: border-box;
+
+    background: var(--grad-tarjeta);
+    border: var(--borde-sutil);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+    &:hover {
+        border-color: rgba(63, 217, 160, 0.45);
+        box-shadow: var(--sombra-elevada);
+    }
 }
 
 .encabezado-mesa {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
-.encabezado-mesa h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--ion-text-color, #ffffff);
+/* Misma ficha de mesa que en la pantalla de pedidos. */
+.ficha-mesa {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4375rem;
+
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radio-chico);
+
+    background: rgba(87, 216, 234, 0.16);
+    border: 0.0938rem solid rgba(87, 216, 234, 0.45);
+}
+
+.ficha-mesa-rotulo {
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--tinta-baja);
+}
+
+.ficha-mesa-numero {
+    font-size: 1.625rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--neon-cian);
+}
+
+.datos-mesa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .dato-mesa {
-  margin: 0;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.88);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    margin: 0;
+    padding: 0.3125rem 0.625rem;
+    border-radius: 999px;
+
+    background: var(--velo-claro);
+    border: 0.0625rem solid var(--velo-medio);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: var(--tinta-media);
+    text-transform: capitalize;
+
+    ion-icon {
+        font-size: 1rem;
+        color: var(--neon-cian);
+    }
 }
 
 .tarjeta-mesa ion-button {
-  margin-top: 6px;
+    margin: 0.25rem 0 0;
+    min-height: 3.125rem;
+    font-weight: 800;
 }
