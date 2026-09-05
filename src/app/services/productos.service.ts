@@ -37,7 +37,9 @@ export class ProductosService {
             .from('productos')
             .select('id, nombre, descripcion, tiempo_elaboracion_minutos, precio, fotos_urls, tipo')
             .eq('tipo', tipo)
-            .order('nombre');
+            // Más nuevo primero: al volver de dar de alta un producto, se lo ve
+            // arriba de todo sin tener que buscarlo en la lista.
+            .order('fecha_creacion', { ascending: false });
 
         if (error) throw error;
 

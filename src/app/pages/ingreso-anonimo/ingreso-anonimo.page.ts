@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 
+
 /**
  * Ingreso de cliente anónimo (punto 9 del enunciado).
  *
@@ -16,7 +17,7 @@ import { SpinnerService } from '../../services/spinner.service';
 @Component({
     selector: 'app-ingreso-anonimo',
     templateUrl: './ingreso-anonimo.page.html',
-    imports: [
+    imports: [IonHeader, 
         IonContent,
         FormularioUsuarioAnonimoComponent,
     ],

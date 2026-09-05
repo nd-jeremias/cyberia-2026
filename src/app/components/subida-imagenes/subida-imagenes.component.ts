@@ -35,6 +35,14 @@ export class SubidaImagenesComponent {
     modoCamara = input<'camara' | 'galeria'>('galeria');
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
     label = input<string>('');
+    /**
+     * Habilita un botón extra para elegir la foto de la galería.
+     *
+     * Opt-in y apagado por defecto a propósito: sólo los productos admiten
+     * galería (puntos 2 y 3), mientras que el registro de usuarios la prohíbe
+     * expresamente ("no se tiene que elegir desde la galería", puntos 1 y 5).
+     */
+    permitirGaleria = input<boolean>(false);
     // URLs ya guardadas (edición): se muestran como preview desde el arranque.
     imagenesIniciales = input<string[]>([]);
 
@@ -78,60 +86,95 @@ export class SubidaImagenesComponent {
         }
 
         try {
-            let results: any = null;
-            let item = null;
+            const capturada =
+                modoCamara === 'galeria'
+                    ? await this.obtenerDeGaleria(index)
+                    : await this.obtenerDeCamara(index, direccionCamara);
 
-            if (modoCamara === 'galeria') {
-                results = await this.galeriaService.subirImagen(1);
+            // Sin foto: el usuario canceló. No es un error que haya que avisar.
+            if (!capturada) return;
 
-                if (results && results.length > 0) {
-                    item = results[0];
+            this.guardarEnSlot(index, capturada.file, capturada.previewUrl);
+        } catch (error) {
+            // Cancelar la cámara también llega acá como excepción, así que se
+            // registra y se corta: no se propaga para no dejar una promesa
+            // rechazada sin atender colgando del click del template.
+            console.error('Error procesando la imagen:', error);
+        }
+    }
 
-                    if (!item.webPath) return;
-                    // 2. Obtenemos los datos binarios puros (Blob) desde la ruta temporal de Capacitor
-                    const response = await fetch(item?.webPath!);
-                    const blobPuro = await response.blob();
+    /** Abre la galería para un slot puntual, sin importar el modo del componente. */
+    async abrirGaleria(index: number) {
+        if (this.imageSlots.length > this.maxImages()) return;
 
-                    // 3. Convertimos el Blob en un File real dándole un nombre único
-                    const nombreArchivo = `foto_${index}_${Date.now()}.jpg`;
-                    const archivoFile = new File([blobPuro], nombreArchivo, {
-                        type: blobPuro.type, // Mantiene 'image/jpeg' o el formato original
-                    });
+        try {
+            const capturada = await this.obtenerDeGaleria(index);
 
-                    this.imageSlots[index] = { file: archivoFile, previewUrl: item.webPath };
+            if (!capturada) return;
 
-                    if (index === this.imageSlots.length - 1) {
-                        this.imageSlots.push({ file: null, previewUrl: null });
-                    }
-
-                    this.emitirImagenes();
-                }
-            } else {
-                const direccion = direccionCamara ? direccionCamara : 'frontal';
-                results = await this.camaraService.tomarFoto(direccion);
-
-                if (results) {
-                    const archivoFoto = new File([results.blob], `selfie_${Date.now()}.jpg`, {
-                        type: 'image/jpeg',
-                    });
-
-                    // Forzamos a Angular a procesar la respuesta en la zona correcta
-                    this.zone.run(() => {
-                        const nuevosSlots = [...this.imageSlots];
-                        nuevosSlots[index] = { file: archivoFoto, previewUrl: results.previewUrl };
-                        this.imageSlots = nuevosSlots;
-
-                        // Forzar el renderizado inmediato del HTML
-                        this.cdr.detectChanges();
-
-                        this.emitirImagenes();
-                    });
-                }
-            }
+            this.guardarEnSlot(index, capturada.file, capturada.previewUrl);
         } catch (error) {
             console.error('Error procesando la imagen:', error);
-            throw error;
         }
+    }
+
+    private async obtenerDeGaleria(index: number): Promise<{ file: File; previewUrl: string } | null> {
+        const results = await this.galeriaService.subirImagen(1);
+        const item = results?.[0];
+
+        if (!item?.webPath) return null;
+
+        // Los datos binarios puros (Blob) salen de la ruta temporal de Capacitor.
+        const response = await fetch(item.webPath);
+        const blobPuro = await response.blob();
+
+        return {
+            file: new File([blobPuro], `foto_${index}_${Date.now()}.jpg`, {
+                type: blobPuro.type, // Mantiene 'image/jpeg' o el formato original
+            }),
+            previewUrl: item.webPath,
+        };
+    }
+
+    private async obtenerDeCamara(
+        index: number,
+        direccionCamara?: 'frontal' | 'trasera'
+    ): Promise<{ file: File; previewUrl: string } | null> {
+        const foto = await this.camaraService.tomarFoto(direccionCamara ?? 'frontal');
+
+        if (!foto) return null;
+
+        return {
+            file: new File([foto.blob], `foto_${index}_${Date.now()}.jpg`, {
+                type: foto.blob.type || 'image/jpeg',
+            }),
+            previewUrl: foto.previewUrl,
+        };
+    }
+
+    /**
+     * Coloca la foto en su slot, abre el siguiente y avisa al formulario.
+     *
+     * Centralizado a propósito: antes cada origen resolvía esto por su cuenta y
+     * la rama de la cámara no abría el slot siguiente, así que con `maxImages`
+     * mayor a uno no se podía cargar la segunda foto.
+     */
+    private guardarEnSlot(index: number, file: File, previewUrl: string) {
+        // La respuesta de la cámara vuelve fuera de la zona de Angular, así que
+        // se reemplaza el arreglo y se fuerza el redibujado desde adentro.
+        this.zone.run(() => {
+            const nuevosSlots = [...this.imageSlots];
+            nuevosSlots[index] = { file, previewUrl };
+            this.imageSlots = nuevosSlots;
+
+            if (index === this.imageSlots.length - 1 && this.imageSlots.length < this.maxImages()) {
+                this.imageSlots.push({ file: null, previewUrl: null });
+            }
+
+            this.cdr.detectChanges();
+
+            this.emitirImagenes();
+        });
     }
 
     async onFileSelected(event: Event, index: number) {

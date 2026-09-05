@@ -9,9 +9,18 @@
         @if (slot.previewUrl || idx < maxImages()) {
         <div class="image-slot">
             @if (!slot.previewUrl) {
-            <ion-button class="add-button" (click)="subirImagen(idx, modoCamara(), direccionCamara())" fill="clear">
-                <fa-icon class="fa-regular fa-square-plus" [icon]="faSquarePlus"></fa-icon>
-            </ion-button>
+            <div class="slot-vacio">
+                <ion-button class="add-button" (click)="subirImagen(idx, modoCamara(), direccionCamara() )" fill="clear">
+                    <fa-icon class="fa-regular fa-square-plus" [icon]="faSquarePlus"></fa-icon>
+                </ion-button>
+
+                <!-- Sólo donde el enunciado permite elegir de la galería. -->
+                @if (permitirGaleria()) {
+                <ion-button class="galeria-button" fill="clear" size="small" (click)="abrirGaleria(idx)">
+                    Elegir de galería
+                </ion-button>
+                }
+            </div>
             }
             <!-- CASO B: Ya tiene imagen -> Muestra la imagen y botón de eliminar -->
             @else {

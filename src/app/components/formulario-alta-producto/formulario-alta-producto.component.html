@@ -61,7 +61,9 @@
                     </p>
                     <app-subida-imagenes
                         [maxImages]="3"
-                        [modoCamara]="'galeria'"
+                        [modoCamara]="'camara'"
+                        [direccionCamara]="'trasera'"
+                        [permitirGaleria]="true"
                         [imagenesIniciales]="fotosIniciales()"
                         (imagenesChange)="onFotosSeleccionadas($event)"
                         (urlsExistentesChange)="onUrlsExistentes($event)"
