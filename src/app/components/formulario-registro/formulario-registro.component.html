@@ -3,7 +3,7 @@
         <div class="isotipo-icono">
             <img src="../../../assets/logo.png" />
         </div>
-        <h1>{{ esDueno() ? "Registrar empleado" : "Crear Cuenta" }}</h1>
+        <h1>{{ tituloEncabezado() }}</h1>
     </div>
 
     <div class="seccion-form">
@@ -72,7 +72,7 @@
             </div>
 
             <!-- CUIL (Solo si es Dueño) -->
-            @if (esDueno()) {
+            @if (usuarioRol() === 'dueño') {
             <div class="grupo-input">
                 <label class="input-label">CUIL</label>
 
@@ -93,7 +93,7 @@
                     <span>-</span>
 
                     <!-- Central (Muestra el computed que se alimenta del DNI - Deshabilitado) -->
-                    <div class="caja-input" style="flex:3; opacity: 0.8">
+                    <div class="caja-input" style="flex: 3; opacity: 0.8">
                         <ion-icon name="briefcase-outline" class="icono-campo"></ion-icon>
                         <ion-input type="text" [disabled]="true" [value]="cuilCentral()" placeholder="DNI"></ion-input>
                     </div>
@@ -154,7 +154,7 @@
                 >
                 </app-subida-imagenes>
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <span>Debe cargar 3 imagenes del producto</span>
+                <span>Debe cargar la foto de perfil</span>
                 }
             </div>
 
@@ -225,11 +225,11 @@
             <div class="enlaces-secundarios">
                 <!-- Botón de acción dinámico -->
                 <ion-button expand="full" fill="outline" type="submit" class="btn-principal">{{
-                    esDueno() ? "Registrar Empleado" : "Registrarse"
+                    textoBoton()
                 }}</ion-button>
 
                 <!-- Redirección al Login -->
-                @if (!esDueno()) {
+                @if (usuarioRol() == 'cliente') {
                 <div class="divisor">
                     <span class="estaRegistrado"> ¿Ya tenés una cuenta? </span>
                 </div>

@@ -1,5 +1,5 @@
 <ion-content [fullscreen]="true">
     <app-header [defaultHref]="'/gestion-empleados'" [tituloHeader]="'Alta de empleado'"></app-header>
 
-    <app-formulario-registro [esDueno]="true" (registroSubmit)="handleRegistro($event)" [direccionCamara]="'frontal'"></app-formulario-registro>
+    <app-formulario-registro [usuarioRol]="'dueño'" (registroSubmit)="handleRegistro($event)" [direccionCamara]="'frontal'"></app-formulario-registro>
 </ion-content>

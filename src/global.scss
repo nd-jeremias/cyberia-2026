@@ -215,3 +215,88 @@ ion-content::part(scroll) {
     font-size: 0.8rem;
     color: var(--ion-color-danger, #dc2626);
 }
+
+/* Estilo universal para todos los Alerts de la app */
+ion-alert {
+    width: 100%;
+    /* 1. El contenedor principal del Alert */
+    .alert-wrapper {
+        background: var(--bg-blue-petrol) !important; /* Fondo del cuadro */
+        border-radius: 15px !important; /* Bordes redondeados */
+        width: 80% !important; /* Ocupa el 90% del ancho de la pantalla */
+        height: 50vh !important; /* Fuerza al alert a medir exactamente el 50% del alto de la pantalla */
+        max-width: 450px !important; /* Límite máximo para que no se deforme en tablets o web */
+        /* Convertimos el contenedor en Flexbox para distribuir sus partes */
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    .alert-head, .alert-message {
+        background: var(--bg-darkblue);
+    }
+
+    .alert-head + .alert-scrollable-container {
+        flex: 1 !important; /* Ocupa todo el espacio central disponible */
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important; /* Centra verticalmente las opciones */
+        overflow-y: auto !important; /* Mantiene el scroll si los ítems superan el espacio */
+    }
+
+    /* Forzamos a la lista interna a centrar también sus elementos */
+    .alert-radio-group {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        width: 100% !important;
+    }
+
+    .alert-scrollable-container {
+        max-height: 60vh !important; /* Le da más espacio interno a la lista de opciones */
+    }
+
+    /* 2. Título y Subtítulo */
+    .alert-title {
+        color: var(--text-light) !important;
+        font-size: 1.5rem !important;
+        font-weight: bold !important;
+    }
+    .alert-sub-title {
+        color: var(--text-light) !important;
+    }
+
+    /* 3. El texto de las opciones (filas del select) */
+    .alert-radio-label {
+        color: var(--text-light) !important;
+        font-size: 1.2rem !important;
+        padding-top: 14px !important; /* Más espacio arriba de cada opción */
+        padding-bottom: 14px !important; /* Más espacio abajo de cada opción */
+    }
+
+    /* 4. La opción que está actualmente seleccionada */
+    [aria-checked="true"] .alert-radio-label {
+        color: var(--bg-blue) !important;
+        font-weight: bold !important;
+    }
+
+    /* 5. El círculo/check de selección */
+    .alert-radio-icon {
+        --color: var(--text-secondary); /* Color desmarcado */
+        --color-checked: var(--bg-blue); /* Color marcado */
+    }
+
+    /* 6. Los botones de abajo (Cancelar / OK) */
+    .alert-button-group {
+        margin-top: auto !important; /* Empuja los botones al fondo del contenedor */
+        background: var(--bg-darkblue) !important;
+        width: 100% !important;
+        .alert-button {
+            color: var(--bg-blue) !important;
+            font-weight: 600 !important;
+
+            /* Botón de la izquierda (usualmente Cancelar) */
+            &:first-child {
+                color: var(--color-orange) !important;
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 <div class="images-container">
     <!-- El label pasarlo por el componente -->
-    <label>{{label()}}</label>
+    <label>{{ label() }}</label>
 
     <div class="slot-container">
         @for (slot of imageSlots; track idx; let idx = $index) {
@@ -9,7 +9,7 @@
         @if (slot.previewUrl || idx < maxImages()) {
         <div class="image-slot">
             @if (!slot.previewUrl) {
-            <ion-button class="add-button" (click)="subirImagen(idx, modoCamara(), direccionCamara() )" fill="clear">
+            <ion-button class="add-button" (click)="subirImagen(idx, modoCamara(), direccionCamara())" fill="clear">
                 <fa-icon class="fa-regular fa-square-plus" [icon]="faSquarePlus"></fa-icon>
             </ion-button>
             }
@@ -25,7 +25,6 @@
                 </ion-button>
             </div>
             }
-
         </div>
         } }
     </div>

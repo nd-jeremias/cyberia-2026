@@ -73,9 +73,6 @@ export class SubidaImagenesComponent {
             return;
         }
 
-        console.log(`direccion: ${direccionCamara} modo: ${modoCamara}`);
-        console.log(`MODAL - direccion: ${this.direccionCamara()} modo: ${this.modoCamara()}`);
-
         if (!this.platform.is('hybrid')) {
             modoCamara = 'galeria';
         }
@@ -110,7 +107,6 @@ export class SubidaImagenesComponent {
                     this.emitirImagenes();
                 }
             } else {
-                
                 const direccion = direccionCamara ? direccionCamara : 'frontal';
                 results = await this.camaraService.tomarFoto(direccion);
 
@@ -128,11 +124,7 @@ export class SubidaImagenesComponent {
                         // Forzar el renderizado inmediato del HTML
                         this.cdr.detectChanges();
 
-                        const archivosAEnviar = this.imageSlots
-                            .map((slot) => slot.file)
-                            .filter((file): file is File => file !== null); // Evita enviar nulos si hay slots vacíos
-
-                        this.imagenesChange.emit(archivosAEnviar);
+                        this.emitirImagenes();
                     });
                 }
             }

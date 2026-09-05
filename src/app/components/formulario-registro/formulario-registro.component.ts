@@ -52,7 +52,21 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     ],
 })
 export class FormularioRegistroComponent {
-    esDueno = input<boolean>(false);
+    private titulosPorRol = {
+        cliente: 'Crear Cuenta',
+        dueño: 'Registrar empleado',
+        metre: 'Registrar cliente', // Ejemplo de tercer texto
+    };
+    tituloEncabezado = computed(() => this.titulosPorRol[this.usuarioRol()]);
+
+    private botonesPorRol = {
+        cliente: 'Registrarse',
+        dueño: 'Registrar Empleado',
+        metre: 'Registrar Metre', // Ajusta este texto según tu necesidad
+    };
+    textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);
+
+    usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
 
     qrService = inject(QrService);
     modal = inject(ModalService);
@@ -112,7 +126,7 @@ export class FormularioRegistroComponent {
             const cuil = this.formulario.controls.cuil;
             const tipoEmpleado = this.formulario.controls.tipoEmpleado;
 
-            if (this.esDueno()) {
+            if (this.usuarioRol() == 'dueño') {
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
                 tipoEmpleado.setValidators([Validators.required]);
             } else {
@@ -154,7 +168,7 @@ export class FormularioRegistroComponent {
     }
 
     validateForm(form: FormGroup): boolean {
-        if (this.esDueno()) {
+        if (this.usuarioRol() == 'dueño') {
             const cuilCompleto = `${this.cuilPrefijo()}${this.cuilCentral()}${this.cuilSufijo()}`;
             this.formulario.controls.cuil.setValue(cuilCompleto);
         }
