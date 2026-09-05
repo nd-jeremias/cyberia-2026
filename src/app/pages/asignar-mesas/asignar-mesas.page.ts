@@ -14,6 +14,7 @@ import { MesaService } from '../../services/mesa.service';
 import { ModalService } from '../../services/modal.service';
 import { supabase } from '../../services/supabase.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
+import { HeaderComponent } from '../../components/header/header.component';
 
 /**
  * Pantalla del metre: asignar una mesa a un cliente (punto 10).
@@ -30,14 +31,12 @@ import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjet
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
     imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
         IonContent,
         IonButton,
         IonBadge,
         IonIcon,
         TarjetaUsuarioComponent,
+        HeaderComponent
     ],
 })
 export class AsignarMesasPage implements OnInit {

@@ -62,7 +62,7 @@ export class FormularioRegistroComponent {
     private botonesPorRol = {
         cliente: 'Registrarse',
         dueño: 'Registrar Empleado',
-        metre: 'Registrar Metre', // Ajusta este texto según tu necesidad
+        metre: 'Registrar cliente', // Ajusta este texto según tu necesidad
     };
     textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);
 

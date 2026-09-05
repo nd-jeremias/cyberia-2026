@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
@@ -14,7 +14,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     selector: 'app-metre-registrar-cliente',
     templateUrl: './metre-registrar-cliente.page.html',
     styleUrls: ['./metre-registrar-cliente.page.scss'],
-    imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, FormularioRegistroComponent, HeaderComponent],
+    imports: [IonContent, CommonModule, FormsModule, FormularioRegistroComponent, HeaderComponent],
 })
 export class MetreRegistrarClientePage implements OnInit {
     constructor() {}

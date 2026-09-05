@@ -1,4 +1,4 @@
 <app-header [defaultHref]="'/inicio'" [tituloHeader]="'Registro de clientes'"></app-header>
 <ion-content [fullscreen]="true">
-    <app-formulario-registro [esDueno]="true" (registroSubmit)="handleRegistro($event)" [direccionCamara]="'trasera'"></app-formulario-registro>
+    <app-formulario-registro [usuarioRol]="'metre'" (registroSubmit)="handleRegistro($event)" [direccionCamara]="'trasera'"></app-formulario-registro>
 </ion-content>
