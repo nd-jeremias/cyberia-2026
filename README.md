@@ -278,6 +278,8 @@ npx cap open android
 
 A continuación se detalla la distribución tentativa de tareas para los integrantes del equipo.
 
+> **05/09/2026:** Se modificaron las fechas de entrega, para enfocarnos sobre la corrección del día haciendo incapié en la estética general de la app.
+
 ### 👤 Jeremías, Nicolás (🚀 Alpha ) 🌿 Branch: nico-dev
 
 | 📝 Tarea / Descripción                                    | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                                   Observaciones                                   |
@@ -293,9 +295,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | **Puntos del TP a realizar:**                             |
 | 1.- Agregar un empleado                                   |   02/09/2026    | 02/09/2026 | Completado |                                                                                   |
 | 4.- Agregar una nueva mesa                                |   02/09/2026    | 04/09/2026 | Completado |                                                                                   |
-| 6.- Verificar ingreso del cliente registrado              |   05/09/2026    | --/--/---- | Pendiente  |                                                                                   |
-| 7.- El dueño o supervisor rechaza a un cliente.           |   05/09/2026    | --/--/---- | Pendiente  |                                                                                   |
-| 8.- El dueño o supervisor acepta a un cliente registrado. |   05/09/2026    | --/--/---- | Pendiente  |                                                                                   |
+| 6.- Verificar ingreso del cliente registrado              |   12/09/2026    | --/--/---- | Pendiente  |                                                                                   |
+| 7.- El dueño o supervisor rechaza a un cliente.           |   12/09/2026    | --/--/---- | Pendiente  |                                                                                   |
+| 8.- El dueño o supervisor acepta a un cliente registrado. |   12/09/2026    | --/--/---- | Pendiente  |                                                                                   |
 
 ---
 
@@ -315,10 +317,10 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | **Puntos del TP a realizar:**                                                                |
 | 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
 | 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |
-| 19.- El mozo entrega el pedido completo                                                      |   12/09/2026    | --/--/---- | Pendiente  |                                                              |
-| 13.- El mozo rechaza el pedido                                                               |   12/09/2026    | --/--/---- | Pendiente  |                                                              |
-| 14.- El mozo confirma el pedido                                                              |   12/09/2026    | --/--/---- | Pendiente  |                                                              |
-| 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | --/--/---- | Pendiente  |                                                              |
+| 19.- El mozo entrega el pedido completo                                                      |   19/09/2026    | --/--/---- | Pendiente  |                                                              |
+| 13.- El mozo rechaza el pedido                                                               |   19/09/2026    | --/--/---- | Pendiente  |                                                              |
+| 14.- El mozo confirma el pedido                                                              |   19/09/2026    | --/--/---- | Pendiente  |                                                              |
+| 22.- El mozo confirma el pago y se libera la mesa.                                           |   23/09/2026    | --/--/---- | Pendiente  |                                                              |
 
 ---
 
@@ -337,9 +339,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | **Puntos del TP a realizar:**                               |
 | 2.- Agregar un nuevo plato                                  |   02/09/2026    | 02/09/2026 |  Completo  |                                                ✅ Correccion de errores                                                 |
 | 3.- Agregar una nueva bebida                                |   02/09/2026    | 02/09/2026 |  Completo  |                                                                                                                         |
-| 16.- El sector cocina recibe los productos correspondientes |   09/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
-| 17.- El sector bar recibe los productos correspondientes    |   09/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
-| 18.- Cada sector verifica el pedido completo.               |   09/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
+| 16.- El sector cocina recibe los productos correspondientes |   16/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
+| 17.- El sector bar recibe los productos correspondientes    |   16/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
+| 18.- Cada sector verifica el pedido completo.               |   16/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
 
 ---
 
@@ -360,11 +362,11 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Juegos                                                                                                             |   --/--/----    | --/--/---- | Pendiente  |                                                                  |
 | **Puntos del TP a realizar:**                                                                                      |
 | 9.- Ingresar al local como un cliente anónimo                                                                      |   --/09/2026    | --/--/---- | En proceso | Reevaluar la fecha conciderando relaciones con otros componentes |
-| 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos |   09/09/2026    | --/--/---- | Pendiente  |                                                                  |
-| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   09/09/2026    | --/--/---- | Pendiente  |                                                                  |
-| 15.- El cliente accede a la sección de juegos en busca de descuentos.                                              |   16/09/2026    | --/--/---- | Pendiente  |                                                                  |
-| 20.- El cliente accede a la encuesta                                                                               |   19/09/2026    | --/--/---- | Pendiente  |                                                                  |
-| 21.- El cliente solicita la cuenta al mozo.                                                                        |   19/09/2026    | --/--/---- | Pendiente  |                                                                  |
+| 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos |   16/09/2026    | --/--/---- | Pendiente  |                                                                  |
+| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   16/09/2026    | --/--/---- | Pendiente  |                                                                  |
+| 15.- El cliente accede a la sección de juegos en busca de descuentos.                                              |   23/09/2026    | --/--/---- | Pendiente  |                                                                  |
+| 20.- El cliente accede a la encuesta                                                                               |   26/09/2026    | --/--/---- | Pendiente  |                                                                  |
+| 21.- El cliente solicita la cuenta al mozo.                                                                        |   26/09/2026    | --/--/---- | Pendiente  |                                                                  |
 
 ---
 
