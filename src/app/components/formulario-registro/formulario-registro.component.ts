@@ -27,6 +27,8 @@ import {
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { titulosPorRol } from '../../shared/constants';
+import { HeaderLogoComponent } from '../header-logo/header-logo.component';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     const password = group.get('password')?.value;
@@ -49,15 +51,14 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
         IonInput,
         SubidaImagenesComponent,
         IonInputPasswordToggle,
+        HeaderLogoComponent
     ],
 })
 export class FormularioRegistroComponent {
-    private titulosPorRol = {
-        cliente: 'Crear Cuenta',
-        dueño: 'Registrar empleado',
-        metre: 'Registrar cliente', // Ejemplo de tercer texto
-    };
-    tituloEncabezado = computed(() => this.titulosPorRol[this.usuarioRol()]);
+    
+    titulosPorRol = titulosPorRol
+    
+    usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
 
     private botonesPorRol = {
         cliente: 'Registrarse',
@@ -66,7 +67,6 @@ export class FormularioRegistroComponent {
     };
     textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);
 
-    usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
 
     qrService = inject(QrService);
     modal = inject(ModalService);

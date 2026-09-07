@@ -1,3 +1,11 @@
 <ion-content [fullscreen]="true" [scrollY]="true">
-    <app-formulario-registro (registroSubmit)="handleRegistro($event)" [direccionCamara]="'trasera'"></app-formulario-registro>
+    <div class="layout-superpuesto">
+        <app-header-logo class="inferior fondo-texturizado textura-cafe"></app-header-logo>
+        <app-formulario-registro
+            class="superior fondo-texturizado textura-crema"
+            (registroSubmit)="handleRegistro($event)"
+            [direccionCamara]="'trasera'"
+        ></app-formulario-registro>
+        <app-footer class="inferior-final"></app-footer>
+    </div>
 </ion-content>

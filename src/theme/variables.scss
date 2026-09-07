@@ -1,4 +1,65 @@
 :root {
+    /* PALETA PASTEL */
+    --color10: #3d2922;
+    --color11: #380f00;
+    --color9: #c91e5a;
+    --color1: #fe4365;
+    --color8: #ff5252;
+    --color2: #fc9d9a;
+    --color7: #ff9a52;
+    --color3: #f9cdad;
+    --color6: #ffe3b3;
+    
+    --color5: #83af9b;
+    --color12: #35463e;
+
+    /* PALETA 2 */
+    --color1--p: #72bca5;
+    --color2--p: #f4ddb4;
+    --color3--p: #f1ae2b;
+    --color4--p: #bc0b27;
+    --color4--b: #f04a43;
+    --color5--p: #4a2512;
+
+    /* DEGRADADOS */
+    --grad-ambar: linear-gradient(135deg, #ffc06b 0%, #f7a53b 45%, #e08a26 100%); // Botones
+    --grad-tarjeta: linear-gradient(160deg, #456d96 0%, #375a80 100%); // Tarjetas
+    --grad-peligro: linear-gradient(135deg, #ff8090 0%, #ef4e62 100%);
+    --grad-exito: linear-gradient(135deg, #5ee7b5 0%, #23b184 100%);
+
+    /* ESTADOS */
+    --exito: #3fd9a0;
+    --exito-hondo: #1fa377;
+    --peligro: #ff6072;
+    --peligro-hondo: #d63b4d;
+    --alerta: #ffcc55;
+    --alerta-hondo: #d9a01f;
+    --dato: #5cb8f2;
+    --dato-hondo: #2b8bc9;
+
+    /* COLORES PERFIL */
+    --perfil-duenio: #ffb547;
+    --perfil-supervisor: #a78bfa;
+    --perfil-metre: #57d8ea;
+    --perfil-mozo: #4ade80;
+    --perfil-cocinero: #fb7f52;
+    --perfil-cantinero: #f472b6;
+    --perfil-cliente: #7dd3fc;
+
+    /* RADIOS */
+    --radio-chico: 0.625rem; /* 10px — chips, insignias */
+    --radio: 1rem; /* 16px — campos, botones  */
+    --radio-grande: 1.375rem; /* 22px — tarjetas         */
+    --radio-panel: 1.75rem; /* 28px — paneles y hojas  */
+
+    /* Paleta por defecto para tus fondos texturizados (Modificable en segundos) */
+    --txtr-color-respaldo: #0d2c23; /* Color plano de seguridad */
+    --txtr-grad-inicio: #1e5144; /* Color superior del degradado */
+    --txtr-grad-medio: #0d2c23; /* Color central del degradado */
+    --txtr-grad-fin: #051611; /* Color inferior del degradado */
+
+    --txtr-lineas-opacidad: 0.02; /* Controla qué tan visibles son las líneas (0 a 1) */
+
     --bg-dark: #000a21;
     --bg-darkblue: #2d394d;
     --bg-blue-petrol: #3d5a80;
@@ -15,13 +76,6 @@
     --text-light: #e6f1fe;
     --text-secondary: #8aa0b8;
     --text-placeholder: #6b84a0;
-
-    // --border-field: rgba(255, 255, 255, 0.1);
-    // --border-card: rgba(255, 255, 255, 0.08);
-    // --divider: rgba(255, 255, 255, 0.12);
-    // --accent-primary: #2d8cf0;
-    // --accent-on-primary: #042c53;
-    // --accent-link: #6fb0f5;
 
     --badge-bg: rgba(29, 158, 117, 0.18);
     --badge-text: #9fe1cb;
@@ -47,10 +101,34 @@
     // --color-cocinero: #ea580c; /* Naranja terracota */
     // --color-metre: #7c3aed; /* Violeta */
     // --color-cliente: #16a34a; /* Verde esmeralda */
-    
+
     // --ion-background-color: #bad8fd; /* Ionic pinta el fondo de la app con esto */
     --ion-background-color: transparent !important;
     --ion-text-color: var(--text-dark); /* Ionic pinta el texto general con esto */
+
+    /* PALETA DEFINITIVA */
+    --color-principal: #e8612d;
+    --color-principal-degrade: #fd9169;
+    --color-contraste: #c1272d;
+    --color-disabled: #e0d5c1;
+
+    --bg-light: #f7efe3;
+    --bg-input: #faf6f0;
+    --bg-input-dark: #c8c8a9;
+    --border-input: #d9c3a5;
+
+    --text-dark: #3a2218;
+    --text-placeholder: #8c766b;
+
+    /* Estilos de radio */
+    --radio-chico: 0.625rem; /* 10px — chips, insignias */
+    --radio: 1rem; /* 16px — campos, botones  */
+    --radio-grande: 1.375rem; /* 22px — tarjetas         */
+    --radio-panel: 1.75rem; /* 28px — paneles y hojas  */
+
+    /* Sombra suave basada en el color de texto para un acabado orgánico y limpio */
+    --sombra-3d: 0 4px 14px rgba(58, 34, 24, 0.22);
+    --sombra-3d-hover: 0 6px 20px rgba(58, 34, 24, 0.38);
 }
 
 /* Forzar que no aplique temas claros u oscuros del sistema operativo */

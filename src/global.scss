@@ -42,46 +42,127 @@
 
 html,
 body {
-    --ion-background-color: var(--bg-sky);
+    --ion-background-color: var(--bg-light);
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
-// ion-card {
-//   --background: var(--ion-card-background);
-//   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-//   border-radius: 12px;
-//   margin: 16px auto;
-//   max-width: 500px;
-// }
-
-// ion-item {
-//   --background: transparent;
-//   --highlight-color-focused: var(--ion-color-primary);
-//   margin-bottom: 8px;
-// }
-
-// /* Botones principales con espaciado consistente */
-// ion-button {
-//   --border-radius: 8px;
-//   font-weight: 600;
-//   margin-top: 12px;
-
-//   &[fill="outline"] {
-//     --border-color: var(--ion-color-primary);
-//     --color: var(--ion-color-primary);
-//   }
-// }
-
 /* Ocultar scrollbar si no es necesario */
 ion-content::part(scroll) {
     scrollbar-width: none;
 }
 
-// ========= Estilos Formulario ============= \\
-/* 1. Cabecera con Isotipo */
+/* ==========================================================================
+    LAYOUT DE PAGINA, BORDER REDONDEADOS
+   ========================================================================== */
+
+.layout-superpuesto {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+
+    .inferior,
+    .superior,
+    .inferior-final {
+        display: block !important;
+        position: relative;
+    }
+
+    // 1. Capa base del Header
+    .inferior {
+        z-index: 1;
+        flex-shrink: 0;
+        background-color: var(--color-principal);
+        /* TRUCO: Le agregas exactamente el mismo espacio que le vas a quitar con el margen negativo */
+        padding-bottom: 50px;
+        height: 25vh;
+    }
+
+    // 2. Capa Central
+    .superior {
+        z-index: 3;
+        background-color: var(--bg-light);
+        margin-top: -40px; /* Sube 40px y tapa exactamente el padding-bottom del header */
+        border-radius: 40px;
+        overflow: hidden;
+        flex-grow: 1;
+    }
+
+    // 3. Capa base del Footer
+    .inferior-final {
+        z-index: 2;
+        margin-top: -40px;
+        flex-shrink: 0;
+        background-color: var(--color-principal);
+        /* Opcional: Si el footer también sufre el mismo problema abajo, dale padding-top */
+        padding-top: 40px;
+        height: 10vh;
+    }
+}
+
+/* ==========================================================================
+    BOTONES
+   ========================================================================== */
+
+.btn {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: var(--radio);
+    font-weight: 800;
+    font-size: 1.05rem;
+    margin-top: 0.25rem;
+    padding: 1rem;
+    box-shadow: var(--sombra-3d);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+    :disabled {
+        background-color: var(--color-disabled);
+        color: var(--text-placeholder);
+    }
+}
+
+.btn:hover {
+    /* Al pasar el mouse, el botón se eleva visualmente aumentando su sombra */
+    box-shadow: var(--sombra-3d-hover);
+    transform: translateY(-1px); /* Sutil movimiento hacia arriba */
+}
+
+.btn-principal {
+    //background-color: var(--color-principal);
+    background: linear-gradient(180deg, var(--color-principal-degrade) 0%, var(--color-principal) 100%);
+    color: white;
+    width: 100%;
+    color: var(--text-light);
+}
+
+.btn-principal:active {
+    /* Al hacer clic (presionar), el botón simula hundirse */
+    background: var(--color-contraste);
+    box-shadow: 0 2px 6px rgba(58, 34, 24, 0.1);
+    transform: translateY(1px); /* Sutil movimiento hacia abajo */
+}
+
+.btn-principal:hover {
+    background-color: var(--color-contraste);
+}
+
+.btn-secundario {
+    background-color: transparent;
+    color: var(--color-principal);
+    border: 2px solid var(--color-principal);
+    width: 50%;
+}
+
+.btn-secundario:hover {
+    background: linear-gradient(180deg, var(--color-principal-degrade) 0%, var(--color-principal) 100%);
+    color: var(--text-light);
+}
+
+/* ==========================================================================
+    ESTILOS HEADER CON LOGO
+   ========================================================================== */
 .cabecera {
     display: flex;
     flex-direction: column;
@@ -98,13 +179,11 @@ ion-content::part(scroll) {
         color: var(--text-light);
         margin: 0;
     }
-
-    p {
-        font-size: 0.88rem;
-        color: var(--text-light);
-        margin: 0.125rem 0 0 0;
-    }
 }
+
+/* ==========================================================================
+    ESTILOS FORMULARIO
+   ========================================================================== */
 
 .seccion-form {
     form {
@@ -120,57 +199,33 @@ ion-content::part(scroll) {
     gap: 1rem;
 
     .input-label {
-        font-size: 0.85rem;
+        font-size: 1.2rem;
         font-weight: 700;
-        color: #ffffff;
+        color: var(--text-dark);
     }
 }
 
 .caja-input {
     display: flex;
     align-items: center;
-    background-color: var(--bg-darkblue);
-    border: 0.093rem solid var(--bg-cyan);
-    border-radius: 0.5rem;
+    background-color: var(--bg-input);
+    border: 0.093rem solid var(--border-input);
+    border-radius: var(--radio);
     padding: 0 0.625rem;
     min-height: 3rem;
-    color: var(--text-placeholder);
 
     .icono-campo {
-        font-size: 1.25rem;
-        color: var(--bg-lightblue);
+        font-size: 1.5rem;
         margin-right: 0.5rem;
+        color: var(--border-input);
     }
 
     ion-input {
-        --color: var(--bg-lightblue);
         --placeholder-color: var(--text-placeholder);
         --padding-start: 0;
         font-size: 0.95rem;
         font-weight: 600;
     }
-}
-
-.btn-principal,
-.btn-secundario {
-    width: 100%;
-    min-height: 3rem;
-    border: 0.093rem solid var(--bg-sky);
-    border-radius: 0.5rem;
-    font-weight: 800;
-    font-size: 1.05rem;
-    cursor: pointer;
-    margin-top: 0.25rem;
-    color: var(--bg-lightblue);
-}
-
-.btn-principal {
-    background-color: var(--color-red);
-}
-
-.btn-secundario {
-    background-color: transparent;
-    color: var(--bg-lightblue);
 }
 
 .enlaces-secundarios {
@@ -180,26 +235,11 @@ ion-content::part(scroll) {
     gap: 0.75rem;
     margin-top: 0.25rem;
 
-    p {
-        font-size: 0.85rem;
-        color: var(--bg-lightblue);
-        // color: #e2e8f0;
-        margin: 0;
-
-        a {
-            color: var(--bg-orange);
-            // color: #38bdf8;
-            font-weight: 700;
-            text-decoration: none;
-        }
-    }
-
-    .btn-link-anonimo {
+    .btn-anonimo {
         background: transparent;
-        border: none;
-        color: #94a3b8;
-        font-size: 0.8rem;
-        cursor: pointer;
+        border: 2px solid var(--color-principal);
+        color: var(--color-principal);
+        font-size: 0.9rem;
         padding: 0.125rem;
 
         strong {
@@ -207,13 +247,14 @@ ion-content::part(scroll) {
         }
     }
 }
+
 /* Mensajes de validación bajo cada campo */
 .mensaje-error {
     display: block;
     margin-top: 0.25rem;
     padding-left: 0.25rem;
-    font-size: 0.8rem;
-    color: var(--ion-color-danger, #dc2626);
+    font-size: 1rem;
+    color: var(--color-contraste);
 }
 
 /* Estilo universal para todos los Alerts de la app */
@@ -230,7 +271,8 @@ ion-alert {
         display: flex !important;
         flex-direction: column !important;
     }
-    .alert-head, .alert-message {
+    .alert-head,
+    .alert-message {
         background: var(--bg-darkblue);
     }
 
@@ -300,3 +342,64 @@ ion-alert {
         }
     }
 }
+
+/* ==========================================================================
+    BASE TEXTURIZADA GENERAL
+   ========================================================================== */
+// .fondo-texturizado {
+//     display: block !important;
+//     position: relative;
+//     background-attachment: scroll;
+//     background-size: cover;
+//     background-color: var(--txtr-color-respaldo);
+
+//     background-image: repeating-linear-gradient(
+//             45deg,
+//             rgba(255, 255, 255, var(--txtr-lineas-opacidad, 0.02)) 0,
+//             rgba(255, 255, 255, var(--txtr-lineas-opacidad, 0.02)) 1px,
+//             transparent 1px,
+//             transparent 6px
+//         ),
+//         linear-gradient(178deg, var(--txtr-grad-inicio) 0%, var(--txtr-grad-medio) 60%, var(--txtr-grad-fin) 100%);
+// }
+
+// /* ==========================================================================
+//     VARIACIONES DE TEXTURA (Paletas de Colores)
+//    ========================================================================== */
+
+// // Textura 1: Estilo Chocolate / Café Profundo (Base: #380f00)
+// .textura-cafe {
+//     --txtr-color-respaldo: #380f00;
+//     --txtr-grad-inicio: #591b02; /* Tono más claro arriba */
+//     --txtr-grad-medio: #380f00; /* Tu color base */
+//     --txtr-grad-fin: #1c0700; /* Tono casi negro abajo */
+//     --txtr-lineas-opacidad: 0.02;
+// }
+
+// // Textura 2: Estilo Crema / Luz Cálida (Base: #ffe3b3)
+// // Nota: Como es un fondo claro, cambiamos el patrón a líneas OSCURAS (rgba 0,0,0) para que se vean
+// .textura-crema {
+//     --txtr-color-respaldo: #f4ddb4;
+//     --txtr-grad-inicio: #fff3db; /* Tono muy suave arriba */
+//     --txtr-grad-medio: #ffe3b3; /* Tu color base */
+//     --txtr-grad-fin: #dcbfa2; /* Tono más tostado abajo */
+
+//     /* Ajuste especial para fondos claros: líneas sutiles oscuras */
+//     background-image: repeating-linear-gradient(
+//             45deg,
+//             rgba(0, 0, 0, 0.015) 0,
+//             rgba(0, 0, 0, 0.015) 1px,
+//             transparent 1px,
+//             transparent 6px
+//         ),
+//         linear-gradient(178deg, var(--txtr-grad-inicio) 0%, var(--txtr-grad-medio) 60%, var(--txtr-grad-fin) 100%) !important;
+// }
+
+// // Textura 3: Estilo Neon / Rojo Enérgico (Base: #ff5252)
+// .textura-rojo {
+//     --txtr-color-respaldo: #ff5252;
+//     --txtr-grad-inicio: #ff7676; /* Tono más vivo arriba */
+//     --txtr-grad-medio: #ff5252; /* Tu color base */
+//     --txtr-grad-fin: #b31c1c; /* Tono guinda/oscuro abajo */
+//     --txtr-lineas-opacidad: 0.025;
+// }

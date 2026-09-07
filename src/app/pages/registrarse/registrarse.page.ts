@@ -6,12 +6,14 @@ import { ModalService } from '../../services/modal.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 import { AuthService } from '../../services/auth.service';
 import { EmailService } from '../../services/email.service';
+import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 @Component({
     selector: 'app-registrarse',
     templateUrl: './registrarse.page.html',
     styleUrls: ['./registrarse.page.scss'],
-    imports: [IonContent, FormularioRegistroComponent],
+    imports: [IonContent, FormularioRegistroComponent, HeaderLogoComponent, FooterComponent],
 })
 export class RegistrarsePage {
     private router = inject(Router);
