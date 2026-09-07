@@ -1,6 +1,1 @@
-/* Sólo hospeda al formulario de registro; el diseño vive en ese componente. */
-
-app-formulario-registro {
-    display: block;
-    min-height: 100%;
-}
+/* La estructura la aportan `app-header` y la clase `.hoja` de global.scss. */

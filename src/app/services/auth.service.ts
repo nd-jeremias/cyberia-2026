@@ -20,6 +20,13 @@ export class AuthService {
     // En null significa que la consulta anduvo (haya traído fila o no).
     perfilError = signal<string | null>(null);
 
+    // Datos de identidad para la cabecera: nombre y foto de la persona que
+    // está usando la aplicación. Vienen de la misma consulta que el perfil, así
+    // que no agregan un viaje extra a la base.
+    nombres = signal<string | null>(null);
+    apellidos = signal<string | null>(null);
+    fotoUrl = signal<string | null>(null);
+
     galeriaService = inject(GaleriaService)
     modal = inject(ModalService)
 
@@ -31,6 +38,7 @@ export class AuthService {
                 this.cargarPerfil(session.user.id);
             } else {
                 this.perfil.set(null);
+                this.limpiarIdentidad();
             }
         });
     }
@@ -45,7 +53,7 @@ export class AuthService {
         // 406 que ensucia la consola sin aportar nada.
         const { data, error } = await supabase
             .from('usuarios')
-            .select('perfil')
+            .select('perfil, nombres, apellidos, foto_url')
             .eq('id', userId)
             .maybeSingle();
 
@@ -57,6 +65,7 @@ export class AuthService {
 
             this.perfilError.set(error.message);
             this.perfil.set(null);
+            this.limpiarIdentidad();
             return;
         }
 
@@ -69,11 +78,23 @@ export class AuthService {
 
             this.perfilError.set(null);
             this.perfil.set(null);
+            this.limpiarIdentidad();
             return;
         }
 
         this.perfilError.set(null);
         this.perfil.set(data.perfil);
+
+        this.nombres.set(data.nombres ?? null);
+        this.apellidos.set(data.apellidos ?? null);
+        this.fotoUrl.set(data.foto_url ?? null);
+    }
+
+    /** Deja la identidad en blanco cuando no hay fila que mostrar. */
+    private limpiarIdentidad() {
+        this.nombres.set(null);
+        this.apellidos.set(null);
+        this.fotoUrl.set(null);
     }
 
     setLocalUser(user: LocalUserInterface) {

@@ -1,24 +1,12 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>Pantalla de pruebas</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pruebas'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <div class="pantalla-preparacion">
-        <img class="logo-preparacion" src="assets/logo.png" alt="Cyberia Restó" />
-
-        <div class="tarjeta-preparacion">
-            <span class="sello-preparacion">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Uso interno
-            </span>
-
+    <div class="hoja">
+        <div class="aviso-preparacion">
+            <span class="medallon"><ion-icon name="information-circle-outline"></ion-icon></span>
+            <span class="sello-preparacion">Uso interno</span>
             <h2>Pantalla de pruebas</h2>
-            <p>
-                Espacio reservado para probar componentes durante el desarrollo. No forma parte del circuito
-                de la aplicación.
-            </p>
+            <p>Espacio reservado para probar componentes durante el desarrollo.</p>
         </div>
     </div>
 </ion-content>

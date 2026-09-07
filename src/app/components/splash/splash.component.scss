@@ -17,13 +17,12 @@
 /* Fondo compartido por las dos capas: mismo tratamiento que el resto de la
    aplicación, con la luz cálida arriba y el reflejo de neón abajo. */
 %fondo-presentacion {
-    background-color: var(--superficie-fondo-a);
-    background-image: var(--luz-calida), var(--luz-fria),
-        linear-gradient(178deg, var(--superficie-fondo-b) 0%, var(--superficie-fondo-a) 60%, #22384f 100%);
+    background-color: #24405f;
+    background-image: linear-gradient(178deg, #3a6289 0%, #2a4a6d 58%, #22384f 100%);
 }
 
 ion-content {
-    --background: var(--superficie-fondo-a);
+    --background: #2a4a6d;
 }
 
 /* --- CAPA 1: LOGOTIPO ANIMADO Y TEXTURA --- */
@@ -109,7 +108,7 @@ ion-content {
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--tinta-alta);
+    color: #f4f9ff;
     text-shadow: 0 0 1.5rem rgba(87, 216, 234, 0.55);
 
     opacity: 0;
@@ -123,7 +122,7 @@ ion-content {
     font-weight: 600;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--tinta-baja);
+    color: #b9d0e7;
 
     opacity: 0;
     animation: fadeInText 0.5s ease-out 2.6s forwards;

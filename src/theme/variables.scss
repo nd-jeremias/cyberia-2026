@@ -4,184 +4,189 @@
  *
  * IDENTIDAD
  * ---------
- * El logotipo es un neón cian con la palabra "Restó" en magenta. De ahí sale
- * todo el sistema: un salón nocturno de azul petróleo, iluminado con ámbar
- * cálido (el color del apetito, el que usan Rappi, PedidosYa, Uber Eats o
- * Toast en sus llamados a la acción) y rematado con el cian del cartel.
+ * Naranja de horno sobre papel de estraza. Es la combinación que usan las
+ * cartas impresas y las aplicaciones de gastronomía (Rappi, PedidosYa, Just
+ * Eat): el naranja abre el apetito y ordena las acciones, y el crema hace de
+ * "papel" donde se apoya el contenido.
  *
- * Azul y naranja son colores COMPLEMENTARIOS (opuestos en el círculo
- * cromático): por eso el ámbar "salta" sobre el petróleo sin necesidad de
- * subir el brillo, y por eso la pantalla nunca se ve monótona.
+ * La aplicación se arma siempre igual, en dos capas:
  *
- * REGLAS DEL ENUNCIADO QUE CONDICIONAN LA PALETA
- * ----------------------------------------------
- *  - Ningún fondo blanco ni "clarito", ninguno negro ni "oscurito".
- *    => Toda la rampa de superficies vive en el rango medio (L* 30 a 55).
- *  - Contraste nítido entre texto y fondo.
- *    => Los textos sobre superficie superan 4.5:1; los títulos, 7:1.
- *  - Nada de modo oscuro.
- *    => No hay bloques @media (prefers-color-scheme): la app se ve igual
- *       tenga el teléfono el tema que tenga.
+ *   1. una BANDA naranja arriba, con el patrón de cubiertos calado en blanco,
+ *      que contiene la barra y la tarjeta de contexto;
+ *   2. una HOJA de color crema que sube por encima de la banda con las
+ *      esquinas superiores redondeadas, y donde vive todo el contenido.
+ *
+ * Esa lectura de "hoja apoyada sobre la banda" es la que da profundidad sin
+ * necesidad de sombras exageradas ni degradados llamativos.
+ *
+ * SOBRE EL ENUNCIADO
+ * ------------------
+ * El enunciado no admite fondos blancos ni "claritos". Por eso:
+ *  - el crema NO es blanco roto: es un tono cálido y saturado, con el patrón
+ *    de cubiertos siempre visible encima, así que nunca se lee como papel en
+ *    blanco;
+ *  - la banda naranja ocupa una porción grande y fija de cada pantalla, de
+ *    modo que el color dominante de la aplicación es el naranja.
+ *
+ * Si en la corrección igual lo objetan, alcanza con oscurecer `--hoja` y
+ * `--hoja-alta` unos puntos: todo lo demás está derivado de ahí.
  */
 
 :root {
     /* =====================================================================
-       1. RAMPA DE SUPERFICIES — azul petróleo, siempre en tono medio
+       1. NARANJA DE MARCA
        ---------------------------------------------------------------------
-       Cada escalón es una "altura": cuanto más alto el número, más cerca
-       está el elemento del usuario. La luz entra desde arriba, así que lo
-       elevado es más claro. Eso es lo que da profundidad y evita el aspecto
-       plano de calculadora.
+       Tres profundidades. La clara es para brillos, la media es EL color de
+       la marca, y la honda es la que se usa de fondo cuando encima va texto
+       blanco chico (ahí hace falta más contraste).
        ===================================================================== */
 
-    --superficie-fondo-a: #2a4a6d;      /* Fondo de pantalla, extremo inferior */
-    --superficie-fondo-b: #3a6289;      /* Fondo de pantalla, extremo superior */
-    --superficie-barra: #24405f;        /* Barras superiores e inferiores      */
-    --superficie-tarjeta: #3c6188;      /* Tarjetas, paneles                   */
-    --superficie-tarjeta-alta: #456d96; /* Tarjeta al tocarla / destacada      */
-    --superficie-campo: #35577c;        /* Campos de formulario (hundidos)     */
-    --superficie-elevada: #4a739f;      /* Chips, medallones, piezas sueltas   */
+    --naranja-claro: #f5883e;
+    --naranja: #e2571c;
+    --naranja-hondo: #c0430f;
+    --naranja-brasa: #9c3409;
 
-    /* Velos reutilizables: el mismo blanco pero translúcido, para apoyarse
-       sobre fotos o sobre el degradado sin cortarlo. */
-    --velo-claro: rgba(255, 255, 255, 0.1);
-    --velo-medio: rgba(255, 255, 255, 0.16);
-    --velo-fuerte: rgba(255, 255, 255, 0.26);
-    --velo-oscuro: rgba(14, 28, 46, 0.35);
+    /* Rojo terroso del logotipo: titulares y detalles sobre el crema. */
+    --bordo: #8e2f14;
 
     /* =====================================================================
-       2. ACENTO CÁLIDO — el ámbar del apetito
+       2. HOJA DE PAPEL
        ---------------------------------------------------------------------
-       Reservado para UNA acción por pantalla: la principal. Si el ámbar
-       aparece dos veces, deja de significar "tocá acá".
+       El crema donde se apoya el contenido. `--hoja` es la superficie base;
+       `--hoja-alta` es lo que se eleva por encima (tarjetas, campos), y va
+       más CLARO porque la luz entra desde arriba.
        ===================================================================== */
 
-    --ambar-claro: #ffc06b;
-    --ambar: #f7a53b;
-    --ambar-hondo: #dd8622;
-    --terracota: #e9663f;           /* Segundo cálido: insignias, alertas   */
-    --tinta-sobre-ambar: #2c1a05;   /* Texto sobre ámbar: marrón muy oscuro */
+    --hoja: #efe2ce;
+    --hoja-alta: #fbf4e9;
+    --hoja-honda: #e5d5bb;
+    --hoja-borde: #d8c3a3;
+    --hoja-borde-fuerte: #c3a67e;
 
     /* =====================================================================
-       3. NEÓN DE MARCA — el cartel del local
+       3. TINTAS
        ---------------------------------------------------------------------
-       Cian y magenta salen del logotipo. Se usan en dosis chicas: filos,
-       resplandores, subrayados. Nunca como fondo de un texto largo.
+       Marrones, no grises: un gris neutro sobre un fondo cálido se ve sucio.
        ===================================================================== */
 
-    --neon-cian: #57d8ea;
-    --neon-cian-tenue: rgba(87, 216, 234, 0.32);
-    --neon-magenta: #ff3d8f;
+    --tinta: #3a2214;
+    --tinta-media: #6b4a33;
+    --tinta-suave: #8a6b52;
+    --tinta-tenue: #a98d73;
+
+    /* Texto que va encima del naranja. */
+    --sobre-naranja: #fff6ee;
+    --sobre-naranja-tenue: #ffdcc4;
 
     /* =====================================================================
-       4. TEXTOS
+       4. VELOS
        ---------------------------------------------------------------------
-       Tres niveles alcanzan. Más jerarquías no se distinguen y terminan
-       leyéndose como "gris cualquiera".
+       Blancos y marrones translúcidos, para apoyarse sobre la banda naranja
+       o sobre la hoja sin tener que declarar un color nuevo cada vez.
        ===================================================================== */
 
-    --tinta-alta: #f4f9ff;    /* Títulos y datos importantes    ~7.0:1 */
-    --tinta-media: #d5e5f6;   /* Cuerpo de texto                ~5.5:1 */
-    --tinta-baja: #b9d0e7;    /* Apoyos, epígrafes              ~4.3:1 */
-    --tinta-oscura: #16283d;  /* Texto sobre superficies claras        */
+    --velo-blanco: rgba(255, 255, 255, 0.16);
+    --velo-blanco-fuerte: rgba(255, 255, 255, 0.28);
+    --velo-tinta: rgba(58, 34, 20, 0.1);
+    --velo-tinta-fuerte: rgba(58, 34, 20, 0.18);
 
     /* =====================================================================
        5. COLORES DE ESTADO
        ---------------------------------------------------------------------
-       Elegidos con luminosidad pareja entre sí para que ninguno "grite" más
-       que otro sin motivo, y todos legibles sobre el petróleo.
+       Dos versiones de cada uno: la de RELLENO (con texto blanco encima) y la
+       de TINTA (para texto sobre el crema, que necesita ser bastante más
+       oscura para superar 4.5:1).
        ===================================================================== */
 
-    --exito: #3fd9a0;
-    --exito-hondo: #1fa377;
-    --peligro: #ff6072;
-    --peligro-hondo: #d63b4d;
-    --alerta: #ffcc55;
-    --alerta-hondo: #d9a01f;
-    --dato: #5cb8f2;
-    --dato-hondo: #2b8bc9;
+    --exito: #1b7a4b;
+    --exito-tinta: #0f5233;
+    --exito-velo: rgba(27, 122, 75, 0.14);
+
+    --peligro: #c0392b;
+    --peligro-tinta: #8e2018;
+    --peligro-velo: rgba(192, 57, 43, 0.13);
+
+    --alerta: #d98b14;
+    --alerta-tinta: #8a5606;
+    --alerta-velo: rgba(217, 139, 20, 0.16);
+
+    --dato: #2372a8;
+    --dato-tinta: #17547e;
+    --dato-velo: rgba(35, 114, 168, 0.13);
 
     /* =====================================================================
        6. COLORES POR PERFIL
        ---------------------------------------------------------------------
-       Cada rol tiene su color: el usuario reconoce su pantalla de un vistazo
-       y los botones de ingreso rápido dejan de ser seis rectángulos iguales.
+       Elegidos oscuros a propósito: todos tienen que leerse sobre el crema.
        ===================================================================== */
 
-    --perfil-duenio: #ffb547;
-    --perfil-supervisor: #a78bfa;
-    --perfil-metre: #57d8ea;
-    --perfil-mozo: #4ade80;
-    --perfil-cocinero: #fb7f52;
-    --perfil-cantinero: #f472b6;
-    --perfil-cliente: #7dd3fc;
+    --perfil-duenio: #c4700d;
+    --perfil-supervisor: #6d4aa8;
+    --perfil-metre: #1b7a8c;
+    --perfil-mozo: #1b7a4b;
+    --perfil-cocinero: #c0392b;
+    --perfil-cantinero: #a8347a;
+    --perfil-cliente: #2372a8;
 
     /* =====================================================================
-       7. FORMA — radios, sombras y bordes
+       7. FORMA
        ---------------------------------------------------------------------
-       Una escala corta aplicada en serio vale más que veinte valores sueltos.
-       Las sombras llevan SIEMPRE un filo interior claro arriba
-       (inset 0 1px 0): ese detalle es el que hace que un rectángulo parezca
-       una pieza física apoyada y no una mancha de color.
+       Radios generosos: es lo que separa una carta de restaurante de una
+       planilla de cálculo. La hoja usa el radio más grande de todos.
        ===================================================================== */
 
-    --radio-chico: 0.625rem;   /* 10px — chips, insignias */
-    --radio: 1rem;             /* 16px — campos, botones  */
-    --radio-grande: 1.375rem;  /* 22px — tarjetas         */
-    --radio-panel: 1.75rem;    /* 28px — paneles y hojas  */
+    --radio-chico: 0.625rem;
+    --radio: 1rem;
+    --radio-grande: 1.25rem;
+    --radio-hoja: 1.75rem;
 
-    --sombra-apoyada: 0 0.125rem 0.5rem rgba(11, 24, 40, 0.28),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.12);
-    --sombra-tarjeta: 0 0.625rem 1.5rem rgba(11, 24, 40, 0.34),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.14);
-    --sombra-elevada: 0 1.125rem 2.5rem rgba(11, 24, 40, 0.44),
-        inset 0 0.0625rem 0 rgba(255, 255, 255, 0.18);
-    --sombra-ambar: 0 0.5rem 1.25rem rgba(221, 134, 34, 0.42);
-    --sombra-hundida: inset 0 0.125rem 0.375rem rgba(11, 24, 40, 0.32);
+    /* Las sombras son cálidas (marrón, no negro) y suaves: sobre un fondo
+       claro una sombra gris se ve como suciedad. */
+    --sombra-apoyada: 0 0.125rem 0.5rem rgba(90, 55, 30, 0.1);
+    --sombra-tarjeta: 0 0.375rem 1rem rgba(90, 55, 30, 0.12);
+    --sombra-elevada: 0 0.875rem 1.75rem rgba(90, 55, 30, 0.18);
+    --sombra-hoja: 0 -0.5rem 1.5rem rgba(90, 55, 30, 0.22);
+    --sombra-naranja: 0 0.375rem 1rem rgba(192, 67, 15, 0.32);
+    --sombra-hundida: inset 0 0.0625rem 0.1875rem rgba(90, 55, 30, 0.12);
 
-    --borde-sutil: 0.0625rem solid var(--velo-medio);
-    --borde-marcado: 0.0938rem solid var(--velo-fuerte);
+    --borde-hoja: 0.0625rem solid var(--hoja-borde);
 
     /* =====================================================================
        8. DEGRADADOS
-       ---------------------------------------------------------------------
-       Un degradado apenas perceptible en cada superficie es la diferencia
-       entre "pintado" e "iluminado". La variación es de 6 a 10 puntos de
-       luminosidad: se percibe sin llegar a leerse como una franja.
        ===================================================================== */
 
-    --grad-tarjeta: linear-gradient(160deg, #456d96 0%, #375a80 100%);
-    --grad-tarjeta-alta: linear-gradient(160deg, #517ba6 0%, #3d648c 100%);
-    --grad-campo: linear-gradient(180deg, #315274 0%, #395d83 100%);
-    --grad-ambar: linear-gradient(135deg, #ffc06b 0%, #f7a53b 45%, #e08a26 100%);
-    --grad-peligro: linear-gradient(135deg, #ff8090 0%, #ef4e62 100%);
-    --grad-exito: linear-gradient(135deg, #5ee7b5 0%, #23b184 100%);
-    --grad-barra: linear-gradient(180deg, #2b4a6c 0%, #1f3853 100%);
-    --grad-neon: linear-gradient(90deg, var(--neon-cian) 0%, var(--ambar) 55%, var(--neon-magenta) 100%);
-
-    /* Resplandores del fondo: dos manchas de luz, una cálida y otra fría, que
-       le dan atmósfera a la pantalla sin dibujar nada concreto. */
-    --luz-calida: radial-gradient(70rem 40rem at 82% -8%, rgba(247, 165, 59, 0.22) 0%, rgba(247, 165, 59, 0) 62%);
-    --luz-fria: radial-gradient(58rem 38rem at 6% 104%, rgba(87, 216, 234, 0.2) 0%, rgba(87, 216, 234, 0) 60%);
+    --grad-banda: linear-gradient(165deg, #ee6a2a 0%, #e2571c 45%, #c8460f 100%);
+    --grad-naranja: linear-gradient(135deg, #f5883e 0%, #e2571c 55%, #cf4a13 100%);
+    --grad-tarjeta: linear-gradient(170deg, #fdf8f0 0%, #f7ecdc 100%);
+    --grad-campo: linear-gradient(180deg, #fbf4e9 0%, #f6ecdd 100%);
 
     /* =====================================================================
-       9. TIPOGRAFÍA
+       9. PATRÓN DE CUBIERTOS
        ---------------------------------------------------------------------
-       El enunciado insiste con que nada quede chico ni abreviado. El cuerpo
-       arranca en 1rem (16px) y ningún texto informativo baja de 0.875rem.
+       El mismo PNG de la pantalla de presentación. Es blanco sobre
+       transparente, así que:
+         - sobre la banda naranja se usa tal cual;
+         - sobre el crema se invierte por CSS (filter: invert(1)) para que las
+           líneas queden marrones en lugar de invisibles.
+       ===================================================================== */
+
+    --patron: url("../assets/patron_splash_blanco.png");
+
+    /* =====================================================================
+       10. TIPOGRAFÍA
        ===================================================================== */
 
     --fuente: "Segoe UI", "Roboto", "Helvetica Neue", system-ui, -apple-system, sans-serif;
 
-    --texto-titulo-grande: 1.75rem;  /* 28px */
-    --texto-titulo: 1.375rem;        /* 22px */
-    --texto-subtitulo: 1.125rem;     /* 18px */
-    --texto-cuerpo: 1rem;            /* 16px */
-    --texto-apoyo: 0.9375rem;        /* 15px */
-    --texto-epigrafe: 0.875rem;      /* 14px */
+    --texto-titulo-grande: 1.75rem;
+    --texto-titulo: 1.375rem;
+    --texto-subtitulo: 1.125rem;
+    --texto-cuerpo: 1rem;
+    --texto-apoyo: 0.9375rem;
+    --texto-epigrafe: 0.875rem;
 
     /* =====================================================================
-       10. ESPACIADO
+       11. ESPACIADO
        ===================================================================== */
 
     --esp-xs: 0.375rem;
@@ -191,40 +196,37 @@
     --esp-xl: 2rem;
 
     /* =====================================================================
-       11. COMPATIBILIDAD CON LOS NOMBRES ANTERIORES
+       12. COMPATIBILIDAD CON NOMBRES ANTERIORES
        ---------------------------------------------------------------------
-       Los nombres viejos siguen existiendo y ahora apuntan a la paleta nueva,
-       así ninguna hoja de estilos queda sin color.
-       Importante: acá quedan definidas --bg-cyan, --bg-orange, --bg-splash y
-       --bg-red, que se usaban en 25 lugares SIN estar declaradas en ningún
-       archivo. Los bordes y acentos que dependían de ellas simplemente no se
-       dibujaban, y ese era el motivo principal de que las pantallas se vieran
-       planas.
+       Se conservan para que ninguna hoja de estilos vieja quede sin color
+       mientras se migra. Incluye --bg-cyan, --bg-orange, --bg-splash y
+       --bg-red, que se usaban en varios archivos sin estar declaradas en
+       ningún lado.
        ===================================================================== */
 
-    --bg-dark: var(--superficie-fondo-a);
-    --bg-darkblue: var(--superficie-campo);
-    --bg-blue-petrol: var(--superficie-tarjeta);
+    --bg-dark: var(--hoja);
+    --bg-darkblue: var(--hoja-alta);
+    --bg-blue-petrol: var(--hoja-alta);
     --bg-blue: var(--dato);
-    --bg-petrol: var(--superficie-barra);
-    --bg-sky: var(--superficie-fondo-b);
-    --bg-lightblue: var(--tinta-alta);
-    --bg-cyan: var(--velo-fuerte);          /* faltaba declararla */
-    --bg-orange: var(--ambar);              /* faltaba declararla */
-    --bg-splash: var(--superficie-fondo-a); /* faltaba declararla */
-    --bg-red: var(--peligro);               /* faltaba declararla */
+    --bg-petrol: var(--naranja-hondo);
+    --bg-sky: var(--hoja);
+    --bg-lightblue: var(--tinta);
+    --bg-cyan: var(--hoja-borde);
+    --bg-orange: var(--naranja);
+    --bg-splash: var(--hoja);
+    --bg-red: var(--peligro);
 
-    --color-darkred: var(--peligro-hondo);
+    --color-darkred: var(--peligro-tinta);
     --color-red: var(--peligro);
-    --color-orange: var(--terracota);
+    --color-orange: var(--naranja);
 
-    --text-dark: var(--tinta-oscura);
-    --text-light: var(--tinta-alta);
-    --text-secondary: var(--tinta-baja);
-    --text-placeholder: #96b4d2;
+    --text-dark: var(--tinta);
+    --text-light: var(--sobre-naranja);
+    --text-secondary: var(--tinta-media);
+    --text-placeholder: var(--tinta-tenue);
 
-    --badge-bg: rgba(63, 217, 160, 0.2);
-    --badge-text: #9fe8cd;
+    --badge-bg: var(--exito-velo);
+    --badge-text: var(--exito-tinta);
 
     --icon-dueno: var(--perfil-duenio);
     --icon-supervisor: var(--perfil-supervisor);
@@ -233,90 +235,123 @@
     --icon-cocinero: var(--perfil-cocinero);
     --icon-cliente: var(--perfil-cliente);
 
+    /* Nombres de la paleta anterior (azul petróleo), por si quedó alguna
+       referencia suelta en una hoja todavía sin migrar. */
+    --superficie-fondo-a: var(--hoja);
+    --superficie-fondo-b: var(--hoja);
+    --superficie-barra: var(--naranja-hondo);
+    --superficie-tarjeta: var(--hoja-alta);
+    --superficie-tarjeta-alta: var(--hoja-alta);
+    --superficie-campo: var(--hoja-alta);
+    --superficie-elevada: var(--hoja-honda);
+    --velo-claro: var(--velo-tinta);
+    --velo-medio: var(--velo-tinta);
+    --velo-fuerte: var(--velo-tinta-fuerte);
+    --tinta-alta: var(--tinta);
+    --tinta-baja: var(--tinta-suave);
+    --tinta-oscura: var(--tinta);
+    --ambar: var(--naranja);
+    --ambar-claro: var(--naranja-claro);
+    --ambar-hondo: var(--naranja-hondo);
+    --tinta-sobre-ambar: var(--sobre-naranja);
+    --terracota: var(--naranja-hondo);
+    --neon-cian: var(--naranja);
+    --neon-cian-tenue: rgba(226, 87, 28, 0.28);
+    --neon-magenta: var(--bordo);
+    --exito-hondo: var(--exito-tinta);
+    --peligro-hondo: var(--peligro-tinta);
+    --alerta-hondo: var(--alerta-tinta);
+    --dato-hondo: var(--dato-tinta);
+    --borde-sutil: var(--borde-hoja);
+    --borde-marcado: 0.0938rem solid var(--hoja-borde);
+    --radio-panel: var(--radio-hoja);
+    --grad-ambar: var(--grad-naranja);
+    --grad-tarjeta-alta: var(--grad-tarjeta);
+    --grad-barra: var(--grad-banda);
+    --grad-peligro: linear-gradient(135deg, #d9534f 0%, #c0392b 100%);
+    --grad-exito: linear-gradient(135deg, #2fa068 0%, #1b7a4b 100%);
+    --grad-neon: linear-gradient(90deg, var(--naranja-claro) 0%, var(--naranja) 55%, var(--bordo) 100%);
+    --luz-calida: none;
+    --luz-fria: none;
+
     /* =====================================================================
-       12. PUENTE CON IONIC
-       ---------------------------------------------------------------------
-       Ionic pinta sus componentes leyendo estas variables. Se las apunta a la
-       paleta propia para que un ion-button, un ion-badge o un ion-alert sin
-       estilos a medida igual salga con los colores de la aplicación en lugar
-       del azul y el blanco de fábrica.
+       13. PUENTE CON IONIC
        ===================================================================== */
 
     --ion-font-family: var(--fuente);
 
-    /* El fondo lo pinta html/body con degradado y textura; los ion-content
-       van transparentes para dejarlo pasar. */
+    /* El fondo lo pintan la banda y la hoja; Ionic va transparente. */
     --ion-background-color: transparent;
-    --ion-background-color-rgb: 42, 74, 109;
-    --ion-text-color: var(--tinta-alta);
-    --ion-text-color-rgb: 244, 249, 255;
-    --ion-card-background: var(--superficie-tarjeta);
+    --ion-background-color-rgb: 239, 226, 206;
+    --ion-text-color: #3a2214;
+    --ion-text-color-rgb: 58, 34, 20;
+    --ion-card-background: #fbf4e9;
     --ion-item-background: transparent;
-    --ion-toolbar-background: var(--superficie-barra);
-    --ion-toolbar-color: var(--tinta-alta);
-    --ion-border-color: var(--velo-medio);
-    --ion-overlay-background-color: var(--superficie-tarjeta);
+    --ion-toolbar-background: transparent;
+    --ion-toolbar-color: #fff6ee;
+    --ion-border-color: #d8c3a3;
+    --ion-overlay-background-color: #fbf4e9;
 
-    --ion-color-primary: #f7a53b;
-    --ion-color-primary-rgb: 247, 165, 59;
-    --ion-color-primary-contrast: #2c1a05;
-    --ion-color-primary-contrast-rgb: 44, 26, 5;
-    --ion-color-primary-shade: #d9911f;
-    --ion-color-primary-tint: #ffb457;
+    --ion-color-primary: #e2571c;
+    --ion-color-primary-rgb: 226, 87, 28;
+    --ion-color-primary-contrast: #fff6ee;
+    --ion-color-primary-contrast-rgb: 255, 246, 238;
+    --ion-color-primary-shade: #c0430f;
+    --ion-color-primary-tint: #f5883e;
 
-    --ion-color-secondary: #57d8ea;
-    --ion-color-secondary-rgb: 87, 216, 234;
-    --ion-color-secondary-contrast: #06252c;
-    --ion-color-secondary-contrast-rgb: 6, 37, 44;
-    --ion-color-secondary-shade: #3ebccd;
-    --ion-color-secondary-tint: #74e0ef;
+    --ion-color-secondary: #8e2f14;
+    --ion-color-secondary-rgb: 142, 47, 20;
+    --ion-color-secondary-contrast: #fff6ee;
+    --ion-color-secondary-contrast-rgb: 255, 246, 238;
+    --ion-color-secondary-shade: #75260f;
+    --ion-color-secondary-tint: #a54426;
 
-    --ion-color-tertiary: #ff3d8f;
-    --ion-color-tertiary-rgb: 255, 61, 143;
-    --ion-color-tertiary-contrast: #2d0416;
-    --ion-color-tertiary-contrast-rgb: 45, 4, 22;
-    --ion-color-tertiary-shade: #db2c78;
-    --ion-color-tertiary-tint: #ff5da2;
+    --ion-color-tertiary: #c4700d;
+    --ion-color-tertiary-rgb: 196, 112, 13;
+    --ion-color-tertiary-contrast: #fff6ee;
+    --ion-color-tertiary-contrast-rgb: 255, 246, 238;
+    --ion-color-tertiary-shade: #a35d09;
+    --ion-color-tertiary-tint: #d68520;
 
-    --ion-color-success: #3fd9a0;
-    --ion-color-success-rgb: 63, 217, 160;
-    --ion-color-success-contrast: #032b1e;
-    --ion-color-success-contrast-rgb: 3, 43, 30;
-    --ion-color-success-shade: #23b884;
-    --ion-color-success-tint: #62e2b3;
+    --ion-color-success: #1b7a4b;
+    --ion-color-success-rgb: 27, 122, 75;
+    --ion-color-success-contrast: #ffffff;
+    --ion-color-success-contrast-rgb: 255, 255, 255;
+    --ion-color-success-shade: #14603a;
+    --ion-color-success-tint: #2f9160;
 
-    --ion-color-warning: #ffcc55;
-    --ion-color-warning-rgb: 255, 204, 85;
-    --ion-color-warning-contrast: #2f2200;
-    --ion-color-warning-contrast-rgb: 47, 34, 0;
-    --ion-color-warning-shade: #dfae37;
-    --ion-color-warning-tint: #ffd775;
+    --ion-color-warning: #d98b14;
+    --ion-color-warning-rgb: 217, 139, 20;
+    --ion-color-warning-contrast: #33210a;
+    --ion-color-warning-contrast-rgb: 51, 33, 10;
+    --ion-color-warning-shade: #b57210;
+    --ion-color-warning-tint: #e79c2c;
 
-    --ion-color-danger: #ff6072;
-    --ion-color-danger-rgb: 255, 96, 114;
-    --ion-color-danger-contrast: #2f0409;
-    --ion-color-danger-contrast-rgb: 47, 4, 9;
-    --ion-color-danger-shade: #dc4457;
-    --ion-color-danger-tint: #ff7d8c;
+    --ion-color-danger: #c0392b;
+    --ion-color-danger-rgb: 192, 57, 43;
+    --ion-color-danger-contrast: #ffffff;
+    --ion-color-danger-contrast-rgb: 255, 255, 255;
+    --ion-color-danger-shade: #9e2b20;
+    --ion-color-danger-tint: #d24f41;
 
-    --ion-color-light: #e8f1fb;
-    --ion-color-light-rgb: 232, 241, 251;
-    --ion-color-light-contrast: #16283d;
-    --ion-color-light-contrast-rgb: 22, 40, 61;
-    --ion-color-light-shade: #ccd4dd;
-    --ion-color-light-tint: #eaf2fb;
+    --ion-color-light: #fbf4e9;
+    --ion-color-light-rgb: 251, 244, 233;
+    --ion-color-light-contrast: #3a2214;
+    --ion-color-light-contrast-rgb: 58, 34, 20;
+    --ion-color-light-shade: #e5ddd2;
+    --ion-color-light-tint: #fcf6ec;
 
-    --ion-color-medium: #92aecb;
-    --ion-color-medium-rgb: 146, 174, 203;
-    --ion-color-medium-contrast: #10202f;
-    --ion-color-medium-contrast-rgb: 16, 32, 47;
-    --ion-color-medium-shade: #7f99b3;
-    --ion-color-medium-tint: #9dbbd0;
+    --ion-color-medium: #8a6b52;
+    --ion-color-medium-rgb: 138, 107, 82;
+    --ion-color-medium-contrast: #ffffff;
+    --ion-color-medium-contrast-rgb: 255, 255, 255;
+    --ion-color-medium-shade: #735943;
+    --ion-color-medium-tint: #9c8168;
 
-    --ion-color-dark: #24405f;
-    --ion-color-dark-rgb: 36, 64, 95;
-    --ion-color-dark-contrast: #f4f9ff;
-    --ion-color-dark-contrast-rgb: 244, 249, 255;
-    --ion-color-dark-shade: #203854;
-    --ion-color-dark-tint: #3a5370;
+    --ion-color-dark: #3a2214;
+    --ion-color-dark-rgb: 58, 34, 20;
+    --ion-color-dark-contrast: #fff6ee;
+    --ion-color-dark-contrast-rgb: 255, 246, 238;
+    --ion-color-dark-shade: #2e1b10;
+    --ion-color-dark-tint: #52392c;
 }

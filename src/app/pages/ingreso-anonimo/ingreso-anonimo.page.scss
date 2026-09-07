@@ -1,12 +1,1 @@
-/**
- * Página de ingreso anónimo.
- *
- * Igual que la de registro, sólo hospeda al formulario. Los estilos que había
- * acá (`.estilo-header`, `.estilo-content`, `.estilo-input`...) apuntaban a
- * clases que la plantilla actual no usa, así que no llegaban a aplicarse.
- */
-
-app-formulario-usuario-anonimo {
-    display: block;
-    min-height: 100%;
-}
+/* La estructura la aportan `app-header` y la clase `.hoja` de global.scss. */

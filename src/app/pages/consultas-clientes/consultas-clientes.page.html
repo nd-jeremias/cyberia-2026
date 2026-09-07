@@ -1,22 +1,12 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Consultas de clientes'"></app-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Consultas'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <div class="pantalla-preparacion">
-        <img class="logo-preparacion" src="assets/logo.png" alt="Cyberia Restó" />
-
-        <div class="tarjeta-preparacion">
-            <span class="sello-preparacion">
-                <ion-icon name="time-outline"></ion-icon>
-                En preparación
-            </span>
-
+    <div class="hoja">
+        <div class="aviso-preparacion">
+            <span class="medallon"><ion-icon name="chatbubbles-outline"></ion-icon></span>
+            <span class="sello-preparacion">En preparación</span>
             <h2>Sala de conversación</h2>
-            <p>Va a ser la sala de conversación entre los mozos y los clientes del salón, con el número de mesa y la fecha con hora y minutos en cada mensaje.</p>
-
-            <span class="referencia-enunciado">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Punto 11 del enunciado
-            </span>
+            <p>Acá van a llegar las consultas que los clientes hacen desde su mesa.</p>
         </div>
     </div>
 </ion-content>

@@ -1,15 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
-import {
-    IonBackButton,
-    IonBadge,
-    IonButton,
-    IonButtons,
-    IonContent,
-    IonHeader,
-    IonIcon,
-    IonTitle,
-    IonToolbar,
-} from '@ionic/angular';
+import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
+import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { PedidoService } from '../../services/pedido.service';
 
@@ -24,17 +15,7 @@ import { PedidoService } from '../../services/pedido.service';
     selector: 'app-pedidos',
     templateUrl: './pedidos.page.html',
     styleUrls: ['./pedidos.page.scss'],
-    imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
-        IonButtons,
-        IonBackButton,
-        IonContent,
-        IonButton,
-        IonBadge,
-        IonIcon,
-    ],
+    imports: [IonContent, IonButton, IonBadge, IonIcon, HeaderComponent],
 })
 export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);

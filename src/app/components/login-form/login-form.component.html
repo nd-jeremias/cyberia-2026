@@ -1,15 +1,19 @@
-<div class="pantalla-login">
-    <!-- 1. Cabecera con isotipo -->
-    <header class="cabecera">
-        <div class="isotipo-icono">
-            <img src="../../../assets/logo.png" alt="Cyberia Restó" />
-        </div>
+<!-- Banda naranja de bienvenida: la misma capa que encabeza el resto de la
+     aplicación, acá con el logotipo en lugar de la barra de navegación. -->
+<div class="banda-ingreso">
+    <div class="isotipo-icono">
+        <img src="assets/logo.png" alt="Cyberia Restó" />
+    </div>
+    <div class="labio-hoja" aria-hidden="true"></div>
+</div>
+
+<div class="hoja hoja-angosta">
+    <header class="encabezado-ingreso">
         <h1>Iniciar sesión</h1>
-        <p>Bienvenido de nuevo a Cyberia Restó</p>
+        <p>Bienvenido de nuevo</p>
     </header>
 
-    <!-- 2. Formulario principal -->
-    <div class="seccion-form panel">
+    <div class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onLogin()">
             <!-- Campo Correo electrónico -->
             <div class="grupo-input">
@@ -41,54 +45,51 @@
                 }
             </div>
 
-            <!-- Acciones -->
-            <div class="enlaces-secundarios">
-                <button type="submit" class="btn-principal">
-                    <ion-icon name="log-in-outline"></ion-icon>
-                    Iniciar sesión
-                </button>
+            <button type="submit" class="btn-principal">Iniciar sesión</button>
 
-                <div class="divisor">
-                    <span>o</span>
-                </div>
+            <div class="divisor"><span>o</span></div>
 
-                <!-- Las dos alternativas comparten fila: ocupan el ancho sin
-                     dejar el hueco vacío que quedaba al apilarlas. -->
-                <div class="fila-alternativas">
-                    <button type="button" routerLink="/registrarse" class="btn-secundario">
-                        <ion-icon name="person-add-outline"></ion-icon>
-                        Crear cuenta
-                    </button>
-                    <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">
-                        <ion-icon name="fast-food-outline"></ion-icon>
-                        Invitado
-                    </button>
-                </div>
+            <div class="fila-alternativas">
+                <button type="button" routerLink="/registrarse" class="btn-secundario">Crear cuenta</button>
+                <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">Invitado</button>
             </div>
         </form>
     </div>
-</div>
 
-<!-- 3. Accesos rápidos por perfil -->
-<footer class="seccion-demo">
-    <div class="divisor-demo">
-        <span>Acceso rápido · demo</span>
-    </div>
+    <!--
+      Accesos rápidos por perfil.
 
-    <div class="grilla-perfiles">
-        @for (perfil of usuariosValidos; track perfil.email) {
+      El enunciado los pide y aclara que no sean botones fijos: acá viven
+      plegados detrás de un disparador y se despliegan al tocarlo.
+    -->
+    <section class="accesos" [class.accesos-abiertos]="accesosAbiertos()">
         <button
             type="button"
-            [class]="'card-perfil perfil-' + perfil.clave"
-            (click)="cargarCredenciales(perfil.email, perfil.pass)"
+            class="accesos-disparador"
+            (click)="alternarAccesos()"
+            [attr.aria-expanded]="accesosAbiertos()"
+            aria-controls="panel-accesos"
         >
-            <span class="icono-perfil-wrapper">
-                <ion-icon [name]="perfil.icono"></ion-icon>
-            </span>
-            <span class="textos-perfil">
-                <span class="rol">{{ perfil.rol }}</span>
-            </span>
+            <ion-icon class="accesos-rayo" name="flash-outline"></ion-icon>
+            <span class="accesos-texto">Acceso rápido</span>
+            <ion-icon class="accesos-flecha" name="chevron-down-outline"></ion-icon>
         </button>
-        }
-    </div>
-</footer>
+
+        <div class="accesos-panel" id="panel-accesos" [attr.inert]="accesosAbiertos() ? null : ''">
+            <div class="grilla-perfiles">
+                @for (perfil of usuariosValidos; track perfil.email) {
+                <button
+                    type="button"
+                    [class]="'card-perfil perfil-' + perfil.clave"
+                    (click)="cargarCredenciales(perfil.email, perfil.pass)"
+                >
+                    <span class="icono-perfil-wrapper">
+                        <ion-icon [name]="perfil.icono"></ion-icon>
+                    </span>
+                    <span class="rol">{{ perfil.rol }}</span>
+                </button>
+                }
+            </div>
+        </div>
+    </section>
+</div>

@@ -1,14 +1,1 @@
-/**
- * Página de registro de cliente.
- *
- * Sólo hospeda al formulario reutilizable; el diseño vive en ese componente.
- * El archivo anterior tenía más de cien líneas de estilos (`.cabecera-registro`,
- * `.item-input`, `.boton-scanner`, `.seccion-foto`...) que apuntaban a clases
- * que este HTML no usa: eran de una versión previa de la pantalla y no pintaban
- * nada.
- */
-
-app-formulario-registro {
-    display: block;
-    min-height: 100%;
-}
+/* La estructura la aportan `app-header` y la clase `.hoja` de global.scss. */

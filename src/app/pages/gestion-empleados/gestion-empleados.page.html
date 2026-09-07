@@ -1,48 +1,15 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Gestión de empleados'"></app-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
+    <a accion class="btn-banda" routerLink="/gestion-empleados/alta">
+        <ion-icon name="person-add-outline"></ion-icon>
+        Agregar
+    </a>
+</app-header>
 
 <ion-content [fullscreen]="true">
-    <div class="pantalla-gestion">
-        <!-- Portada de la sección -->
-        <section class="portada-gestion">
-            <div class="portada-texto">
-                <h2>Empleados</h2>
-                <p>Personal del local, sus perfiles y sus accesos a la aplicación.</p>
-            </div>
-            <img class="portada-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-        </section>
-
-        <!-- Acciones disponibles -->
-        <section class="seccion-gestion">
-            <h2 class="titulo-seccion">Acciones</h2>
-
-            <div class="grilla-gestion">
-                <a class="tarjeta-accion" routerLink="/gestion-empleados/alta">
-                    <span class="medallon">
-                        <ion-icon name="person-add-outline"></ion-icon>
-                    </span>
-                    <span class="textos-accion">
-                        <span class="titulo-accion">Agregar empleado</span>
-                        <span class="detalle-accion">
-                            Cargar los datos, la foto y el perfil del nuevo integrante
-                        </span>
-                    </span>
-                    <ion-icon class="flecha-accion" name="chevron-forward-outline"></ion-icon>
-                </a>
-            </div>
-        </section>
-
-        <!-- Indicaciones del circuito -->
-        <aside class="guia-gestion">
-            <h3>
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Cómo dar de alta un empleado
-            </h3>
-            <ol>
-                <li>Completá nombres, apellidos, documento y correo electrónico.</li>
-                <li>Usá el lector de código QR del documento para cargar los datos más rápido.</li>
-                <li>Tomá la foto personal con la cámara del dispositivo.</li>
-                <li>Elegí el perfil que le corresponde dentro del local.</li>
-            </ol>
-        </aside>
+    <div class="hoja">
+        <div class="estado-vacio">
+            <ion-icon name="people-outline"></ion-icon>
+            <p>Todavía no hay empleados cargados.</p>
+        </div>
     </div>
 </ion-content>

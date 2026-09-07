@@ -1,4 +1,4 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonIcon, IonInput, IonInputPasswordToggle } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
@@ -13,7 +13,9 @@ import {
   fastFoodOutline, 
   personOutline,
   logInOutline,
-  personAddOutline
+  personAddOutline,
+  flashOutline,
+  chevronDownOutline
 } from 'ionicons/icons';
 import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
@@ -50,6 +52,8 @@ export class LoginFormComponent {
       'person-outline': personOutline,
       'log-in-outline': logInOutline,
       'person-add-outline': personAddOutline,
+      'flash-outline': flashOutline,
+      'chevron-down-outline': chevronDownOutline,
     });
   }
 
@@ -74,9 +78,29 @@ export class LoginFormComponent {
     { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', clave: 'cliente', icono: 'person-outline' },
   ];
 
-  /** Completa el formulario con un perfil de prueba, listo para enviar. */
+  /**
+   * Panel de accesos rápidos: abierto o cerrado.
+   *
+   * El enunciado pide que los botones de ingreso rápido NO sean fijos. Por eso
+   * viven dentro de un panel que se despliega al tocar "Acceso rápido": en
+   * reposo la pantalla muestra sólo el formulario, y los perfiles aparecen
+   * cuando se los pide.
+   */
+  accesosAbiertos = signal(false);
+
+  alternarAccesos() {
+    this.accesosAbiertos.update((abierto) => !abierto);
+  }
+
+  /**
+   * Completa el formulario con un perfil de prueba y cierra el panel.
+   *
+   * Se cierra a propósito: una vez elegido el perfil, lo que importa es ver el
+   * formulario ya cargado y el botón de ingresar.
+   */
   cargarCredenciales(correo: string, clave: string) {
     this.formulario.setValue({ email: correo, password: clave });
+    this.accesosAbiertos.set(false);
   }
 
   /**

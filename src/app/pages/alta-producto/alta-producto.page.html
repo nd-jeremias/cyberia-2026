@@ -1,11 +1,4 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button defaultHref="/gestion-productos" text=""></ion-back-button>
-        </ion-buttons>
-        <ion-title>{{ titulo() }}</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/gestion-productos'" [tituloHeader]="titulo()"></app-header>
 
 <ion-content [fullscreen]="true">
     <app-formulario-alta-producto

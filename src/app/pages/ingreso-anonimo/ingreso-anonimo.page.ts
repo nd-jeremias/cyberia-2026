@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { HeaderComponent } from '../../components/header/header.component';
 import { FormularioUsuarioAnonimoComponent } from '../../components/formulario-usuario-anonimo/formulario-usuario-anonimo.component';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { AuthService } from '../../services/auth.service';
@@ -18,10 +19,7 @@ import { SpinnerService } from '../../services/spinner.service';
     selector: 'app-ingreso-anonimo',
     templateUrl: './ingreso-anonimo.page.html',
     styleUrls: ['./ingreso-anonimo.page.scss'],
-    imports: [ 
-        IonContent,
-        FormularioUsuarioAnonimoComponent,
-    ],
+    imports: [IonContent, HeaderComponent, FormularioUsuarioAnonimoComponent],
 })
 export class IngresoAnonimoPage {
     private router = inject(Router);

@@ -1,21 +1,63 @@
-<header class="app-header-container">
-    <div class="header-content">
-        <!-- Contenedor Izquierdo: Botón Volver -->
-        <div class="header-left">
-            @if(mostrarBotonVolver()){
+<header class="banda" [class.banda-usuario]="modo() === 'usuario'">
+    <!-- Fila superior: navegación y marca. Es igual en todas las pantallas. -->
+    <div class="banda-barra">
+        <div class="banda-lado">
+            @if (mostrarBotonVolver()) {
             <app-boton-atras [rutaPorDefecto]="defaultHref()"></app-boton-atras>
             }
         </div>
 
-        <!-- Contenedor Central: Título -->
-        <!-- <h1 class="header-title">Perfil: {{ perfil() }}</h1> -->
-        <h1 class="header-title">{{ tituloHeader() }}</h1>
-        
-        <!-- Contenedor Derecho: Botón Cerrar Sesión -->
-        <div class="header-right">
-            <button class="logout-html-btn" (click)="cerrarSesion()" aria-label="Cerrar sesión">
-                <ng-icon class="logoutIcon" name="remixLogoutCircleLine" />
+        <span class="marca">Cyberia Restó</span>
+
+        <div class="banda-lado banda-lado-fin">
+            @if (haySesion()) {
+            <button class="btn-salir" (click)="cerrarSesion()" aria-label="Cerrar sesión">
+                <ng-icon class="icono-salir" name="remixLogoutCircleLine" />
             </button>
+            }
         </div>
     </div>
+
+    <!--
+      Tarjeta de contexto, unida a la barra.
+      En el inicio muestra quién entró; en el resto de las pantallas, dónde
+      está parado y la acción principal de la sección.
+    -->
+    <div class="banda-cuerpo">
+        @if (modo() === 'usuario') {
+        <div class="identidad">
+            <div class="avatar">
+                @if (fotoUsuario(); as foto) {
+                <img [src]="foto" [alt]="nombreCompleto()" />
+                } @else {
+                <span class="avatar-iniciales">{{ iniciales() }}</span>
+                }
+            </div>
+
+            <div class="identidad-textos">
+                <p class="saludo">{{ saludo() }}</p>
+                <h1 class="identidad-nombre">{{ nombreCompleto() }}</h1>
+            </div>
+
+            <span class="chip-perfil">{{ perfilVisible() }}</span>
+        </div>
+        } @else {
+        <div class="contexto">
+            <h1 class="contexto-titulo">{{ tituloHeader() }}</h1>
+
+            <!-- Cada pantalla proyecta acá su botón de acción, si lo necesita. -->
+            <div class="contexto-accion">
+                <ng-content select="[accion]"></ng-content>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!--
+      Labio de la hoja: el borde superior redondeado del papel crema, dibujado
+      dentro de la banda. Así el contenido de la pantalla arranca ya "dentro"
+      de la hoja y al desplazarse pasa por debajo de la curva, sin la costura
+      que quedaría si el redondeo viviera en el ion-content.
+    -->
+    <div class="labio-hoja" aria-hidden="true"></div>
 </header>

@@ -1,48 +1,15 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Gestión de mesas'"></app-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Mesas'">
+    <a accion class="btn-banda" routerLink="/gestion-mesas/alta">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        Agregar
+    </a>
+</app-header>
 
 <ion-content [fullscreen]="true">
-    <div class="pantalla-gestion">
-        <!-- Portada de la sección -->
-        <section class="portada-gestion">
-            <div class="portada-texto">
-                <h2>Mesas</h2>
-                <p>Distribución del salón, tipos de mesa y sus códigos QR.</p>
-            </div>
-            <img class="portada-logo" src="assets/logo.png" alt="" aria-hidden="true" />
-        </section>
-
-        <!-- Acciones disponibles -->
-        <section class="seccion-gestion">
-            <h2 class="titulo-seccion">Acciones</h2>
-
-            <div class="grilla-gestion">
-                <a class="tarjeta-accion" routerLink="/gestion-mesas/alta">
-                    <span class="medallon">
-                        <ion-icon name="grid-outline"></ion-icon>
-                    </span>
-                    <span class="textos-accion">
-                        <span class="titulo-accion">Agregar nueva mesa</span>
-                        <span class="detalle-accion">
-                            Número, comensales, tipo de mesa y foto del lugar
-                        </span>
-                    </span>
-                    <ion-icon class="flecha-accion" name="chevron-forward-outline"></ion-icon>
-                </a>
-            </div>
-        </section>
-
-        <!-- Indicaciones del circuito -->
-        <aside class="guia-gestion">
-            <h3>
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Cómo dar de alta una mesa
-            </h3>
-            <ol>
-                <li>Asigná el número de mesa y la cantidad de comensales que admite.</li>
-                <li>Elegí el tipo: estándar, VIP o para comensales con movilidad reducida.</li>
-                <li>Tomá la foto de la mesa con la cámara del dispositivo.</li>
-                <li>Al guardarla se genera automáticamente su código QR y queda disponible.</li>
-            </ol>
-        </aside>
+    <div class="hoja">
+        <div class="estado-vacio">
+            <ion-icon name="grid-outline"></ion-icon>
+            <p>Todavía no hay mesas cargadas.</p>
+        </div>
     </div>
 </ion-content>

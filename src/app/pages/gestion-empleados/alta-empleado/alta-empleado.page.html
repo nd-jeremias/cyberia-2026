@@ -1,5 +1,11 @@
-<ion-content [fullscreen]="true">
-    <app-header [defaultHref]="'/gestion-empleados'" [tituloHeader]="'Alta de empleado'"></app-header>
+<app-header [defaultHref]="'/gestion-empleados'" [tituloHeader]="'Registrar empleado'"></app-header>
 
-    <app-formulario-registro [usuarioRol]="'dueño'" (registroSubmit)="handleRegistro($event)" [direccionCamara]="'frontal'"></app-formulario-registro>
+<ion-content [fullscreen]="true">
+    <div class="hoja hoja-angosta">
+        <app-formulario-registro
+            [usuarioRol]="'dueño'"
+            (registroSubmit)="handleRegistro($event)"
+            [direccionCamara]="'frontal'"
+        ></app-formulario-registro>
+    </div>
 </ion-content>

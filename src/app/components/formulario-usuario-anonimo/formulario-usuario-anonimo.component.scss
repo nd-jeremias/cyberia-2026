@@ -1,47 +1,22 @@
 /**
  * Ingreso como cliente anónimo (punto 9 del enunciado).
  *
- * Es un formulario de dos campos, así que el problema no era la falta de
- * espacio sino el sobrante: quedaba media pantalla en blanco debajo del botón.
- * Se resuelve con `justify-content: center` sobre el alto completo más un
- * panel que agrupa nombre y foto, y una nota al pie que explica qué pasa
- * después de ingresar. Así la superficie queda ocupada con contenido útil.
+ * Dos campos y un botón. El título lo pone la banda de `app-header`, y el
+ * recuadro explicativo que había antes se quitó: la pantalla se entiende sola.
  */
 
 :host {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
+    display: block;
     width: 100%;
-    min-height: 100%;
-    padding: 1.5rem 1.25rem 2rem;
-    box-sizing: border-box;
-
-    background: transparent;
 }
 
 .pantalla-anonimo {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-
+    gap: 1.25rem;
     width: 100%;
-    max-width: 32rem;
-    margin: 0 auto;
-    box-sizing: border-box;
 }
 
-.cabecera .isotipo-icono img {
-    width: 11rem;
-    max-width: 56%;
-}
-
-.seccion-form {
-    padding: 1.5rem 1.25rem;
-}
-
-/* Bloque de la foto: mismo tratamiento que en el registro. */
 .img-preview {
     display: flex;
     flex-direction: column;
@@ -50,41 +25,7 @@
     padding: 0.875rem;
     box-sizing: border-box;
 
-    background: rgba(255, 255, 255, 0.05);
-    border: var(--borde-sutil);
+    background: rgba(255, 255, 255, 0.5);
+    border: var(--borde-hoja);
     border-radius: var(--radio);
-}
-
-/**
- * Nota al pie.
- *
- * Cuenta qué va a pasar después de tocar el botón. Además de llenar el hueco
- * que quedaba, responde la pregunta que se hace cualquiera que entra sin
- * cuenta: "¿y ahora qué?".
- */
-.nota-anonimo {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-
-    padding: 1rem;
-    box-sizing: border-box;
-
-    background: rgba(87, 216, 234, 0.1);
-    border: 0.0938rem solid rgba(87, 216, 234, 0.35);
-    border-radius: var(--radio);
-
-    ion-icon {
-        flex-shrink: 0;
-        margin-top: 0.125rem;
-        font-size: 1.375rem;
-        color: var(--neon-cian);
-    }
-
-    p {
-        margin: 0;
-        font-size: var(--texto-epigrafe);
-        line-height: 1.45;
-        color: var(--tinta-media);
-    }
 }

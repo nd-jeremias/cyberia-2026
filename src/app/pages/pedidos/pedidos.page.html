@@ -1,14 +1,7 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button defaultHref="/inicio" text=""></ion-back-button>
-        </ion-buttons>
-        <ion-title>Pedidos</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos'"></app-header>
 
 <ion-content [fullscreen]="true">
-  <div class="pantalla-pedidos">
+  <div class="hoja pantalla-pedidos">
     <section class="grupo">
         <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
 

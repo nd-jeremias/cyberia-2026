@@ -17,9 +17,17 @@ import {
     alertCircleOutline,
 } from 'ionicons/icons';
 import { AuthService } from '../services/auth.service';
-import { BOTONES_POR_ROL, GUIA_POR_ROL } from './home-botones.config';
+import { BOTONES_POR_ROL } from './home-botones.config';
 import { HeaderComponent } from '../components/header/header.component';
 
+/**
+ * Pantalla de inicio.
+ *
+ * Sólo lista los accesos que le corresponden al rol. El saludo, la foto y el
+ * perfil de quien entró viven en `app-header` (modo 'usuario'), que los
+ * muestra pegados a la barra: son datos de la sesión, no de esta pantalla, y
+ * así la misma cabecera sirve para todas las demás.
+ */
 @Component({
     selector: 'app-home',
     templateUrl: 'home.page.html',
@@ -31,8 +39,7 @@ export class HomePage {
 
     constructor() {
         // Los iconos de los accesos se declaran acá porque los nombres salen de
-        // la configuración por rol, no del HTML: sin registrarlos, Ionic no
-        // encuentra el dibujo y el medallón sale vacío.
+        // la configuración por rol, no del HTML.
         addIcons({
             'people-outline': peopleOutline,
             'grid-outline': gridOutline,
@@ -53,48 +60,5 @@ export class HomePage {
     botonesDelRol = computed(() => {
         const perfil = this.authService.perfil();
         return perfil ? BOTONES_POR_ROL[perfil] : [];
-    });
-
-    /**
-     * Nombre para el saludo de bienvenida.
-     *
-     * Sale de los metadatos de la sesión, que es donde el registro guarda el
-     * nombre de la persona. Si la cuenta no los tiene (por ejemplo, los
-     * usuarios de prueba creados a mano), se saluda de forma genérica en lugar
-     * de usar la parte anterior a la arroba del correo: eso mostraba textos
-     * como "duenio" o "cliente", que se leen como un dato técnico y no como el
-     * nombre de alguien. El rol ya se ve en la insignia de al lado.
-     */
-    nombreUsuario = computed(() => {
-        const metadatos = this.authService.session()?.user?.user_metadata ?? {};
-        const nombre = (metadatos['nombre'] ?? metadatos['nombres'] ?? '').toString().trim();
-
-        return nombre || '¡Bienvenido!';
-    });
-
-    /** Saludo según la hora, como hacen las aplicaciones de delivery. */
-    saludo = computed(() => {
-        const hora = new Date().getHours();
-
-        if (hora < 6) return 'Buenas madrugadas';
-        if (hora < 13) return 'Buen día';
-        if (hora < 20) return 'Buenas tardes';
-
-        return 'Buenas noches';
-    });
-
-    /** Pasos del circuito de trabajo que le tocan al rol de la sesión. */
-    guiaDelRol = computed(() => {
-        const perfil = this.authService.perfil();
-        return perfil ? GUIA_POR_ROL[perfil] : [];
-    });
-
-    /** Perfil listo para mostrar, con la primera letra en mayúscula. */
-    perfilVisible = computed(() => {
-        const perfil = this.authService.perfil();
-
-        if (!perfil) return 'Sin perfil asignado';
-
-        return perfil.charAt(0).toUpperCase() + perfil.slice(1);
     });
 }

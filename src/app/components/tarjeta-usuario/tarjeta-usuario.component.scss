@@ -32,8 +32,8 @@
     padding: 1rem;
     box-sizing: border-box;
 
-    background: var(--grad-tarjeta);
-    border: var(--borde-sutil);
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
     border-radius: var(--radio-grande);
     box-shadow: var(--sombra-tarjeta);
 
@@ -42,7 +42,7 @@
         box-shadow 0.2s ease;
 
     &:hover {
-        border-color: var(--velo-fuerte);
+        border-color: var(--hoja-borde-fuerte);
         box-shadow: var(--sombra-elevada);
     }
 }
@@ -57,7 +57,7 @@
     overflow: hidden;
 
     border-radius: var(--radio);
-    border: 0.125rem solid var(--velo-fuerte);
+    border: 0.125rem solid var(--hoja-borde-fuerte);
     background: var(--superficie-campo);
     box-shadow: var(--sombra-apoyada);
 }
@@ -76,7 +76,7 @@
     align-items: center;
     justify-content: center;
 
-    color: var(--tinta-baja);
+    color: var(--tinta-suave);
     opacity: 0.7;
 
     ion-icon {
@@ -101,7 +101,7 @@
     font-size: var(--texto-subtitulo);
     font-weight: 800;
     line-height: 1.2;
-    color: var(--tinta-alta);
+    color: var(--tinta);
 
     /* El enunciado no admite texto cortado: los nombres largos bajan de
        renglón en lugar de terminar en puntos suspensivos. */
@@ -117,7 +117,7 @@
 }
 
 .fecha {
-    color: var(--tinta-baja);
+    color: var(--tinta-suave);
 }
 
 ion-badge {
@@ -132,7 +132,7 @@ ion-badge {
     display: flex;
     gap: 0.625rem;
     padding-top: 0.75rem;
-    border-top: 0.0625rem solid var(--velo-medio);
+    border-top: 0.0625rem solid var(--hoja-borde);
 
     ion-button {
         flex: 1 1 0;

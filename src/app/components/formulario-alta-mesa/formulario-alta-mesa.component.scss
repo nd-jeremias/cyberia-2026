@@ -1,51 +1,29 @@
 /**
  * Alta de mesa (punto 4 del enunciado).
  *
- * Comparte el kit de formularios de `global.scss`, así que acá solo va el
- * armado: cabecera, panel con los campos y bloque de foto.
- *
- * Igual que en los otros formularios, el `:host` deja de pintar un color
- * sólido para que se vea el degradado del fondo general.
+ * Comparte el kit de formularios de `global.scss`; el título lo pone la banda
+ * naranja de `app-header`.
  */
 
 :host {
     display: block;
     width: 100%;
-    min-height: 100%;
-    padding: 1.5rem 1.25rem 2rem;
-    box-sizing: border-box;
-
-    background: transparent;
 }
 
 .pantalla-alta-mesa {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-
+    gap: 1.25rem;
     width: 100%;
-    max-width: 32rem;
-    margin: 0 auto;
-    box-sizing: border-box;
-}
-
-.cabecera .isotipo-icono img {
-    width: 9rem;
-    max-width: 48%;
-}
-
-.seccion-form {
-    padding: 1.5rem 1.25rem;
 }
 
 .formulario-cuerpo {
     display: flex;
     flex-direction: column;
-    gap: 1.125rem;
+    gap: 1rem;
     width: 100%;
 }
 
-/* Bloque de la foto de la mesa. */
 .img-preview {
     display: flex;
     flex-direction: column;
@@ -54,8 +32,8 @@
     padding: 0.875rem;
     box-sizing: border-box;
 
-    background: rgba(255, 255, 255, 0.05);
-    border: var(--borde-sutil);
+    background: rgba(255, 255, 255, 0.5);
+    border: var(--borde-hoja);
     border-radius: var(--radio);
 
     > span {
@@ -64,14 +42,14 @@
 
         font-size: var(--texto-epigrafe);
         font-weight: 600;
-        color: #ffd2d8;
+        color: var(--peligro-tinta);
 
-        background: rgba(255, 96, 114, 0.16);
+        background: var(--peligro-velo);
         border-left: 0.1875rem solid var(--peligro);
         border-radius: 0.375rem;
     }
 }
 
 .enlaces-secundarios {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }

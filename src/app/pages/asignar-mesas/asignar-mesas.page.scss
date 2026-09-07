@@ -57,14 +57,14 @@
     margin: 0;
     padding: 0.875rem 1rem;
 
-    background: rgba(255, 204, 85, 0.14);
-    border: 0.0625rem solid rgba(255, 204, 85, 0.42);
+    background: var(--alerta-velo);
+    border: 0.0625rem solid rgba(217, 139, 20, 0.42);
     border-left: 0.25rem solid var(--alerta);
     border-radius: var(--radio);
 
     font-size: var(--texto-apoyo);
     line-height: 1.45;
-    color: var(--tinta-alta);
+    color: var(--tinta);
 
     ion-icon {
         flex-shrink: 0;
@@ -86,8 +86,8 @@
     padding: 1rem;
     box-sizing: border-box;
 
-    background: var(--grad-tarjeta);
-    border: var(--borde-sutil);
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
     border-radius: var(--radio-grande);
     box-shadow: var(--sombra-tarjeta);
 
@@ -96,7 +96,7 @@
         box-shadow 0.2s ease;
 
     &:hover {
-        border-color: rgba(63, 217, 160, 0.45);
+        border-color: rgba(27, 122, 75, 0.4);
         box-shadow: var(--sombra-elevada);
     }
 }
@@ -117,8 +117,8 @@
     padding: 0.375rem 0.875rem;
     border-radius: var(--radio-chico);
 
-    background: rgba(87, 216, 234, 0.16);
-    border: 0.0938rem solid rgba(87, 216, 234, 0.45);
+    background: rgba(226, 87, 28, 0.12);
+    border: 0.0938rem solid rgba(226, 87, 28, 0.32);
 }
 
 .ficha-mesa-rotulo {
@@ -126,14 +126,14 @@
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--tinta-baja);
+    color: var(--tinta-suave);
 }
 
 .ficha-mesa-numero {
     font-size: 1.625rem;
     font-weight: 800;
     line-height: 1;
-    color: var(--neon-cian);
+    color: var(--naranja);
 }
 
 .datos-mesa {
@@ -151,8 +151,8 @@
     padding: 0.3125rem 0.625rem;
     border-radius: 999px;
 
-    background: var(--velo-claro);
-    border: 0.0625rem solid var(--velo-medio);
+    background: var(--velo-tinta);
+    border: 0.0625rem solid var(--hoja-borde);
 
     font-size: var(--texto-epigrafe);
     font-weight: 600;
@@ -161,7 +161,7 @@
 
     ion-icon {
         font-size: 1rem;
-        color: var(--neon-cian);
+        color: var(--naranja);
     }
 }
 

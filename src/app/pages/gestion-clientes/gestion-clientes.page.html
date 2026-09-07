@@ -1,22 +1,12 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Gestión de clientes'"></app-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Clientes'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <div class="pantalla-preparacion">
-        <img class="logo-preparacion" src="assets/logo.png" alt="Cyberia Restó" />
-
-        <div class="tarjeta-preparacion">
-            <span class="sello-preparacion">
-                <ion-icon name="time-outline"></ion-icon>
-                En preparación
-            </span>
-
+    <div class="hoja">
+        <div class="aviso-preparacion">
+            <span class="medallon"><ion-icon name="person-circle-outline"></ion-icon></span>
+            <span class="sello-preparacion">En preparación</span>
             <h2>Aprobación de clientes</h2>
-            <p>Desde acá el dueño y el supervisor van a poder revisar las solicitudes de registro, ver la foto de cada persona y aprobarlas o rechazarlas. Cada decisión dispara automáticamente el correo electrónico correspondiente.</p>
-
-            <span class="referencia-enunciado">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Puntos 6, 7 y 8 del enunciado
-            </span>
+            <p>Acá se van a revisar las solicitudes de registro para aceptarlas o rechazarlas.</p>
         </div>
     </div>
 </ion-content>

@@ -8,9 +8,9 @@
  * izquierda y el precio destacado a la derecha.
  *
  * Decisiones:
- *  - la foto NO se recorta ("contain"), porque el enunciado pide que ninguna
- *    imagen quede cortada; las franjas que eso deja se rellenan con la misma
- *    foto ampliada y desenfocada, para que no queden zonas muertas;
+ *  - la foto LLENA su contenedor ("cover"): es lo que hacen todas las cartas
+ *    digitales, y es lo que pidió el equipo. La alternativa ("contain") dejaba
+ *    el plato chico y centrado entre dos bandas oscuras;
  *  - el precio es el dato de mayor tamaño después del nombre: es lo que la
  *    gente busca de un vistazo;
  *  - el ámbar queda para "Agregar al carrito", la única acción principal.
@@ -28,8 +28,8 @@
     height: 100%;
     width: 100%;
 
-    background: var(--grad-tarjeta);
-    border: var(--borde-sutil);
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
     border-radius: var(--radio-grande);
     overflow: hidden;
     box-shadow: var(--sombra-tarjeta);
@@ -53,7 +53,10 @@
 .carrusel {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+
+    /* Algo más alta que 4:3: con la foto a "cover", darle presencia es lo que
+       hace que la carta se vea apetitosa y no un listado administrativo. */
+    aspect-ratio: 5 / 4;
     overflow: hidden;
     background-color: var(--superficie-campo);
 
@@ -76,27 +79,13 @@
     overflow: hidden;
 }
 
-/* Copia ampliada y desenfocada, detrás. Rellena las franjas laterales con los
-   colores del propio plato en vez de dejar un rectángulo de color liso. */
-.foto-fondo {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-
-    filter: blur(1.25rem) saturate(1.3) brightness(0.62);
-    transform: scale(1.18);
-    pointer-events: none;
-}
-
-/* La foto real: entera, centrada y sin recortar. */
+/* La foto llena el contenedor de lado a lado. */
 .foto-principal {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
 }
 
@@ -109,7 +98,7 @@
     justify-content: center;
     gap: 0.5rem;
 
-    color: var(--tinta-baja);
+    color: var(--tinta-suave);
     background: var(--grad-campo);
 
     ion-icon {
@@ -132,7 +121,7 @@
 
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    box-shadow: 0 0.25rem 0.75rem rgba(11, 24, 40, 0.55);
+    box-shadow: 0 0.25rem 0.75rem rgba(58, 34, 20, 0.4);
 }
 
 /* Flechas de navegación. */
@@ -150,12 +139,14 @@
     height: 2.375rem;
     padding: 0;
 
-    background: rgba(11, 24, 40, 0.62);
-    border: 0.0938rem solid var(--velo-fuerte);
+    background: rgba(35, 15, 5, 0.55);
+    border: 0.0938rem solid rgba(255, 255, 255, 0.35);
     border-radius: 50%;
-    box-shadow: var(--sombra-apoyada);
+    box-shadow: 0 0.125rem 0.5rem rgba(35, 15, 5, 0.35);
 
-    color: var(--tinta-alta);
+    /* Claro sobre velo oscuro: es lo único que se lee sobre cualquier foto,
+       sea clara u oscura. */
+    color: #ffffff;
     font-size: 1.25rem;
     cursor: pointer;
 
@@ -164,8 +155,8 @@
         transform 0.18s ease;
 
     &:hover {
-        background: rgba(247, 165, 59, 0.85);
-        color: var(--tinta-sobre-ambar);
+        background: var(--naranja);
+        border-color: var(--naranja);
     }
 
     &:active {
@@ -200,8 +191,8 @@
     padding: 0;
 
     border-radius: 999px;
-    border: 0.0625rem solid rgba(255, 255, 255, 0.55);
-    background: rgba(11, 24, 40, 0.45);
+    border: 0.0625rem solid rgba(255, 255, 255, 0.7);
+    background: rgba(35, 15, 5, 0.45);
     cursor: pointer;
 
     transition:
@@ -213,8 +204,8 @@
    distingue sin depender sólo del contraste. */
 .punto-activo {
     width: 1.375rem;
-    background: var(--ambar);
-    border-color: var(--ambar);
+    background: var(--naranja);
+    border-color: #ffffff;
 }
 
 /* ---------------------------------------------------------------------------
@@ -234,14 +225,18 @@
     font-size: var(--texto-subtitulo);
     font-weight: 800;
     line-height: 1.2;
-    color: var(--tinta-alta);
+    color: var(--tinta);
+
+    /* Los nombres se cargan como vienen escritos ("plato 1"); en la carta se
+       muestran con mayúscula inicial sin tener que tocar el dato guardado. */
+    text-transform: capitalize;
 }
 
 .descripcion {
     margin: 0;
     font-size: var(--texto-epigrafe);
     line-height: 1.45;
-    color: var(--tinta-baja);
+    color: var(--tinta-suave);
 
     // Tres líneas: iguala el alto de las tarjetas de una misma fila sin cortar
     // una palabra por la mitad.
@@ -260,7 +255,7 @@
 
     margin-top: auto;
     padding-top: 0.75rem;
-    border-top: 0.0625rem solid var(--velo-medio);
+    border-top: 0.0625rem solid var(--hoja-borde);
 }
 
 /* Tiempo de elaboración, como una pastilla. */
@@ -272,8 +267,8 @@
     padding: 0.3125rem 0.625rem;
     border-radius: 999px;
 
-    background: var(--velo-claro);
-    border: 0.0625rem solid var(--velo-medio);
+    background: var(--velo-tinta);
+    border: 0.0625rem solid var(--hoja-borde);
 
     font-size: var(--texto-epigrafe);
     font-weight: 700;
@@ -282,7 +277,7 @@
 
     ion-icon {
         font-size: 1rem;
-        color: var(--neon-cian);
+        color: var(--naranja);
     }
 }
 
@@ -291,7 +286,7 @@
     font-size: 1.5rem;
     font-weight: 800;
     line-height: 1;
-    color: var(--ambar-claro);
+    color: var(--naranja-hondo);
     white-space: nowrap;
 }
 
@@ -302,7 +297,7 @@
 .boton-agregar {
     --background: var(--grad-ambar);
     --background-activated: var(--ambar-hondo);
-    --background-hover: var(--ambar-claro);
+    --background-hover: var(--naranja-hondo);
     --color: var(--tinta-sobre-ambar);
     --border-radius: var(--radio);
     --box-shadow: var(--sombra-ambar);
@@ -328,13 +323,13 @@
 }
 
 .boton-editar {
-    --border-color: var(--velo-fuerte);
+    --border-color: var(--hoja-borde-fuerte);
     --border-width: 0.125rem;
-    --color: var(--tinta-alta);
+    --color: var(--tinta);
     --background-hover: rgba(255, 255, 255, 0.09);
 }
 
 .boton-eliminar {
     --border-radius: var(--radio);
-    --color: var(--tinta-alta);
+    --color: var(--tinta);
 }

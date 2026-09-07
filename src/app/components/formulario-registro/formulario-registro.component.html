@@ -1,12 +1,5 @@
 <div class="pantalla-registro">
-    <div class="cabecera">
-        <div class="isotipo-icono">
-            <img src="../../../assets/logo.png" />
-        </div>
-        <h1>{{ tituloEncabezado() }}</h1>
-    </div>
-
-    <div class="seccion-form panel">
+    <div class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onRegistro()" class="formulario-cuerpo">
             <!-- Nombres -->
             <div class="grupo-input">

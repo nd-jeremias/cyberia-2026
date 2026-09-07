@@ -1,3 +1,10 @@
+<app-header [defaultHref]="'/ingresar'" [tituloHeader]="'Ingreso anónimo'"></app-header>
+
 <ion-content [fullscreen]="true" [scrollY]="true">
-    <app-formulario-usuario-anonimo (anonimoSubmit)="onIngresoAnonimo($event)" [direccionCamara]="'trasera'"></app-formulario-usuario-anonimo>
+    <div class="hoja hoja-angosta">
+        <app-formulario-usuario-anonimo
+            (anonimoSubmit)="onIngresoAnonimo($event)"
+            [direccionCamara]="'trasera'"
+        ></app-formulario-usuario-anonimo>
+    </div>
 </ion-content>

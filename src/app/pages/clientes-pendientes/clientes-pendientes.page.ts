@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
+import { HeaderComponent } from '../../components/header/header.component';
 import { ListadoClientesPendientesComponent } from '../../components/listado-clientes-pendientes/listado-clientes-pendientes.component';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import { ModalService } from '../../services/modal.service';
@@ -17,15 +18,7 @@ import { supabase } from '../../services/supabase.service';
     selector: 'app-clientes-pendientes',
     templateUrl: './clientes-pendientes.page.html',
     styleUrls: ['./clientes-pendientes.page.scss'],
-    imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
-        IonButtons,
-        IonBackButton,
-        IonContent,
-        ListadoClientesPendientesComponent,
-    ],
+    imports: [IonContent, HeaderComponent, ListadoClientesPendientesComponent],
 })
 export class ClientesPendientesPage implements OnInit {
     private modal = inject(ModalService);

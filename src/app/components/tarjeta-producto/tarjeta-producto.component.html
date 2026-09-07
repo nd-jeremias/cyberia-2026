@@ -23,14 +23,11 @@
               </div>
             } @else {
               <!--
-                Fondo desenfocado con la misma foto.
-                La foto de arriba va con "contain" para que nunca se recorte el
-                plato (lo pide el enunciado), pero eso deja franjas laterales.
-                En lugar de rellenarlas con un color liso, se repite la imagen
-                ampliada y desenfocada: las franjas toman el color del plato y
-                el recuadro deja de verse como un rectángulo vacío.
+                La foto ocupa todo el contenedor (object-fit: cover). Antes iba
+                con "contain" más una copia desenfocada de fondo para rellenar
+                las franjas laterales; se quitó porque dejaba el plato chico en
+                el medio de dos bandas oscuras.
               -->
-              <img class="foto-fondo" [src]="foto" alt="" aria-hidden="true" />
               <img class="foto-principal" [src]="foto" [alt]="producto().nombre" (error)="onErrorFoto($index)" />
             }
           </div>

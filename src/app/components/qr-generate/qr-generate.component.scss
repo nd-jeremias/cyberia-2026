@@ -24,8 +24,8 @@
     padding: 1.25rem;
     box-sizing: border-box;
 
-    background: var(--grad-tarjeta);
-    border: var(--borde-sutil);
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
     border-radius: var(--radio-grande);
     box-shadow: var(--sombra-tarjeta);
 }
@@ -34,7 +34,7 @@ h4 {
     margin: 0;
     font-size: var(--texto-subtitulo);
     font-weight: 800;
-    color: var(--tinta-alta);
+    color: var(--tinta);
     text-align: center;
 }
 
@@ -47,7 +47,7 @@ h4 {
     padding: 0.875rem;
 
     background: #ffffff;
-    border: 0.1875rem solid var(--neon-cian);
+    border: 0.1875rem solid var(--naranja);
     border-radius: var(--radio);
     box-shadow:
         var(--sombra-tarjeta),

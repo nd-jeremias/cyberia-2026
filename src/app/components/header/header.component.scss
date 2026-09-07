@@ -1,117 +1,102 @@
 /**
- * Barra superior de la aplicación.
+ * Banda superior de la aplicación.
  *
- * Tres decisiones que la sacan del aspecto plano anterior:
- *
- *  1. El fondo es un degradado, no un color liso, y respeta el área segura del
- *     teléfono (la muesca / barra de estado) con env(safe-area-inset-top). Antes
- *     usaba un alto fijo de 6rem, que en un teléfono sin muesca dejaba un
- *     hueco vacío y en uno con muesca apretaba el título.
- *
- *  2. Lleva un filo de neón abajo con el degradado del logotipo. Sobre un
- *     fondo azul una sombra prácticamente no se percibe; una línea de color sí,
- *     y de paso mete la marca en todas las pantallas.
- *
- *  3. El título va centrado de verdad: las dos columnas laterales tienen el
- *     mismo ancho mínimo, así el texto no se corre cuando aparece o desaparece
- *     el botón de volver.
+ * Es la pieza que unifica todas las pantallas: naranja, con el patrón de
+ * cubiertos calado, la barra de navegación arriba y la tarjeta de contexto
+ * pegada abajo. Termina en el "labio" de la hoja crema, de modo que el
+ * contenido de la pantalla parezca una hoja de papel apoyada sobre la banda.
  */
 
 :host {
     display: block;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
 }
 
-.app-header-container {
-    width: 100%;
-    box-sizing: border-box;
+.banda {
+    position: relative;
+    overflow: hidden;
 
-    background: var(--grad-barra);
+    background: var(--grad-banda);
+    color: var(--sobre-naranja);
 
-    /* El filo de neón reemplaza a la sombra como separador. */
-    border-bottom: 0.125rem solid transparent;
-    border-image: var(--grad-neon) 1;
-    box-shadow: 0 0.5rem 1.5rem rgba(11, 24, 40, 0.38);
-
-    /* Deja libre la barra de estado del sistema. */
+    /* Deja libre la barra de estado del teléfono. */
     padding-top: env(safe-area-inset-top, 0px);
+
+    /* Patrón de cubiertos, muy tenue. Es blanco sobre transparente, así que
+       sobre el naranja se usa tal cual. Da textura sin robar protagonismo. */
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: var(--patron);
+        background-size: 26rem auto;
+        background-position: center top;
+        opacity: 0.14;
+        pointer-events: none;
+    }
 }
 
-.header-content {
+/* ---------------------------------------------------------------------------
+   Barra de navegación
+   --------------------------------------------------------------------------- */
+
+.banda-barra {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
 
-    min-height: 3.75rem;
-    padding: 0.625rem 1rem;
+    min-height: 3.25rem;
+    padding: 0.5rem 0.875rem 0;
     box-sizing: border-box;
 }
 
-/* Columnas laterales del mismo ancho: mantienen el título en el centro
-   exacto, esté o no el botón de volver. */
-.header-left,
-.header-right {
+/* Los dos lados tienen el mismo ancho mínimo: así la marca queda centrada de
+   verdad, esté o no el botón de volver. */
+.banda-lado {
     display: flex;
     align-items: center;
-    flex: 0 0 3rem;
-    min-width: 3rem;
+    flex: 0 0 2.75rem;
+    min-width: 2.75rem;
 }
 
-.header-right {
+.banda-lado-fin {
     justify-content: flex-end;
 }
 
-.header-title {
+.marca {
     flex: 1;
     min-width: 0;
-    margin: 0;
 
-    font-size: var(--texto-titulo);
+    font-size: 0.8125rem;
     font-weight: 800;
-    letter-spacing: -0.01em;
-    color: var(--tinta-alta);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     text-align: center;
-    text-shadow: 0 0.0625rem 0.5rem rgba(11, 24, 40, 0.45);
-
-    /* El enunciado no admite palabras abreviadas ni texto cortado: si el
-       título es largo, se achica un punto y se parte en dos renglones en lugar
-       de terminar en puntos suspensivos. */
-    overflow-wrap: break-word;
-    hyphens: none;
+    color: var(--sobre-naranja);
+    opacity: 0.92;
 }
 
-@media (max-width: 22.5rem) {
-    .header-title {
-        font-size: var(--texto-subtitulo);
-    }
-}
-
-/* ---------------------------------------------------------------------------
-   Botón de cierre de sesión
-   ---------------------------------------------------------------------------
-   Va en rojo suave y no en azul: es una acción destructiva y conviene que se
-   distinga del resto de los controles de la barra.
-   --------------------------------------------------------------------------- */
-
-.logout-html-btn {
+/* Cerrar sesión: pastilla translúcida sobre el naranja. */
+.btn-salir {
     display: flex;
     align-items: center;
     justify-content: center;
 
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
     padding: 0;
 
-    background: linear-gradient(150deg, rgba(255, 96, 114, 0.28) 0%, rgba(214, 59, 77, 0.2) 100%);
-    border: 0.0938rem solid rgba(255, 96, 114, 0.55);
+    background: var(--velo-blanco);
+    border: 0.0625rem solid var(--velo-blanco-fuerte);
     border-radius: 50%;
-    box-shadow: var(--sombra-apoyada);
 
-    color: #ffd2d8;
-    outline: none;
+    color: var(--sobre-naranja);
     cursor: pointer;
 
     transition:
@@ -119,7 +104,7 @@
         transform 0.14s ease;
 
     &:hover {
-        background: linear-gradient(150deg, rgba(255, 96, 114, 0.42) 0%, rgba(214, 59, 77, 0.34) 100%);
+        background: var(--velo-blanco-fuerte);
     }
 
     &:active {
@@ -127,7 +112,190 @@
     }
 }
 
-.logoutIcon {
+.icono-salir {
     display: flex;
-    font-size: 1.375rem;
+    font-size: 1.25rem;
+}
+
+/* ---------------------------------------------------------------------------
+   Tarjeta de contexto
+   --------------------------------------------------------------------------- */
+
+.banda-cuerpo {
+    position: relative;
+    z-index: 1;
+    padding: 0.75rem 1.125rem 1.25rem;
+}
+
+/* En el inicio la tarjeta de identidad respira más: es el bloque principal de
+   la pantalla, no un encabezado de paso. */
+.banda-usuario .banda-cuerpo {
+    padding: 1.125rem 1.25rem 1.75rem;
+}
+
+/* --- Modo 'usuario' (inicio) --------------------------------------------- */
+
+.identidad {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+        "avatar textos"
+        "avatar chip";
+    align-items: center;
+    gap: 0.375rem 1.125rem;
+}
+
+.avatar {
+    grid-area: avatar;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 5.25rem;
+    height: 5.25rem;
+    overflow: hidden;
+
+    background: var(--velo-blanco);
+    border: 0.25rem solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    box-shadow: 0 0.375rem 1rem rgba(120, 45, 10, 0.32);
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.avatar-iniciales {
+    font-size: 1.875rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--sobre-naranja);
+}
+
+.identidad-textos {
+    grid-area: textos;
+    min-width: 0;
+}
+
+.saludo {
+    margin: 0;
+    font-size: var(--texto-apoyo);
+    font-weight: 600;
+    color: var(--sobre-naranja-tenue);
+}
+
+.identidad-nombre {
+    margin: 0.125rem 0 0;
+
+    font-size: var(--texto-titulo-grande);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: var(--sobre-naranja);
+
+    /* El enunciado no admite texto cortado: los nombres largos bajan de
+       renglón en lugar de terminar en puntos suspensivos. */
+    overflow-wrap: anywhere;
+}
+
+/* Insignia del perfil: fondo claro y texto naranja oscuro, para que se
+   despegue del naranja de la banda en lugar de fundirse con él. */
+.chip-perfil {
+    grid-area: chip;
+    justify-self: start;
+
+    padding: 0.25rem 0.8125rem;
+    border-radius: 999px;
+
+    background: var(--sobre-naranja);
+    font-size: var(--texto-epigrafe);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--naranja-hondo);
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+/* --- Modo 'pantalla' (resto de las secciones) ---------------------------- */
+
+.contexto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.875rem;
+}
+
+.contexto-titulo {
+    margin: 0;
+    min-width: 0;
+
+    font-size: var(--texto-titulo-grande);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--sobre-naranja);
+    overflow-wrap: anywhere;
+}
+
+.contexto-accion {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    /* Sin botón proyectado el contenedor no ocupa lugar. */
+    &:empty {
+        display: none;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Labio de la hoja
+   ---------------------------------------------------------------------------
+   El comienzo del papel crema, dibujado dentro de la banda. Deja las esquinas
+   superiores redondeadas y una sombra hacia arriba que separa una capa de la
+   otra.
+   --------------------------------------------------------------------------- */
+
+.labio-hoja {
+    position: relative;
+    z-index: 2;
+
+    height: var(--radio-hoja);
+
+    background: var(--hoja);
+    border-radius: var(--radio-hoja) var(--radio-hoja) 0 0;
+
+    /* Sombra hacia arriba: separa el papel de la banda. Queda dentro de la
+       banda, así que el `overflow: hidden` de arriba no la recorta. */
+    box-shadow: var(--sombra-hoja);
+}
+
+/* ---------------------------------------------------------------------------
+   Pantallas angostas
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 22.5rem) {
+    .banda-cuerpo {
+        padding: 0.625rem 1rem 1rem;
+    }
+
+    .avatar {
+        width: 4.25rem;
+        height: 4.25rem;
+    }
+
+    .avatar-iniciales {
+        font-size: 1.5rem;
+    }
+
+    .identidad-nombre {
+        font-size: var(--texto-titulo);
+    }
+
+    .contexto-titulo {
+        font-size: var(--texto-titulo);
+    }
 }

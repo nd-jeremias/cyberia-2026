@@ -43,13 +43,13 @@
         font-size: var(--texto-titulo-grande);
         font-weight: 800;
         letter-spacing: -0.02em;
-        color: var(--tinta-alta);
+        color: var(--tinta);
     }
 
     p {
         margin: 0;
         font-size: var(--texto-apoyo);
-        color: var(--tinta-baja);
+        color: var(--tinta-suave);
     }
 }
 
@@ -103,7 +103,7 @@
     box-sizing: border-box;
 
     background: rgba(255, 255, 255, 0.05);
-    border: var(--borde-sutil);
+    border: var(--borde-hoja);
     border-radius: var(--radio);
 }
 
@@ -112,7 +112,7 @@
     font-size: var(--texto-epigrafe);
     font-weight: 600;
     line-height: 1.4;
-    color: var(--tinta-baja);
+    color: var(--tinta-suave);
 }
 
 /* --------------------------------------------------------------------------

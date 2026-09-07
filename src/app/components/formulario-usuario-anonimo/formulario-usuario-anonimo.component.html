@@ -1,13 +1,5 @@
 <div class="pantalla-anonimo">
-    <header class="cabecera">
-        <div class="isotipo-icono">
-            <img src="../../../assets/logo.png" alt="Cyberia Restó" />
-        </div>
-        <h1>Ingreso anónimo</h1>
-        <p>Entrá al local sin crear una cuenta</p>
-    </header>
-
-    <section class="seccion-form panel">
+    <section class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onRegistrar()">
             <!-- Campo Nombres -->
             <div class="grupo-input">
@@ -48,13 +40,4 @@
         </form>
     </section>
 
-    <!-- Explica el paso siguiente: además de informar, ocupa el espacio que
-         antes quedaba vacío bajo el botón. -->
-    <aside class="nota-anonimo">
-        <ion-icon name="information-circle-outline"></ion-icon>
-        <p>
-            Como invitado no necesitás aprobación. Al ingresar vas a poder escanear el código QR de la entrada para
-            anotarte en la lista de espera y ver los resultados de las encuestas.
-        </p>
-    </aside>
 </div>

@@ -1,12 +1,12 @@
 /**
  * Botón de volver.
  *
- * Pastilla de vidrio con la flecha en cian, del mismo tamaño y con el mismo
- * relieve que el botón de cerrar sesión del otro extremo de la barra. Que los
- * dos extremos pesen igual es lo que mantiene el título centrado de verdad.
+ * Vive dentro de la banda naranja, así que se resuelve igual que el botón de
+ * cerrar sesión del otro extremo: un círculo de vidrio blanco translúcido. Que
+ * los dos pesen lo mismo es lo que mantiene la marca centrada en la barra.
  *
- * Se estiliza `ion-back-button` en sí y no un contenido propio, porque el
- * componente de Ionic no renderiza hijos (ver el comentario del HTML).
+ * Se estiliza `ion-back-button` directamente porque el componente de Ionic no
+ * renderiza contenido propio (no tiene <slot> en su plantilla interna).
  */
 
 :host {
@@ -19,34 +19,27 @@ ion-buttons {
 }
 
 .boton-personalizado {
-    --background: linear-gradient(150deg, var(--superficie-elevada) 0%, var(--superficie-campo) 100%);
-    --background-hover: var(--superficie-elevada);
-    --background-focused: var(--superficie-elevada);
-    --color: var(--neon-cian);
-    --color-hover: var(--tinta-alta);
-    --border-radius: var(--radio-chico);
-    --icon-font-size: 1.5rem;
+    --background: rgba(255, 255, 255, 0.16);
+    --background-hover: rgba(255, 255, 255, 0.28);
+    --background-focused: rgba(255, 255, 255, 0.28);
+    --color: var(--sobre-naranja);
+    --color-hover: #ffffff;
+    --border-radius: 50%;
+    --icon-font-size: 1.375rem;
     --padding-start: 0;
     --padding-end: 0;
-    --min-width: 2.75rem;
-    --ripple-color: var(--neon-cian);
+    --min-width: 2.5rem;
+    --ripple-color: #ffffff;
 
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 2.5rem;
+    height: 2.5rem;
     margin: 0;
 
-    border: 0.0938rem solid var(--velo-fuerte);
-    border-radius: var(--radio-chico);
-    box-shadow: var(--sombra-apoyada);
+    border: 0.0625rem solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
     overflow: hidden;
 
-    transition:
-        transform 0.14s ease,
-        border-color 0.18s ease;
-
-    &:hover {
-        border-color: var(--neon-cian);
-    }
+    transition: transform 0.14s ease;
 
     &:active {
         transform: scale(0.92);
