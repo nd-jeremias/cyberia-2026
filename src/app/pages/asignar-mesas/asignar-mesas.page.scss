@@ -1,12 +1,61 @@
 /**
  * Pantalla del metre: asignar mesa a un cliente (punto 10 del enunciado).
  *
- * La pantalla es un procedimiento de dos pasos, así que se ve como tal: cada
- * paso numerado, con su título encabezado por el riel de neón, y la mesa
- * representada por una ficha con el número en grande — el mismo componente
- * visual que en la pantalla de pedidos, para que "mesa" se lea siempre igual
- * en toda la aplicación.
+ * Es un procedimiento de dos pasos, así que se ve como tal: cada paso numerado
+ * con su título, y la mesa representada por la misma ficha que en la pantalla
+ * de pedidos, para que "mesa" se lea igual en toda la aplicación.
+ *
+ * La ficha de mesa y las pastillas de dato viven en global.scss: las comparte
+ * con la pantalla de pedidos.
  */
+
+/* --- Resumen del salón ---------------------------------------------------- */
+
+.resumen {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+.ficha-resumen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+
+    padding: 0.75rem 0.5rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-apoyada);
+    text-align: center;
+}
+
+.cifra {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--tinta);
+
+    ion-icon {
+        font-size: 1.25rem;
+        color: var(--naranja);
+    }
+}
+
+.rotulo {
+    font-size: var(--texto-epigrafe);
+    line-height: 1.2;
+    color: var(--tinta-suave);
+}
+
+/* --- Pasos ---------------------------------------------------------------- */
 
 .paso {
     display: flex;
@@ -16,11 +65,11 @@
     width: 100%;
     max-width: 44rem;
     margin: 0 auto;
-    padding: 1.25rem 1rem 0.5rem;
+    padding: 1.25rem 0 0.5rem;
     box-sizing: border-box;
 
     &:last-of-type {
-        padding-bottom: 2rem;
+        padding-bottom: 1rem;
     }
 }
 
@@ -30,25 +79,15 @@
 }
 
 .lista,
-.lista-mesas {
+.lista-mesas,
+.cliente-elegido {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.cliente-elegido {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-/* ---------------------------------------------------------------------------
-   Aviso de mesa ya asignada
-   ---------------------------------------------------------------------------
-   Es una advertencia, no un dato más: va en ámbar, con icono y filo lateral,
-   para que el metre no intente asignar una segunda mesa por distracción.
-   --------------------------------------------------------------------------- */
-
+/* Advertencia, no un dato más: ámbar, con icono y filo lateral, para que el
+   metre no intente asignar una segunda mesa por distracción. */
 .aviso-asignada {
     display: flex;
     align-items: flex-start;
@@ -69,14 +108,12 @@
     ion-icon {
         flex-shrink: 0;
         margin-top: 0.0625rem;
-        font-size: 1.375rem;
+        font-size: 1.5rem;
         color: var(--alerta);
     }
 }
 
-/* ---------------------------------------------------------------------------
-   Tarjeta de mesa
-   --------------------------------------------------------------------------- */
+/* --- Tarjeta de mesa ------------------------------------------------------ */
 
 .tarjeta-mesa {
     display: flex;
@@ -108,65 +145,19 @@
     gap: 0.75rem;
 }
 
-/* Misma ficha de mesa que en la pantalla de pedidos. */
-.ficha-mesa {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 0.4375rem;
-
-    padding: 0.375rem 0.875rem;
-    border-radius: var(--radio-chico);
-
-    background: rgba(226, 87, 28, 0.12);
-    border: 0.0938rem solid rgba(226, 87, 28, 0.32);
-}
-
-.ficha-mesa-rotulo {
-    font-size: var(--texto-epigrafe);
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--tinta-suave);
-}
-
-.ficha-mesa-numero {
-    font-size: 1.625rem;
-    font-weight: 800;
-    line-height: 1;
-    color: var(--naranja);
-}
-
 .datos-mesa {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
 }
 
-.dato-mesa {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-
-    margin: 0;
-    padding: 0.3125rem 0.625rem;
-    border-radius: 999px;
-
-    background: var(--velo-tinta);
-    border: 0.0625rem solid var(--hoja-borde);
-
-    font-size: var(--texto-epigrafe);
-    font-weight: 600;
-    color: var(--tinta-media);
+/* "estándar" y "VIP" llegan como están cargados en la base. */
+.chip-tipo {
     text-transform: capitalize;
-
-    ion-icon {
-        font-size: 1rem;
-        color: var(--naranja);
-    }
 }
 
 .tarjeta-mesa ion-button {
     margin: 0.25rem 0 0;
-    min-height: 3.125rem;
+    min-height: 3.25rem;
     font-weight: 800;
 }

@@ -9,12 +9,7 @@
                     <ion-icon [name]="boton.icono"></ion-icon>
                 </span>
 
-                <span class="textos-accion">
-                    <span class="titulo-accion">{{ boton.texto }}</span>
-                    @if (boton.descripcion) {
-                    <span class="detalle-accion">{{ boton.descripcion }}</span>
-                    }
-                </span>
+                <span class="titulo-accion">{{ boton.texto }}</span>
 
                 <ion-icon class="flecha-accion" name="chevron-forward-outline"></ion-icon>
             </a>
@@ -31,6 +26,46 @@
             </div>
             }
         </div>
+
+        <!--
+          Panel de estado. El contenido lo arma `panel()` según el rol: el mapa
+          del salón para quien lo atiende, los pedidos en curso para cocina y
+          barra. Si todavía no hay datos, no se dibuja.
+        -->
+        @if (panel(); as estado) {
+        <section class="panel-estado">
+            <h2 class="titulo-seccion">{{ estado.titulo }}</h2>
+
+            <div class="cifras">
+                @for (cifra of estado.cifras; track cifra.rotulo) {
+                <div class="ficha-cifra">
+                    <b [class]="'valor valor-' + cifra.tono">{{ cifra.valor }}</b>
+                    <span class="rotulo">{{ cifra.rotulo }}</span>
+                </div>
+                }
+            </div>
+
+            @if (estado.fichas.length) {
+            <div class="mapa">
+                @for (ficha of estado.fichas; track $index) {
+                <span class="ficha-mapa" [class.ficha-verde]="ficha.enVerde">
+                    {{ ficha.numero }}
+                </span>
+                }
+            </div>
+
+            <p class="leyenda">
+                <span class="punto punto-verde"></span> {{ estado.leyendaVerde }}
+                <span class="punto punto-naranja"></span> {{ estado.leyendaNaranja }}
+            </p>
+            } @else {
+            <p class="panel-vacio">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                {{ estado.vacio }}
+            </p>
+            }
+        </section>
+        }
 
         <footer class="pie-marca">
             <span class="linea-marca"></span>

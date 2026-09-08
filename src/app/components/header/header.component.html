@@ -1,5 +1,5 @@
 <header class="banda" [class.banda-usuario]="modo() === 'usuario'">
-    <!-- Fila superior: navegación y marca. Es igual en todas las pantallas. -->
+    <!-- Fila superior: navegación y marca, igual en todas las pantallas. -->
     <div class="banda-barra">
         <div class="banda-lado">
             @if (mostrarBotonVolver()) {
@@ -18,11 +18,8 @@
         </div>
     </div>
 
-    <!--
-      Tarjeta de contexto, unida a la barra.
-      En el inicio muestra quién entró; en el resto de las pantallas, dónde
-      está parado y la acción principal de la sección.
-    -->
+    <!-- Tarjeta de contexto: en el inicio muestra quién entró; en el resto,
+         dónde está parado y la acción principal de la sección. -->
     <div class="banda-cuerpo">
         @if (modo() === 'usuario') {
         <div class="identidad">
@@ -53,11 +50,6 @@
         }
     </div>
 
-    <!--
-      Labio de la hoja: el borde superior redondeado del papel crema, dibujado
-      dentro de la banda. Así el contenido de la pantalla arranca ya "dentro"
-      de la hoja y al desplazarse pasa por debajo de la curva, sin la costura
-      que quedaría si el redondeo viviera en el ion-content.
-    -->
+    <!-- Borde superior redondeado del papel crema (ver el .scss). -->
     <div class="labio-hoja" aria-hidden="true"></div>
 </header>

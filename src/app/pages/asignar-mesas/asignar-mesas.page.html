@@ -2,6 +2,33 @@
 
 <ion-content [fullscreen]="true">
   <div class="hoja">
+    <!-- Estado del salón de un vistazo, antes de entrar al procedimiento. -->
+    <div class="resumen">
+        <div class="ficha-resumen">
+            <span class="cifra">
+                <ion-icon name="grid-outline"></ion-icon>
+                {{ mesasDisponibles().length }}
+            </span>
+            <span class="rotulo">Mesas libres</span>
+        </div>
+
+        <div class="ficha-resumen">
+            <span class="cifra">
+                <ion-icon name="pricetag-outline"></ion-icon>
+                {{ mesas().length }}
+            </span>
+            <span class="rotulo">Total de mesas</span>
+        </div>
+
+        <div class="ficha-resumen">
+            <span class="cifra">
+                <ion-icon name="people-outline"></ion-icon>
+                {{ clientes().length }}
+            </span>
+            <span class="rotulo">Clientes activos</span>
+        </div>
+    </div>
+
     <section class="paso">
         <h2 class="titulo-paso titulo-seccion">1. Elegí el cliente</h2>
 
@@ -72,11 +99,11 @@
                         </div>
 
                         <div class="datos-mesa">
-                            <span class="dato-mesa">
+                            <span class="chip chip-tipo">
                                 <ion-icon name="pricetag-outline"></ion-icon>
                                 {{ mesa.tipo }}
                             </span>
-                            <span class="dato-mesa">
+                            <span class="chip">
                                 <ion-icon name="people-outline"></ion-icon>
                                 {{ mesa.cantidadLugares }} lugares
                             </span>
@@ -87,10 +114,7 @@
                             [disabled]="!clienteElegido() || cargando()"
                             (click)="onAsignar(mesa)"
                         >
-                            <ion-icon
-                                slot="start"
-                                name="checkmark-circle"
-                            ></ion-icon>
+                            <ion-icon slot="start" name="checkmark-circle"></ion-icon>
                             Asignar esta mesa
                         </ion-button>
                     </article>

@@ -15,17 +15,6 @@ import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
 import { RouterLink } from '@angular/router';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
-import {
-    personAddOutline,
-    personOutline,
-    cardOutline,
-    qrCodeOutline,
-    briefcaseOutline,
-    peopleOutline,
-    mailOutline,
-    lockClosedOutline,
-} from 'ionicons/icons';
-import { addIcons } from 'ionicons';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
@@ -111,17 +100,6 @@ export class FormularioRegistroComponent {
     cuilCentral = computed(() => this.dniSignal() || '');
 
     constructor() {
-        // Registramos los íconos para que se puedan renderizar en el HTML
-        addIcons({
-            personAddOutline,
-            personOutline,
-            cardOutline,
-            qrCodeOutline,
-            briefcaseOutline,
-            peopleOutline,
-            mailOutline,
-            lockClosedOutline,
-        });
         effect(() => {
             const cuil = this.formulario.controls.cuil;
             const tipoEmpleado = this.formulario.controls.tipoEmpleado;

@@ -1,14 +1,12 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
+import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
-import { QrGenerateComponent } from '../qr-generate/qr-generate.component';
 import { QrService } from '../../services/qr.service';
-import { IonIcon } from '@ionic/angular';
 
 /**
  * Formulario de alta de mesa (punto 4 del enunciado).

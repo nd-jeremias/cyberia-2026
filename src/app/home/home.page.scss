@@ -1,43 +1,31 @@
 /**
  * Pantalla de inicio.
  *
- * Es una sola lista de accesos sobre el papel crema. El saludo, la foto y el
+ * Los accesos del rol y, debajo, el panel de estado. El saludo, la foto y el
  * perfil los muestra la banda (`app-header` en modo 'usuario'), pegada arriba.
- *
- * No lleva texto explicativo de "qué tenés que hacer": cada acceso ya dice a
- * dónde lleva con su nombre y un renglón corto. Los pasos numerados que había
- * antes convertían el inicio en un instructivo.
  */
 
 .grilla-acciones {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 0.875rem;
-
-    /* Los accesos van arriba y en su alto natural.
-       Se probaron las dos alternativas y quedaban peor: estirarlos hasta
-       llenar la pantalla deja tarjetas con mucho aire adentro, y repartir el
-       sobrante entre ellos (space-evenly) los deja flotando separados en el
-       medio del papel. El vacío de abajo lo cierra el pie de marca, y la
-       textura del papel hace que no se lea como un espacio neutro. */
-    flex: 1;
-    grid-auto-rows: minmax(5rem, max-content);
-    align-content: start;
+    gap: 0.75rem;
 }
 
-/**
- * Tarjeta de acceso.
- *
- * Medallón, nombre, renglón de apoyo y flecha. Es el patrón de lista de
- * cualquier aplicación de gastronomía: se lee de un vistazo y el área de toque
- * ocupa toda la fila.
- */
+/* Sin accesos (los perfiles de cliente todavía no tienen) el cartel se lleva
+   el alto sobrante, en lugar de dejar medio papel cortado. */
+.grilla-acciones:has(> .estado-vacio) {
+    flex: 1;
+    align-content: stretch;
+}
+
+/* Medallón, nombre y flecha: el patrón de lista de cualquier aplicación de
+   gastronomía. El área de toque ocupa toda la fila. */
 .tarjeta-accion {
     display: flex;
     align-items: center;
-    gap: 0.9375rem;
+    gap: 1rem;
 
-    padding: 0.9375rem 1rem;
+    padding: 1rem;
     box-sizing: border-box;
 
     background: var(--hoja-alta);
@@ -68,37 +56,171 @@
     }
 }
 
-.textos-accion {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
+.titulo-accion {
     flex: 1;
     min-width: 0;
-}
 
-.titulo-accion {
-    font-size: var(--texto-subtitulo);
+    font-size: var(--texto-titulo);
     font-weight: 800;
     line-height: 1.2;
     color: var(--tinta);
 }
 
-.detalle-accion {
-    font-size: var(--texto-epigrafe);
-    line-height: 1.35;
-    color: var(--tinta-suave);
-}
-
 .flecha-accion {
     flex-shrink: 0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: var(--tinta-tenue);
     transition:
         transform 0.18s ease,
         color 0.18s ease;
 }
 
-/* En pantalla ancha entran de a dos. */
+/* --- Panel de estado ------------------------------------------------------
+   Es lo que llena la mitad de abajo con algo que se usa, en lugar de con un
+   adorno: las cifras del turno y el mapa de mesas, que es lo que muestran en
+   su pantalla principal todas las aplicaciones de restaurante.
+   ------------------------------------------------------------------------- */
+
+.panel-estado {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    margin-top: 0.875rem;
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+}
+
+.cifras {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+.ficha-cifra {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+
+    padding: 0.5rem 0.375rem;
+    box-sizing: border-box;
+
+    background: var(--velo-tinta);
+    border-radius: var(--radio-chico);
+    text-align: center;
+}
+
+.valor {
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.valor-verde {
+    color: var(--exito-tinta);
+}
+
+.valor-naranja {
+    color: var(--naranja-hondo);
+}
+
+.valor-neutro {
+    color: var(--tinta);
+}
+
+.rotulo {
+    font-size: var(--texto-epigrafe);
+    line-height: 1.2;
+    color: var(--tinta-suave);
+}
+
+/* Mapa de mesas: fichas cuadradas con el número, como el plano de salón de un
+   sistema de restaurante. El color dice el estado de un vistazo. */
+.mapa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4375rem;
+}
+
+.ficha-mapa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+
+    border-radius: var(--radio-chico);
+    background: rgba(226, 87, 28, 0.14);
+    border: 0.125rem solid rgba(226, 87, 28, 0.45);
+
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    color: var(--naranja-hondo);
+}
+
+.ficha-verde {
+    background: var(--exito-velo);
+    border-color: rgba(27, 122, 75, 0.45);
+    color: var(--exito-tinta);
+}
+
+/* Sin datos el panel dice qué pasa, en vez de desaparecer. */
+.panel-vacio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin: 0;
+    padding: 0.5rem 0.25rem;
+
+    font-size: var(--texto-apoyo);
+    font-weight: 600;
+    color: var(--tinta-media);
+
+    ion-icon {
+        flex-shrink: 0;
+        font-size: 1.375rem;
+        color: var(--exito);
+    }
+}
+
+/* El color no puede ser el único indicio: la referencia lo dice con palabras. */
+.leyenda {
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    color: var(--tinta-suave);
+}
+
+.punto {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.punto-verde {
+    background: var(--exito);
+}
+
+.punto-naranja {
+    background: var(--naranja);
+    margin-left: 0.75rem;
+}
+
+/* En pantalla ancha los accesos entran de a dos. */
 @media (min-width: 34rem) {
     .grilla-acciones {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -109,13 +231,8 @@
     }
 }
 
-/* ---------------------------------------------------------------------------
-   Pie de marca
-   ---------------------------------------------------------------------------
-   Cierra el papel abajo. Sin él, con un rol de pocos accesos la pantalla
-   terminaba en un corte seco de textura.
-   --------------------------------------------------------------------------- */
-
+/* Cierra el papel abajo: sin él, con un rol de pocos accesos la pantalla
+   terminaba en un corte seco de textura. */
 .pie-marca {
     display: flex;
     flex-direction: column;
@@ -123,11 +240,11 @@
     gap: 0.5rem;
 
     margin-top: auto;
-    padding-top: 1.5rem;
+    padding-top: 1rem;
 
     p {
         margin: 0;
-        font-size: var(--texto-epigrafe);
+        font-size: var(--texto-apoyo);
         font-weight: 700;
         letter-spacing: 0.16em;
         text-transform: uppercase;

@@ -2,21 +2,6 @@ import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonIcon, IonInput, IonInputPasswordToggle } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { 
-  restaurantOutline, 
-  mailOutline, 
-  lockClosedOutline, 
-  shieldCheckmarkOutline, 
-  peopleOutline, 
-  wineOutline, 
-  fastFoodOutline, 
-  personOutline,
-  logInOutline,
-  personAddOutline,
-  flashOutline,
-  chevronDownOutline
-} from 'ionicons/icons';
 import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { ModalService } from '../../services/modal.service';
@@ -39,23 +24,6 @@ export class LoginFormComponent {
 
   loginSubmit = output<LoginInterface>();
   loginAnonimo = output<void>();
-
-  constructor() {
-    addIcons({
-      'restaurant-outline': restaurantOutline,
-      'mail-outline': mailOutline,
-      'lock-closed-outline': lockClosedOutline,
-      'shield-checkmark-outline': shieldCheckmarkOutline,
-      'people-outline': peopleOutline,
-      'wine-outline': wineOutline,
-      'fast-food-outline': fastFoodOutline,
-      'person-outline': personOutline,
-      'log-in-outline': logInOutline,
-      'person-add-outline': personAddOutline,
-      'flash-outline': flashOutline,
-      'chevron-down-outline': chevronDownOutline,
-    });
-  }
 
   formulario = new FormGroup({
     email: new FormControl('', { validators: [Validators.required, Validators.email] }),

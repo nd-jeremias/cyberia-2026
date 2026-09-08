@@ -1,19 +1,10 @@
 /**
  * Tarjeta de producto.
  *
- * Es la pieza que más se repite en pantalla y la que define si la carta se ve
- * apetitosa o burocrática. Toma el patrón que usan las aplicaciones de
- * gastronomía (Rappi, PedidosYa, Uber Eats): foto grande arriba, insignia del
- * tipo sobre la foto, y al pie una línea con el tiempo de preparación a la
- * izquierda y el precio destacado a la derecha.
- *
- * Decisiones:
- *  - la foto LLENA su contenedor ("cover"): es lo que hacen todas las cartas
- *    digitales, y es lo que pidió el equipo. La alternativa ("contain") dejaba
- *    el plato chico y centrado entre dos bandas oscuras;
- *  - el precio es el dato de mayor tamaño después del nombre: es lo que la
- *    gente busca de un vistazo;
- *  - el ámbar queda para "Agregar al carrito", la única acción principal.
+ * Es la pieza que más se repite y la que define si la carta se ve apetitosa o
+ * burocrática. Sigue el patrón de las aplicaciones de gastronomía: foto grande
+ * arriba llenando el contenedor, insignia del tipo encima, y al pie el tiempo
+ * de preparación a la izquierda con el precio destacado a la derecha.
  */
 
 :host {
@@ -58,7 +49,7 @@
        hace que la carta se vea apetitosa y no un listado administrativo. */
     aspect-ratio: 5 / 4;
     overflow: hidden;
-    background-color: var(--superficie-campo);
+    background-color: var(--hoja-alta);
 
     // Deja pasar el desplazamiento vertical: el gesto horizontal es del carrusel.
     touch-action: pan-y;
@@ -294,18 +285,11 @@
    Acciones
    --------------------------------------------------------------------------- */
 
-.boton-agregar {
-    --background: var(--grad-ambar);
-    --background-activated: var(--ambar-hondo);
-    --background-hover: var(--naranja-hondo);
-    --color: var(--tinta-sobre-ambar);
-    --border-radius: var(--radio);
-    --box-shadow: var(--sombra-ambar);
-
+/* El aspecto lo aporta `.btn-principal` de global.scss; acá sólo el alto
+   propio de la tarjeta, algo más bajo que el de un formulario. */
+ion-button.boton-agregar {
     margin-top: 0.75rem;
-    min-height: 3.125rem;
-    font-size: var(--texto-cuerpo);
-    font-weight: 800;
+    min-height: 3.25rem;
 }
 
 .acciones-gestion {

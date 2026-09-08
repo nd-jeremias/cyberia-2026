@@ -1,21 +1,14 @@
 /**
  * Pantalla de ingreso.
  *
- * Usa la misma estructura de dos capas que el resto de la aplicación —banda
- * naranja arriba, papel crema abajo— pero acá la banda lleva el logotipo en
- * lugar de la barra de navegación, porque todavía no hay sesión ni a dónde
- * volver.
+ * Misma estructura de dos capas que el resto —banda naranja arriba, papel crema
+ * abajo— pero acá la banda lleva el logotipo en lugar de la barra: todavía no
+ * hay sesión ni a dónde volver.
  *
- * Los accesos rápidos por perfil van plegados detrás de un disparador: el
- * enunciado los pide, pero aclara que no sean botones fijos.
- *
- * TAMAÑOS
- * -------
- * Toda la pantalla está ajustada para que, con el panel de accesos ABIERTO,
- * las seis fichas entren sin tener que desplazarse en un teléfono común (unos
- * 950 px de alto útil). Por eso el logotipo, los espacios y los altos de los
- * campos son más ajustados que en el resto de la aplicación: acá el que manda
- * es el alto total, no el ritmo general.
+ * Los accesos rápidos por perfil van plegados detrás de un disparador, porque
+ * el enunciado los pide pero no fijos. Al abrirse se montan POR ENCIMA del
+ * formulario, fuera del flujo: así las fichas entran grandes sin que el alto de
+ * la pantalla dependa de si el panel está abierto o cerrado.
  */
 
 :host {
@@ -25,19 +18,16 @@
     min-height: 100%;
 }
 
-/* ---------------------------------------------------------------------------
-   Banda del logotipo
-   --------------------------------------------------------------------------- */
+/* --- Banda del logotipo --------------------------------------------------- */
 
 .banda-ingreso {
     position: relative;
     flex-shrink: 0;
     overflow: hidden;
 
-    padding-top: calc(env(safe-area-inset-top, 0px) + 0.875rem);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
     background: var(--grad-banda);
 
-    /* Mismo patrón de cubiertos que la banda del resto de las pantallas. */
     &::before {
         content: "";
         position: absolute;
@@ -49,24 +39,17 @@
         pointer-events: none;
     }
 
-    /**
-     * Placa del logotipo.
-     *
-     * El isotipo es un cartel de neón: necesita fondo oscuro para que el tubo
-     * "encienda". Apoyado directo sobre el naranja se leía como un agujero
-     * negro, porque el PNG trae su propio fondo azul muy oscuro.
-     *
-     * La solución es asumirlo: se lo monta sobre una placa oscura con filo
-     * claro, como el cartel colgado en la pared del local. De paso queda igual
-     * al de la pantalla de presentación, que también es oscura.
-     */
+    /* El isotipo es un cartel de neón y el PNG trae su propio fondo azul muy
+       oscuro: apoyado directo sobre el naranja se leía como un agujero negro.
+       Se lo monta sobre una placa oscura con filo claro, como el cartel colgado
+       en la pared del local. */
     .isotipo-icono {
         position: relative;
         z-index: 1;
 
         display: flex;
         justify-content: center;
-        padding: 0 1.5rem 1rem;
+        padding: 0 1.5rem 0.875rem;
 
         img {
             width: 9.5rem;
@@ -96,29 +79,12 @@
     box-shadow: var(--sombra-hoja);
 }
 
-/* ---------------------------------------------------------------------------
-   Papel
-   --------------------------------------------------------------------------- */
+/* --- Papel ---------------------------------------------------------------- */
 
 .hoja {
     flex: 1;
-    gap: 0.875rem;
+    gap: 1rem;
     padding-top: 0.75rem;
-    padding-bottom: 1.25rem;
-}
-
-/* Campos y botones algo más bajos que el estándar de la aplicación, para
-   ganar el alto que necesita el panel de accesos. */
-.caja-input {
-    min-height: 3.125rem;
-}
-
-.btn-principal {
-    min-height: 3.125rem;
-}
-
-.seccion-form form {
-    gap: 0.875rem;
 }
 
 .encabezado-ingreso {
@@ -126,16 +92,11 @@
 
     h1 {
         margin: 0;
-        font-size: var(--texto-titulo);
+        font-size: var(--texto-titulo-grande);
         font-weight: 800;
-        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        letter-spacing: var(--traqueo);
         color: var(--bordo);
-    }
-
-    p {
-        margin: 0.0625rem 0 0;
-        font-size: var(--texto-epigrafe);
-        color: var(--tinta-media);
     }
 }
 
@@ -146,37 +107,33 @@
     gap: 0.75rem;
 
     .btn-secundario {
-        min-height: 2.875rem;
-        padding: 0 0.75rem;
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
         font-size: var(--texto-apoyo);
     }
 }
 
-/* ---------------------------------------------------------------------------
-   Accesos rápidos por perfil
-   --------------------------------------------------------------------------- */
+/* --- Accesos rápidos por perfil ------------------------------------------- */
 
-/* Sin `margin-top: auto`: empujar el panel al fondo agregaba un hueco que,
-   con los accesos abiertos, obligaba a desplazarse. */
+/* Anclado al pie: separa el ingreso real de los accesos de demostración, y de
+   paso reparte el aire sobrante en lugar de dejarlo todo junto abajo. Ahora que
+   el panel se despliega por encima, bajarlo ya no obliga a desplazarse. */
 .accesos {
-    margin-top: 0.25rem;
+    position: relative;
+    margin-top: auto;
+    padding-top: 0.75rem;
 }
 
-/**
- * Disparador.
- *
- * Es una pastilla discreta, no un botón principal: la acción importante de
- * esta pantalla sigue siendo iniciar sesión. La flecha gira al abrir, que es
- * la señal que todo el mundo ya conoce para "esto se despliega".
- */
+/* Pastilla discreta, no un botón principal: la acción importante de esta
+   pantalla sigue siendo iniciar sesión. La flecha gira al abrir. */
 .accesos-disparador {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.625rem;
 
     width: 100%;
-    min-height: 2.875rem;
-    padding: 0 1rem;
+    min-height: 3.5rem;
+    padding: 0 1.125rem;
     box-sizing: border-box;
 
     background: transparent;
@@ -186,6 +143,8 @@
     font-family: var(--fuente);
     font-size: var(--texto-apoyo);
     font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: var(--traqueo);
     color: var(--tinta-media);
     cursor: pointer;
 
@@ -200,10 +159,18 @@
     }
 }
 
-.accesos-rayo {
+.accesos-rayo,
+.accesos-flecha {
     flex-shrink: 0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+}
+
+.accesos-rayo {
     color: var(--naranja);
+}
+
+.accesos-flecha {
+    transition: transform 0.25s ease;
 }
 
 .accesos-texto {
@@ -211,30 +178,31 @@
     text-align: left;
 }
 
-.accesos-flecha {
-    flex-shrink: 0;
-    font-size: 1.25rem;
-    transition: transform 0.25s ease;
-}
-
 /**
  * Panel desplegable.
  *
- * Se anima con `max-height` en lugar de mostrar y ocultar de golpe: el
+ * Va fuera del flujo, apoyado sobre el formulario y anclado al disparador. Se
+ * anima con desplazamiento y opacidad en lugar de aparecer de golpe: el
  * movimiento explica de dónde salieron los botones. `visibility` acompaña para
  * que, cerrado, el panel no sea alcanzable con el teclado (además del `inert`
  * que pone la plantilla).
  */
 .accesos-panel {
-    overflow: hidden;
-    max-height: 0;
+    position: absolute;
+    bottom: calc(100% + 0.625rem);
+    left: 0;
+    right: 0;
+    z-index: 5;
+
+    opacity: 0;
     visibility: hidden;
+    transform: translateY(0.75rem) scale(0.98);
+    transform-origin: bottom center;
 
     transition:
-        max-height 0.32s cubic-bezier(0.32, 0.72, 0, 1),
-        visibility 0.32s,
-        opacity 0.25s ease;
-    opacity: 0;
+        opacity 0.2s ease,
+        transform 0.24s cubic-bezier(0.32, 0.72, 0, 1),
+        visibility 0.24s;
 }
 
 .accesos-abiertos {
@@ -243,7 +211,6 @@
         border-color: var(--naranja);
         background: rgba(226, 87, 28, 0.08);
         color: var(--naranja-hondo);
-        border-radius: var(--radio) var(--radio) 0 0;
     }
 
     .accesos-flecha {
@@ -251,45 +218,43 @@
     }
 
     .accesos-panel {
-        max-height: 32rem;
-        visibility: visible;
         opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
     }
 }
 
+/* Fondo opaco: el panel se apoya sobre el formulario, así que no puede dejar
+   ver lo que hay debajo. */
 .grilla-perfiles {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
+    gap: 0.625rem;
 
-    padding: 0.625rem;
+    padding: 0.75rem;
 
-    background: rgba(255, 255, 255, 0.55);
+    background: var(--hoja-alta);
     border: 0.125rem solid var(--naranja);
-    border-top: none;
-    border-radius: 0 0 var(--radio) var(--radio);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-elevada);
 }
 
-/**
- * Ficha de perfil.
- *
- * Cada rol lleva su color en el medallón. Seis fichas iguales serían seis
- * rectángulos indistinguibles; con el color, en una demostración que salta de
- * perfil en perfil se encuentra el que se busca sin leer.
- */
+/* Cada rol lleva su color en el medallón: seis fichas iguales serían seis
+   rectángulos indistinguibles, y en una demostración que salta de perfil en
+   perfil se encuentra el que se busca sin leer. */
 .card-perfil {
     --color-perfil: var(--naranja);
 
     display: flex;
     align-items: center;
-    gap: 0.5625rem;
+    gap: 0.5rem;
 
-    min-height: 2.875rem;
-    padding: 0.4375rem 0.5625rem;
+    min-height: 3.75rem;
+    padding: 0.5rem 0.5625rem;
     box-sizing: border-box;
 
-    background: var(--hoja-alta);
-    border: 0.0625rem solid var(--hoja-borde);
+    background: var(--hoja);
+    border: 0.0938rem solid var(--hoja-borde);
     border-radius: var(--radio-chico);
 
     text-align: left;
@@ -315,8 +280,8 @@
         justify-content: center;
         flex-shrink: 0;
 
-        width: 1.9375rem;
-        height: 1.9375rem;
+        width: 2.375rem;
+        height: 2.375rem;
         border-radius: 50%;
 
         /* Respaldo para navegadores sin color-mix(): el medallón queda neutro
@@ -324,62 +289,55 @@
         background: var(--velo-tinta);
         background: color-mix(in srgb, var(--color-perfil) 16%, transparent);
 
-        font-size: 1.0625rem;
+        font-size: 1.3125rem;
         color: var(--color-perfil);
     }
 
+    /* Nunca parte una palabra al medio: el enunciado no admite texto cortado
+       y "Cantinero" es justo el que no entraba. */
     .rol {
         min-width: 0;
-        font-size: var(--texto-epigrafe);
+        font-size: var(--texto-apoyo);
         font-weight: 800;
         line-height: 1.15;
         color: var(--tinta);
+        overflow-wrap: normal;
+        word-break: keep-all;
+        hyphens: none;
     }
 }
 
-.perfil-duenio {
-    --color-perfil: var(--perfil-duenio);
-}
-.perfil-supervisor {
-    --color-perfil: var(--perfil-supervisor);
-}
-.perfil-metre {
-    --color-perfil: var(--perfil-metre);
-}
-.perfil-mozo {
-    --color-perfil: var(--perfil-mozo);
-}
-.perfil-cocinero {
-    --color-perfil: var(--perfil-cocinero);
-}
-.perfil-cantinero {
-    --color-perfil: var(--perfil-cantinero);
-}
-.perfil-cliente {
-    --color-perfil: var(--perfil-cliente);
-}
+.perfil-duenio { --color-perfil: var(--perfil-duenio); }
+.perfil-supervisor { --color-perfil: var(--perfil-supervisor); }
+.perfil-metre { --color-perfil: var(--perfil-metre); }
+.perfil-mozo { --color-perfil: var(--perfil-mozo); }
+.perfil-cocinero { --color-perfil: var(--perfil-cocinero); }
+.perfil-cantinero { --color-perfil: var(--perfil-cantinero); }
+.perfil-cliente { --color-perfil: var(--perfil-cliente); }
 
-/* ---------------------------------------------------------------------------
-   Pantallas bajas
-   ---------------------------------------------------------------------------
-   En un teléfono chico el logotipo se achica para que el formulario entre sin
-   tener que desplazarse.
-   --------------------------------------------------------------------------- */
-
-@media (max-height: 44rem) {
+/* Teléfonos de pantalla baja: se recorta lo que no es control para que el
+   formulario entre sin desplazarse. */
+@media (max-height: 48rem) {
     .banda-ingreso {
         padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
 
         .isotipo-icono {
-            padding-bottom: 0.75rem;
+            padding-bottom: 0.625rem;
 
             img {
-                width: 7.5rem;
+                width: 7rem;
             }
         }
     }
 
-    .encabezado-ingreso p {
-        display: none;
+    .hoja {
+        gap: 0.75rem;
+    }
+
+    .caja-input,
+    .btn-principal,
+    .fila-alternativas .btn-secundario,
+    .accesos-disparador {
+        min-height: 3.125rem;
     }
 }

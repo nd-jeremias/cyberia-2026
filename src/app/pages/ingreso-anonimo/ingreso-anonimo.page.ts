@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FormularioUsuarioAnonimoComponent } from '../../components/formulario-usuario-anonimo/formulario-usuario-anonimo.component';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';

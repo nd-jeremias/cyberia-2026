@@ -10,7 +10,6 @@
 <div class="hoja hoja-angosta">
     <header class="encabezado-ingreso">
         <h1>Iniciar sesión</h1>
-        <p>Bienvenido de nuevo</p>
     </header>
 
     <div class="seccion-form">
@@ -59,8 +58,10 @@
     <!--
       Accesos rápidos por perfil.
 
-      El enunciado los pide y aclara que no sean botones fijos: acá viven
-      plegados detrás de un disparador y se despliegan al tocarlo.
+      El enunciado los pide y aclara que no sean botones fijos: viven plegados
+      detrás de un disparador. Al abrirse, el panel se monta POR ENCIMA del
+      formulario en lugar de empujarlo hacia abajo, así las fichas pueden ser
+      grandes sin que la pantalla necesite desplazarse.
     -->
     <section class="accesos" [class.accesos-abiertos]="accesosAbiertos()">
         <button

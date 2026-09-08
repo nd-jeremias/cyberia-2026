@@ -1,13 +1,5 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import {
-    IonBadge,
-    IonButton,
-    IonContent,
-    IonHeader,
-    IonIcon,
-    IonTitle,
-    IonToolbar,
-} from '@ionic/angular';
+import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';

@@ -1,6 +1,6 @@
 import { inject, Service, signal } from '@angular/core';
 import { AuthResponse, Session } from '@supabase/supabase-js';
-import { LoginInterface, RegisterInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
+import { LoginInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
 import { AnonimoAltaInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
 import { GaleriaService } from './galeria.service';

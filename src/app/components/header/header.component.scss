@@ -1,10 +1,10 @@
 /**
  * Banda superior de la aplicación.
  *
- * Es la pieza que unifica todas las pantallas: naranja, con el patrón de
- * cubiertos calado, la barra de navegación arriba y la tarjeta de contexto
- * pegada abajo. Termina en el "labio" de la hoja crema, de modo que el
- * contenido de la pantalla parezca una hoja de papel apoyada sobre la banda.
+ * Es la pieza que unifica todas las pantallas: naranja con el patrón de
+ * cubiertos, la barra de navegación arriba y la tarjeta de contexto pegada
+ * abajo. Termina en el "labio" de la hoja crema, de modo que el contenido de la
+ * pantalla parezca una hoja de papel apoyada sobre la banda.
  */
 
 :host {
@@ -24,8 +24,8 @@
     /* Deja libre la barra de estado del teléfono. */
     padding-top: env(safe-area-inset-top, 0px);
 
-    /* Patrón de cubiertos, muy tenue. Es blanco sobre transparente, así que
-       sobre el naranja se usa tal cual. Da textura sin robar protagonismo. */
+    /* El patrón es blanco sobre transparente, así que sobre el naranja va tal
+       cual. Da textura sin robar protagonismo. */
     &::before {
         content: "";
         position: absolute;
@@ -38,9 +38,7 @@
     }
 }
 
-/* ---------------------------------------------------------------------------
-   Barra de navegación
-   --------------------------------------------------------------------------- */
+/* --- Barra de navegación -------------------------------------------------- */
 
 .banda-barra {
     position: relative;
@@ -73,9 +71,9 @@
     flex: 1;
     min-width: 0;
 
-    font-size: 0.8125rem;
+    font-size: var(--texto-apoyo);
     font-weight: 800;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     text-align: center;
     color: var(--sobre-naranja);
@@ -88,8 +86,8 @@
     align-items: center;
     justify-content: center;
 
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.625rem;
+    height: 2.625rem;
     padding: 0;
 
     background: var(--velo-blanco);
@@ -114,12 +112,10 @@
 
 .icono-salir {
     display: flex;
-    font-size: 1.25rem;
+    font-size: 1.375rem;
 }
 
-/* ---------------------------------------------------------------------------
-   Tarjeta de contexto
-   --------------------------------------------------------------------------- */
+/* --- Tarjeta de contexto -------------------------------------------------- */
 
 .banda-cuerpo {
     position: relative;
@@ -133,7 +129,7 @@
     padding: 1.125rem 1.25rem 1.75rem;
 }
 
-/* --- Modo 'usuario' (inicio) --------------------------------------------- */
+/* Modo 'usuario' (inicio) */
 
 .identidad {
     display: grid;
@@ -142,7 +138,7 @@
         "avatar textos"
         "avatar chip";
     align-items: center;
-    gap: 0.375rem 1.125rem;
+    gap: 0.5rem 1.125rem;
 }
 
 .avatar {
@@ -152,8 +148,8 @@
     align-items: center;
     justify-content: center;
 
-    width: 5.25rem;
-    height: 5.25rem;
+    width: 6rem;
+    height: 6rem;
     overflow: hidden;
 
     background: var(--velo-blanco);
@@ -169,7 +165,7 @@
 }
 
 .avatar-iniciales {
-    font-size: 1.875rem;
+    font-size: 2.125rem;
     font-weight: 800;
     letter-spacing: 0.02em;
     color: var(--sobre-naranja);
@@ -187,31 +183,41 @@
     color: var(--sobre-naranja-tenue);
 }
 
-.identidad-nombre {
-    margin: 0.125rem 0 0;
+/* El enunciado no admite texto cortado: los nombres largos bajan de renglón en
+   lugar de terminar en puntos suspensivos. */
+.identidad-nombre,
+.contexto-titulo {
+    margin: 0;
+    min-width: 0;
 
     font-size: var(--texto-titulo-grande);
     font-weight: 800;
-    letter-spacing: -0.01em;
-    line-height: 1.15;
     color: var(--sobre-naranja);
-
-    /* El enunciado no admite texto cortado: los nombres largos bajan de
-       renglón en lugar de terminar en puntos suspensivos. */
     overflow-wrap: anywhere;
 }
 
-/* Insignia del perfil: fondo claro y texto naranja oscuro, para que se
-   despegue del naranja de la banda en lugar de fundirse con él. */
+.identidad-nombre {
+    margin-top: 0.125rem;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+
+.contexto-titulo {
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+
+/* Insignia del perfil: fondo claro y texto naranja oscuro, para que se despegue
+   del naranja de la banda en lugar de fundirse con él. */
 .chip-perfil {
     grid-area: chip;
     justify-self: start;
 
-    padding: 0.25rem 0.8125rem;
+    padding: 0.3125rem 0.9375rem;
     border-radius: 999px;
 
     background: var(--sobre-naranja);
-    font-size: var(--texto-epigrafe);
+    font-size: var(--texto-apoyo);
     font-weight: 800;
     letter-spacing: 0.02em;
     color: var(--naranja-hondo);
@@ -219,25 +225,13 @@
     white-space: nowrap;
 }
 
-/* --- Modo 'pantalla' (resto de las secciones) ---------------------------- */
+/* Modo 'pantalla' (resto de las secciones) */
 
 .contexto {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.875rem;
-}
-
-.contexto-titulo {
-    margin: 0;
-    min-width: 0;
-
-    font-size: var(--texto-titulo-grande);
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    color: var(--sobre-naranja);
-    overflow-wrap: anywhere;
 }
 
 .contexto-accion {
@@ -251,13 +245,12 @@
     }
 }
 
-/* ---------------------------------------------------------------------------
-   Labio de la hoja
-   ---------------------------------------------------------------------------
-   El comienzo del papel crema, dibujado dentro de la banda. Deja las esquinas
-   superiores redondeadas y una sombra hacia arriba que separa una capa de la
-   otra.
-   --------------------------------------------------------------------------- */
+/* --- Labio de la hoja -----------------------------------------------------
+   El comienzo del papel crema, dibujado DENTRO de la banda: así el contenido
+   arranca ya "dentro" de la hoja y al desplazarse pasa por debajo de la curva,
+   sin la costura que quedaría si el redondeo viviera en el ion-content. La
+   sombra queda adentro, de modo que el `overflow: hidden` no la recorta.
+   ------------------------------------------------------------------------- */
 
 .labio-hoja {
     position: relative;
@@ -267,15 +260,8 @@
 
     background: var(--hoja);
     border-radius: var(--radio-hoja) var(--radio-hoja) 0 0;
-
-    /* Sombra hacia arriba: separa el papel de la banda. Queda dentro de la
-       banda, así que el `overflow: hidden` de arriba no la recorta. */
     box-shadow: var(--sombra-hoja);
 }
-
-/* ---------------------------------------------------------------------------
-   Pantallas angostas
-   --------------------------------------------------------------------------- */
 
 @media (max-width: 22.5rem) {
     .banda-cuerpo {
@@ -283,18 +269,15 @@
     }
 
     .avatar {
-        width: 4.25rem;
-        height: 4.25rem;
+        width: 4.5rem;
+        height: 4.5rem;
     }
 
     .avatar-iniciales {
-        font-size: 1.5rem;
+        font-size: 1.625rem;
     }
 
-    .identidad-nombre {
-        font-size: var(--texto-titulo);
-    }
-
+    .identidad-nombre,
     .contexto-titulo {
         font-size: var(--texto-titulo);
     }

@@ -22,12 +22,6 @@
                 <span>Sin imagen disponible</span>
               </div>
             } @else {
-              <!--
-                La foto ocupa todo el contenedor (object-fit: cover). Antes iba
-                con "contain" más una copia desenfocada de fondo para rellenar
-                las franjas laterales; se quitó porque dejaba el plato chico en
-                el medio de dos bandas oscuras.
-              -->
               <img class="foto-principal" [src]="foto" [alt]="producto().nombre" (error)="onErrorFoto($index)" />
             }
           </div>
@@ -94,7 +88,7 @@
         </ion-button>
       </div>
     } @else {
-      <ion-button expand="block" class="boton-agregar" (click)="onAgregarCarrito()">
+      <ion-button expand="block" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
         <ion-icon name="cart-outline" slot="start"></ion-icon>
         Agregar al carrito
       </ion-button>

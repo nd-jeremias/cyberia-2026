@@ -1,8 +1,6 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonIcon, IonInput } from '@ionic/angular';
-import { addIcons } from 'ionicons';
-import { personOutline, enterOutline, informationCircleOutline } from 'ionicons/icons';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
@@ -28,14 +26,6 @@ export class FormularioUsuarioAnonimoComponent {
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
     foto: File[] = [];
-
-    constructor() {
-        addIcons({
-            'person-outline': personOutline,
-            'enter-outline': enterOutline,
-            'information-circle-outline': informationCircleOutline,
-        });
-    }
 
     formulario = new FormGroup({
         nombres: new FormControl('', {

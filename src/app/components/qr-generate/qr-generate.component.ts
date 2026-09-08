@@ -1,4 +1,4 @@
-import { Component, effect, inject, input } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { QrService } from '../../services/qr.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faShareNodes } from '@fortawesome/free-solid-svg-icons';
