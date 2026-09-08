@@ -102,6 +102,8 @@ export class AuthService {
     }
 
     async login({ email, password }: LoginInterface): Promise<void> {
+        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
         const response: AuthResponse = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -112,6 +114,8 @@ export class AuthService {
         if (!response.data.session || !response.data.user) {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
+
+        await delay(1500);
 
         // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
         // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
@@ -270,6 +274,4 @@ export class AuthService {
             localStorage.removeItem('user');
         }
     }
-
-    
 }
