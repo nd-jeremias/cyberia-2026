@@ -16,8 +16,19 @@ export class AuthService {
     // Se resuelve solo cada vez que cambia la sesión (login/logout/refresh).
     perfil = signal<PerfilUsuario | null>(null);
 
-    galeriaService = inject(GaleriaService)
-    modal = inject(ModalService)
+    // Motivo por el que no se pudo leer el perfil, cuando la consulta falló.
+    // En null significa que la consulta anduvo (haya traído fila o no).
+    perfilError = signal<string | null>(null);
+
+    // Datos de identidad para la cabecera: nombre y foto de la persona que
+    // está usando la aplicación. Vienen de la misma consulta que el perfil, así
+    // que no agregan un viaje extra a la base.
+    nombres = signal<string | null>(null);
+    apellidos = signal<string | null>(null);
+    fotoUrl = signal<string | null>(null);
+
+    galeriaService = inject(GaleriaService);
+    modal = inject(ModalService);
 
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
@@ -27,6 +38,7 @@ export class AuthService {
                 this.cargarPerfil(session.user.id);
             } else {
                 this.perfil.set(null);
+                this.limpiarIdentidad();
             }
         });
     }
@@ -41,14 +53,19 @@ export class AuthService {
         // 406 que ensucia la consola sin aportar nada.
         const { data, error } = await supabase
             .from('usuarios')
-            .select('perfil')
+            .select('perfil, nombres, apellidos, foto_url')
             .eq('id', userId)
             .maybeSingle();
 
         if (error) {
+            // La consulta falló: no es que falte la fila. Se guarda el motivo
+            // para que la pantalla no mande a revisar la base cuando en
+            // realidad fue la red, los permisos o el token.
             console.error('No se pudo cargar el perfil del usuario', userId, error);
 
+            this.perfilError.set(error.message);
             this.perfil.set(null);
+            this.limpiarIdentidad();
             return;
         }
 
@@ -59,11 +76,25 @@ export class AuthService {
             // recrea la tabla y sólo repone los usuarios de prueba).
             console.warn('El usuario no tiene fila en "usuarios"', userId);
 
+            this.perfilError.set(null);
             this.perfil.set(null);
+            this.limpiarIdentidad();
             return;
         }
 
+        this.perfilError.set(null);
         this.perfil.set(data.perfil);
+
+        this.nombres.set(data.nombres ?? null);
+        this.apellidos.set(data.apellidos ?? null);
+        this.fotoUrl.set(data.foto_url ?? null);
+    }
+
+    /** Deja la identidad en blanco cuando no hay fila que mostrar. */
+    private limpiarIdentidad() {
+        this.nombres.set(null);
+        this.apellidos.set(null);
+        this.fotoUrl.set(null);
     }
 
     setLocalUser(user: LocalUserInterface) {
@@ -71,6 +102,8 @@ export class AuthService {
     }
 
     async login({ email, password }: LoginInterface): Promise<void> {
+        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
         const response: AuthResponse = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -81,6 +114,8 @@ export class AuthService {
         if (!response.data.session || !response.data.user) {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
+
+        await delay(1500);
 
         // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
         // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
@@ -239,6 +274,4 @@ export class AuthService {
             localStorage.removeItem('user');
         }
     }
-
-    
 }
