@@ -71,6 +71,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     ],
 })
 export class FormularioRegistroComponent {
+
     // ============================================================
     // CONFIGURACIÓN
     // ============================================================
@@ -90,6 +91,11 @@ export class FormularioRegistroComponent {
     };
 
     textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);
+    fotosIniciales = computed<string[]>(() => {
+        const fotoUrl = this.empleadoExistente()?.foto_url;
+        console.log('Fotos iniciales:', this.empleadoExistente())
+        return fotoUrl ? fotoUrl : [];
+    });
 
     // ============================================================
     // INPUTS / OUTPUTS
@@ -102,9 +108,7 @@ export class FormularioRegistroComponent {
      * Si es undefined, estamos en modo creación.
      */
     empleadoExistente = input<EmpleadoInterface>();
-
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
-
     registroSubmit = output<FormData>();
 
     // ============================================================
@@ -133,6 +137,7 @@ export class FormularioRegistroComponent {
     // ============================================================
 
     tiposEmpleado = ['dueño', 'supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
+    fotosUrlsExistentes: string[] = [];
 
     // ============================================================
     // FORMULARIO
@@ -368,6 +373,10 @@ export class FormularioRegistroComponent {
          */
         this.formulario.controls.foto.markAsTouched();
         this.formulario.controls.foto.markAsDirty();
+    }
+
+    onUrlsExistentes(urls: string[]) {
+        this.fotosUrlsExistentes = urls;
     }
 
     // ============================================================
