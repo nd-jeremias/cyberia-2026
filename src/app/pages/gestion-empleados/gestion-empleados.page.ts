@@ -36,7 +36,6 @@ export class GestionEmpleadosPage implements OnInit {
         if (!data) return;
 
         this.listaEmpleados.set(data);
-        console.log(this.listaEmpleados());
     }
 
     private async confirmarEliminar(empleado: EmpleadoInterface) {

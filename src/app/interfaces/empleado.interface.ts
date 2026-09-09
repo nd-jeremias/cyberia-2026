@@ -7,7 +7,7 @@ export interface EmpleadoInterface {
     dni: string;
     cuil: string;
     correo_electronico: string;
-    fotoUrl: string | null;
+    foto_url: string[] | null;
     token_push: string;
     perfil: PerfilUsuario;
 }
