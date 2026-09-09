@@ -55,7 +55,6 @@ export class AuthService {
         const { data, error } = await supabase
             .from('usuarios')
             .select('perfil, nombres, apellidos, foto_url')
-            .select('perfil, nombres, apellidos, foto_url')
             .eq('id', userId)
             .maybeSingle();
 
@@ -63,15 +62,10 @@ export class AuthService {
             // La consulta falló: no es que falte la fila. Se guarda el motivo
             // para que la pantalla no mande a revisar la base cuando en
             // realidad fue la red, los permisos o el token.
-            // La consulta falló: no es que falte la fila. Se guarda el motivo
-            // para que la pantalla no mande a revisar la base cuando en
-            // realidad fue la red, los permisos o el token.
             console.error('No se pudo cargar el perfil del usuario', userId, error);
 
             this.perfilError.set(error.message);
-            this.perfilError.set(error.message);
             this.perfil.set(null);
-            this.limpiarIdentidad();
             this.limpiarIdentidad();
             return;
         }
@@ -84,27 +78,13 @@ export class AuthService {
             console.warn('El usuario no tiene fila en "usuarios"', userId);
 
             this.perfilError.set(null);
-            this.perfilError.set(null);
             this.perfil.set(null);
-            this.limpiarIdentidad();
             this.limpiarIdentidad();
             return;
         }
 
         this.perfilError.set(null);
-        this.perfilError.set(null);
         this.perfil.set(data.perfil);
-
-        this.nombres.set(data.nombres ?? null);
-        this.apellidos.set(data.apellidos ?? null);
-        this.fotoUrl.set(data.foto_url ?? null);
-    }
-
-    /** Deja la identidad en blanco cuando no hay fila que mostrar. */
-    private limpiarIdentidad() {
-        this.nombres.set(null);
-        this.apellidos.set(null);
-        this.fotoUrl.set(null);
 
         this.nombres.set(data.nombres ?? null);
         this.apellidos.set(data.apellidos ?? null);
@@ -123,7 +103,6 @@ export class AuthService {
     }
 
     async login({ email, password }: LoginInterface): Promise<void> {
-        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
         const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -137,8 +116,6 @@ export class AuthService {
         if (!response.data.session || !response.data.user) {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
-
-        await delay(1500);
 
         await delay(1500);
 
