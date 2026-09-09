@@ -1,4 +1,21 @@
 <app-header [defaultHref]="'/inicio'" [tituloHeader]="'Gestión de empleados'"></app-header>
 <ion-content [fullscreen]="true">
     <ion-button expand="block" class="boton-home" routerLink="/gestion-empleados/alta"> Agregar Empleado </ion-button>
+    <section class="listado-clientes">
+        <h2 class="titulo-listado">Empleados</h2>
+
+        @if (listaEmpleados().length === 0) {
+        <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
+        } @else {
+        <div class="lista">
+            @for (empleado of listaEmpleados(); track empleado.id) {
+            <app-tarjeta-empleado
+                [usuario]="empleado"
+                (editarEmpleado)="onEditar($event)"
+                (eliminarEmpleado)="onEliminar($event)"
+            ></app-tarjeta-empleado>
+            }
+        </div>
+        }
+    </section>
 </ion-content>
