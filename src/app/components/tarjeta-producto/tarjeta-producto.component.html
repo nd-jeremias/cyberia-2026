@@ -1,97 +1,90 @@
 <article class="tarjeta-producto">
-  <div
-    class="carrusel"
-    (touchstart)="onToqueInicio($event)"
-    (touchend)="onToqueFin($event)"
-  >
-    @if (sinFotoValida()) {
-      <div class="carrusel-placeholder">
-        <ion-icon name="image-outline"></ion-icon>
-        <span>Sin imagen disponible</span>
-      </div>
-    } @else {
-      <div
-        class="carrusel-pista"
-        [style.transform]="'translateX(-' + (fotoActual() * 100) + '%)'"
-      >
-        @for (foto of producto().fotosUrls; track $index) {
-          <div class="carrusel-slide">
-            @if (fotoTieneError($index)) {
-              <div class="carrusel-placeholder">
-                <ion-icon name="image-outline"></ion-icon>
-                <span>Sin imagen disponible</span>
-              </div>
-            } @else {
-              <img class="foto-principal" [src]="foto" [alt]="producto().nombre" (error)="onErrorFoto($index)" />
+    <div class="carrusel" (touchstart)="onToqueInicio($event)" (touchend)="onToqueFin($event)">
+        @if (sinFotoValida()) {
+        <div class="carrusel-placeholder">
+            <ion-icon name="image-outline"></ion-icon>
+            <span>Sin imagen disponible</span>
+        </div>
+        } @else {
+        <div class="carrusel-pista" [style.transform]="'translateX(-' + fotoActual() * 100 + '%)'">
+            @for (foto of producto().fotosUrls; track $index) {
+            <div class="carrusel-slide">
+                @if (fotoTieneError($index)) {
+                <div class="carrusel-placeholder">
+                    <ion-icon name="image-outline"></ion-icon>
+                    <span>Sin imagen disponible</span>
+                </div>
+                } @else {
+                <img class="foto-principal" [src]="foto" [alt]="producto().nombre" (error)="onErrorFoto($index)" />
+                }
+            </div>
             }
-          </div>
+        </div>
         }
-      </div>
-    }
 
-    <ion-badge class="insignia-tipo" [color]="colorTipo()">{{ etiquetaTipo() }}</ion-badge>
+        <ion-badge class="insignia-tipo" [color]="colorTipo()">{{ etiquetaTipo() }}</ion-badge>
 
-    @if (!sinFotoValida() && producto().fotosUrls.length > 1) {
-      <button
-        type="button"
-        class="control-carrusel control-anterior"
-        aria-label="Foto anterior"
-        (click)="fotoAnterior()"
-      >
-        <ion-icon name="chevron-back-outline"></ion-icon>
-      </button>
-
-      <button
-        type="button"
-        class="control-carrusel control-siguiente"
-        aria-label="Foto siguiente"
-        (click)="fotoSiguiente()"
-      >
-        <ion-icon name="chevron-forward-outline"></ion-icon>
-      </button>
-
-      <div class="puntos-carrusel">
-        @for (foto of producto().fotosUrls; track $index) {
-          <button
+        @if (!sinFotoValida() && producto().fotosUrls.length > 1) {
+        <button
             type="button"
-            class="punto"
-            [class.punto-activo]="$index === fotoActual()"
-            [attr.aria-label]="'Ver foto ' + ($index + 1)"
-            (click)="irAFoto($index)"
-          ></button>
+            class="control-carrusel control-anterior"
+            aria-label="Foto anterior"
+            (click)="fotoAnterior()"
+        >
+            <ion-icon name="chevron-back-outline"></ion-icon>
+        </button>
+
+        <button
+            type="button"
+            class="control-carrusel control-siguiente"
+            aria-label="Foto siguiente"
+            (click)="fotoSiguiente()"
+        >
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+
+        <div class="puntos-carrusel">
+            @for (foto of producto().fotosUrls; track $index) {
+            <button
+                type="button"
+                class="punto"
+                [class.punto-activo]="$index === fotoActual()"
+                [attr.aria-label]="'Ver foto ' + ($index + 1)"
+                (click)="irAFoto($index)"
+            ></button>
+            }
+        </div>
         }
-      </div>
-    }
-  </div>
-
-  <div class="contenido">
-    <h3 class="nombre">{{ producto().nombre }}</h3>
-    <p class="descripcion">{{ producto().descripcion }}</p>
-
-    <div class="detalles">
-      <span class="detalle">
-        <ion-icon name="time-outline"></ion-icon>
-        {{ producto().tiempoElaboracionMinutos }} min
-      </span>
-      <span class="precio">{{ precioFormateado() }}</span>
     </div>
 
-    @if (modo() === 'gestion') {
-      <div class="acciones-gestion">
-        <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
-          <ion-icon name="create-outline" slot="start"></ion-icon>
-          Editar
+    <div class="contenido">
+        <h3 class="nombre">{{ producto().nombre }}</h3>
+        <p class="descripcion">{{ producto().descripcion }}</p>
+
+        <div class="detalles">
+            <span class="detalle">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ producto().tiempoElaboracionMinutos }} min
+            </span>
+            <span class="precio">{{ precioFormateado() }}</span>
+        </div>
+
+        @if (modo() === 'gestion') {
+        <div class="acciones-gestion">
+            <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
+                <ion-icon name="create-outline" slot="start"></ion-icon>
+                Editar
+            </ion-button>
+            <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
+                <ion-icon name="trash-outline" slot="start"></ion-icon>
+                Eliminar
+            </ion-button>
+        </div>
+        } @else {
+        <ion-button expand="block" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
+            <ion-icon name="cart-outline" slot="start"></ion-icon>
+            Agregar al carrito
         </ion-button>
-        <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
-          Eliminar
-        </ion-button>
-      </div>
-    } @else {
-      <ion-button expand="block" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
-        <ion-icon name="cart-outline" slot="start"></ion-icon>
-        Agregar al carrito
-      </ion-button>
-    }
-  </div>
+        }
+    </div>
 </article>

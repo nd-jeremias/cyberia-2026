@@ -13,7 +13,7 @@ export interface MesaAltaInterface {
     numeroMesa: number;
     cantidadLugares: number;
     tipo: TipoMesa;
-    fotos: File[];
+    fotos: File;
     qrFile: File; // o url, corregir cuando sea necesario
 }
 

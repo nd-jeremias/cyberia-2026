@@ -72,7 +72,7 @@ export class MesaService {
     }
 
     /** Trae todas las mesas ordenadas por número, como están en el salón. */
-    async listar(): Promise<void> {
+    async listar(): Promise<MesaInterface[] | null> {
         this.cargando.set(true);
 
         try {
@@ -88,8 +88,11 @@ export class MesaService {
                     this.mapear(f)
                 )
             );
+
+            return this.mesas()
         } catch (error) {
             this.avisarError(error, 'No se pudieron cargar las mesas.');
+            return null
         } finally {
             this.cargando.set(false);
         }

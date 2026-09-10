@@ -13,20 +13,25 @@ export class MesaDbService {
             if (!publicQrUrl) throw Error;
 
             // Mapeamos el array de Files directamente utilizando el índice para nombrarlos
-            const promesasDeSubida = mesa.fotos.map((archivo, index) => {
-                // Genera nombres automáticos: 'foto-1.png', 'foto-2.png', etc.
-                // Manteniendo la extensión original del archivo subido
-                const extension = archivo.name.split('.').pop() || 'png';
-                const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${index + 1}.${extension}`;
+            // const promesasDeSubida = mesa.fotos.map((archivo, index) => {
+            //     // Genera nombres automáticos: 'foto-1.png', 'foto-2.png', etc.
+            //     // Manteniendo la extensión original del archivo subido
+            //     const extension = archivo.name.split('.').pop() || 'png';
+            //     const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${index + 1}.${extension}`;
 
-                // Llamamos directamente a tu función existente
-                return this.galeriaService.subirImagenDb(archivo, 'mesas', nombrePersonalizado);
-            });
+            //     // Llamamos directamente a tu función existente
+            //     return this.galeriaService.subirImagenDb(archivo, 'mesas', nombrePersonalizado);
+            // });
 
             // Ejecutamos las subidas en paralelo
-            const urlsPublicas = await Promise.all(promesasDeSubida);
+            // const urlsPublicas = await Promise.all(promesasDeSubida);
 
-            if(!urlsPublicas) throw Error;
+            // Las siguientes 3 lineas suben 1 sola img:
+            const extension = mesa.fotos.name.split('.').pop() || 'png';
+            const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
+            const urlsPublicas = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', nombrePersonalizado);
+
+            if (!urlsPublicas) throw Error;
 
             const { error } = await supabase.from('mesas').insert({
                 numero_mesa: mesa.numeroMesa,
@@ -34,13 +39,13 @@ export class MesaDbService {
                 tipo: mesa.tipo,
                 disponibilidad: 'disponible',
                 qr_url: publicQrUrl,
-                foto_url: urlsPublicas
-            })
+                foto_url: urlsPublicas,
+            });
 
             if (error) throw error;
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            throw error
         }
-
     }
 }

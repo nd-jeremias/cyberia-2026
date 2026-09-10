@@ -92,8 +92,7 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
-        console.log("Formulario: ", this.formulario.value)
-        console.log("fotos: ", this.fotos)
+        
         if (this.formulario.invalid || !this.fotos) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
             // nunca visitó.
@@ -131,7 +130,7 @@ export class FormularioAltaMesaComponent {
             numeroMesa: Number(valores.numeroMesa),
             cantidadLugares: Number(valores.cantidadLugares),
             tipo: valores.tipo as TipoMesa,
-            fotos: this.fotos,
+            fotos: this.fotos[0],
             qrFile: this.formulario.value.qr!,
         };
         this.mesaSubmit.emit(mesa);
