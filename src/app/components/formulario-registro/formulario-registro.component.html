@@ -173,6 +173,7 @@
                 }
             </div>
 
+            @if (!empleadoExistente()) {
             <!-- Contraseña -->
             <div class="grupo-input">
                 <label class="input-label">Contraseña</label>
@@ -217,11 +218,10 @@
                 <span class="mensaje-error">Las contraseñas no coinciden.</span>
                 }
             </div>
+            }
             <div class="enlaces-secundarios">
                 <!-- Botón de acción dinámico -->
-                <ion-button expand="block" type="submit" class="btn-principal">{{
-                    textoBoton()
-                }}</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal">{{ textoBoton() }}</ion-button>
 
                 <!-- Redirección al Login -->
                 @if (usuarioRol() == 'cliente') {

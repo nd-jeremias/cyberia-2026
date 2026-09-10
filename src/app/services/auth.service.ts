@@ -27,8 +27,8 @@ export class AuthService {
     apellidos = signal<string | null>(null);
     fotoUrl = signal<string | null>(null);
 
-    galeriaService = inject(GaleriaService)
-    modal = inject(ModalService)
+    galeriaService = inject(GaleriaService);
+    modal = inject(ModalService);
 
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
@@ -103,7 +103,6 @@ export class AuthService {
     }
 
     async login({ email, password }: LoginInterface): Promise<void> {
-
         const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
         const response: AuthResponse = await supabase.auth.signInWithPassword({
@@ -274,6 +273,52 @@ export class AuthService {
             // quede una sesión a medias si el alta falla por el camino.
             await supabase.auth.signOut();
             localStorage.removeItem('user');
+        }
+    }
+
+    async actualizar(id: string, form: FormData): Promise<void> {
+        try {
+            const correo = form.get('correo') as string;
+            const dni = form.get('dni') as string;
+            const nombres = form.get('nombres') as string;
+            const apellidos = form.get('apellidos') as string;
+            const cuil = form.get('cuil') as string;
+            const tipoEmpleado = form.get('tipoEmpleado') as string;
+            const fotoArchivo = form.get('foto');
+
+            const correolimpio = correo.replace(/["']/g, '').trim().toLowerCase();
+            const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
+
+            const datosActualizar: any = {
+                nombres,
+                apellidos,
+                dni,
+                cuil,
+                correo_electronico: correolimpio,
+                perfil: perfilFinal,
+                estado: tipoEmpleado ? 'Activo' : 'Pendiente',
+            };
+
+            // Solo subimos una imagen si realmente llegó un archivo
+            if (fotoArchivo instanceof File) {
+                const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
+
+                if (!publicUrl) {
+                    throw new Error('No se pudo subir la imagen.');
+                }
+
+                datosActualizar.foto_url = publicUrl;
+            }
+
+            const { error } = await supabase.from('usuarios').update(datosActualizar).eq('id', id);
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el usuario.';
+            this.modal.setOpen('Error', mensaje);
+            throw error;
         }
     }
 }

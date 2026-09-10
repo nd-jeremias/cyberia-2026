@@ -47,6 +47,7 @@ export class EmpleadosService {
             foto_url: this.parseFotoUrl(row.foto_url),
             token_push: row.token_push,
             perfil: row.perfil,
+            tipoEmpleado: row.perfil,
         };
     }
 

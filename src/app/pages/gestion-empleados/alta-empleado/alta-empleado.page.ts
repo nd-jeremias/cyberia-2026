@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
@@ -27,6 +27,8 @@ export class AltaEmpleadoPage implements OnInit {
     empleadoId = input<string | undefined>(undefined);
     empleadoExistente = signal<EmpleadoInterface | undefined>(undefined);
 
+    titulo = computed(() => (this.empleadoId() ? 'Editar datos' : 'Registrar empleado'));
+
     constructor() {
         effect(() => {
             const id = this.empleadoId();
@@ -41,7 +43,7 @@ export class AltaEmpleadoPage implements OnInit {
 
         try {
             const empleado = await this.empleadoService.obtenerPorId(id);
-            if (!empleado) return
+            if (!empleado) return;
             this.empleadoExistente.set(empleado);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el empleado.';
@@ -53,18 +55,38 @@ export class AltaEmpleadoPage implements OnInit {
 
     async handleRegistro(formData: FormData) {
         this.spinner.show();
-        try {
-            await this.authService.register(formData);
+        console.log('FORM DATA:');
 
-            const nombre = formData.get('nombre') as String;
-            const apellido = formData.get('apellido') as String;
-            this.spinner.hide();
-            this.modal.setOpen('Registro', `Empleado agregado correctamente:\n ${nombre} ${apellido} dado de alta.`);
+        formData.forEach((valor, clave) => {
+            console.log(clave, ':', valor);
+        });
+        try {
+            const id = this.empleadoId();
+            const nombre = formData.get('nombres') as String;
+            const apellido = formData.get('apellidos') as String;
+
+            if (id) {
+                await this.authService.actualizar(id, formData);
+                this.modal.setOpen(
+                    'Modificacion de datos',
+                    `Se modificaron correctamente los datos de:\n ${nombre} ${apellido}.`
+                );
+            } else {
+                await this.authService.register(formData);
+
+                this.spinner.hide();
+                this.modal.setOpen(
+                    'Registro',
+                    `Empleado agregado correctamente:\n ${nombre} ${apellido} dado de alta.`
+                );
+            }
             this.router.navigate(['/gestion-empleados']);
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
             this.modal.setOpen('Error', error.message || 'No se pudo completar el registro');
+        } finally {
+            this.spinner.hide();
         }
     }
 }

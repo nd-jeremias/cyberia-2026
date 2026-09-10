@@ -1,15 +1,9 @@
 <app-header [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
-    <a accion class="btn-banda" routerLink="/gestion-empleados/alta">
-        <ion-icon name="person-add-outline"></ion-icon>
-        Agregar
-    </a>
+    <a accion class="btn-banda" routerLink="/gestion-empleados/alta"> Agregar </a>
 </app-header>
 
 <ion-content [fullscreen]="true">
-    <ion-button expand="block" class="boton-home" routerLink="/gestion-empleados/alta"> Agregar Empleado </ion-button>
     <section class="listado-clientes">
-        <h2 class="titulo-listado">Empleados</h2>
-
         @if (listaEmpleados().length === 0) {
         <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
         } @else {

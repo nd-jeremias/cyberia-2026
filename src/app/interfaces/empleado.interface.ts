@@ -10,6 +10,7 @@ export interface EmpleadoInterface {
     foto_url: string[] | null;
     token_push: string;
     perfil: PerfilUsuario;
+    tipoEmpleado: TiposEmpleado
 }
 
 export type TiposEmpleado = 'dueño' | 'supervisor' | 'metre' | 'mozo' | 'cocinero' | 'cantinero';

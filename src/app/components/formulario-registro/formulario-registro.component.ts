@@ -9,7 +9,6 @@ import {
     Validators,
 } from '@angular/forms';
 import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton, IonIcon } from '@ionic/angular';
-import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
@@ -60,18 +59,9 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     ],
 })
 export class FormularioRegistroComponent {
-
     // ============================================================
     // CONFIGURACIÓN
     // ============================================================
-
-    private titulosPorRol = {
-        cliente: 'Crear cuenta',
-        dueño: 'Registrar empleado',
-        metre: 'Registrar cliente',
-    };
-
-    tituloEncabezado = computed(() => this.titulosPorRol[this.usuarioRol()]);
 
     private botonesPorRol = {
         cliente: 'Registrarse',
@@ -79,10 +69,19 @@ export class FormularioRegistroComponent {
         metre: 'Registrar cliente', // Ajusta este texto según tu necesidad
     };
 
-    textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);
+    textoBoton = computed(() => {
+        // Si llega el input de empleado, significa que estamos EDITANDO
+        if (this.empleadoExistente()) {
+            return 'Guardar cambios'; // Texto único para edición
+        }
+
+        // Si no hay empleado, es una ALTA. Usamos el rol actual.
+        const rol = this.usuarioRol();
+        return rol ? this.botonesPorRol[rol] : 'Enviar';
+    });
     fotosIniciales = computed<string[]>(() => {
         const fotoUrl = this.empleadoExistente()?.foto_url;
-        console.log('Fotos iniciales:', this.empleadoExistente())
+        console.log('Fotos iniciales:', this.empleadoExistente());
         return fotoUrl ? fotoUrl : [];
     });
 
@@ -147,6 +146,7 @@ export class FormularioRegistroComponent {
             correo: new FormControl('', {
                 validators: [Validators.required, Validators.email],
             }),
+            tipoEmpleado: new FormControl(''),
             perfil: new FormControl(''),
 
             /**
@@ -192,16 +192,16 @@ export class FormularioRegistroComponent {
 
     constructor() {
         // Registramos los íconos
-        addIcons({
-            personAddOutline,
-            personOutline,
-            cardOutline,
-            qrCodeOutline,
-            briefcaseOutline,
-            peopleOutline,
-            mailOutline,
-            lockClosedOutline,
-        });
+        // addIcons({
+        //     personAddOutline,
+        //     personOutline,
+        //     cardOutline,
+        //     qrCodeOutline,
+        //     briefcaseOutline,
+        //     peopleOutline,
+        //     mailOutline,
+        //     lockClosedOutline,
+        // });
 
         /**
          * Este effect se ejecuta cuando cambia:
@@ -219,7 +219,8 @@ export class FormularioRegistroComponent {
             const foto = this.formulario.controls.foto;
             const password = this.formulario.controls.password;
             const confirmPassword = this.formulario.controls.confirmPassword;
-
+            const tipoEmpleado = this.formulario.controls.tipoEmpleado;
+            console.log('TIPO EMPLEADO: ', tipoEmpleado);
             // ====================================================
             // MODO EDICIÓN
             // ====================================================
@@ -232,6 +233,7 @@ export class FormularioRegistroComponent {
                     cuil: empleado.cuil ?? '',
                     correo: empleado.correo_electronico ?? '',
                     perfil: empleado.perfil ?? '',
+                    tipoEmpleado: empleado.tipoEmpleado ?? '',
 
                     /**
                      * NO colocamos empleado.fotoUrl acá.
@@ -251,6 +253,8 @@ export class FormularioRegistroComponent {
                     password: '',
                     confirmPassword: '',
                 });
+
+                this.separarCuil(empleado.cuil);
 
                 // ------------------------------------------------
                 // FOTO OPCIONAL EN EDICIÓN
@@ -302,11 +306,11 @@ export class FormularioRegistroComponent {
 
             if (this.usuarioRol() === 'dueño') {
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
-
+                tipoEmpleado.setValidators([Validators.required]);
                 perfil.setValidators([Validators.required]);
             } else {
                 cuil.clearValidators();
-
+                tipoEmpleado.clearValidators();
                 perfil.clearValidators();
 
                 /**
@@ -314,12 +318,13 @@ export class FormularioRegistroComponent {
                  * cuando el rol no los utiliza.
                  */
                 cuil.reset('');
-
+                tipoEmpleado.reset('');
                 perfil.reset('');
             }
 
             cuil.updateValueAndValidity();
             perfil.updateValueAndValidity();
+            tipoEmpleado.updateValueAndValidity();
         });
     }
 
@@ -380,6 +385,26 @@ export class FormularioRegistroComponent {
         return word[0].toUpperCase() + word.slice(1);
     }
 
+    private separarCuil(cuil: string | null | undefined): void {
+        if (!cuil) {
+            this.cuilPrefijo.set('');
+            this.cuilSufijo.set('');
+            return;
+        }
+
+        const cuilLimpio = cuil.replace(/\D/g, '');
+
+        if (cuilLimpio.length !== 11) {
+            console.warn('CUIL inválido:', cuil);
+            this.cuilPrefijo.set('');
+            this.cuilSufijo.set('');
+            return;
+        }
+
+        this.cuilPrefijo.set(cuilLimpio.substring(0, 2));
+        this.cuilSufijo.set(cuilLimpio.substring(10, 11));
+    }
+
     // ============================================================
     // VALIDACIÓN
     // ============================================================
@@ -423,7 +448,7 @@ export class FormularioRegistroComponent {
         if (this.validateForm(this.formulario) || this.formulario.invalid) {
             return;
         }
-
+        console.log('ONREGISTRO FORM: ', this.formulario.value); // Aqui imprime el formulario con los valores modificados
         const datosRegistro = this.formulario.getRawValue();
         const formData = new FormData();
 
@@ -437,6 +462,7 @@ export class FormularioRegistroComponent {
         formData.append('nombres', this.toCapitalize(datosRegistro.nombres ?? ''));
         formData.append('correo', (datosRegistro.correo ?? '').toLowerCase().trim());
         formData.append('perfil', datosRegistro.perfil ?? '');
+        formData.append('tipoEmpleado', datosRegistro.tipoEmpleado ?? '');
 
         // ========================================================
         // PASSWORD

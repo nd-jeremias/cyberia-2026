@@ -32,10 +32,16 @@ export class GestionEmpleadosPage implements OnInit {
     listaEmpleados = signal<EmpleadoInterface[]>([]);
 
     async ngOnInit(): Promise<void> {
-        const data = await this.empleadosService.getEmpleados();
-        if (!data) return;
-
-        this.listaEmpleados.set(data);
+        this.spinner.show();
+        try {
+            const data = await this.empleadosService.getEmpleados();
+            this.listaEmpleados.set(data);
+        } catch (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los productos.';
+            this.modal.setOpen('Error', mensaje);
+        } finally {
+            this.spinner.hide();
+        }
     }
 
     private async confirmarEliminar(empleado: EmpleadoInterface) {
@@ -65,7 +71,7 @@ export class GestionEmpleadosPage implements OnInit {
         await alerta.present();
     }
 
-    async onEditar(empleado: EmpleadoInterface){
+    async onEditar(empleado: EmpleadoInterface) {
         this.router.navigate(['/gestion-empleados/alta'], {
             queryParams: { empleadoId: empleado.id },
         });
