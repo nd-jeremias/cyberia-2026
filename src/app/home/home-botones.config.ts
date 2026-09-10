@@ -23,6 +23,11 @@ const BOTONES_GESTION: BotonHome[] = [
         icono: 'person-circle-outline',
         ruta: '/gestion-clientes',
     },
+    {
+        texto: 'QR de ingreso al local',
+        icono: 'qr-code-outline',
+        ruta: '/qr-local',
+    },
 ];
 
 // Cocinero y cantinero comparten las mismas pantallas (el rol decide adentro
@@ -32,6 +37,16 @@ const BOTONES_PEDIDOS: BotonHome[] = [
         texto: 'Pedidos',
         icono: 'list-outline',
         ruta: '/pedidos',
+    },
+];
+
+// Los dos perfiles de cliente arrancan igual: sin mesa, lo único que pueden
+// hacer es anotarse en la lista de espera escaneando el QR de la puerta.
+const BOTONES_CLIENTE: BotonHome[] = [
+    {
+        texto: 'Escanear QR de ingreso',
+        icono: 'qr-code-outline',
+        ruta: '/escanear-ingreso',
     },
 ];
 
@@ -85,8 +100,6 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
         ...BOTONES_PEDIDOS,
     ],
 
-    // Pendiente de definir (ver bocetos de pantallas de cliente): por ahora
-    // sin botones propios en este home compartido.
-    'cliente registrado': [],
-    'cliente anónimo': [],
+    'cliente registrado': BOTONES_CLIENTE,
+    'cliente anónimo': BOTONES_CLIENTE,
 };

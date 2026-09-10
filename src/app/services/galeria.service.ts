@@ -92,13 +92,25 @@ export class GaleriaService {
         }
     }
 
-    async subirImagenDb(fotoArchivo: File, ruta:string, nombre?: string): Promise<string> {
+    /**
+     * Sube un archivo al bucket y devuelve su URL pública.
+     *
+     * `reemplazar` en true pisa el archivo si ya existe. Hace falta cuando el
+     * nombre es determinístico (el QR de una mesa, por ejemplo): sin eso, al
+     * regenerarlo la subida falla porque el archivo ya está.
+     */
+    async subirImagenDb(
+        fotoArchivo: File,
+        ruta: string,
+        nombre?: string,
+        reemplazar = false
+    ): Promise<string> {
         const nombreNuevo =  nombre ? nombre : fotoArchivo.name;
         const rutaArchivo = `${ruta}/${nombreNuevo}`;
 
-        const { data: storageData, error: storageError } = await supabase.storage
+        const { error: storageError } = await supabase.storage
             .from('Fotos')
-            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: false });
+            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: reemplazar });
 
         if (storageError) throw storageError;
 

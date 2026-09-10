@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS public.usuarios;
 DROP TABLE IF EXISTS public.clientes_anonimos;
 DROP TYPE IF EXISTS public.usuarios_rol;
 DROP TYPE IF EXISTS public.usuarios_estado;
+DROP TYPE IF EXISTS public.estado_en_resto;
 
 -- =========================================================================
 -- 2. CREACIÓN DE TIPOS ENUM
@@ -22,6 +23,17 @@ CREATE TYPE public.usuarios_rol AS ENUM (
     'cantinero',
     'cliente registrado',
     'cliente anónimo'
+);
+
+-- Dónde está parado el cliente dentro del circuito del local. Arranca en
+-- 'libre' y avanza al escanear el QR de ingreso (punto 9), al recibir mesa del
+-- metre (punto 10), al sentarse y al pedir la cuenta (punto 21).
+CREATE TYPE public.estado_en_resto AS ENUM (
+    'libre',
+    'esperando_mesa',
+    'mesa_asignada',
+    'sentado',
+    'pagando'
 );
 
 CREATE TYPE public.usuarios_estado AS ENUM (
@@ -50,6 +62,13 @@ CREATE TABLE public.usuarios (
     foto_url TEXT NULL, 
     estado public.usuarios_estado NOT NULL DEFAULT 'Activo',
     token_push TEXT NULL, -- Token de FCM del dispositivo, para notificaciones push
+
+    -- Circuito del cliente dentro del local. La lista de espera del metre es,
+    -- justamente, quienes están en 'esperando_mesa'.
+    estado_en_resto public.estado_en_resto NOT NULL DEFAULT 'libre',
+    -- Mesa que tiene asignada ahora mismo. Sin REFERENCES acá porque `mesas`
+    -- todavía no existe: la clave foránea se agrega al final de mesas.sql.
+    mesa_id UUID NULL,
     fecha_registro TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 

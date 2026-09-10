@@ -827,3 +827,25 @@ ion-alert {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* === 9. Lector de códigos QR ==============================================
+   El plugin de escaneo dibuja la cámara *detrás* del webview: para verla hay
+   que volver transparente todo lo que tape. `QrService` agrega esta clase al
+   <body> mientras el lector está abierto y la saca al cerrarlo.
+
+   Sin estas reglas el escáner "no anda": la cámara está prendida, pero queda
+   escondida abajo del fondo de la aplicación.
+   ========================================================================= */
+
+body.barcode-scanner-active {
+    visibility: hidden;
+    --background: transparent;
+    --ion-background-color: transparent;
+    background: transparent;
+}
+
+/* La interfaz propia del lector (botón de cancelar, marco de puntería) se
+   marca con esta clase para seguir visible sobre la cámara. */
+body.barcode-scanner-active .barcode-scanner-ui {
+    visibility: visible;
+}

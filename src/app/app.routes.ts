@@ -39,6 +39,19 @@ export const routes: Routes = [
         path: 'registrarse',
         loadComponent: () => import('./pages/registrarse/registrarse.page').then((m) => m.RegistrarsePage),
     },
+    // Punto 9: el cliente escanea el QR de la puerta y entra a la lista de espera.
+    {
+        path: 'escanear-ingreso',
+        loadComponent: () =>
+            import('./pages/escanear-ingreso/escanear-ingreso.page').then((m) => m.EscanearIngresoPage),
+        canActivate: [authGuard],
+    },
+    // El QR de ingreso, para imprimirlo y pegarlo en la puerta.
+    {
+        path: 'qr-local',
+        loadComponent: () => import('./pages/qr-local/qr-local.page').then((m) => m.QrLocalPage),
+        canActivate: [authGuard],
+    },
     // Punto 9: el cliente anónimo entra con nombre y foto, sin aprobación.
     {
         path: 'ingreso-anonimo',

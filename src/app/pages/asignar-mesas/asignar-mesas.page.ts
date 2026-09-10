@@ -3,6 +3,7 @@ import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
+import { SalonService } from '../../services/salon.service';
 import { ModalService } from '../../services/modal.service';
 import { supabase } from '../../services/supabase.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
@@ -33,6 +34,7 @@ import { HeaderComponent } from '../../components/header/header.component';
 })
 export class AsignarMesasPage implements OnInit {
     private mesaService = inject(MesaService);
+    private salonService = inject(SalonService);
     private modal = inject(ModalService);
 
     clientes = signal<ClientePendienteInterface[]>([]);
@@ -71,10 +73,12 @@ export class AsignarMesasPage implements OnInit {
     }
 
     /**
-     * Trae los clientes registrados que pueden recibir mesa.
+     * Trae la lista de espera: los clientes que escanearon el QR de la puerta.
      *
-     * Se filtra por estado Activo porque un cliente pendiente o rechazado no
-     * debería siquiera aparecer como opción (puntos 5, 7 y 8).
+     * No es la lista de todos los clientes del local, sino la de quienes están
+     * esperando mesa ahora mismo (punto 9). Entran los dos perfiles de cliente,
+     * porque el anónimo también se anota, y salen solos al recibir mesa: el
+     * filtro es el propio estado, no una tabla aparte que haya que mantener.
      */
     async cargarClientes() {
         try {
@@ -83,9 +87,8 @@ export class AsignarMesasPage implements OnInit {
                 .select(
                     'id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro'
                 )
-                .eq('perfil', 'cliente registrado')
-                .eq('estado', 'Activo')
-                .order('apellidos', { ascending: true });
+                .eq('estado_en_resto', 'esperando_mesa')
+                .order('fecha_registro', { ascending: true });
 
             if (error) throw error;
 
@@ -93,9 +96,11 @@ export class AsignarMesasPage implements OnInit {
                 (data ?? []).map((fila) => ({
                     id: fila.id,
                     nombres: fila.nombres,
-                    apellidos: fila.apellidos,
-                    dni: fila.dni,
-                    correo: fila.correo_electronico,
+                    // El cliente anónimo entra sólo con nombre y foto: el resto
+                    // de los campos vienen en null y la tarjeta los muestra vacíos.
+                    apellidos: fila.apellidos ?? '',
+                    dni: fila.dni ?? '',
+                    correo: fila.correo_electronico ?? '',
                     fotoUrl: fila.foto_url,
                     estado: 'Activo' as const,
                     fechaRegistro: fila.fecha_registro,
@@ -145,6 +150,23 @@ export class AsignarMesasPage implements OnInit {
             cliente.id
         );
 
-        if (asignada) this.clienteElegido.set(null);
+        if (!asignada) return;
+
+        // La mesa ya quedó tomada; ahora el cliente sale de la lista de espera
+        // y pasa a 'mesa_asignada'. Si esto fallara quedaría una mesa ocupada
+        // por alguien que sigue figurando en la lista, así que se avisa.
+        try {
+            await this.salonService.asignarMesa(cliente.id, mesa.id);
+        } catch (error) {
+            const mensaje =
+                error instanceof Error
+                    ? error.message
+                    : 'La mesa quedó tomada pero no se pudo actualizar el estado del cliente.';
+
+            this.modal.setOpen('Revisar la asignación', mensaje);
+        }
+
+        this.clienteElegido.set(null);
+        await this.cargarClientes();
     }
 }
