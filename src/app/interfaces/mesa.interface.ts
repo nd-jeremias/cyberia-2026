@@ -13,9 +13,8 @@ export interface MesaAltaInterface {
     numeroMesa: number;
     cantidadLugares: number;
     tipo: TipoMesa;
-    fotos: File[];
-    // El código QR no viaja acá: lo genera `MesaDbService`, que es quien conoce
-    // el id definitivo de la mesa y por lo tanto lo que va adentro del código.
+    fotos: File;
+    qrFile: File; // o url, corregir cuando sea necesario
 }
 
 // Refleja el ENUM disponibilidad_mesa de sql/mesas.sql.

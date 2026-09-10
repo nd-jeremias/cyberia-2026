@@ -7,9 +7,19 @@
 
 <ion-content [fullscreen]="true">
     <div class="hoja">
-        <div class="estado-vacio">
-            <ion-icon name="grid-outline"></ion-icon>
-            <p>Todavía no hay mesas cargadas.</p>
+        <div class="lista">
+            @if(mesasCargadas().length > 0) { @for(mesa of mesasCargadas(); track mesa.id) {
+            <app-tarjeta-mesa
+                [mesa]="mesa"
+                (editarMesa)="onEditar($event)"
+                (eliminarMesa)="onEliminar($event)"
+            ></app-tarjeta-mesa>
+            } } @else {
+            <div class="estado-vacio">
+                <ion-icon name="grid-outline"></ion-icon>
+                <p>Todavía no hay mesas cargadas.</p>
+            </div>
+            }
         </div>
     </div>
 </ion-content>

@@ -120,7 +120,7 @@
                 <div class="caja-input">
                     <ion-icon name="people-outline" class="icono-campo"></ion-icon>
                     <ion-select
-                        formControlName="tipoEmpleado"
+                        formControlName="perfil"
                         label="Tipo de empleado"
                         labelPlacement="floating"
                         placeholder="Seleccionar"
@@ -144,6 +144,8 @@
                     (imagenesChange)="recibirImagenes($event)"
                     [modoCamara]="'camara'"
                     [direccionCamara]="direccionCamara()"
+                    [imagenesIniciales]="fotosIniciales()"
+                    (urlsExistentesChange)="onUrlsExistentes($event)"
                 >
                 </app-subida-imagenes>
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
@@ -171,6 +173,7 @@
                 }
             </div>
 
+            @if (!empleadoExistente()) {
             <!-- Contraseña -->
             <div class="grupo-input">
                 <label class="input-label">Contraseña</label>
@@ -215,11 +218,10 @@
                 <span class="mensaje-error">Las contraseñas no coinciden.</span>
                 }
             </div>
+            }
             <div class="enlaces-secundarios">
                 <!-- Botón de acción dinámico -->
-                <ion-button expand="block" type="submit" class="btn-principal">{{
-                    textoBoton()
-                }}</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal">{{ textoBoton() }}</ion-button>
 
                 <!-- Redirección al Login -->
                 @if (usuarioRol() == 'cliente') {

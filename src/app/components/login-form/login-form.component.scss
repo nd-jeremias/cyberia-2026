@@ -49,20 +49,17 @@
 
         display: flex;
         justify-content: center;
-        padding: 0 1.5rem 0.875rem;
+        // padding: 0 1.5rem 0.875rem;
 
         img {
-            width: 9.5rem;
+            width: 12rem;
             max-width: 46%;
             height: auto;
 
-            padding: 0.625rem 0.875rem;
+            padding: 0.225rem 0.475rem;
             box-sizing: border-box;
-
-            background: radial-gradient(circle at 50% 40%, #123055 0%, #0a1c33 70%);
-            border: 0.125rem solid rgba(255, 255, 255, 0.42);
-            border-radius: var(--radio-grande);
-            box-shadow: 0 0.625rem 1.5rem rgba(90, 30, 5, 0.4);
+            /* Nace blanco con 60% de opacidad y se difumina hacia tu fondo vainilla */
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(247, 239, 227, 0) 60%);
         }
     }
 }
@@ -148,10 +145,7 @@
     color: var(--tinta-media);
     cursor: pointer;
 
-    transition:
-        border-color 0.18s ease,
-        color 0.18s ease,
-        background 0.18s ease;
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
 
     &:hover {
         border-color: var(--naranja);
@@ -199,10 +193,7 @@
     transform: translateY(0.75rem) scale(0.98);
     transform-origin: bottom center;
 
-    transition:
-        opacity 0.2s ease,
-        transform 0.24s cubic-bezier(0.32, 0.72, 0, 1),
-        visibility 0.24s;
+    transition: opacity 0.2s ease, transform 0.24s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.24s;
 }
 
 .accesos-abiertos {
@@ -260,10 +251,7 @@
     text-align: left;
     cursor: pointer;
 
-    transition:
-        transform 0.14s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
+    transition: transform 0.14s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 
     &:hover {
         border-color: var(--color-perfil);
@@ -307,13 +295,27 @@
     }
 }
 
-.perfil-duenio { --color-perfil: var(--perfil-duenio); }
-.perfil-supervisor { --color-perfil: var(--perfil-supervisor); }
-.perfil-metre { --color-perfil: var(--perfil-metre); }
-.perfil-mozo { --color-perfil: var(--perfil-mozo); }
-.perfil-cocinero { --color-perfil: var(--perfil-cocinero); }
-.perfil-cantinero { --color-perfil: var(--perfil-cantinero); }
-.perfil-cliente { --color-perfil: var(--perfil-cliente); }
+.perfil-duenio {
+    --color-perfil: var(--perfil-duenio);
+}
+.perfil-supervisor {
+    --color-perfil: var(--perfil-supervisor);
+}
+.perfil-metre {
+    --color-perfil: var(--perfil-metre);
+}
+.perfil-mozo {
+    --color-perfil: var(--perfil-mozo);
+}
+.perfil-cocinero {
+    --color-perfil: var(--perfil-cocinero);
+}
+.perfil-cantinero {
+    --color-perfil: var(--perfil-cantinero);
+}
+.perfil-cliente {
+    --color-perfil: var(--perfil-cliente);
+}
 
 /* Teléfonos de pantalla baja: se recorta lo que no es control para que el
    formulario entre sin desplazarse. */

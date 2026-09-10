@@ -1,0 +1,46 @@
+<article class="tarjeta-mesa">
+    <div class="container">
+        @if (!mesa().fotoUrl) {
+        <div class="container-placeholder">
+            <ion-icon name="image-outline"></ion-icon>
+            <span>Sin imagen disponible</span>
+        </div>
+        } @else {
+        <div class="container-pista">
+            <div class="container-slide">
+                @if (!mesa().fotoUrl) {
+                <div class="container-placeholder">
+                    <ion-icon name="image-outline"></ion-icon>
+                    <span>Sin imagen disponible</span>
+                </div>
+                } @else {
+                <img class="foto-principal" [src]="mesa().fotoUrl" [alt]="mesa().numeroMesa" />
+                }
+            </div>
+        </div>
+        }
+    </div>
+
+    <div class="contenido">
+        <h3 class="numero">NÚMERO: {{ mesa().numeroMesa }}</h3>
+
+        <div class="detalles">
+            <span class="detalle">
+                <ion-icon name="time-outline"></ion-icon>
+                {{ mesa().tipo }}
+            </span>
+            <span class="lugares">Lugares: {{ mesa().cantidadLugares }}</span>
+        </div>
+
+        <div class="acciones-gestion">
+            <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
+                <ion-icon name="create-outline" slot="start"></ion-icon>
+                Editar
+            </ion-button>
+            <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
+                <ion-icon name="trash-outline" slot="start"></ion-icon>
+                Eliminar
+            </ion-button>
+        </div>
+    </div>
+</article>

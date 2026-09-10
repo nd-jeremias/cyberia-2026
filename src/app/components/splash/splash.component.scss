@@ -28,8 +28,7 @@ ion-content {
 /* --- CAPA 1: LOGOTIPO ANIMADO Y TEXTURA --- */
 
 .layer-animated {
-    @extend %fondo-presentacion;
-
+    background-color: #e2571c;
     position: absolute;
     inset: 0;
     z-index: 2;
@@ -37,22 +36,29 @@ ion-content {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* Se desvanece a los 2,5 s para dar tiempo al latido del logotipo. */
+    z-index: 2;
+    /* Mantenemos tu salida: desaparece a los 2.5s para dar tiempo al latido */
     animation: fadeOutLayer 0.5s ease-out 2.5s forwards;
 }
 
 /* Patrón gastronómico de fondo, muy tenue: da textura sin competir. */
 .background-pattern {
     position: absolute;
-    inset: 0;
-    z-index: 1;
-
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background-image: url("../../../assets/patron_splash_blanco.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    opacity: 0.16;
+    opacity: 0.25; /* Súper tenue para que no compita visualmente */
+    z-index: 1;
+}
+
+.full-img {
+    background-image: url("../../../assets/patron_full_blanco.png");
+    opacity: 0.1;
 }
 
 .animated-logo {
@@ -64,20 +70,20 @@ ion-content {
     height: auto;
     opacity: 0;
 
-    /* Resplandor de neón sobre el logotipo. */
-    filter: drop-shadow(0 0 1.75rem rgba(87, 216, 234, 0.55));
+    /* Resplandor tecnológico azulado sobre el logo */
+    // filter: drop-shadow(0px 0px 25px rgba(0, 162, 255, 0.45));
+    filter: drop-shadow(0px 0px 25px rgb(250, 250, 250, 0.45));
 
-    /* Entrada (una vez) encadenada con el latido (en bucle a partir de 0,9 s). */
-    animation:
-        logoEntrance 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards,
+    /* TRUCO CLAVE: Encadenamos la animación de Entrada (ejecuta una vez) 
+       y la animación de Latido (corre en bucle infinito tras 0.8 segundos) */
+    animation: logoEntrance 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards,
         latidoCyberia 2.5s ease-in-out 0.9s infinite;
 }
 
 /* --- CAPA 2: NOMBRE DEL GRUPO E INTEGRANTES --- */
 
 .layer-html-credits {
-    @extend %fondo-presentacion;
-
+    background-color: #e2571c;
     position: absolute;
     inset: 0;
     z-index: 1;
@@ -98,15 +104,12 @@ ion-content {
     height: 80vh;
     padding: 1.25rem 1rem;
     box-sizing: border-box;
+    padding: 20px 0;
 }
 
-/* Nombre del grupo: el dato de mayor jerarquía de esta pantalla. */
-.credits-group {
-    margin: 0 0 0.25rem;
-
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+.credits-title {
+    color: #f5e1d5;
+    font-size: 1rem;
     text-transform: uppercase;
     color: #f4f9ff;
     text-shadow: 0 0 1.5rem rgba(87, 216, 234, 0.55);
@@ -146,10 +149,8 @@ ion-content {
 
         opacity: 0;
         animation: fadeInText 0.5s ease-out 2.8s forwards;
-
-        /* Degradado sobre el texto: el nombre se lee como metal pulido, un
-           detalle que las presentaciones de marca usan mucho. */
-        background: linear-gradient(to bottom, #ffffff 40%, #b9d0e7 100%);
+        
+        background: linear-gradient(to bottom, #ffffff 40%, #b0c4de 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -171,46 +172,36 @@ ion-content {
 }
 
 .names-list li.divider-line {
-    display: block;
-    align-self: center;
-
     width: 45%;
-    height: 0.125rem;
-
+    height: 3px;
+    align-self: center;
+    display: block;
     opacity: 0;
-    animation: fadeInText 0.5s ease-out 2.9s forwards;
-
+    animation: fadeInText 0.5s ease-out 2.8s forwards;
+    
     -webkit-background-clip: initial !important;
     background-clip: initial !important;
     -webkit-text-fill-color: initial !important;
-
-    /* Filo de neón entre integrantes, en lugar de una línea blanca. */
+    
     background: linear-gradient(
-        90deg,
-        rgba(87, 216, 234, 0) 0%,
-        rgba(87, 216, 234, 0.55) 50%,
-        rgba(87, 216, 234, 0) 100%
-    ) !important;
+        to right,
+        rgba(250, 250, 250, 0.1) 0%,
+        rgba(250, 250, 250, 0.8) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+        ) !important;
 }
 
+/* Estilos de fuentes */
 .first-name,
 .last-name {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    line-height: 1.15;
-}
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
 
-/* En pantallas bajas se achica todo para que ningún nombre quede cortado. */
-@media (max-height: 40rem) {
-    .credits-group {
-        font-size: 1.5rem;
-    }
-
-    .first-name,
-    .last-name {
-        font-size: 1.375rem;
-    }
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    color: #f5e1d5;
+    font-weight: 600;
 }
 
 /* --- ANIMACIONES --- */
@@ -228,12 +219,14 @@ ion-content {
 
 /* Latido sutil: el logotipo respira mientras se espera. */
 @keyframes latidoCyberia {
-    0%,
-    100% {
+    0% {
         transform: scale(1);
     }
     50% {
         transform: scale(1.05);
+    } /* Engorda un 5% de manera sutil */
+    100% {
+        transform: scale(1);
     }
 }
 

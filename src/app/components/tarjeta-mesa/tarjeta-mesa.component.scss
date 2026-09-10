@@ -1,0 +1,194 @@
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tarjeta-mesa {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    overflow: hidden;
+    box-shadow: var(--sombra-tarjeta);
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+        transform: translateY(-0.1875rem);
+        border-color: rgba(247, 165, 59, 0.4);
+        box-shadow: var(--sombra-elevada);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   container de fotos
+   --------------------------------------------------------------------------- */
+
+.container {
+    position: relative;
+    width: 100%;
+
+    /* Algo más alta que 4:3: con la foto a "cover", darle presencia es lo que
+       hace que la carta se vea apetitosa y no un listado administrativo. */
+    aspect-ratio: 5 / 4;
+    overflow: hidden;
+    background-color: var(--hoja-alta);
+
+    // Deja pasar el desplazamiento vertical: el gesto horizontal es del container.
+    touch-action: pan-y;
+}
+
+.container-pista {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.container-slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* La foto llena el contenedor de lado a lado. */
+.foto-principal {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.container-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    color: var(--tinta-suave);
+    background: var(--grad-campo);
+
+    ion-icon {
+        font-size: 2.75rem;
+        opacity: 0.7;
+    }
+
+    span {
+        font-size: var(--texto-epigrafe);
+        font-weight: 600;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Contenido
+   --------------------------------------------------------------------------- */
+
+.contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    padding: 1rem;
+}
+
+.numero {
+    margin: 0;
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--tinta);
+
+    /* Los nombres se cargan como vienen escritos ("plato 1"); en la carta se
+       muestran con mayúscula inicial sin tener que tocar el dato guardado. */
+    text-transform: capitalize;
+}
+
+.detalles {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 0.0625rem solid var(--hoja-borde);
+}
+
+.detalle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    padding: 0.3125rem 0.625rem;
+    border-radius: 999px;
+
+    background: var(--velo-tinta);
+    border: 0.0625rem solid var(--hoja-borde);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    color: var(--tinta-media);
+    white-space: nowrap;
+
+    ion-icon {
+        font-size: 1rem;
+        color: var(--naranja);
+    }
+}
+
+.lugares {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--naranja-hondo);
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   Acciones
+   --------------------------------------------------------------------------- */
+
+/* El aspecto lo aporta `.btn-principal` de global.scss; acá sólo el alto
+   propio de la tarjeta, algo más bajo que el de un formulario. */
+ion-button.boton-agregar {
+    margin-top: 0.75rem;
+    min-height: 3.25rem;
+}
+
+.acciones-gestion {
+    display: flex;
+    gap: 0.625rem;
+    margin-top: 0.75rem;
+
+    ion-button {
+        flex: 1 1 0;
+        margin: 0;
+        min-height: 3rem;
+        font-size: var(--texto-apoyo);
+        font-weight: 800;
+    }
+}
+
+.boton-editar {
+    --border-color: var(--hoja-borde-fuerte);
+    --border-width: 0.125rem;
+    --color: var(--tinta);
+    --background-hover: rgba(255, 255, 255, 0.09);
+}
+
+.boton-eliminar {
+    --border-radius: var(--radio);
+    --color: var(--tinta);
+}

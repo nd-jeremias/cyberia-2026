@@ -41,7 +41,15 @@ export class MesaDbService {
             return this.galeriaService.subirImagenDb(archivo, 'mesas', nombrePersonalizado, true);
         });
 
-        const urlsPublicas = await Promise.all(promesasDeSubida);
+            // Ejecutamos las subidas en paralelo
+            // const urlsPublicas = await Promise.all(promesasDeSubida);
+
+            // Las siguientes 3 lineas suben 1 sola img:
+            const extension = mesa.fotos.name.split('.').pop() || 'png';
+            const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
+            const urlsPublicas = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', nombrePersonalizado);
+
+            if (!urlsPublicas) throw Error;
 
         const { error } = await supabase.from('mesas').insert({
             id: mesaId,
@@ -53,8 +61,30 @@ export class MesaDbService {
             foto_url: urlsPublicas,
         });
 
-        // Se propaga: antes se registraba en consola y la pantalla mostraba
-        // "mesa cargada" aunque no se hubiera guardado nada.
-        if (error) throw error;
+            if (error) throw error;
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    async eliminar(mesaId: string, fotoUrl: string) {
+        // 1. Si la mesa tiene foto, la borramos primero del bucket
+        if (fotoUrl) {
+            const filePath = this.galeriaService.obtenerPathDesdeUrl(fotoUrl, 'Fotos');
+            if (filePath) {
+                const { error: storageError } = await supabase.storage.from('Fotos').remove([filePath]); // Recibe un array de rutas
+
+                if (storageError) {
+                    console.error('Error al borrar la foto del bucket:', storageError);
+                    throw new Error();
+                }
+            }
+        }
+
+        // 2. Procedemos a borrar el registro de la mesa en la base de datos
+        const { error: dbError } = await supabase.from('mesas').delete().eq('id', mesaId);
+
+        if (dbError) throw dbError;
     }
 }

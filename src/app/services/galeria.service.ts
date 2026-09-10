@@ -84,9 +84,7 @@ export class GaleriaService {
             return results;
         } catch (e) {
             const error = e as any;
-            const message = error.code
-                ? `[${error.code}] ${error.message}`
-                : error.message;
+            const message = error.code ? `[${error.code}] ${error.message}` : error.message;
             console.error('chooseFromGallery failed:', message);
             throw new Error(message);
         }
@@ -118,5 +116,25 @@ export class GaleriaService {
         const { data: urlData } = supabase.storage.from('Fotos').getPublicUrl(rutaArchivo);
 
         return urlData.publicUrl;
+    }
+
+    obtenerPathDesdeUrl(url: string, bucketName: string): string {
+        try {
+            const urlObjeto = new URL(url);
+            const pathname = urlObjeto.pathname; // Devuelve: "/storage/v1/object/public/Fotos/mesas/mesa55-foto-1.jpg"
+
+            // Construimos exactamente el prefijo de la URL pública de Supabase
+            const prefijo = `/storage/v1/object/public/${bucketName}/`;
+
+            if (pathname.includes(prefijo)) {
+                // Retorna todo lo que esté después de la carpeta del bucket: "mesas/mesa55-foto-1.jpg"
+                return pathname.substring(pathname.indexOf(prefijo) + prefijo.length);
+            }
+
+            return '';
+        } catch (error) {
+            console.error('La URL provista no es válida:', error);
+            return '';
+        }
     }
 }
