@@ -18,48 +18,39 @@ export class MesaDbService {
      * QR después y volver a actualizar la fila.
      */
     async altaMesa(mesa: MesaAltaInterface): Promise<void> {
-        // Postgres acepta un id propio; su DEFAULT sólo actúa si no se envía.
-        const mesaId = crypto.randomUUID();
+        try {
+            // Postgres acepta un id propio; su DEFAULT sólo actúa si no se envía.
+            const mesaId = crypto.randomUUID();
 
-        // Dentro del QR va únicamente el id. Nada de número, tipo ni cantidad de
-        // lugares: son datos editables, y el QR se imprime y se pega en la mesa,
-        // así que cualquier cambio posterior dejaría el papel mintiendo.
-        const archivoQr = await this.qrService.generateQrFile(
-            this.qrService.contenidoMesa(mesaId),
-            `mesa-${mesa.numeroMesa}-qr.png`
-        );
+            // Dentro del QR va únicamente el id. Nada de número, tipo ni cantidad de
+            // lugares: son datos editables, y el QR se imprime y se pega en la mesa,
+            // así que cualquier cambio posterior dejaría el papel mintiendo.
+            const archivoQr = await this.qrService.generateQrFile(
+                this.qrService.contenidoMesa(mesaId),
+                `mesa-${mesa.numeroMesa}-qr.png`
+            );
 
-        // `upsert` en true: el nombre del archivo es fijo por mesa, así que al
-        // regenerar el QR de una mesa existente se pisa el anterior en lugar de
-        // fallar por duplicado.
-        const publicQrUrl = await this.galeriaService.subirImagenDb(archivoQr, 'qr', `${mesaId}-qr.png`, true);
-
-        const promesasDeSubida = mesa.fotos.map((archivo, index) => {
-            const extension = archivo.name.split('.').pop() || 'png';
-            const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${index + 1}.${extension}`;
-
-            return this.galeriaService.subirImagenDb(archivo, 'mesas', nombrePersonalizado, true);
-        });
-
-            // Ejecutamos las subidas en paralelo
-            // const urlsPublicas = await Promise.all(promesasDeSubida);
+            // `upsert` en true: el nombre del archivo es fijo por mesa, así que al
+            // regenerar el QR de una mesa existente se pisa el anterior en lugar de
+            // fallar por duplicado.
+            const publicQrUrl = await this.galeriaService.subirImagenDb(archivoQr, 'qr', `${mesaId}-qr.png`, true);
 
             // Las siguientes 3 lineas suben 1 sola img:
             const extension = mesa.fotos.name.split('.').pop() || 'png';
             const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
-            const urlsPublicas = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', nombrePersonalizado);
+            const urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', nombrePersonalizado);
 
-            if (!urlsPublicas) throw Error;
+            if (!urlPublica) throw Error;
 
-        const { error } = await supabase.from('mesas').insert({
-            id: mesaId,
-            numero_mesa: mesa.numeroMesa,
-            cantidad_lugares: mesa.cantidadLugares,
-            tipo: mesa.tipo,
-            disponibilidad: 'disponible',
-            qr_url: publicQrUrl,
-            foto_url: urlsPublicas,
-        });
+            const { error } = await supabase.from('mesas').insert({
+                id: mesaId,
+                numero_mesa: mesa.numeroMesa,
+                cantidad_lugares: mesa.cantidadLugares,
+                tipo: mesa.tipo,
+                disponibilidad: 'disponible',
+                qr_url: publicQrUrl,
+                foto_url: urlPublica,
+            });
 
             if (error) throw error;
         } catch (error) {
