@@ -45,7 +45,27 @@ export class MesaDbService {
             if (error) throw error;
         } catch (error) {
             console.log(error);
-            throw error
+            throw error;
         }
+    }
+
+    async eliminar(mesaId: string, fotoUrl: string) {
+        // 1. Si la mesa tiene foto, la borramos primero del bucket
+        if (fotoUrl) {
+            const filePath = this.galeriaService.obtenerPathDesdeUrl(fotoUrl, 'Fotos');
+            if (filePath) {
+                const { error: storageError } = await supabase.storage.from('Fotos').remove([filePath]); // Recibe un array de rutas
+
+                if (storageError) {
+                    console.error('Error al borrar la foto del bucket:', storageError);
+                    throw new Error();
+                }
+            }
+        }
+
+        // 2. Procedemos a borrar el registro de la mesa en la base de datos
+        const { error: dbError } = await supabase.from('mesas').delete().eq('id', mesaId);
+
+        if (dbError) throw dbError;
     }
 }

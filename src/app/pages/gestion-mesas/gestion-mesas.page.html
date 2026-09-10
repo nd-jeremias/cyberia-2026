@@ -9,7 +9,11 @@
     <div class="hoja">
         <div class="lista">
             @if(mesasCargadas().length > 0) { @for(mesa of mesasCargadas(); track mesa.id) {
-            <app-tarjeta-mesa [mesa]="mesa"></app-tarjeta-mesa>
+            <app-tarjeta-mesa
+                [mesa]="mesa"
+                (editarMesa)="onEditar($event)"
+                (eliminarMesa)="onEliminar($event)"
+            ></app-tarjeta-mesa>
             } } @else {
             <div class="estado-vacio">
                 <ion-icon name="grid-outline"></ion-icon>

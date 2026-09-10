@@ -1,4 +1,4 @@
-import { Component, computed, input, OnInit } from '@angular/core';
+import { Component, computed, input, OnInit, output } from '@angular/core';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { IonIcon, IonButton } from '@ionic/angular';
 
@@ -10,12 +10,18 @@ import { IonIcon, IonButton } from '@ionic/angular';
 })
 export class TarjetaMesaComponent implements OnInit {
     mesa = input.required<MesaInterface>();
+    editarMesa = output<MesaInterface>();
+    eliminarMesa = output<MesaInterface>();
 
     constructor() {}
 
     ngOnInit() {}
 
-    onEditar() {}
+    onEditar() {
+        this.editarMesa.emit(this.mesa());
+    }
 
-    onEliminar() {}
+    onEliminar() {
+        this.eliminarMesa.emit(this.mesa());
+    }
 }
