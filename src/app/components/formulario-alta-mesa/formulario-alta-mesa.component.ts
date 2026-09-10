@@ -6,6 +6,7 @@ import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
+import { QrService } from '../../services/qr.service';
 
 /**
  * Formulario de alta de mesa (punto 4 del enunciado).
@@ -23,6 +24,7 @@ import { FileService } from '../../services/file.service';
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
     private fileService = inject(FileService);
+    qrService = inject(QrService)
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
 
@@ -52,6 +54,7 @@ export class FormularioAltaMesaComponent {
             validators: [Validators.required],
         }),
         fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
+        qr: new FormControl<File | null>(null, ),
     });
 
     /** Guarda la foto elegida; si el usuario cancela, queda en null. */
@@ -89,7 +92,6 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
-        
         if (this.formulario.invalid || !this.fotos) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
             // nunca visitó.
@@ -106,8 +108,20 @@ export class FormularioAltaMesaComponent {
 
             return;
         }
-        
+
         const valores = this.formulario.getRawValue();
+
+        const datosMesa = {
+            numeroMesa: valores.numeroMesa,
+            cantidadLugares: valores.cantidadLugares,
+            tipo: valores.tipo,
+        };
+
+        const data = JSON.stringify(datosMesa);
+        const filename = `mesa_${valores.numeroMesa}_qr.png`;
+
+        const archivo: File = await this.qrService.generateQrFile(data, filename);
+        this.formulario.patchValue({ qr: archivo });
 
         // Los <ion-input type="number"> devuelven texto: se convierte acá para
         // que quien reciba el evento no tenga que desconfiar de los tipos.
@@ -115,7 +129,8 @@ export class FormularioAltaMesaComponent {
             numeroMesa: Number(valores.numeroMesa),
             cantidadLugares: Number(valores.cantidadLugares),
             tipo: valores.tipo as TipoMesa,
-            fotos: this.fotos,
+            fotos: this.fotos[0],
+            qrFile: this.formulario.value.qr!,
         };
         this.mesaSubmit.emit(mesa);
         this.formulario.reset();
