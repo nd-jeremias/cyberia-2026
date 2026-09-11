@@ -77,6 +77,8 @@
                     (imagenesChange)="recibirImagenes($event)"
                     [modoCamara]="'camara'"
                     [direccionCamara]="direccionCamara()"
+                    [imagenesIniciales]="fotosIniciales()"
+                    (urlsExistentesChange)="onUrlsExistentes($event)"
                 >
                 </app-subida-imagenes>
                 @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
@@ -85,7 +87,7 @@
             </div>
 
             <div class="enlaces-secundarios">
-                <ion-button expand="block" type="submit" class="btn-principal">Agregar mesa</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal">{{ mesaExistente() ? 'Editar mesa' : 'Agregar mesa' }} </ion-button>
             </div>
         </form>
     </div>
