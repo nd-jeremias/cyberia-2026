@@ -301,7 +301,7 @@ export class AuthService {
 
             // Solo subimos una imagen si realmente llegó un archivo
             if (fotoArchivo instanceof File) {
-                const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
+                const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios', true);
 
                 if (!publicUrl) {
                     throw new Error('No se pudo subir la imagen.');

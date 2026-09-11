@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { MesaAltaInterface } from '../interfaces/mesa.interface';
+import { MesaAltaInterface, MesaInterface } from '../interfaces/mesa.interface';
 import { supabase } from './supabase.service';
 import { GaleriaService } from './galeria.service';
 import { QrService } from './qr.service';
@@ -33,12 +33,12 @@ export class MesaDbService {
             // `upsert` en true: el nombre del archivo es fijo por mesa, así que al
             // regenerar el QR de una mesa existente se pisa el anterior en lugar de
             // fallar por duplicado.
-            const publicQrUrl = await this.galeriaService.subirImagenDb(archivoQr, 'qr', `${mesaId}-qr.png`, true);
+            const publicQrUrl = await this.galeriaService.subirImagenDb(archivoQr, 'qr', true, `${mesaId}-qr.png`);
 
             // Las siguientes 3 lineas suben 1 sola img:
             const extension = mesa.fotos.name.split('.').pop() || 'png';
             const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
-            const urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', nombrePersonalizado);
+            const urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', false, nombrePersonalizado);
 
             if (!urlPublica) throw Error;
 
@@ -77,5 +77,63 @@ export class MesaDbService {
         const { error: dbError } = await supabase.from('mesas').delete().eq('id', mesaId);
 
         if (dbError) throw dbError;
+    }
+
+    mapMesa(row: any): MesaInterface {
+        return {
+            id: row.id,
+            numeroMesa: row.numero_mesa,
+            cantidadLugares: row.cantidad_lugares,
+            tipo: row.tipo,
+            disponibilidad: row.disponibilidad,
+            clienteId: row.clienteId,
+            qrUrl: row.qr_url,
+            fotoUrl: row.foto_url,
+        };
+    }
+
+    async obtenerPorId(mesaId: string) {
+        try {
+            const { data, error } = await supabase.from('mesas').select('*').eq('id', mesaId).single();
+            if (error) throw error;
+            return this.mapMesa(data);
+        } catch (error) {
+            console.log(error);
+            throw new Error();
+        }
+    }
+
+    async editarMesa(id: string, mesa: MesaAltaInterface): Promise<void> {
+        try {
+            const numeroMesa = mesa.numeroMesa;
+            const cantidadLugares = mesa.cantidadLugares;
+            const tipo = mesa.tipo;
+            const fotoUrl = mesa.fotos;
+
+            const mesaNueva: any = {
+                numero_mesa: numeroMesa,
+                cantidad_lugares: cantidadLugares,
+                tipo,
+            };
+
+            if (fotoUrl instanceof File) {
+                const publicUrl = await this.galeriaService.subirImagenDb(fotoUrl, 'mesas', true);
+
+                if (!publicUrl) {
+                    throw new Error('No se pudo subir la imagen.');
+                }
+
+                mesaNueva.foto_url = publicUrl;
+            }
+
+            const { error } = await supabase.from('mesas').update(mesaNueva).eq('id', id);
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            console.log(error);
+            throw new Error();
+        }
     }
 }
