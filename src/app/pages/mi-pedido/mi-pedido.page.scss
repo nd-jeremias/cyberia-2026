@@ -1,0 +1,46 @@
+/**
+ * Pantalla "Mi pedido".
+ *
+ * La tarjeta (ficha de mesa, líneas y total) toma sus estilos de
+ * pedidos.page.scss: el cliente ve su pedido con el mismo aspecto que el mozo.
+ * Acá sólo va lo propio de esta pantalla.
+ */
+
+.pantalla-mi-pedido {
+    gap: 1rem;
+}
+
+.tarjeta-pedido,
+.pantalla-mi-pedido > .btn-principal {
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+}
+
+/* Estado del pedido: la pastilla que el cliente busca con la vista. */
+.estado {
+    padding: 0.3125rem 0.75rem;
+    border-radius: 999px;
+
+    background: rgba(226, 87, 28, 0.12);
+    border: 0.0625rem solid rgba(226, 87, 28, 0.3);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 800;
+    color: var(--naranja-hondo);
+    text-align: center;
+}
+
+/* El rechazo cambia de color: es lo único que le pide al cliente hacer algo. */
+.estado-rechazado {
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.35);
+    color: var(--ion-color-danger, #dc2626);
+}
+
+.leyenda {
+    margin: 0;
+    font-size: var(--texto-cuerpo);
+    font-weight: 600;
+    color: var(--tinta);
+}

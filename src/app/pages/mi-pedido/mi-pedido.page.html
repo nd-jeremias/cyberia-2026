@@ -1,0 +1,64 @@
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Mi pedido'">
+    <!-- Punto 14: el cliente vuelve a consultar su pedido sin salir de la pantalla. -->
+    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+        <ion-icon name="refresh-outline"></ion-icon>
+        Actualizar
+    </button>
+</app-header>
+
+<ion-content [fullscreen]="true">
+    <div class="hoja pantalla-mi-pedido">
+        @if (pedido(); as pedido) {
+        <article class="tarjeta-pedido">
+            <div class="encabezado">
+                <span class="ficha-mesa">
+                    <span class="ficha-mesa-rotulo">Mesa</span>
+                    <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                </span>
+                <span class="estado" [class.estado-rechazado]="rechazado()">{{ pedido.estado }}</span>
+            </div>
+
+            <p class="leyenda">{{ leyenda() }}</p>
+
+            <div class="datos-pedido">
+                <span class="chip">
+                    <ion-icon name="restaurant-outline"></ion-icon>
+                    {{ tiempoEstimado(pedido) }} minutos estimados
+                </span>
+            </div>
+
+            <ul class="detalles">
+                @for (item of pedido.detalles; track item.id) {
+                <li>
+                    <span class="cantidad">{{ item.cantidad }}×</span>
+                    {{ item.nombreProducto }}
+                </li>
+                }
+            </ul>
+
+            <p class="total">
+                <span class="total-rotulo">Total</span>
+                <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+            </p>
+        </article>
+
+        @if (puedeJugar()) {
+        <!-- Punto 15: sólo el cliente registrado, con el pedido ya confirmado. -->
+        <button type="button" class="btn-principal" (click)="irAJuegos()">
+            <ion-icon name="game-controller-outline"></ion-icon>
+            Ir a los juegos
+        </button>
+        }
+        } @else if (cargando()) {
+        <div class="estado-vacio">
+            <ion-icon name="time-outline"></ion-icon>
+            <p>Consultando tu pedido…</p>
+        </div>
+        } @else {
+        <div class="estado-vacio">
+            <ion-icon name="receipt-outline"></ion-icon>
+            <p>Todavía no hiciste ningún pedido.</p>
+        </div>
+        }
+    </div>
+</ion-content>
