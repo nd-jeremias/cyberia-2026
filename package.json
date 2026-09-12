@@ -10,7 +10,9 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
-    "datos:prueba": "node scripts/cargar-datos-prueba.mjs"
+    "datos:prueba": "node scripts/cargar-datos-prueba.mjs",
+    "datos:prueba:entrega": "node scripts/cargar-datos-prueba.mjs sql/datos-prueba/pedido-listo.json",
+    "datos:prueba:pago": "node scripts/cargar-datos-prueba.mjs sql/datos-prueba/pedido-por-cobrar.json"
   },
   "private": true,
   "dependencies": {
