@@ -31,15 +31,20 @@ export class AltaMesaPage implements OnInit {
         this.spinner.show();
 
         try {
-            await this.mesaDbService.altaMesa(mesa)
-            this.modal.setOpen(
-                'Mesa cargada',
-                `La mesa N° ${mesa.numeroMesa} se registró correctamente.`
-            );
-            console.log("MESA: ",mesa)
+            await this.mesaDbService.altaMesa(mesa);
+        } catch (error) {
+            // Antes no había catch: la pantalla volvía al listado igual y el
+            // error se perdía, así que parecía que la mesa se había guardado.
+            const mensaje = error instanceof Error ? error.message : 'No se pudo registrar la mesa.';
+
+            this.modal.setOpen('Error', mensaje || 'No se pudo registrar la mesa.');
+
+            return;
         } finally {
-            this.router.navigate(['/gestion-mesas']);
             this.spinner.hide();
         }
+
+        this.modal.setOpen('Mesa cargada', `La mesa N° ${mesa.numeroMesa} se registró correctamente.`);
+        this.router.navigate(['/gestion-mesas']);
     }
 }
