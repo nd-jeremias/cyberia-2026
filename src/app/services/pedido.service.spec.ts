@@ -440,4 +440,174 @@ describe('PedidoService', () => {
             expect(detalles[1].estadoProducto).toBe('Pendiente');
         });
     });
+
+    /**
+     * Consulta encadenable: cada método devuelve la misma consulta y, al
+     * esperarla, resuelve con `respuesta`, como hace el cliente de Supabase.
+     */
+    function consultaFalsa(respuesta: { data?: unknown; error: unknown }) {
+        const consulta = {
+            select: vi.fn(),
+            update: vi.fn(),
+            eq: vi.fn(),
+            neq: vi.fn(),
+            order: vi.fn(),
+            then: (
+                resolver: (valor: unknown) => unknown,
+                rechazar?: (motivo: unknown) => unknown
+            ) => Promise.resolve(respuesta).then(resolver, rechazar),
+        };
+
+        for (const paso of ['select', 'update', 'eq', 'neq', 'order'] as const) {
+            consulta[paso].mockReturnValue(consulta);
+        }
+
+        return consulta;
+    }
+
+    describe('pagosPorConfirmar (punto 22)', () => {
+        it('muestra sólo los pedidos en la mesa de clientes que ya pagaron', () => {
+            servicio.pedidos.set([
+                pedidoDePrueba({ id: 'a', estado: 'Recibido', estadoCliente: 'pagando' }),
+                pedidoDePrueba({ id: 'b', estado: 'Entregado', estadoCliente: 'pagando' }),
+                pedidoDePrueba({ id: 'c', estado: 'Recibido', estadoCliente: 'sentado' }),
+                pedidoDePrueba({ id: 'd', estado: 'Listo para Entregar', estadoCliente: 'pagando' }),
+            ]);
+
+            expect(servicio.pagosPorConfirmar().map((p) => p.id)).toEqual(['a', 'b']);
+        });
+    });
+
+    describe('listarSinPagar', () => {
+        it('trae lo que no está pagado, con el estado del cliente', async () => {
+            const consulta = consultaFalsa({
+                data: [
+                    {
+                        id: 'pedido-1',
+                        mesa_id: 'mesa-1',
+                        cliente_id: 'cliente-1',
+                        estado: 'Entregado',
+                        precio_total_neto: '12000.00',
+                        descuento_juego: '0',
+                        propina_porcentaje: '0',
+                        fecha: '2026-09-12T20:00:00.000Z',
+                        mesas: { numero_mesa: 1 },
+                        usuarios: { estado_en_resto: 'pagando' },
+                        pedido_detalles: [],
+                    },
+                ],
+                error: null,
+            });
+
+            supabase.from.mockReturnValue(consulta);
+
+            await servicio.listarSinPagar();
+
+            // Se filtra por "no pagado" y no nombrando 'Recibido': en una base
+            // sin la migración, nombrarlo haría fallar la consulta entera.
+            expect(consulta.neq).toHaveBeenCalledWith('estado', 'Pagado');
+            expect(servicio.pedidos()[0].estadoCliente).toBe('pagando');
+        });
+    });
+
+    describe('confirmarRecepcion (punto 19)', () => {
+        it('pasa el pedido entregado a Recibido, sólo para su cliente', async () => {
+            const consulta = consultaFalsa({ data: [{ id: 'pedido-1' }], error: null });
+
+            supabase.from.mockReturnValue(consulta);
+
+            const ok = await servicio.confirmarRecepcion('pedido-1', 'cliente-1');
+
+            expect(ok).toBe(true);
+            expect(consulta.update).toHaveBeenCalledWith({ estado: 'Recibido' });
+            expect(consulta.eq).toHaveBeenCalledWith('cliente_id', 'cliente-1');
+            expect(consulta.eq).toHaveBeenCalledWith('estado', 'Entregado');
+        });
+
+        it('avisa si el mozo todavía no lo entregó', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            supabase.from.mockReturnValue(consultaFalsa({ data: [], error: null }));
+
+            const ok = await servicio.confirmarRecepcion('pedido-1', 'cliente-1');
+
+            expect(ok).toBe(false);
+            expect(espia).toHaveBeenCalledWith('Pedido sin entregar', expect.any(String), 'error');
+        });
+
+        it('explica que falta la migración si la base no conoce "Recibido"', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            supabase.from.mockReturnValue(
+                consultaFalsa({
+                    data: null,
+                    error: { code: '22P02', message: 'invalid input value for enum' },
+                })
+            );
+
+            const ok = await servicio.confirmarRecepcion('pedido-1', 'cliente-1');
+
+            expect(ok).toBe(false);
+            expect(espia).toHaveBeenCalledWith(
+                'Falta actualizar la base',
+                expect.stringContaining('migracion-recepcion-pedido.sql')
+            );
+        });
+    });
+
+    describe('confirmarPago (punto 22)', () => {
+        it('no toca la base si el cliente todavía no pagó', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            const ok = await servicio.confirmarPago(
+                pedidoDePrueba({ estado: 'Recibido', estadoCliente: 'sentado' })
+            );
+
+            expect(ok).toBe(false);
+            expect(supabase.from).not.toHaveBeenCalled();
+            expect(espia).toHaveBeenCalledWith('El cliente no pagó', expect.any(String), 'error');
+        });
+
+        it('cobra el pedido, libera la mesa y deja al cliente libre', async () => {
+            const pedido = consultaFalsa({ data: [{ id: 'pedido-1' }], error: null });
+            const mesa = consultaFalsa({ error: null });
+            const cliente = consultaFalsa({ error: null });
+
+            supabase.from
+                .mockReturnValueOnce(pedido)
+                .mockReturnValueOnce(mesa)
+                .mockReturnValueOnce(cliente);
+
+            servicio.pedidos.set([pedidoDePrueba({ estado: 'Recibido', estadoCliente: 'pagando' })]);
+
+            const ok = await servicio.confirmarPago(servicio.pedidos()[0]);
+
+            expect(ok).toBe(true);
+            expect(supabase.from.mock.calls.map(([tabla]) => tabla)).toEqual([
+                'pedidos',
+                'mesas',
+                'usuarios',
+            ]);
+            expect(pedido.update).toHaveBeenCalledWith({ estado: 'Pagado' });
+            expect(mesa.update).toHaveBeenCalledWith({ disponibilidad: 'disponible', cliente_id: null });
+            expect(mesa.eq).toHaveBeenCalledWith('id', 'mesa-1');
+            expect(cliente.update).toHaveBeenCalledWith({ estado_en_resto: 'libre', mesa_id: null });
+            expect(cliente.eq).toHaveBeenCalledWith('id', 'cliente-1');
+            expect(servicio.pedidos()).toEqual([]);
+        });
+
+        it('si otro mozo ya lo cobró, avisa y no vuelve a liberar la mesa', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            supabase.from.mockReturnValueOnce(consultaFalsa({ data: [], error: null }));
+
+            const ok = await servicio.confirmarPago(
+                pedidoDePrueba({ estado: 'Recibido', estadoCliente: 'pagando' })
+            );
+
+            expect(ok).toBe(false);
+            expect(supabase.from).toHaveBeenCalledTimes(1);
+            expect(espia).toHaveBeenCalledWith('Pago ya registrado', expect.any(String), 'info');
+        });
+    });
 });

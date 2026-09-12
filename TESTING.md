@@ -105,7 +105,7 @@ TypeScript. ESLint cubre las convenciones de Angular.
 
 | Servicio | Foco de las pruebas |
 | :------- | :------------------ |
-| `PedidoService` | Cálculo de tiempo estimado y totales, transiciones de estado, pedido actual del cliente y su paso a "sentado" (punto 13), manejo de errores de la base |
+| `PedidoService` | Cálculo de tiempo estimado y totales, transiciones de estado, pedido actual del cliente y su paso a "sentado" (punto 13), confirmación de recepción (punto 19), cobro con liberación de mesa y cliente (punto 22), manejo de errores de la base |
 | `MesaService` | Las tres verificaciones del punto 10: cliente con mesa previa, mesa ocupada y asignación simultánea |
 | `NotificacionesService` | Contador de no leídas, marcado, y la guarda de plataforma |
 | `ModalService` | Vibra ante los títulos de error y no ante los avisos de éxito |
@@ -115,10 +115,11 @@ TypeScript. ESLint cubre las convenciones de Angular.
 
 | Componente | Foco de las pruebas |
 | :--------- | :------------------ |
-| `FormularioRegistroComponent` | Validadores por campo, coincidencia de contraseñas y avisos al enviar |
+| `FormularioRegistroComponent` | Validadores por campo, coincidencia de contraseñas, avisos al enviar, mensajes de foto y contraseña corta, y alta de empleado con su tipo |
+| `FormularioAltaMesaComponent` | Aviso específico de la foto faltante y mínimos de los campos numéricos |
 | `LoginFormComponent` | Validación, credenciales de ingreso rápido y avisos |
 | `TarjetaUsuarioComponent` | Datos derivados, acciones configurables y datos opcionales |
-| Mi pedido (`mi-pedido.estado`) | Leyenda de cada estado del pedido y acceso a los juegos (puntos 13 y 15) |
+| Mi pedido (`mi-pedido.estado`) | Leyenda de cada estado, acceso a los juegos (puntos 13 y 15), confirmación de recepción, encuesta y cuenta (punto 19) |
 
 ### Extremo a extremo
 

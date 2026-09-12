@@ -172,4 +172,46 @@ describe('FormularioRegistroComponent', () => {
             expect(componente.formulario.get('correo')?.touched).toBe(true);
         });
     });
+
+    // Regresión de la observación "revisar la validación antes del emit": la
+    // plantilla consultaba controles y claves de error que no existían, así que
+    // estos mensajes no se mostraban nunca.
+    describe('mensajes que antes no aparecían', () => {
+        it('la foto faltante se informa en el control "foto"', () => {
+            componente.formulario.controls.foto.markAsTouched();
+
+            expect(componente.hayError('foto', 'minLengthArray')).toBe(true);
+        });
+
+        it('la contraseña corta se informa con la clave "minlength"', () => {
+            completarValido();
+            componente.formulario.controls.password.setValue('corta1');
+            componente.formulario.controls.password.markAsTouched();
+
+            expect(componente.hayError('password', 'minlength')).toBe(true);
+        });
+    });
+
+    describe('alta de empleado (usuarioRol dueño)', () => {
+        beforeEach(() => {
+            fixture.componentRef.setInput('usuarioRol', 'dueño');
+            fixture.detectChanges();
+        });
+
+        // Regresión: se exigía también `perfil`, que no tiene campo en pantalla,
+        // y el alta de un empleado nunca pasaba la validación.
+        it('es válida con el tipo de empleado elegido, sin exigir "perfil"', () => {
+            completarValido();
+
+            expect(componente.formulario.valid).toBe(true);
+        });
+
+        it('exige elegir el tipo de empleado', () => {
+            completarValido();
+            componente.formulario.controls.tipoEmpleado.setValue('');
+
+            expect(componente.formulario.controls.tipoEmpleado.hasError('required')).toBe(true);
+            expect(componente.formulario.valid).toBe(false);
+        });
+    });
 });
