@@ -5,9 +5,12 @@
                 <ion-title>{{ modalService.tituloModal() }}</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content class="contenido">
+        <!-- Un div y no <ion-content>: ion-content es un contenedor de scroll
+             que no informa alto propio, así que con `--height: auto` el modal
+             colapsaba y recortaba el mensaje. -->
+        <div class="contenido">
             <p>{{ modalService.mensajeModal() }}</p>
-        </ion-content>
+        </div>
         <ion-footer>
             <ion-buttons class="botonContainer">
                 <ion-button class="botonCerrar" (click)="modalService.setClose()">Cerrar</ion-button>
