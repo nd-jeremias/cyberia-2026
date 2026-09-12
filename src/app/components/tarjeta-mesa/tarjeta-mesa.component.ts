@@ -12,6 +12,7 @@ export class TarjetaMesaComponent implements OnInit {
     mesa = input.required<MesaInterface>();
     editarMesa = output<MesaInterface>();
     eliminarMesa = output<MesaInterface>();
+    verQrMesa = output<MesaInterface>();
 
     constructor() {}
 
@@ -23,5 +24,9 @@ export class TarjetaMesaComponent implements OnInit {
 
     onEliminar() {
         this.eliminarMesa.emit(this.mesa());
+    }
+
+    onVerQr() {
+        this.verQrMesa.emit(this.mesa());
     }
 }

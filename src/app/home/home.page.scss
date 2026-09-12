@@ -260,3 +260,56 @@
     background: var(--naranja);
     opacity: 0.5;
 }
+
+/* --- Situación del cliente en el local ------------------------------------
+   El cliente no tiene cifras ni mapa del salón: lo que necesita saber es en
+   qué parte del circuito está y qué sigue. Este cartel se lleva el alto que
+   dejan libre sus pocos accesos, y cambia solo cuando el metre actúa.
+   ------------------------------------------------------------------------- */
+
+.panel-situacion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    margin-top: 0.875rem;
+    padding: 1.125rem 1rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+}
+
+.situacion-detalle {
+    margin: 0;
+    font-size: var(--texto-apoyo);
+    line-height: 1.45;
+    color: var(--tinta-suave);
+}
+
+/* El número de mesa es el dato que el cliente va a buscar de un vistazo. */
+.situacion-mesa {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin: 0.25rem 0 0;
+    padding: 0.625rem 0.75rem;
+
+    background: var(--exito-velo);
+    border-radius: var(--radio-chico);
+
+    font-size: var(--texto-titulo);
+    color: var(--exito-tinta);
+
+    ion-icon {
+        flex-shrink: 0;
+        font-size: 1.375rem;
+    }
+
+    strong {
+        font-weight: 800;
+    }
+}

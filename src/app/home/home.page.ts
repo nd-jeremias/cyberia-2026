@@ -5,7 +5,9 @@ import { AuthService } from '../services/auth.service';
 import { MesaService } from '../services/mesa.service';
 import { PedidoService } from '../services/pedido.service';
 import { EstadoPedido } from '../interfaces/pedido.interface';
-import { BOTONES_POR_ROL } from './home-botones.config';
+import { BOTONES_CLIENTE_POR_ESTADO, BOTONES_POR_ROL } from './home-botones.config';
+import { SalonService } from '../services/salon.service';
+import { EstadoEnResto } from '../interfaces/auth.interface';
 import { HeaderComponent } from '../components/header/header.component';
 
 /** Una ficha del mapa: el número de mesa y si está en verde o en naranja. */
@@ -24,6 +26,33 @@ interface PanelEstado {
     leyendaVerde: string;
     leyendaNaranja: string;
 }
+
+// Los dos perfiles de cliente: sus accesos salen del estado, no del rol.
+const ROLES_CLIENTE = ['cliente registrado', 'cliente anónimo'];
+
+/** Qué le dice el inicio al cliente en cada tramo del circuito. */
+const SITUACION_CLIENTE: Record<EstadoEnResto, { titulo: string; detalle: string }> = {
+    libre: {
+        titulo: 'Todavía no pediste mesa',
+        detalle: 'Escaneá el código QR de la entrada para anotarte en la lista de espera.',
+    },
+    esperando_mesa: {
+        titulo: 'Estás en la lista de espera',
+        detalle: 'El metre te va a asignar una mesa. Esta pantalla se actualiza sola cuando pase.',
+    },
+    mesa_asignada: {
+        titulo: 'Ya tenés mesa',
+        detalle: 'Acercate a tu mesa y escaneá su código QR para ver la carta.',
+    },
+    sentado: {
+        titulo: 'Estás en tu mesa',
+        detalle: 'Desde acá podés ver la carta, consultar al mozo y seguir tu pedido.',
+    },
+    pagando: {
+        titulo: 'Pediste la cuenta',
+        detalle: 'Esperá la confirmación del mozo para terminar tu visita.',
+    },
+};
 
 // Quiénes miran el salón y quiénes su sector de producción.
 const ROLES_SALON = ['dueño', 'supervisor', 'metre', 'mozo'];
@@ -56,11 +85,49 @@ export class HomePage {
     authService = inject(AuthService);
     private mesaService = inject(MesaService);
     private pedidoService = inject(PedidoService);
+    private salonService = inject(SalonService);
 
-    // Se recalcula solo cuando cambia el perfil (login/logout/refresh de sesión).
+    esCliente = computed(() => {
+        const perfil = this.authService.perfil();
+
+        return perfil ? ROLES_CLIENTE.includes(perfil) : false;
+    });
+
+    /** Tramo del circuito en el que está el cliente. */
+    estadoCliente = computed<EstadoEnResto>(
+        () => this.salonService.situacion()?.estado ?? 'libre'
+    );
+
+    /**
+     * Accesos de la pantalla.
+     *
+     * Para los empleados salen del rol; para el cliente, de su estado en el
+     * local. Es la misma pantalla de inicio: lo que cambia es lo que puede
+     * hacer según dónde esté en el circuito.
+     */
     botonesDelRol = computed(() => {
         const perfil = this.authService.perfil();
-        return perfil ? BOTONES_POR_ROL[perfil] : [];
+
+        if (!perfil) return [];
+
+        return this.esCliente()
+            ? BOTONES_CLIENTE_POR_ESTADO[this.estadoCliente()]
+            : BOTONES_POR_ROL[perfil];
+    });
+
+    /** Cartel de situación del cliente, con la mesa si ya la tiene. */
+    situacionCliente = computed(() => {
+        if (!this.esCliente()) return null;
+
+        const mesaId = this.salonService.situacion()?.mesaId ?? null;
+        const mesa = mesaId
+            ? this.mesaService.mesas().find((m) => m.id === mesaId) ?? null
+            : null;
+
+        return {
+            ...SITUACION_CLIENTE[this.estadoCliente()],
+            numeroMesa: mesa?.numeroMesa ?? null,
+        };
     });
 
     private tipoPanel = computed(() => {
@@ -143,5 +210,29 @@ export class HomePage {
             if (tipo === 'salon') this.mesaService.listar();
             else this.pedidoService.listar(PEDIDOS_EN_CURSO);
         });
+
+        // El cliente necesita su situación y, sobre todo, quedar escuchando:
+        // el metre le asigna la mesa desde otro teléfono, y sin esto la
+        // pantalla se quedaría mostrando "esperando mesa" para siempre.
+        let yaEscucha = false;
+
+        effect(() => {
+            if (!this.esCliente() || yaEscucha) return;
+
+            const usuarioId = this.authService.session()?.user.id;
+            if (!usuarioId) return;
+
+            yaEscucha = true;
+
+            void this.salonService.cargarSituacion(usuarioId);
+            this.salonService.escucharSituacion(usuarioId);
+
+            // Para poder mostrarle el número de su mesa cuando se la asignen.
+            this.mesaService.listar();
+        });
+    }
+
+    ngOnDestroy() {
+        void this.salonService.dejarDeEscuchar();
     }
 }

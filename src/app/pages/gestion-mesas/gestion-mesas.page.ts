@@ -40,6 +40,11 @@ export class GestionMesasPage {
         this.mesasCargadas.set(mesas);
     }
 
+    /** Abre el QR ya generado de la mesa, para imprimirlo. */
+    onVerQr(mesa: MesaInterface) {
+        this.router.navigate(['/qr-mesa'], { queryParams: { id: mesa.id } });
+    }
+
     onEditar(mesa: MesaInterface) {
         this.router.navigate(['/gestion-mesas/alta'], { queryParams: { id: mesa.id } });
     }

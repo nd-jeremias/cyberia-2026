@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
@@ -32,7 +32,7 @@ import { HeaderComponent } from '../../components/header/header.component';
         HeaderComponent
     ],
 })
-export class AsignarMesasPage implements OnInit {
+export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
@@ -65,11 +65,27 @@ export class AsignarMesasPage implements OnInit {
             icono: 'hand-right',
             color: 'primary',
         },
+        // Punto 9: el metre tiene que poder sacar a alguien de la lista, por
+        // ejemplo si se fue sin esperar.
+        {
+            id: 'quitar',
+            etiqueta: 'Quitar',
+            icono: 'person-remove',
+            color: 'danger',
+        },
     ];
 
     ngOnInit() {
         this.cargarClientes();
         this.mesaService.listar();
+
+        // La lista cambia desde otro teléfono: el cliente escanea el QR de la
+        // puerta y tiene que aparecer acá sin que el metre recargue nada.
+        this.salonService.escucharListaEspera(() => void this.cargarClientes());
+    }
+
+    ngOnDestroy() {
+        void this.salonService.dejarDeEscuchar();
     }
 
     /**
@@ -116,11 +132,37 @@ export class AsignarMesasPage implements OnInit {
         }
     }
 
-    onSeleccionCliente(evento: {
+    async onSeleccionCliente(evento: {
         accion: string;
         usuario: ClientePendienteInterface;
     }) {
+        if (evento.accion === 'quitar') {
+            await this.quitarDeLista(evento.usuario);
+            return;
+        }
+
         this.clienteElegido.set(evento.usuario);
+    }
+
+    /** Saca al cliente de la lista de espera sin asignarle mesa (punto 9). */
+    private async quitarDeLista(cliente: ClientePendienteInterface) {
+        try {
+            await this.salonService.quitarDeListaEspera(cliente.id);
+
+            // Si era el que estaba elegido, la selección deja de tener sentido.
+            if (this.clienteElegido()?.id === cliente.id) {
+                this.clienteElegido.set(null);
+            }
+
+            await this.cargarClientes();
+        } catch (error) {
+            const mensaje =
+                error instanceof Error
+                    ? error.message
+                    : 'No se pudo quitar al cliente de la lista.';
+
+            this.modal.setOpen('Error', mensaje);
+        }
     }
 
     limpiarSeleccion() {
