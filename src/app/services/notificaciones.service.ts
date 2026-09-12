@@ -1,11 +1,11 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { ActionPerformed, PushNotificationSchema, PushNotifications, Token } from '@capacitor/push-notifications';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { Preferences } from '@capacitor/preferences';
 import { Platform, ToastController } from '@ionic/angular';
 import { NotificacionInterface, TipoNotificacion } from '../interfaces/notificacion.interface';
 import { ModalService } from './modal.service';
 import { supabase } from './supabase.service';
+import { VibracionService } from './vibracion.service';
 
 const CLAVE_TOKEN = 'token-push';
 
@@ -18,6 +18,10 @@ export class NotificacionesService {
     private platform = inject(Platform);
     private modal = inject(ModalService);
     private toastCtrl = inject(ToastController);
+    private vibracion = inject(VibracionService);
+
+    /** Evita registrar los listeners dos veces si se inicializa de nuevo. */
+    private inicializado = false;
 
     token = signal<string | null>(null);
     permisoConcedido = signal<boolean>(false);
@@ -32,17 +36,39 @@ export class NotificacionesService {
     }
 
     async inicializar(): Promise<void> {
-        if (!this.esNativo) return;
+        // Una sola vez: repetirlo duplicaría los listeners y cada aviso se
+        // mostraría dos veces.
+        if (!this.esNativo || this.inicializado) return;
 
         const permiso = await this.pedirPermiso();
 
         if (!permiso) return;
 
+        this.inicializado = true;
+
         await this.crearCanal();
 
         this.escucharEventos();
+        this.sincronizarAlCambiarSesion();
 
         await PushNotifications.register();
+    }
+
+    /**
+     * Vuelve a guardar el token cada vez que se abre o se restaura una sesión.
+     *
+     * El token puede llegar antes de que Supabase termine de leer la sesión
+     * guardada en el dispositivo: en ese caso `sincronizarToken` no encuentra
+     * usuario y no guarda nada, y antes no se volvía a intentar. Escuchar los
+     * cambios de sesión cubre ese caso y también el ingreso anónimo y el de los
+     * botones rápidos, que no pasan por la pantalla de ingreso.
+     */
+    private sincronizarAlCambiarSesion(): void {
+        supabase.auth.onAuthStateChange((_evento, sesion) => {
+            // Supabase advierte que llamar a otros métodos suyos dentro de este
+            // callback puede trabar el cliente: se difiere al siguiente ciclo.
+            if (sesion) setTimeout(() => void this.sincronizarToken(), 0);
+        });
     }
 
     private async crearCanal(): Promise<void> {
@@ -91,9 +117,8 @@ export class NotificacionesService {
             await this.sincronizarToken();
         });
 
-        PushNotifications.addListener('registrationError', async () => {
-            await Haptics.notification({ type: NotificationType.Error });
-
+        // La vibración la pone el modal, que vibra ante cualquier error.
+        PushNotifications.addListener('registrationError', () => {
             this.modal.setOpen('Error de registro', 'No se pudo registrar el dispositivo para recibir notificaciones.');
         });
 
@@ -111,7 +136,7 @@ export class NotificacionesService {
     }
 
     private async avisarEnPantalla(notificacion: NotificacionInterface): Promise<void> {
-        await Haptics.notification({ type: NotificationType.Success });
+        await this.vibracion.exito();
 
         const toast = await this.toastCtrl.create({
             header: notificacion.titulo,
