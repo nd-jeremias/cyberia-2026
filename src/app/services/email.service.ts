@@ -17,9 +17,9 @@ export class EmailService {
   // Identificadores de la cuenta de EmailJS. La clave pública está pensada
   // para usarse desde el navegador, pero conviene moverla a environment.ts
   // para no tener que tocar el código al cambiar de cuenta.
-  private serviceId = 'service_e6xpg2s';
-  private templateId = 'template_vwi1j3c';
-  private publicKey = 'CYS0VPBDEotYw_zMW';
+  private serviceId = 'service_ek7jpdd';
+  private templateId = 'template_8fl84ys';
+  private publicKey = 'RLbRJhW8Gk9IN-Z3Z';
 
   constructor() {
     emailjs.init(this.publicKey);
@@ -33,7 +33,7 @@ export class EmailService {
    */
   async enviarAvisoRegistroPendiente(email: string, nombre: string) {
     return emailjs.send(this.serviceId, this.templateId, {
-      to_email: email,
+      email: email,
       to_name: nombre,
       message: 'Gracias por registrarte. Tu cuenta está pendiente de aprobación por el supervisor/dueño.',
     });
@@ -50,8 +50,11 @@ export class EmailService {
       ? '¡Tu cuenta ha sido aprobada con éxito! Ya podés ingresar a la aplicación.'
       : 'Lamentamos informarte que tu solicitud de registro no fue aprobada.';
 
-    return emailjs.send(this.serviceId, this.templateId, {
-      to_email: email,
+    const templateId = aprobado
+    ? 'template_8fl84ys'
+    : 'template_t44g5mr'
+    return emailjs.send(this.serviceId, templateId, {
+      email: email,
       to_name: nombre,
       message: mensaje,
     });
