@@ -1,4 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { EstadoEnResto } from '../../interfaces/auth.interface';
@@ -36,6 +37,7 @@ export class EscanearIngresoPage {
     private qrService = inject(QrService);
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
+    private router = inject(Router);
 
     situacion = this.salonService.situacion;
 
@@ -45,6 +47,23 @@ export class EscanearIngresoPage {
 
     /** Se apaga en cuanto se conoce la situación, para no mostrar datos viejos. */
     cargando = signal(true);
+
+    constructor() {
+        // El metre asigna la mesa desde otro teléfono y el aviso llega por
+        // Realtime. En ese momento esta pantalla ya no tiene nada que ofrecer:
+        // se vuelve al inicio, donde aparece el acceso para escanear la mesa.
+        //
+        // `replaceUrl` saca esta pantalla del historial: el botón de atrás no
+        // debe traer de nuevo el lector del ingreso cuando el cliente ya está
+        // adentro del local.
+        effect(() => {
+            const estado = this.situacion()?.estado;
+
+            if (!estado || estado === 'libre' || estado === 'esperando_mesa') return;
+
+            void this.router.navigate(['/inicio'], { replaceUrl: true });
+        });
+    }
 
     async ionViewWillEnter() {
         const usuarioId = this.authService.session()?.user.id;

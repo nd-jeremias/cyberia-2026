@@ -1,0 +1,26 @@
+<app-header [defaultHref]="'/gestion-mesas'" [tituloHeader]="'QR de la mesa'"></app-header>
+
+<ion-content [fullscreen]="true">
+    <div class="hoja pantalla-qr">
+        @if (mesa(); as mesa) {
+        <p class="mesa-numero">Mesa N° {{ mesa.numeroMesa }}</p>
+
+        <div class="tarjeta-qr">
+            <img [src]="mesa.qrUrl" [alt]="'Código QR de la mesa ' + mesa.numeroMesa" class="imagen-qr" />
+        </div>
+
+        <p class="ayuda">
+            Imprimilo y pegalo sobre la mesa. Al escanearlo, el cliente que tenga esta mesa asignada
+            accede a la carta.
+        </p>
+
+        <button type="button" class="btn-principal" (click)="guardar()">
+            {{ esNativo ? 'Compartir imagen' : 'Descargar imagen' }}
+        </button>
+        } @else {
+        <div class="estado-vacio">
+            <p>No se encontró la mesa.</p>
+        </div>
+        }
+    </div>
+</ion-content>
