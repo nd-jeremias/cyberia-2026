@@ -133,5 +133,53 @@
             }
         }
     </section>
+
+    <!-- Punto 22: el cliente ya pagó y espera que el mozo confirme el cobro. -->
+    <section class="grupo">
+        <h2 class="titulo-grupo titulo-seccion">Pagos por confirmar</h2>
+
+        @if (pagos().length === 0) {
+            <div class="estado-vacio">
+                <ion-icon name="cash-outline"></ion-icon>
+                <p>No hay pagos esperando confirmación.</p>
+            </div>
+        } @else {
+            @for (pedido of pagos(); track pedido.id) {
+                <article class="tarjeta-pedido">
+                    <div class="encabezado">
+                        <span class="ficha-mesa">
+                            <span class="ficha-mesa-rotulo">Mesa</span>
+                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                        </span>
+                        <ion-badge color="tertiary">Pagó, falta confirmar</ion-badge>
+                    </div>
+
+                    <ul class="detalles">
+                        @for (item of pedido.detalles; track item.id) {
+                            <li>
+                                <span class="cantidad">{{ item.cantidad }}×</span>
+                                {{ item.nombreProducto }}
+                            </li>
+                        }
+                    </ul>
+
+                    <p class="total">
+                        <span class="total-rotulo">Total</span>
+                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                    </p>
+
+                    <ion-button
+                        expand="block"
+                        color="success"
+                        [disabled]="cargando()"
+                        (click)="onConfirmarPago(pedido)"
+                    >
+                        <ion-icon slot="start" name="cash-outline"></ion-icon>
+                        Confirmar pago y liberar mesa
+                    </ion-button>
+                </article>
+            }
+        }
+    </section>
   </div>
 </ion-content>

@@ -304,8 +304,10 @@ export class FormularioRegistroComponent {
 
             if (this.usuarioRol() === 'dueño') {
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+                // El select escribe en tipoEmpleado, que es lo que el registro
+                // guarda como perfil. Antes también se exigía `perfil`, que no
+                // tiene campo en pantalla, y el alta nunca pasaba la validación.
                 tipoEmpleado.setValidators([Validators.required]);
-                perfil.setValidators([Validators.required]);
             } else {
                 cuil.clearValidators();
                 tipoEmpleado.clearValidators();
@@ -383,6 +385,30 @@ export class FormularioRegistroComponent {
         return word[0].toUpperCase() + word.slice(1);
     }
 
+    /**
+     * Indica si un campo debe mostrar un error concreto.
+     *
+     * Se exige que el control esté "tocado" para no llenar de rojo un
+     * formulario que el usuario todavía no completó.
+     */
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    /**
+     * La coincidencia de contraseñas se valida a nivel de grupo, porque
+     * comparar dos controles entre sí no lo puede hacer un validador de campo.
+     * Por eso el error se consulta en el FormGroup y no en confirmPassword.
+     */
+    get passwordsNoCoinciden(): boolean {
+        return (
+            !!this.formulario.controls.confirmPassword.touched &&
+            this.formulario.hasError('passwordsDistintas')
+        );
+    }
+
     private separarCuil(cuil: string | null | undefined): void {
         if (!cuil) {
             this.cuilPrefijo.set('');
@@ -446,7 +472,8 @@ export class FormularioRegistroComponent {
         if (this.validateForm(this.formulario) || this.formulario.invalid) {
             return;
         }
-        console.log('ONREGISTRO FORM: ', this.formulario.value); // Aqui imprime el formulario con los valores modificados
+
+        // Sin console.log del formulario: imprimía la contraseña en la consola.
         const datosRegistro = this.formulario.getRawValue();
         const formData = new FormData();
 

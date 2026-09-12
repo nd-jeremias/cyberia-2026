@@ -151,11 +151,17 @@ END;
 $$;
 
 -- =========================================================================
--- Puntos 12, 13 y 14: avisos del circuito del pedido.
+-- Puntos 12, 13, 14, 18, 19 y 22: avisos del circuito del pedido.
 -- =========================================================================
 --  - Pedido nuevo, o reenviado tras un rechazo  → a todos los mozos.
---  - Rechazado                                  → al cliente.
+--  - Listo para entregar (pedido completo)       → a todos los mozos.
+--  - Pagado                                      → al dueño y al supervisor.
+--  - Rechazado                                   → al cliente.
 --  - Confirmado → al cliente, y a cocina y barra sólo si les toca preparar algo.
+--  - Entregado  → al cliente, para que confirme la recepción.
+--
+-- 'Recibido' no se nombra a propósito: si la base todavía no corrió
+-- migracion-recepcion-pedido.sql, compararlo haría fallar el disparador.
 CREATE OR REPLACE FUNCTION public.avisar_cambio_pedido()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -183,6 +189,36 @@ BEGIN
             v_tokens, 'Pedido para confirmar',
             'La mesa ' || COALESCE(v_mesa::text, '?') || ' envió un pedido.',
             'pedido-nuevo', v_datos
+        );
+
+        RETURN NEW;
+    END IF;
+
+    -- Punto 18: cocina y barra terminaron todo; el mozo tiene que llevarlo.
+    IF NEW.estado = 'Listo para Entregar' THEN
+        SELECT ARRAY_AGG(token_push) INTO v_tokens
+        FROM public.usuarios
+        WHERE perfil = 'mozo' AND estado = 'Activo' AND token_push IS NOT NULL;
+
+        PERFORM public.enviar_push(
+            v_tokens, 'Pedido listo para entregar',
+            'Mesa ' || COALESCE(v_mesa::text, '?') || ': el pedido está completo.',
+            'pedido-estado', v_datos
+        );
+
+        RETURN NEW;
+    END IF;
+
+    -- Punto 22: el pago confirmado le llega al dueño y al supervisor.
+    IF NEW.estado = 'Pagado' THEN
+        SELECT ARRAY_AGG(token_push) INTO v_tokens
+        FROM public.usuarios
+        WHERE perfil IN ('dueño', 'supervisor') AND token_push IS NOT NULL;
+
+        PERFORM public.enviar_push(
+            v_tokens, 'Pago confirmado',
+            'Mesa ' || COALESCE(v_mesa::text, '?') || ': se cobró la cuenta y la mesa quedó libre.',
+            'pago', v_datos
         );
 
         RETURN NEW;
@@ -228,6 +264,13 @@ BEGIN
             v_tokens, 'Nuevo pedido para preparar',
             'Mesa ' || COALESCE(v_mesa::text, '?') || ': revisá los pedidos pendientes.',
             'pedido-nuevo', v_datos
+        );
+    ELSIF NEW.estado = 'Entregado' THEN
+        -- Punto 19: el cliente tiene que confirmar que lo recibió.
+        PERFORM public.enviar_push(
+            v_tokens, 'Pedido entregado',
+            'El mozo te llevó el pedido. Confirmá la recepción desde "Mi pedido".',
+            'pedido-estado', v_datos
         );
     END IF;
 

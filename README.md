@@ -305,10 +305,10 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :----------------------------------------------------------: |
 | Creación de módulo ´formulario-ingreso´                                                      |   25/08/2026    | 23/08/2026 | Completado |                                                              |
 | Creación de interfaz de usuarios (autenticación, registro, cliente, usuario)                 |   25/08/2026    | 23/08/2026 | Completado |                                                              |
-| Creación de módulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado | Revisar la validación de datos antes de hacer el envío(emit) |
-| Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |  Crear una tarjeta `usuario` para modularizar y reutilizar   |
+| Creación de módulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado | ✅ Revisar la validación de datos antes de hacer el envío(emit) |
+| Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |  ✅ Crear una tarjeta `usuario` para modularizar y reutilizar   |
 | Creación de módulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |                                                              |
-| Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                   Revisar la funcionalidad                   |
+| Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                   ✅ Revisar la funcionalidad                   |
 | páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | 02/09/2026 | Completado |                                                              |
@@ -318,8 +318,8 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 13.- El mozo rechaza el pedido                                                               |   14/09/2026    | 12/09/2026 | Completado |                                                              |
 | 14.- El mozo confirma el pedido                                                              |   14/09/2026    | 12/09/2026 | Completado |                                                              |
 | 15.- El cliente accede a los juegos en busca de descuentos                                   |   12/09/2026    | 12/09/2026 | Completado |                                                              |
-| 19.- El mozo entrega el pedido completo                                                      |   14/09/2026    | --/--/---- | Pendiente  |                                                              |
-| 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | --/--/---- | Pendiente  |                                                              |
+| 19.- El mozo entrega el pedido completo                                                      |   14/09/2026    | 12/09/2026 | Completado |                                                              |
+| 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | 12/09/2026 | Completado |                                                              |
 
 ---
 

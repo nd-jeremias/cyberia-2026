@@ -1,4 +1,5 @@
 import { Service, computed, inject, signal } from '@angular/core';
+import { EstadoEnResto } from '../interfaces/auth.interface';
 import {
     DetallePedidoInterface,
     EstadoItem,
@@ -22,7 +23,11 @@ import { supabase } from './supabase.service';
  *                 │
  *          En Preparación ──► Listo para Entregar                  (punto 18)
  *                 │
- *             Entregado ──► Pagado, y se libera la mesa            (punto 22)
+ *             Entregado ──► el mozo lo llevó a la mesa             (punto 19)
+ *                 │
+ *             Recibido ──► el cliente confirmó la recepción        (punto 19)
+ *                 │
+ *              Pagado ──► el mozo cobró y se libera la mesa        (punto 22)
  *
  * El estado vive en la base; acá se mantiene una copia en signals para que las
  * pantallas se actualicen solas sin volver a consultar en cada cambio.
@@ -59,20 +64,40 @@ interface FilaPedido {
     propina_porcentaje: number;
     fecha: string;
     mesas: { numero_mesa: number } | null;
+    usuarios: { estado_en_resto: EstadoEnResto } | null;
     pedido_detalles: FilaDetalle[] | null;
 }
 
 // Columnas que se piden en cada consulta. Se declara una sola vez para que
 // todas las consultas devuelvan la misma forma y `mapear` siempre reciba lo
-// que espera. Incluye el número de mesa y el nombre de cada producto, que
-// viven en otras tablas.
+// que espera. Incluye el número de mesa, el estado del cliente y el nombre de
+// cada producto, que viven en otras tablas.
 const SELECT_PEDIDO =
     'id, mesa_id, cliente_id, estado, ' +
     'precio_total_neto, descuento_juego, propina_porcentaje, fecha, ' +
     'mesas ( numero_mesa ), ' +
+    'usuarios ( estado_en_resto ), ' +
     'pedido_detalles ( id, pedido_id, producto_id, cantidad, precio_unitario, ' +
     'precio_total_parcial, estado_producto, ' +
     'productos ( nombre, tiempo_elaboracion_minutos ) )';
+
+/** El pedido ya está en la mesa: entregado por el mozo o, además, recibido. */
+const ESTADOS_EN_LA_MESA: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>(['Entregado', 'Recibido']);
+
+/**
+ * Código con el que Postgres rechaza un valor que el ENUM no tiene. Aparece si
+ * la base todavía no corrió sql/migracion-recepcion-pedido.sql ('Recibido').
+ */
+const VALOR_FUERA_DEL_ENUM = '22P02';
+
+/** Lo mínimo de una consulta de Supabase, sin atarse a sus tipos internos. */
+type ConsultaPedidos = PromiseLike<{ data: unknown; error: unknown }>;
+
+function codigoDeError(error: unknown): string | null {
+    if (typeof error !== 'object' || error === null || !('code' in error)) return null;
+
+    return String(error.code);
+}
 
 @Service()
 export class PedidoService {
@@ -91,6 +116,15 @@ export class PedidoService {
 
     listosParaEntregar = computed(() =>
         this.pedidos().filter((p) => p.estado === 'Listo para Entregar')
+    );
+
+    /**
+     * Punto 22: pedidos en la mesa cuyo cliente ya pagó y espera que el mozo
+     * confirme el cobro. Lo decide el estado del cliente y no el del pedido,
+     * porque pagar no cambia el pedido.
+     */
+    pagosPorConfirmar = computed(() =>
+        this.pedidos().filter((p) => ESTADOS_EN_LA_MESA.has(p.estado) && p.estadoCliente === 'pagando')
     );
 
     /**
@@ -120,6 +154,7 @@ export class PedidoService {
             mesaId: fila.mesa_id,
             numeroMesa: fila.mesas?.numero_mesa ?? 0,
             clienteId: fila.cliente_id,
+            estadoCliente: fila.usuarios?.estado_en_resto ?? null,
             estado: fila.estado,
             precioTotalNeto: Number(fila.precio_total_neto),
             descuentoJuego: Number(fila.descuento_juego),
@@ -148,27 +183,46 @@ export class PedidoService {
      * cocina los confirmados. Así no se traen pedidos que no se van a mostrar.
      */
     async listar(estados?: EstadoPedido[]): Promise<void> {
+        let consulta = supabase
+            .from('pedidos')
+            .select(SELECT_PEDIDO)
+            .order('fecha', { ascending: true });
+
+        if (estados && estados.length > 0) {
+            consulta = consulta.in('estado', estados);
+        }
+
+        await this.cargarLista(consulta);
+    }
+
+    /**
+     * Trae todos los pedidos que todavía no se pagaron.
+     *
+     * Es lo que usa el mozo: de ahí salen sus tres grupos (por confirmar,
+     * listos y pagos por confirmar). Se filtra por "no pagado" en vez de
+     * nombrar cada estado porque mencionar 'Recibido' en la consulta la haría
+     * fallar entera en una base que todavía no tiene esa migración.
+     */
+    async listarSinPagar(): Promise<void> {
+        await this.cargarLista(
+            supabase
+                .from('pedidos')
+                .select(SELECT_PEDIDO)
+                .neq('estado', 'Pagado')
+                .order('fecha', { ascending: true })
+        );
+    }
+
+    /** Ejecuta una consulta de pedidos y deja el resultado en `pedidos`. */
+    private async cargarLista(consulta: ConsultaPedidos): Promise<void> {
         this.cargando.set(true);
 
         try {
-            let consulta = supabase
-                .from('pedidos')
-                .select(SELECT_PEDIDO)
-                .order('fecha', { ascending: true });
-
-            if (estados && estados.length > 0) {
-                consulta = consulta.in('estado', estados);
-            }
-
             const { data, error } = await consulta;
 
             if (error) throw error;
 
-            this.pedidos.set(
-                ((data ?? []) as unknown as FilaPedido[]).map((f) =>
-                    this.mapear(f)
-                )
-            );
+            this.pedidos.set(((data ?? []) as FilaPedido[]).map((f) => this.mapear(f)));
         } catch (error) {
             this.avisarError(error, 'No se pudieron cargar los pedidos.');
         } finally {
@@ -311,37 +365,130 @@ export class PedidoService {
         return this.cambiarEstado(pedidoId, 'Rechazado');
     }
 
-    // Punto 19: el mozo entrega el pedido completo.
+    // Punto 19: el mozo entrega el pedido completo; falta que el cliente
+    // confirme que lo recibió.
     entregar(pedidoId: string): Promise<boolean> {
         return this.cambiarEstado(pedidoId, 'Entregado');
     }
 
     /**
-     * Punto 22: el mozo confirma el pago y la mesa queda libre.
+     * Punto 19: el cliente confirma que recibió el pedido.
      *
-     * Son dos escrituras, y la de la mesa es la que importa para el negocio:
-     * si no se libera, esa mesa queda inutilizable para el resto del servicio.
+     * Las condiciones van dentro del propio UPDATE: sólo el cliente del pedido
+     * puede confirmarlo, y sólo después de que el mozo lo entregó. Si no afecta
+     * ninguna fila, el pedido ya no estaba "Entregado".
      */
-    async marcarPagado(pedidoId: string, mesaId: string): Promise<boolean> {
-        const actualizado = await this.cambiarEstado(pedidoId, 'Pagado');
+    async confirmarRecepcion(pedidoId: string, clienteId: string): Promise<boolean> {
+        this.cargando.set(true);
 
-        if (!actualizado) return false;
+        try {
+            const { data, error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'Recibido' })
+                .eq('id', pedidoId)
+                .eq('cliente_id', clienteId)
+                .eq('estado', 'Entregado')
+                .select('id');
 
-        const { error } = await supabase
-            .from('mesas')
-            .update({
-                disponibilidad: 'disponible',
-                cliente_id: null,
-            })
-            .eq('id', mesaId);
+            if (error) throw error;
 
-        if (error) {
-            this.avisarError(error, 'No se pudo liberar la mesa.');
+            if (!data || data.length === 0) {
+                this.modal.setOpen(
+                    'Pedido sin entregar',
+                    'El mozo todavía no marcó tu pedido como entregado. Actualizá la pantalla.',
+                    'error'
+                );
+
+                return false;
+            }
+
+            this.pedidos.update((actuales) =>
+                actuales.map((p) => (p.id === pedidoId ? { ...p, estado: 'Recibido' } : p))
+            );
+
+            return true;
+        } catch (error) {
+            if (codigoDeError(error) === VALOR_FUERA_DEL_ENUM) {
+                this.modal.setOpen(
+                    'Falta actualizar la base',
+                    'Para confirmar la recepción hay que correr sql/migracion-recepcion-pedido.sql en Supabase.'
+                );
+            } else {
+                this.avisarError(error, 'No se pudo confirmar la recepción.');
+            }
+
+            return false;
+        } finally {
+            this.cargando.set(false);
+        }
+    }
+
+    /**
+     * Punto 22: el mozo confirma el pago y se libera la mesa.
+     *
+     * Son tres escrituras, en este orden:
+     *  1. el pedido pasa a "Pagado", que dispara el aviso al dueño y al
+     *     supervisor (sql/notificaciones.sql);
+     *  2. la mesa vuelve a estar disponible y sin cliente;
+     *  3. el cliente sale del circuito del local: queda "libre" y sin mesa, y
+     *     así puede volver a anotarse en la lista de espera otro día.
+     *
+     * El primer UPDATE excluye los pedidos ya pagados: si dos mozos confirman a
+     * la vez, el segundo no afecta ninguna fila y se le avisa.
+     */
+    async confirmarPago(pedido: PedidoInterface): Promise<boolean> {
+        if (pedido.estadoCliente !== 'pagando') {
+            this.modal.setOpen(
+                'El cliente no pagó',
+                `La mesa ${pedido.numeroMesa} todavía no pagó la cuenta.`,
+                'error'
+            );
 
             return false;
         }
 
-        return true;
+        this.cargando.set(true);
+
+        try {
+            const { data, error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'Pagado' })
+                .eq('id', pedido.id)
+                .neq('estado', 'Pagado')
+                .select('id');
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                this.modal.setOpen('Pago ya registrado', 'Otro mozo confirmó este pago hace instantes.', 'info');
+
+                return false;
+            }
+
+            const { error: errorMesa } = await supabase
+                .from('mesas')
+                .update({ disponibilidad: 'disponible', cliente_id: null })
+                .eq('id', pedido.mesaId);
+
+            if (errorMesa) throw errorMesa;
+
+            const { error: errorCliente } = await supabase
+                .from('usuarios')
+                .update({ estado_en_resto: 'libre', mesa_id: null })
+                .eq('id', pedido.clienteId);
+
+            if (errorCliente) throw errorCliente;
+
+            this.pedidos.update((actuales) => actuales.filter((p) => p.id !== pedido.id));
+
+            return true;
+        } catch (error) {
+            this.avisarError(error, 'No se pudo registrar el pago.');
+
+            return false;
+        } finally {
+            this.cargando.set(false);
+        }
     }
 
     /**
