@@ -176,6 +176,28 @@ export class PedidoService {
         }
     }
 
+    /**
+     * Pedido en curso de un cliente, con sus líneas y productos.
+     *
+     * "En curso" es cualquiera que todavía no se pagó: el cliente sigue su
+     * pedido desde que lo envía hasta que paga. Si hubiera más de uno, se toma
+     * el último.
+     */
+    async pedidoActualDelCliente(clienteId: string): Promise<PedidoInterface | null> {
+        const { data, error } = await supabase
+            .from('pedidos')
+            .select(SELECT_PEDIDO)
+            .eq('cliente_id', clienteId)
+            .neq('estado', 'Pagado')
+            .order('fecha', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        return data ? this.mapear(data as unknown as FilaPedido) : null;
+    }
+
     // Punto 12: el cliente arma el pedido y queda esperando al mozo.
     async crear(nuevo: NuevoPedidoInterface): Promise<string | null> {
         if (nuevo.items.length === 0) {
@@ -220,6 +242,18 @@ export class PedidoService {
                 .insert(detalles);
 
             if (errorDetalles) throw errorDetalles;
+
+            // Hacer el pedido es sentarse a la mesa: el cliente deja de estar
+            // "con mesa asignada" y pasa a "sentado". El filtro evita pisar un
+            // estado posterior, como el de quien ya pidió la cuenta.
+            const { error: errorEstado } = await supabase
+                .from('usuarios')
+                .update({ estado_en_resto: 'sentado' })
+                .eq('id', nuevo.clienteId)
+                .eq('estado_en_resto', 'mesa_asignada');
+
+            // El pedido ya quedó guardado: un fallo acá no debe anularlo.
+            if (errorEstado) console.error('No se pudo actualizar el estado del cliente', errorEstado);
 
             return data.id;
         } catch (error) {
