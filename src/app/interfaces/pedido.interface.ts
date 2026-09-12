@@ -1,3 +1,5 @@
+import { EstadoEnResto } from './auth.interface';
+
 /**
  * Contratos de pedidos.
  *
@@ -15,6 +17,7 @@ export type EstadoPedido =
     | 'En Preparación'
     | 'Listo para Entregar'
     | 'Entregado'
+    | 'Recibido'
     | 'Pagado';
 
 export type EstadoItem = 'Pendiente' | 'En Preparación' | 'Listo';
@@ -37,6 +40,11 @@ export interface PedidoInterface {
     mesaId: string;
     numeroMesa: number;
     clienteId: string;
+    /**
+     * Dónde está parado el cliente en el local. Pagar no cambia el pedido sino
+     * al cliente ('pagando'): es lo que le dice al mozo qué cobro confirmar.
+     */
+    estadoCliente: EstadoEnResto | null;
     estado: EstadoPedido;
     precioTotalNeto: number;
     descuentoJuego: number;
