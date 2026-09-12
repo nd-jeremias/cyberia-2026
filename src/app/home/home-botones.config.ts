@@ -40,13 +40,18 @@ const BOTONES_PEDIDOS: BotonHome[] = [
     },
 ];
 
-// Los dos perfiles de cliente arrancan igual: sin mesa, lo único que pueden
-// hacer es anotarse en la lista de espera escaneando el QR de la puerta.
+// Los dos perfiles de cliente comparten botones: anotarse en la lista de espera
+// escaneando el QR de la puerta y, una vez sentados, seguir su pedido.
 const BOTONES_CLIENTE: BotonHome[] = [
     {
         texto: 'Escanear QR de ingreso',
         icono: 'qr-code-outline',
         ruta: '/escanear-ingreso',
+    },
+    {
+        texto: 'Mi pedido',
+        icono: 'receipt-outline',
+        ruta: '/mi-pedido',
     },
 ];
 

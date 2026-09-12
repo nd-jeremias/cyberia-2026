@@ -77,6 +77,16 @@
     gap: 0.75rem;
 }
 
+/* El estado puede ser largo ("Pendiente de Confirmación") y tiene que poder
+   partirse en dos renglones: cortado sería ilegible, y el enunciado no admite
+   textos informativos cortados. */
+.encabezado ion-badge {
+    max-width: 60%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.25;
+}
+
 /* La ficha de mesa y las pastillas de dato viven en global.scss: las
    comparte con la pantalla de asignacion de mesas. */
 

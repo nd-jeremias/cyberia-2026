@@ -81,12 +81,14 @@ export class PedidosPage implements OnInit {
     }
 
     /**
-     * Vuelve a consultar tras cada acción.
+     * Vuelve a consultar los pedidos contra la base.
      *
-     * Es intencional que se recargue contra la base y no sólo en memoria: otro
-     * mozo pudo haber tocado el mismo pedido mientras tanto.
+     * Se usa tras cada acción y desde el botón "Actualizar" (punto 14): la
+     * pantalla carga una sola vez al entrar, y sin ese botón el mozo no vería
+     * los pedidos que llegan mientras la tiene abierta. Además, otro mozo pudo
+     * haber tocado el mismo pedido mientras tanto.
      */
-    private recargar(): Promise<void> {
+    recargar(): Promise<void> {
         return this.pedidoService.listar([
             'Pendiente de Confirmación',
             'Listo para Entregar',

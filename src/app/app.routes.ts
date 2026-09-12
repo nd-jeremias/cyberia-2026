@@ -83,7 +83,8 @@ export const routes: Routes = [
     // ---------------------------------------------------------------
     // Operación diaria: mozo, metre y sectores
     // ---------------------------------------------------------------
-    // Puntos 13, 14 y 19: el mozo confirma, rechaza y entrega pedidos.
+    // Pedidos de cocina y barra (puntos 16 y 17). Por ahora muestra la misma
+    // pantalla que el mozo, hasta que se implemente la vista de cada sector.
     {
         path: 'pedidos',
         loadComponent: () => import('./pages/pedidos/pedidos.page').then((m) => m.PedidosPage),
@@ -116,10 +117,18 @@ export const routes: Routes = [
         loadComponent: () =>
             import('./pages/consultas-clientes/consultas-clientes.page').then((m) => m.ConsultasClientesPage),
     },
+    // Puntos 13, 14 y 19: el mozo confirma, rechaza y entrega pedidos. Es la
+    // ruta a la que lleva su botón "Pedidos de clientes" desde el inicio.
     {
         path: 'pedidos-clientes',
-        loadComponent: () =>
-            import('./pages/pedidos-clientes/pedidos-clientes.page').then((m) => m.PedidosClientesPage),
+        loadComponent: () => import('./pages/pedidos/pedidos.page').then((m) => m.PedidosPage),
+        canActivate: [authGuard],
+    },
+    // Puntos 13 a 15, del lado del cliente: estado de su pedido y acceso a los juegos.
+    {
+        path: 'mi-pedido',
+        loadComponent: () => import('./pages/mi-pedido/mi-pedido.page').then((m) => m.MiPedidoPage),
+        canActivate: [authGuard],
     },
     // Punto 10: el metre asigna una mesa a un cliente registrado.
     {
