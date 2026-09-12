@@ -8,9 +8,8 @@ import { irA } from './util/app';
  * comprueba lo que el usuario efectivamente ve, que es lo que exige el
  * enunciado: "todo error debe ser mostrado con distintos tipos de controles".
  *
- * Los dos formularios usan estrategias distintas y ambas son válidas:
- *  - ingreso: el botón siempre se puede tocar y avisa el error;
- *  - registro: el botón permanece deshabilitado hasta que los datos sirven.
+ * Los dos formularios siguen la misma estrategia: el botón siempre se puede
+ * tocar y, si los datos no sirven, avisa con un modal y marca los campos.
  */
 
 /** Cualquier forma en que la aplicación comunique un error al usuario. */
@@ -20,9 +19,14 @@ const SELECTOR_AVISO =
 /**
  * Ionic envuelve un `<input>` nativo dentro de `<ion-input>`, y ambos exponen
  * el mismo placeholder. Se apunta al nativo para que el selector sea unívoco.
+ *
+ * En pantallas móviles, además, Ionic clona el input al enfocarlo para
+ * desplazar la vista (`.cloned-input`); ese clon también se excluye.
  */
 function campoPorPlaceholder(page: Page, placeholder: string) {
-    return page.locator(`input[placeholder="${placeholder}"]`);
+    return page.locator(
+        `input[placeholder="${placeholder}"]:not(.cloned-input)`
+    );
 }
 
 test.describe('Formulario de ingreso', () => {
@@ -58,14 +62,14 @@ test.describe('Formulario de ingreso', () => {
     test('los botones de ingreso rápido completan las credenciales', async ({
         page,
     }) => {
-        // El enunciado pide botones de ingreso rápido por perfil.
-        const botonRapido = page
-            .getByRole('button')
-            .filter({ hasText: /duenio@restaurante\.com/i })
-            .first();
+        // El enunciado pide botones de ingreso rápido por perfil, pero no
+        // fijos: viven plegados detrás de "Acceso rápido".
+        await page.getByRole('button', { name: /acceso rápido/i }).click();
 
-        await expect(botonRapido).toBeVisible({ timeout: 8000 });
-        await botonRapido.click();
+        const botonDuenio = page.getByRole('button', { name: /dueño/i });
+
+        await expect(botonDuenio).toBeVisible({ timeout: 8000 });
+        await botonDuenio.click();
 
         await expect(
             campoPorPlaceholder(page, 'nombre@restaurante.com')
@@ -85,16 +89,17 @@ test.describe('Formulario de registro', () => {
         await expect(page.locator('app-formulario-registro')).toBeVisible();
     });
 
-    test('el botón de registro está deshabilitado mientras faltan datos', async ({
+    test('avisa al intentar registrarse con datos faltantes', async ({
         page,
     }) => {
-        // Este formulario impide el envío en vez de avisar después: es otra
-        // manera válida de no dejar mandar datos inválidos.
-        const boton = page
-            .getByRole('button', { name: /registrar/i })
-            .first();
+        await page
+            .getByRole('button', { name: /registrarse/i })
+            .first()
+            .click();
 
-        await expect(boton).toBeDisabled();
+        await expect(page.locator(SELECTOR_AVISO).first()).toBeVisible({
+            timeout: 8000,
+        });
     });
 
     test('muestra el mensaje del campo al dejarlo vacío', async ({ page }) => {

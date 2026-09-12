@@ -20,7 +20,8 @@ test.describe('Arranque de la aplicación', () => {
         const presentacion = page.locator('app-splash');
 
         await expect(presentacion).toBeVisible();
-        await expect(presentacion).toContainText('Plucci');
+        // Los nombres se muestran en mayúsculas: se compara sin distinguirlas.
+        await expect(presentacion).toContainText(/plucci/i);
     });
 
     test('la raíz redirige a la pantalla de ingreso', async ({ page }) => {
@@ -73,8 +74,13 @@ test.describe('Rutas públicas', () => {
 
 test.describe('Protección de rutas', () => {
     // El enunciado exige que un usuario sin sesión no acceda a las pantallas
-    // internas.
-    const RUTAS_PRIVADAS = ['/home', '/alta-mesa', '/alta-producto'];
+    // internas. Son rutas declaradas con authGuard en app.routes.ts.
+    const RUTAS_PRIVADAS = [
+        '/inicio',
+        '/alta-producto',
+        '/pedidos-clientes',
+        '/mi-pedido',
+    ];
 
     for (const ruta of RUTAS_PRIVADAS) {
         test(`${ruta} redirige a ingresar si no hay sesión`, async ({
