@@ -96,6 +96,19 @@ export class FormularioAltaProductoComponent {
         return this.fotos.length + this.fotosUrlsExistentes.length;
     }
 
+    /**
+     * Indica si un campo debe mostrar cierto error.
+     *
+     * Se exige que esté "tocado" para no pintar de rojo un formulario que el
+     * usuario todavía no completó. Al enviar se tocan todos, así que ahí
+     * aparecen los mensajes de lo que falta.
+     */
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
     onAltaProducto() {
         if (this.formulario.invalid) {
             this.formulario.markAllAsTouched();

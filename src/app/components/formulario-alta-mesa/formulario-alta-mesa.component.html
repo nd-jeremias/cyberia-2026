@@ -17,10 +17,12 @@
                     >
                     </ion-input>
                 </div>
+                @if (hayError("numeroMesa", "required")) {
+                <span class="mensaje-error">Ingrese el número correspondiente a la mesa</span>
+                } @if (hayError("numeroMesa", "min")) {
+                <span class="mensaje-error">El número de mesa debe ser mayor a cero</span>
+                }
             </div>
-            @if (formulario.get("numeroMesa")?.errors?.["required"] && formulario.get("numeroMesa")?.touched) {
-            <span class="mensaje-error">Ingrese el número correspondiente a la mesa</span>
-            }
 
             <!-- Cantidad de lugares -->
             <div class="grupo-input">
@@ -37,9 +39,10 @@
                         placeholder="4"
                     ></ion-input>
                 </div>
-                @if (formulario.get("cantidadLugares")?.errors?.["required"] &&
-                formulario.get("cantidadLugares")?.touched) {
+                @if (hayError("cantidadLugares", "required")) {
                 <span class="mensaje-error">Ingrese la cantidad de lugares disponibles</span>
+                } @if (hayError("cantidadLugares", "min")) {
+                <span class="mensaje-error">La mesa debe tener al menos un lugar</span>
                 }
             </div>
 
@@ -59,17 +62,11 @@
                         }
                     </ion-select>
                 </div>
-                @if (formulario.get("tipo")?.errors?.["required"] && formulario.get("tipo")?.touched) {
+                @if (hayError("tipo", "required")) {
                 <span class="mensaje-error">Seleccione el tipo de mesa a cargar</span>
                 }
             </div>
 
-            <!-- <ion-item>
-                <label class="input-archivo">
-                    Foto de la mesa
-                    <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" />
-                </label>
-            </ion-item> -->
             <div class="img-preview">
                 <app-subida-imagenes
                     [label]="'Foto de la mesa'"
@@ -81,8 +78,10 @@
                     (urlsExistentesChange)="onUrlsExistentes($event)"
                 >
                 </app-subida-imagenes>
-                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <span>Debe cargar la foto de la mesa</span>
+                <!-- El control se llama "fotos": antes se consultaba "imagenes", que no
+                     existe, y el mensaje no se mostraba nunca. -->
+                @if (hayError("fotos", "minLengthArray")) {
+                <span class="mensaje-error">Debe cargar la foto de la mesa</span>
                 }
             </div>
 
