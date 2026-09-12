@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import {
     IonButton,
     IonButtons,
-    IonContent,
     IonHeader,
     IonModal,
     IonTitle,
@@ -13,7 +12,7 @@ import { ModalService } from '../../services/modal.service';
     selector: 'app-modal',
     templateUrl: './modal.component.html',
     styleUrls: ['./modal.component.scss'],
-    imports: [IonFooter, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonModal, IonButtons],
+    imports: [IonFooter, IonHeader, IonToolbar, IonTitle, IonButton, IonModal, IonButtons],
 })
 export class ModalComponent {
     modalService = inject(ModalService);
