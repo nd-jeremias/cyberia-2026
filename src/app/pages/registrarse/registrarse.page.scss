@@ -1,1 +1,30 @@
-/* La estructura la aportan `app-header` y la clase `.hoja` de global.scss. */
+// El fondo naranja de ion-content asoma detrás de la banda naranja al rebotar
+// el scroll, lo que da continuidad visual sin un corte brusco.
+ion-content {
+    --background: var(--naranja);
+    --padding-bottom: 0;
+}
+
+// ::ng-deep es necesario porque .layout-superpuesto y sus hijos son elementos
+// del DOM, no componentes, por lo que Angular los encapsula con el atributo
+// _nghost. Sin el deep, los overrides no llegan.
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+:host ::ng-deep {
+    // Fallback de altura: Ionic no expone su altura real al primer hijo, así que
+    // forzamos 100vh para que .layout-superpuesto pueda usar flex-grow: 1.
+    .layout-superpuesto {
+        min-height: 100vh;
+    }
+
+    // El .inferior aloja app-header-logo: usamos height:auto para que la
+    // altura la determine el propio componente (no la fija global del mixin).
+    .inferior {
+        height: auto;
+        padding-bottom: 50px; // mismo valor que el margin-top negativo de .superior
+    }
+
+    // Padding interno del formulario para que no quede pegado al borde redondeado.
+    .superior {
+        padding-top: 1.5rem;
+    }
+}

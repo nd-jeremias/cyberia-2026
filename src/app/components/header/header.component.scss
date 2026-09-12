@@ -13,6 +13,21 @@
     z-index: 10;
     flex-shrink: 0;
 }
+// header.component.scss
+
+:host(.inferior) {
+    background: transparent !important;
+    padding-bottom: 0 !important;
+}
+
+:host(.inferior) .banda {
+    padding-bottom: 50px; /* espacio de solapamiento dentro del gradiente */
+}
+
+:host(.sin-labio) .labio-hoja {
+    display: none;
+}
+
 
 .banda {
     position: relative;

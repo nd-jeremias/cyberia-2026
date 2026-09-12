@@ -1,0 +1,33 @@
+<ion-content [fullscreen]="true">
+    <div class="layout-superpuesto fondo-texturizado">
+        <!-- Header con clases inferior y sin-labio -->
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Título'"> </app-header>
+
+        <!-- Contenido principal -->
+        <div class="superior hoja">
+            <section class="...">
+                <!-- tu contenido -->
+            </section>
+        </div>
+    </div>
+</ion-content>
+
+<!-- Styles: -->
+<style>
+    ion-content {
+        --background: var(--naranja);
+        --padding-bottom: 0;
+    }
+    :host ::ng-deep {
+        .layout-superpuesto {
+            min-height: 100vh;
+        }
+        .inferior {
+            height: auto;
+            padding-bottom: 0;
+        }
+        .superior {
+            padding-top: 1.5rem;
+        }
+    }
+</style>
