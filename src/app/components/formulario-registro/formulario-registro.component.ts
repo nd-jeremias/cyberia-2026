@@ -81,7 +81,6 @@ export class FormularioRegistroComponent {
     });
     fotosIniciales = computed<string[]>(() => {
         const fotoUrl = this.empleadoExistente()?.foto_url;
-        console.log('Fotos iniciales:', this.empleadoExistente());
         return fotoUrl ? fotoUrl : [];
     });
 
@@ -220,7 +219,6 @@ export class FormularioRegistroComponent {
             const password = this.formulario.controls.password;
             const confirmPassword = this.formulario.controls.confirmPassword;
             const tipoEmpleado = this.formulario.controls.tipoEmpleado;
-            console.log('TIPO EMPLEADO: ', tipoEmpleado);
             // ====================================================
             // MODO EDICIÓN
             // ====================================================

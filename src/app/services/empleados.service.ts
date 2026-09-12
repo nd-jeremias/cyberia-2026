@@ -1,9 +1,13 @@
 import { EmpleadoInterface } from './../interfaces/empleado.interface';
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { supabase } from './supabase.service';
+import { GaleriaService } from './galeria.service';
 
 @Service()
 export class EmpleadosService {
+
+    galeriaService = inject(GaleriaService)
+
     async getEmpleados(): Promise<EmpleadoInterface[]> {
         const { data, error } = await supabase
             .from('usuarios')
@@ -16,26 +20,6 @@ export class EmpleadosService {
         return (data ?? []).map((row) => this.mapEmpleado(row));
     }
 
-    parseFotoUrl(raw: unknown): string[] | null {
-        if (!raw) return null;
-
-        // Puede venir como array real (columna jsonb bien tipada)
-        if (Array.isArray(raw)) return raw as string[];
-
-        // O como string con JSON adentro
-        if (typeof raw === 'string') {
-            try {
-                const parsed = JSON.parse(raw);
-                return Array.isArray(parsed) ? parsed : [parsed];
-            } catch {
-                // URL plana sin JSON.stringify
-                return [raw];
-            }
-        }
-
-        return null;
-    }
-
     mapEmpleado(row: any): EmpleadoInterface {
         return {
             id: row.id,
@@ -44,7 +28,7 @@ export class EmpleadosService {
             dni: row.dni,
             cuil: row.cuil,
             correo_electronico: row.correo_electronico,
-            foto_url: this.parseFotoUrl(row.foto_url),
+            foto_url: this.galeriaService.parseFotoUrl(row.foto_url),
             token_push: row.token_push,
             perfil: row.perfil,
             tipoEmpleado: row.perfil,
