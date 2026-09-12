@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
-import { HeaderComponent } from '../../components/header/header.component';
-import { ListadoClientesPendientesComponent } from '../../components/listado-clientes-pendientes/listado-clientes-pendientes.component';
-import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
-import { ModalService } from '../../services/modal.service';
-import { SpinnerService } from '../../services/spinner.service';
-import { supabase } from '../../services/supabase.service';
+import { HeaderComponent } from '../../../components/header/header.component';
+import { ListadoClientesPendientesComponent } from '../../../components/listado-clientes-pendientes/listado-clientes-pendientes.component';
+import { ClientePendienteInterface } from '../../../interfaces/cliente.interface';
+import { ModalService } from '../../../services/modal.service';
+import { SpinnerService } from '../../../services/spinner.service';
+import { supabase } from '../../../services/supabase.service';
 
 /**
  * Aprobación de clientes registrados (puntos 6, 7 y 8 del enunciado).

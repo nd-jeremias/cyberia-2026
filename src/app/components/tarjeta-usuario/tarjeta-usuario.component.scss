@@ -31,9 +31,7 @@
     border-radius: var(--radio-grande);
     box-shadow: var(--sombra-tarjeta);
 
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
         border-color: var(--hoja-borde-fuerte);
@@ -45,7 +43,8 @@
 
 .contenedor-foto {
     grid-area: foto;
-
+    display: flex;
+    align-self: center;
     width: 6rem;
     height: 6rem;
     overflow: hidden;
