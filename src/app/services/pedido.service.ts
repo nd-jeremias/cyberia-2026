@@ -9,7 +9,32 @@ import {
 import { ModalService } from './modal.service';
 import { SupabaseService } from './supabase.service';
 
-// Filas crudas tal como las devuelve Supabase, antes de mapearlas a la interfaz.
+/**
+ * Ciclo de vida completo de un pedido.
+ *
+ * Un pedido nace cuando el cliente termina de elegir (punto 12) y recorre
+ * varios estados hasta el pago (punto 22):
+ *
+ *   Pendiente de Confirmación
+ *        │  el mozo revisa
+ *        ├── Rechazado ──► el cliente corrige y vuelve a enviar   (punto 13)
+ *        └── Confirmado ──► baja a cocina y bar                    (punto 14)
+ *                 │
+ *          En Preparación ──► Listo para Entregar                  (punto 18)
+ *                 │
+ *             Entregado ──► Pagado, y se libera la mesa            (punto 22)
+ *
+ * El estado vive en la base; acá se mantiene una copia en signals para que las
+ * pantallas se actualicen solas sin volver a consultar en cada cambio.
+ */
+
+// ---------------------------------------------------------------------------
+// Formas crudas de Supabase
+// ---------------------------------------------------------------------------
+// La base usa snake_case y devuelve las relaciones anidadas. Estas interfaces
+// describen ese formato para poder traducirlo a las del dominio en un solo
+// lugar (`mapear`), en vez de esparcir `fila.precio_total_neto` por toda la
+// aplicación.
 interface FilaDetalle {
     id: string;
     pedido_id: string;
@@ -27,8 +52,7 @@ interface FilaDetalle {
 interface FilaPedido {
     id: string;
     mesa_id: string;
-    cliente_registrado_id: string | null;
-    cliente_anonimo_id: string | null;
+    cliente_id: string;
     estado: EstadoPedido;
     precio_total_neto: number;
     descuento_juego: number;
@@ -38,8 +62,12 @@ interface FilaPedido {
     pedido_detalles: FilaDetalle[] | null;
 }
 
+// Columnas que se piden en cada consulta. Se declara una sola vez para que
+// todas las consultas devuelvan la misma forma y `mapear` siempre reciba lo
+// que espera. Incluye el número de mesa y el nombre de cada producto, que
+// viven en otras tablas.
 const SELECT_PEDIDO =
-    'id, mesa_id, cliente_registrado_id, cliente_anonimo_id, estado, ' +
+    'id, mesa_id, cliente_id, estado, ' +
     'precio_total_neto, descuento_juego, propina_porcentaje, fecha, ' +
     'mesas ( numero_mesa ), ' +
     'pedido_detalles ( id, pedido_id, producto_id, cantidad, precio_unitario, ' +
@@ -51,7 +79,10 @@ export class PedidoService {
     private modal = inject(ModalService);
     private supabase = inject(SupabaseService);
 
+    /** Pedidos cargados en memoria; las pantallas se enganchan a este signal. */
     pedidos = signal<PedidoInterface[]>([]);
+
+    /** Bloquea los botones mientras hay una operación en curso. */
     cargando = signal<boolean>(false);
 
     // El mozo necesita ver primero lo que espera su confirmacion (punto 12).
@@ -63,6 +94,12 @@ export class PedidoService {
         this.pedidos().filter((p) => p.estado === 'Listo para Entregar')
     );
 
+    /**
+     * Traduce una fila de Supabase al modelo del dominio.
+     *
+     * Los importes llegan como texto porque Postgres usa NUMERIC para no
+     * perder precisión en dinero; por eso cada uno pasa por `Number`.
+     */
     private mapear(fila: FilaPedido): PedidoInterface {
         const detalles: DetallePedidoInterface[] = (
             fila.pedido_detalles ?? []
@@ -83,8 +120,7 @@ export class PedidoService {
             id: fila.id,
             mesaId: fila.mesa_id,
             numeroMesa: fila.mesas?.numero_mesa ?? 0,
-            clienteRegistradoId: fila.cliente_registrado_id,
-            clienteAnonimoId: fila.cliente_anonimo_id,
+            clienteId: fila.cliente_id,
             estado: fila.estado,
             precioTotalNeto: Number(fila.precio_total_neto),
             descuentoJuego: Number(fila.descuento_juego),
@@ -94,12 +130,24 @@ export class PedidoService {
         };
     }
 
+    /**
+     * Muestra el error en pantalla.
+     *
+     * Todo fallo se comunica con un control visible: el enunciado prohíbe los
+     * alerts del navegador y exige que nada falle en silencio.
+     */
     private avisarError(error: unknown, alternativa: string): void {
         const mensaje = error instanceof Error ? error.message : alternativa;
 
         this.modal.setOpen('Error', mensaje);
     }
 
+    /**
+     * Trae los pedidos, opcionalmente filtrados por estado.
+     *
+     * Cada pantalla pide sólo lo suyo: el mozo los que esperan confirmación,
+     * cocina los confirmados. Así no se traen pedidos que no se van a mostrar.
+     */
     async listar(estados?: EstadoPedido[]): Promise<void> {
         this.cargando.set(true);
 
@@ -129,6 +177,28 @@ export class PedidoService {
         }
     }
 
+    /**
+     * Pedido en curso de un cliente, con sus líneas y productos.
+     *
+     * "En curso" es cualquiera que todavía no se pagó: el cliente sigue su
+     * pedido desde que lo envía hasta que paga. Si hubiera más de uno, se toma
+     * el último.
+     */
+    async pedidoActualDelCliente(clienteId: string): Promise<PedidoInterface | null> {
+        const { data, error } = await this.supabase
+            .from('pedidos')
+            .select(SELECT_PEDIDO)
+            .eq('cliente_id', clienteId)
+            .neq('estado', 'Pagado')
+            .order('fecha', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (error) throw error;
+
+        return data ? this.mapear(data as unknown as FilaPedido) : null;
+    }
+
     // Punto 12: el cliente arma el pedido y queda esperando al mozo.
     async crear(nuevo: NuevoPedidoInterface): Promise<string | null> {
         if (nuevo.items.length === 0) {
@@ -152,8 +222,7 @@ export class PedidoService {
                 .from('pedidos')
                 .insert({
                     mesa_id: nuevo.mesaId,
-                    cliente_registrado_id: nuevo.clienteRegistradoId ?? null,
-                    cliente_anonimo_id: nuevo.clienteAnonimoId ?? null,
+                    cliente_id: nuevo.clienteId,
                     estado: 'Pendiente de Confirmación',
                     precio_total_neto: total,
                 })
@@ -175,6 +244,18 @@ export class PedidoService {
 
             if (errorDetalles) throw errorDetalles;
 
+            // Hacer el pedido es sentarse a la mesa: el cliente deja de estar
+            // "con mesa asignada" y pasa a "sentado". El filtro evita pisar un
+            // estado posterior, como el de quien ya pidió la cuenta.
+            const { error: errorEstado } = await this.supabase
+                .from('usuarios')
+                .update({ estado_en_resto: 'sentado' })
+                .eq('id', nuevo.clienteId)
+                .eq('estado_en_resto', 'mesa_asignada');
+
+            // El pedido ya quedó guardado: un fallo acá no debe anularlo.
+            if (errorEstado) console.error('No se pudo actualizar el estado del cliente', errorEstado);
+
             return data.id;
         } catch (error) {
             this.avisarError(error, 'No se pudo registrar el pedido.');
@@ -185,6 +266,14 @@ export class PedidoService {
         }
     }
 
+    /**
+     * Cambia el estado de un pedido en la base y en la copia local.
+     *
+     * Actualizar el signal evita tener que recargar la lista entera: la
+     * pantalla refleja el cambio de inmediato.
+     *
+     * @returns `true` si se guardó; `false` si falló (ya avisado al usuario).
+     */
     private async cambiarEstado(
         pedidoId: string,
         estado: EstadoPedido
@@ -228,7 +317,12 @@ export class PedidoService {
         return this.cambiarEstado(pedidoId, 'Entregado');
     }
 
-    // Punto 22: el mozo confirma el pago y se libera la mesa.
+    /**
+     * Punto 22: el mozo confirma el pago y la mesa queda libre.
+     *
+     * Son dos escrituras, y la de la mesa es la que importa para el negocio:
+     * si no se libera, esa mesa queda inutilizable para el resto del servicio.
+     */
     async marcarPagado(pedidoId: string, mesaId: string): Promise<boolean> {
         const actualizado = await this.cambiarEstado(pedidoId, 'Pagado');
 
@@ -238,8 +332,7 @@ export class PedidoService {
             .from('mesas')
             .update({
                 disponibilidad: 'disponible',
-                cliente_registrado_id: null,
-                cliente_anonimo_id: null,
+                cliente_id: null,
             })
             .eq('id', mesaId);
 
@@ -252,7 +345,12 @@ export class PedidoService {
         return true;
     }
 
-    // Puntos 16 a 18: cocina y bar avisan producto por producto.
+    /**
+     * Puntos 16 a 18: cocina y bar marcan el avance producto por producto.
+     *
+     * El estado va por ítem y no por pedido porque una mesa puede pedir comida
+     * y bebida a la vez, y cada sector termina lo suyo por separado.
+     */
     async cambiarEstadoItem(
         detalleId: string,
         estado: EstadoItem
@@ -282,8 +380,12 @@ export class PedidoService {
         }
     }
 
-    // El tiempo estimado es el del producto mas lento: los sectores trabajan
-    // en paralelo, no uno despues del otro.
+    /**
+     * Minutos estimados hasta que el pedido esté listo.
+     *
+     * Es el tiempo del producto más lento, no la suma: cocina y bar preparan
+     * en paralelo. Sumarlos daría una espera muy por encima de la real.
+     */
     tiempoEstimado(pedido: PedidoInterface): number {
         return pedido.detalles.reduce(
             (mayor, d) => Math.max(mayor, d.tiempoElaboracionMinutos),
@@ -291,6 +393,13 @@ export class PedidoService {
         );
     }
 
+    /**
+     * Importe final a abonar.
+     *
+     * El descuento de los juegos y la propina se calculan **ambos sobre el
+     * neto**, no encadenados. Aplicar uno sobre el resultado del otro daría
+     * un total distinto y equivocado.
+     */
     totalConDescuento(pedido: PedidoInterface): number {
         const descuento = pedido.precioTotalNeto * (pedido.descuentoJuego / 100);
         const propina =

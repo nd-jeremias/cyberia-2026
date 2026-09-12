@@ -1,100 +1,244 @@
-ion-content {
-  /* Fondo azul oscuro permanente */
-  --background: #000730; 
+/**
+ * Pantallas de presentación (splash screens).
+ *
+ * El enunciado pide una estática y una animada, con el ícono de la aplicación,
+ * el nombre del grupo y los apellidos y nombres de cada integrante. Son dos
+ * capas superpuestas: la primera (logotipo) se desvanece a los 2,5 segundos y
+ * deja ver la segunda (créditos), que estaba debajo desde el principio.
+ *
+ * Cambios de esta versión:
+ *  - el fondo pasó del casi negro #000a21 al petróleo de la aplicación, con sus
+ *    dos resplandores. Así la presentación no arranca en negro para después
+ *    saltar a un azul medio, y se respeta la regla de no usar fondos negros;
+ *  - se agregó el nombre del grupo, que el enunciado pide y no estaba;
+ *  - los nombres entran escalonados en lugar de aparecer todos de golpe.
+ */
+
+/* Fondo compartido por las dos capas: mismo tratamiento que el resto de la
+   aplicación, con la luz cálida arriba y el reflejo de neón abajo. */
+%fondo-presentacion {
+    background-color: #24405f;
+    background-image: linear-gradient(178deg, #3a6289 0%, #2a4a6d 58%, #22384f 100%);
 }
 
-/* --- CAPA 1: LOGO ANIMADO --- */
+ion-content {
+    --background: #2a4a6d;
+}
+
+/* --- CAPA 1: LOGOTIPO ANIMADO Y TEXTURA --- */
+
 .layer-animated {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  animation: fadeOutLayer 0.5s ease-out 2.0s forwards;
+    background-color: #e2571c;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    /* Mantenemos tu salida: desaparece a los 2.5s para dar tiempo al latido */
+    animation: fadeOutLayer 0.5s ease-out 2.5s forwards;
+}
+
+/* Patrón gastronómico de fondo, muy tenue: da textura sin competir. */
+.background-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../../../assets/patron_splash_blanco.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    opacity: 0.25; /* Súper tenue para que no compita visualmente */
+    z-index: 1;
+}
+
+.full-img {
+    background-image: url("../../../assets/patron_full_blanco.png");
+    opacity: 0.1;
 }
 
 .animated-logo {
-  width: 75vw; 
-  max-width: 500px;
-  height: auto;
-  opacity: 0;
-  transform: scale(0.6);
-  animation: logoEntrance 1.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards;
+    position: relative;
+    z-index: 2;
+
+    width: 75vw;
+    max-width: 26rem;
+    height: auto;
+    opacity: 0;
+
+    /* Resplandor tecnológico azulado sobre el logo */
+    // filter: drop-shadow(0px 0px 25px rgba(0, 162, 255, 0.45));
+    filter: drop-shadow(0px 0px 25px rgb(250, 250, 250, 0.45));
+
+    /* TRUCO CLAVE: Encadenamos la animación de Entrada (ejecuta una vez) 
+       y la animación de Latido (corre en bucle infinito tras 0.8 segundos) */
+    animation: logoEntrance 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.1s forwards,
+        latidoCyberia 2.5s ease-in-out 0.9s infinite;
 }
 
-/* --- CAPA 2: LISTA DE NOMBRES HTML --- */
+/* --- CAPA 2: NOMBRE DEL GRUPO E INTEGRANTES --- */
+
 .layer-html-credits {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1;
-  text-align: center;
+    background-color: #e2571c;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .credits-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    height: 80vh;
+    padding: 1.25rem 1rem;
+    box-sizing: border-box;
+    padding: 20px 0;
 }
 
 .credits-title {
-  color: #4a5d80; /* Azul grisáceo sobrio */
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  margin: 0;
-  opacity: 0;
-  
-  /* 1. Aparece primero "Desarrollado por" al segundo 2.0 */
-  animation: fadeInText 0.5s ease-out 2.0s forwards;
+    color: #f5e1d5;
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: #f4f9ff;
+    text-shadow: 0 0 1.5rem rgba(87, 216, 234, 0.55);
+
+    opacity: 0;
+    animation: fadeInText 0.5s ease-out 2.5s forwards;
+}
+
+.credits-title {
+    margin: 0;
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #b9d0e7;
+
+    opacity: 0;
+    animation: fadeInText 0.5s ease-out 2.6s forwards;
 }
 
 .names-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 
-  li {
-    font-size: 1.4rem;
-    font-weight: 300;
-    letter-spacing: 1px;
-    opacity: 0;
-    
-    /* 2. Todos los nombres aparecen JUNTOS al segundo 2.3 (un instante después) */
-    animation: fadeInText 0.5s ease-out 2.3s forwards;
-    
-    /* Degradado metálico sobrio */
-    background: linear-gradient(to bottom, #ffffff 60%, #b0c4de 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+    width: 100%;
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li:not(.divider-line) {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        opacity: 0;
+        animation: fadeInText 0.5s ease-out 2.8s forwards;
+        
+        background: linear-gradient(to bottom, #ffffff 40%, #b0c4de 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Entrada escalonada: los nombres llegan de a uno, no todos de golpe. */
+    li:nth-of-type(1) {
+        animation-delay: 2.75s;
+    }
+    li:nth-of-type(3) {
+        animation-delay: 2.9s;
+    }
+    li:nth-of-type(5) {
+        animation-delay: 3.05s;
+    }
+    li:nth-of-type(7) {
+        animation-delay: 3.2s;
+    }
 }
 
-/* --- ANIMACIONES REUTILIZABLES --- */
+.names-list li.divider-line {
+    width: 45%;
+    height: 3px;
+    align-self: center;
+    display: block;
+    opacity: 0;
+    animation: fadeInText 0.5s ease-out 2.8s forwards;
+    
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    
+    background: linear-gradient(
+        to right,
+        rgba(250, 250, 250, 0.1) 0%,
+        rgba(250, 250, 250, 0.8) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+        ) !important;
+}
+
+/* Estilos de fuentes */
+.first-name,
+.last-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    color: #f5e1d5;
+    font-weight: 600;
+}
+
+/* --- ANIMACIONES --- */
+
 @keyframes logoEntrance {
-  0% { opacity: 0; transform: scale(0.6); }
-  60% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
+    0% {
+        opacity: 0;
+        transform: scale(0.6);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Latido sutil: el logotipo respira mientras se espera. */
+@keyframes latidoCyberia {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    } /* Engorda un 5% de manera sutil */
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes fadeOutLayer {
-  to { opacity: 0; visibility: hidden; }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
 }
 
-/* Animación de desvanecimiento limpia compartida (Fade-In) */
 @keyframes fadeInText {
-  to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }

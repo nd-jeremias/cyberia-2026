@@ -1,48 +1,44 @@
+/**
+ * Ingreso como cliente anónimo (punto 9 del enunciado).
+ *
+ * Dos campos y un botón. El título lo pone la banda de `app-header`, y el
+ * recuadro explicativo que había antes se quitó: la pantalla se entiende sola.
+ */
+
 :host {
-  display: block;
-  width: 100%;
+    display: block;
+    width: 100%;
 }
 
-.bloque-foto {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 16px 0;
+.pantalla-anonimo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
 }
 
-.contenedor-foto {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: #12294a;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+.img-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: var(--borde-hoja);
+    border-radius: var(--radio);
 }
 
-.foto-previa {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+/* Las dos alternativas comparten fila: apiladas dejaban un bloque muerto. */
+.fila-alternativas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
 
-.foto-ausente {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.65);
-  text-align: center;
-  padding: 12px;
-}
-
-.foto-ausente ion-icon {
-  font-size: 3.5rem;
-}
-
-.foto-ausente span {
-  font-size: 0.95rem;
+    .btn-secundario {
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
+        font-size: var(--texto-apoyo);
+    }
 }

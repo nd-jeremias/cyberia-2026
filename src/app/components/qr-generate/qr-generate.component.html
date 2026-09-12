@@ -1,17 +1,16 @@
 @if(this.qrService.mostrarQr()){
-<h4>Código QR Generado:</h4>
-<div class="qr-container" id="qr-container">
-    <div class="image-container">
-        <qr-code
-            value="{{ this.qrService.variableQr() }}"
-            size="300"
-            errorCorrectionLevel="M"
-        />
-        <h3>{{ this.qrService.showedText() }}</h3>
+<div class="full-container">
+    <h4>Código QR Generado:</h4>
+    <div class="qr-container" id="qr-container">
+        <!-- <div class="image-container">
+            <qr-code value="{{ this.qrService.variableQr() }}" size="300" errorCorrectionLevel="M" />
+        </div> -->
     </div>
-    <ion-button (click)="this.qrService.captureScreen('qr-container')">
-         Compartir QR 
-        <fa-icon class="fa-regular fa-square-plus" [icon]="faShareNodes"></fa-icon>
-      </ion-button>
+    <h4>{{ this.qrService.showedText() }}</h4>
 </div>
-}
+@if(qrService.archivoQr()){
+<button class="btn-principal" (click)="this.qrService.downloadFile(qrService.archivoQr()!)">
+    Descargar imagen QR
+    <fa-icon class="fa-regular fa-square-plus" [icon]="faShareNodes"></fa-icon>
+</button>
+} }

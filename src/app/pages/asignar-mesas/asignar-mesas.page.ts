@@ -1,37 +1,40 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import {
-    IonBadge,
-    IonButton,
-    IonContent,
-    IonHeader,
-    IonIcon,
-    IonTitle,
-    IonToolbar,
-} from '@ionic/angular';
+import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
+import { SalonService } from '../../services/salon.service';
 import { ModalService } from '../../services/modal.service';
 import { supabase } from '../../services/supabase.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
+import { HeaderComponent } from '../../components/header/header.component';
 
+/**
+ * Pantalla del metre: asignar una mesa a un cliente (punto 10).
+ *
+ * El flujo es de dos pasos deliberadamente: primero se elige el cliente y
+ * después la mesa. Al revés habría que soltar la mesa si el cliente resulta no
+ * poder tomarla, y esa reserva a medias es justo lo que causa mesas trabadas.
+ *
+ * Las verificaciones del enunciado viven en `MesaService`, no acá: son reglas
+ * de negocio y deben valer sin importar desde qué pantalla se asigne.
+ */
 @Component({
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
     imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
         IonContent,
         IonButton,
         IonBadge,
         IonIcon,
         TarjetaUsuarioComponent,
+        HeaderComponent
     ],
 })
 export class AsignarMesasPage implements OnInit {
     private mesaService = inject(MesaService);
+    private salonService = inject(SalonService);
     private modal = inject(ModalService);
 
     clientes = signal<ClientePendienteInterface[]>([]);
@@ -43,6 +46,12 @@ export class AsignarMesasPage implements OnInit {
 
     // Si el cliente elegido ya tiene mesa, el metre debe poder indicarsela
     // en vez de simplemente no dejarlo avanzar (punto 10 del enunciado).
+    /**
+     * Mesa que el cliente elegido ya tiene, si tiene alguna.
+     *
+     * El enunciado pide indicarle al metre cuál es, no sólo impedir la
+     * asignación: sin ese dato no sabría a dónde mandar al comensal.
+     */
     mesaYaAsignada = computed(() => {
         const cliente = this.clienteElegido();
 
@@ -63,6 +72,14 @@ export class AsignarMesasPage implements OnInit {
         this.mesaService.listar();
     }
 
+    /**
+     * Trae la lista de espera: los clientes que escanearon el QR de la puerta.
+     *
+     * No es la lista de todos los clientes del local, sino la de quienes están
+     * esperando mesa ahora mismo (punto 9). Entran los dos perfiles de cliente,
+     * porque el anónimo también se anota, y salen solos al recibir mesa: el
+     * filtro es el propio estado, no una tabla aparte que haya que mantener.
+     */
     async cargarClientes() {
         try {
             const { data, error } = await supabase
@@ -70,9 +87,8 @@ export class AsignarMesasPage implements OnInit {
                 .select(
                     'id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro'
                 )
-                .eq('perfil', 'cliente registrado')
-                .eq('estado', 'Activo')
-                .order('apellidos', { ascending: true });
+                .eq('estado_en_resto', 'esperando_mesa')
+                .order('fecha_registro', { ascending: true });
 
             if (error) throw error;
 
@@ -80,9 +96,11 @@ export class AsignarMesasPage implements OnInit {
                 (data ?? []).map((fila) => ({
                     id: fila.id,
                     nombres: fila.nombres,
-                    apellidos: fila.apellidos,
-                    dni: fila.dni,
-                    correo: fila.correo_electronico,
+                    // El cliente anónimo entra sólo con nombre y foto: el resto
+                    // de los campos vienen en null y la tarjeta los muestra vacíos.
+                    apellidos: fila.apellidos ?? '',
+                    dni: fila.dni ?? '',
+                    correo: fila.correo_electronico ?? '',
                     fotoUrl: fila.foto_url,
                     estado: 'Activo' as const,
                     fechaRegistro: fila.fecha_registro,
@@ -109,6 +127,12 @@ export class AsignarMesasPage implements OnInit {
         this.clienteElegido.set(null);
     }
 
+    /**
+     * Intenta asignar la mesa al cliente seleccionado.
+     *
+     * Sólo se limpia la selección si la asignación salió bien; si falló, el
+     * cliente sigue elegido para poder probar con otra mesa sin rebuscarlo.
+     */
     async onAsignar(mesa: MesaInterface) {
         const cliente = this.clienteElegido();
 
@@ -126,6 +150,23 @@ export class AsignarMesasPage implements OnInit {
             cliente.id
         );
 
-        if (asignada) this.clienteElegido.set(null);
+        if (!asignada) return;
+
+        // La mesa ya quedó tomada; ahora el cliente sale de la lista de espera
+        // y pasa a 'mesa_asignada'. Si esto fallara quedaría una mesa ocupada
+        // por alguien que sigue figurando en la lista, así que se avisa.
+        try {
+            await this.salonService.asignarMesa(cliente.id, mesa.id);
+        } catch (error) {
+            const mensaje =
+                error instanceof Error
+                    ? error.message
+                    : 'La mesa quedó tomada pero no se pudo actualizar el estado del cliente.';
+
+            this.modal.setOpen('Revisar la asignación', mensaje);
+        }
+
+        this.clienteElegido.set(null);
+        await this.cargarClientes();
     }
 }

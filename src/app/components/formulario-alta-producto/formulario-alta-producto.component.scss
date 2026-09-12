@@ -1,0 +1,124 @@
+/**
+ * Alta y edición de producto (puntos 2 y 3 del enunciado).
+ *
+ * Antes el formulario vivía dentro de un `ion-card` con `ion-item` por campo,
+ * que es el aspecto de fábrica de Ionic y no se parecía en nada al resto de los
+ * formularios de la aplicación. Ahora usa el mismo kit que el registro y el
+ * alta de mesa: cabecera, panel elevado y campos hundidos con icono.
+ *
+ * Tiempo y precio comparten fila porque son dos valores cortos: en renglones
+ * separados dejaban media línea vacía cada uno.
+ */
+
+:host {
+    display: block;
+    width: 100%;
+    min-height: 100%;
+    padding: 1.25rem 1rem 2rem;
+    box-sizing: border-box;
+}
+
+.pantalla-alta-producto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    width: 100%;
+    max-width: 34rem;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* --------------------------------------------------------------------------
+   Cabecera
+   -------------------------------------------------------------------------- */
+
+.cabecera-producto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    h2 {
+        margin: 0;
+        font-size: var(--texto-titulo-grande);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--tinta);
+    }
+
+    p {
+        margin: 0;
+        font-size: var(--texto-apoyo);
+        color: var(--tinta-suave);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Formulario
+   -------------------------------------------------------------------------- */
+
+.seccion-form {
+    padding: 1.5rem 1.25rem;
+}
+
+/* La descripción puede crecer: el campo se alinea arriba para que el icono no
+   quede flotando en el medio cuando el texto ocupa varios renglones. */
+.caja-input-alta {
+    align-items: flex-start;
+    padding-top: 0.875rem;
+    padding-bottom: 0.875rem;
+
+    .icono-campo {
+        margin-top: 0.125rem;
+    }
+
+    ion-textarea {
+        --padding-top: 0;
+        --padding-bottom: 0;
+    }
+}
+
+.fila-doble {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (max-width: 22.5rem) {
+    .fila-doble {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Bloque de fotos
+   -------------------------------------------------------------------------- */
+
+.bloque-fotos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.05);
+    border: var(--borde-hoja);
+    border-radius: var(--radio);
+}
+
+.fotos-etiqueta {
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--tinta-suave);
+}
+
+/* --------------------------------------------------------------------------
+   Acciones
+   -------------------------------------------------------------------------- */
+
+.acciones {
+    margin-top: 0.25rem;
+}

@@ -1,0 +1,47 @@
+/**
+ * Botón de volver.
+ *
+ * Vive dentro de la banda naranja, así que se resuelve igual que el botón de
+ * cerrar sesión del otro extremo: un círculo de vidrio blanco translúcido. Que
+ * los dos pesen lo mismo es lo que mantiene la marca centrada en la barra.
+ *
+ * Se estiliza `ion-back-button` directamente porque el componente de Ionic no
+ * renderiza contenido propio (no tiene <slot> en su plantilla interna).
+ */
+
+:host {
+    display: flex;
+    align-items: center;
+}
+
+ion-buttons {
+    margin: 0;
+}
+
+.boton-personalizado {
+    --background: rgba(255, 255, 255, 0.16);
+    --background-hover: rgba(255, 255, 255, 0.28);
+    --background-focused: rgba(255, 255, 255, 0.28);
+    --color: var(--sobre-naranja);
+    --color-hover: #ffffff;
+    --border-radius: 50%;
+    --icon-font-size: 1.375rem;
+    --padding-start: 0;
+    --padding-end: 0;
+    --min-width: 2.5rem;
+    --ripple-color: #ffffff;
+
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0;
+
+    border: 0.0625rem solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    overflow: hidden;
+
+    transition: transform 0.14s ease;
+
+    &:active {
+        transform: scale(0.92);
+    }
+}

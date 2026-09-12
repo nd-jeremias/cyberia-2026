@@ -1,97 +1,87 @@
-<div class="pantalla-login">
-  
-  <!-- 1. Cabecera con Isotipo -->
-  <header class="cabecera">
-    <div class="isotipo-icono">
-      <ion-icon name="restaurant-outline"></ion-icon>
+<div class="hoja hoja-angosta">
+    <header class="encabezado-ingreso">
+        <h1>Iniciar sesión</h1>
+    </header>
+
+    <div class="seccion-form">
+        <form [formGroup]="formulario" (ngSubmit)="onLogin()">
+            <!-- Campo Correo electrónico -->
+            <div class="grupo-input">
+                <label class="input-label">Correo electrónico</label>
+                <div class="caja-input">
+                    <ion-icon name="mail-outline" class="icono-campo"></ion-icon>
+                    <ion-input formControlName="email" type="email" placeholder="nombre@restaurante.com"> </ion-input>
+                </div>
+                @if (hayError('email', 'required')) {
+                <span class="mensaje-error">Ingrese su correo electrónico.</span>
+                } @if (hayError('email', 'email')) {
+                <span class="mensaje-error">El correo electrónico no es válido.</span>
+                }
+            </div>
+
+            <!-- Campo Contraseña -->
+            <div class="grupo-input">
+                <label class="input-label">Contraseña</label>
+                <div class="caja-input">
+                    <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
+                    <ion-input formControlName="password" type="password" placeholder="••••••••">
+                        <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
+                    </ion-input>
+                </div>
+                @if (hayError('password', 'required')) {
+                <span class="mensaje-error">Ingrese su contraseña.</span>
+                } @if (hayError('password', 'minlength')) {
+                <span class="mensaje-error">La contraseña debe tener al menos 8 caracteres.</span>
+                }
+            </div>
+
+            <button type="submit" class="btn-principal">Iniciar sesión</button>
+
+            <div class="divisor"><span>o</span></div>
+
+            <div class="fila-alternativas">
+                <button type="button" routerLink="/registrarse" class="btn-secundario">Crear cuenta</button>
+                <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">Invitado</button>
+            </div>
+        </form>
     </div>
-    <h1>Sistema de gestión gastronómica</h1>
-    <p>Ingresá con tu cuenta</p>
-  </header>
 
-  <!-- 2. Formulario Principal -->
-  <section class="seccion-form">
-    <form [formGroup]="formulario" (ngSubmit)="onLogin()">
-      
-      <!-- Campo Email -->
-      <div class="grupo-input">
-        <label class="input-label">Correo electrónico</label>
-        <div class="caja-input">
-          <ion-icon name="mail-outline" class="icono-campo"></ion-icon>
-          <ion-input
-            formControlName="email"
-            type="email"
-            placeholder="nombre@restaurante.com">
-          </ion-input>
-        </div>
-        @if (hayError('email', 'required')) {
-          <small class="mensaje-error">Ingrese su correo electrónico.</small>
-        }
-        @if (hayError('email', 'email')) {
-          <small class="mensaje-error">El correo electrónico no es válido.</small>
-        }
-      </div>
+    <!--
+      Accesos rápidos por perfil.
 
-      <!-- Campo Contraseña -->
-      <div class="grupo-input">
-        <label class="input-label">Contraseña</label>
-        <div class="caja-input">
-          <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
-          <ion-input
-            formControlName="password"
-            type="password"
-            placeholder="••••••••">
-            <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
-          </ion-input>
-        </div>
-        @if (hayError('password', 'required')) {
-          <small class="mensaje-error">Ingrese su contraseña.</small>
-        }
-        @if (hayError('password', 'minlength')) {
-          <small class="mensaje-error">La contraseña debe tener al menos 8 caracteres.</small>
-        }
-      </div>
-
-      <!-- Botón Principal -->
-      <button type="submit" class="btn-principal">
-        Iniciar sesión
-      </button>
-
-      <!-- Enlaces secundarios -->
-      <div class="enlaces-secundarios">
-        <p>¿No tenés cuenta? <a routerLink="/registrarse">Registrate</a></p>
-        <button type="button" class="btn-link-anonimo" routerLink="/ingresoAnonimo">
-          O continuar como <strong>Invitado / Anónimo</strong>
+      El enunciado los pide y aclara que no sean botones fijos: viven plegados
+      detrás de un disparador. Al abrirse, el panel se monta POR ENCIMA del
+      formulario en lugar de empujarlo hacia abajo, así las fichas pueden ser
+      grandes sin que la pantalla necesite desplazarse.
+    -->
+    <section class="accesos" [class.accesos-abiertos]="accesosAbiertos()">
+        <button
+            type="button"
+            class="accesos-disparador"
+            (click)="alternarAccesos()"
+            [attr.aria-expanded]="accesosAbiertos()"
+            aria-controls="panel-accesos"
+        >
+            <ion-icon class="accesos-rayo" name="flash-outline"></ion-icon>
+            <span class="accesos-texto">Acceso rápido</span>
+            <ion-icon class="accesos-flecha" name="chevron-down-outline"></ion-icon>
         </button>
-      </div>
 
-    </form>
-  </section>
-
-  <!-- 3. Accesos Rápidos Demo -->
-  <footer class="seccion-demo">
-    <div class="divisor-demo">
-      <span>Acceso rápido · demo</span>
-    </div>
-
-    <div class="grilla-perfiles">
-      @for (perfil of usuariosValidos; track perfil.email) {
-        <button 
-          type="button" 
-          class="card-perfil" 
-          (click)="cargarCredenciales(perfil.email, perfil.pass)">
-          <div class="icono-perfil-wrapper">
-            <ion-icon [name]="perfil.icono"></ion-icon>
-          </div>
-          <div class="textos-perfil">
-            <span class="rol">{{ perfil.rol }}</span>
-            <span class="email">{{ perfil.email }}</span>
-          </div>
-        </button>
-      }
-    </div>
-
-    <small class="pie-ayuda">Tocá un perfil para autocompletar las credenciales</small>
-  </footer>
-
+        <div class="accesos-panel" id="panel-accesos" [attr.inert]="accesosAbiertos() ? null : ''">
+            <div class="grilla-perfiles">
+                @for (perfil of usuariosValidos; track perfil.email) {
+                <button
+                    type="button"
+                    [class]="'card-perfil perfil-' + perfil.clave"
+                    (click)="cargarCredenciales(perfil.email, perfil.pass)"
+                >
+                    <span class="icono-perfil-wrapper">
+                        <ion-icon [name]="perfil.icono"></ion-icon>
+                    </span>
+                    <span class="rol">{{ perfil.rol }}</span>
+                </button>
+                }
+            </div>
+        </div>
+    </section>
 </div>

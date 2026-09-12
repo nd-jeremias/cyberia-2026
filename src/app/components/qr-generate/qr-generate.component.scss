@@ -1,0 +1,71 @@
+/**
+ * Generación de códigos QR.
+ *
+ * El código se dibuja sobre una placa clara: un QR necesita fondo blanco y
+ * módulos oscuros para que las cámaras lo lean. Es la única superficie clara de
+ * la aplicación y está justificada por el funcionamiento, no por estética; el
+ * marco de neón alrededor la integra con el resto de las pantallas.
+ */
+
+:host {
+    display: block;
+    width: 100%;
+}
+
+.full-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    width: 100%;
+    max-width: 26rem;
+    margin: 0 auto;
+    padding: 1.25rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+h4 {
+    margin: 0;
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    color: var(--tinta);
+    text-align: center;
+}
+
+/* Placa clara para el código: sin ella, un QR sobre fondo azul no se lee. */
+.qr-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0.875rem;
+
+    background: #ffffff;
+    border: 0.1875rem solid var(--naranja);
+    border-radius: var(--radio);
+    box-shadow:
+        var(--sombra-tarjeta),
+        0 0 1.5rem rgba(226, 87, 28, 0.28);
+
+    img,
+    canvas,
+    svg {
+        display: block;
+        width: 100%;
+        max-width: 15rem;
+        height: auto;
+    }
+}
+
+/* Botón de descarga: es la acción principal de este bloque. */
+.btn-principal {
+    width: 100%;
+    max-width: 26rem;
+    margin: 1rem auto 0;
+}

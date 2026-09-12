@@ -1,0 +1,55 @@
+<header class="banda" [class.banda-usuario]="modo() === 'usuario'">
+    <!-- Fila superior: navegación y marca, igual en todas las pantallas. -->
+    <div class="banda-barra">
+        <div class="banda-lado">
+            @if (mostrarBotonVolver()) {
+            <app-boton-atras [rutaPorDefecto]="defaultHref()"></app-boton-atras>
+            }
+        </div>
+
+        <span class="marca">Cyberia Restó</span>
+
+        <div class="banda-lado banda-lado-fin">
+            @if (haySesion()) {
+            <button class="btn-salir" (click)="cerrarSesion()" aria-label="Cerrar sesión">
+                <ng-icon class="icono-salir" name="remixLogoutCircleLine" />
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Tarjeta de contexto: en el inicio muestra quién entró; en el resto,
+         dónde está parado y la acción principal de la sección. -->
+    <div class="banda-cuerpo">
+        @if (modo() === 'usuario') {
+        <div class="identidad">
+            <div class="avatar">
+                @if (fotoUsuario(); as foto) {
+                <img [src]="foto" [alt]="nombreCompleto()" />
+                } @else {
+                <span class="avatar-iniciales">{{ iniciales() }}</span>
+                }
+            </div>
+
+            <div class="identidad-textos">
+                <p class="saludo">{{ saludo() }}</p>
+                <h1 class="identidad-nombre">{{ nombreCompleto() }}</h1>
+            </div>
+
+            <span class="chip-perfil">{{ perfilVisible() }}</span>
+        </div>
+        } @else {
+        <div class="contexto">
+            <h1 class="contexto-titulo">{{ tituloHeader() }}</h1>
+
+            <!-- Cada pantalla proyecta acá su botón de acción, si lo necesita. -->
+            <div class="contexto-accion">
+                <ng-content select="[accion]"></ng-content>
+            </div>
+        </div>
+        }
+    </div>
+
+    <!-- Borde superior redondeado del papel crema (ver el .scss). -->
+    <div class="labio-hoja" aria-hidden="true"></div>
+</header>

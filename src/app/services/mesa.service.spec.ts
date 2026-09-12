@@ -18,8 +18,7 @@ function mesaDePrueba(parcial: Partial<MesaInterface> = {}): MesaInterface {
         cantidadLugares: 4,
         tipo: 'estándar',
         disponibilidad: 'disponible',
-        clienteRegistradoId: null,
-        clienteAnonimoId: null,
+        clienteId: null,
         qrUrl: 'https://ejemplo/qr.png',
         fotoUrl: 'https://ejemplo/mesa.png',
         ...parcial,
@@ -63,16 +62,15 @@ describe('MesaService', () => {
         it('encuentra la mesa de un cliente registrado', () => {
             servicio.mesas.set([
                 mesaDePrueba({ id: 'a' }),
-                mesaDePrueba({ id: 'b', clienteRegistradoId: 'cliente-1' }),
+                mesaDePrueba({ id: 'b', clienteId: 'cliente-1' }),
             ]);
 
             expect(servicio.mesaDelCliente('cliente-1')?.id).toBe('b');
         });
 
+        // El anónimo también es un usuario de Auth: comparte la columna.
         it('también encuentra la de un cliente anónimo', () => {
-            servicio.mesas.set([
-                mesaDePrueba({ id: 'b', clienteAnonimoId: 'anon-1' }),
-            ]);
+            servicio.mesas.set([mesaDePrueba({ id: 'b', clienteId: 'anon-1' })]);
 
             expect(servicio.mesaDelCliente('anon-1')?.id).toBe('b');
         });
@@ -112,7 +110,7 @@ describe('MesaService', () => {
                 mesaDePrueba({
                     id: 'mesa-7',
                     numeroMesa: 7,
-                    clienteRegistradoId: 'cliente-1',
+                    clienteId: 'cliente-1',
                 }),
             ]);
 
@@ -129,9 +127,7 @@ describe('MesaService', () => {
         it('permite reasignar la misma mesa que el cliente ya tiene', async () => {
             mockUpdate([{ id: 'mesa-1' }]);
 
-            servicio.mesas.set([
-                mesaDePrueba({ id: 'mesa-1', clienteRegistradoId: 'cliente-1' }),
-            ]);
+            servicio.mesas.set([mesaDePrueba({ id: 'mesa-1', clienteId: 'cliente-1' })]);
 
             const ok = await servicio.asignarCliente('mesa-1', 'cliente-1');
 
@@ -141,9 +137,7 @@ describe('MesaService', () => {
         it('rechaza si la mesa está asignada a otro cliente', async () => {
             const espia = vi.spyOn(modal, 'setOpen');
 
-            servicio.mesas.set([
-                mesaDePrueba({ id: 'mesa-1', clienteRegistradoId: 'otro' }),
-            ]);
+            servicio.mesas.set([mesaDePrueba({ id: 'mesa-1', clienteId: 'otro' })]);
 
             const ok = await servicio.asignarCliente('mesa-1', 'cliente-1');
 
@@ -210,19 +204,17 @@ describe('MesaService', () => {
             );
         });
 
-        it('guarda el id en la columna de anónimos cuando corresponde', async () => {
+        it('guarda al cliente en cliente_id, sea registrado o anónimo', async () => {
             const { update } = mockUpdate([{ id: 'mesa-1' }]);
 
             servicio.mesas.set([mesaDePrueba({ id: 'mesa-1' })]);
 
-            await servicio.asignarCliente('mesa-1', 'anon-1', true);
+            await servicio.asignarCliente('mesa-1', 'anon-1');
 
-            expect(update).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    cliente_anonimo_id: 'anon-1',
-                    cliente_registrado_id: null,
-                })
-            );
+            expect(update).toHaveBeenCalledWith({
+                cliente_id: 'anon-1',
+                disponibilidad: 'ocupada',
+            });
         });
     });
 
@@ -244,8 +236,7 @@ describe('MesaService', () => {
             expect(ok).toBe(true);
             expect(update).toHaveBeenCalledWith({
                 disponibilidad: 'disponible',
-                cliente_registrado_id: null,
-                cliente_anonimo_id: null,
+                cliente_id: null,
             });
         });
     });

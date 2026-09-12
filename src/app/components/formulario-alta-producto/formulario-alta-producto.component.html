@@ -1,70 +1,91 @@
-<ion-card>
-    <ion-card-header>
-        <ion-card-title>Alta de producto ({{ tipo() }})</ion-card-title>
-    </ion-card-header>
+<div class="pantalla-alta-producto">
+    <header class="cabecera-producto">
+        <h2>{{ tituloFormulario() }}</h2>
+        <p>Completá los datos y sumá las tres fotos del producto</p>
+    </header>
 
-    <ion-card-content>
+    <div class="seccion-form panel">
         <form [formGroup]="formulario" (ngSubmit)="onAltaProducto()">
-            <ion-item>
-                <ion-input
-                    formControlName="nombre"
-                    type="text"
-                    label="Nombre"
-                    labelPlacement="floating"
-                    placeholder="Milanesa con Papas Fritas"
-                ></ion-input>
-            </ion-item>
+            <div class="grupo-input">
+                <label class="input-label">Nombre</label>
+                <div class="caja-input">
+                    <ion-icon name="restaurant-outline" class="icono-campo"></ion-icon>
+                    <ion-input
+                        formControlName="nombre"
+                        type="text"
+                        placeholder="Milanesa con papas fritas"
+                    ></ion-input>
+                </div>
+            </div>
 
-            <ion-item>
-                <ion-textarea
-                    formControlName="descripcion"
-                    label="Descripción"
-                    labelPlacement="floating"
-                    placeholder="Milanesa de nalga rebozada acompañada de papas fritas."
-                    [autoGrow]="true"
-                ></ion-textarea>
-            </ion-item>
+            <div class="grupo-input">
+                <label class="input-label">Descripción</label>
+                <div class="caja-input caja-input-alta">
+                    <ion-icon name="list-outline" class="icono-campo"></ion-icon>
+                    <ion-textarea
+                        formControlName="descripcion"
+                        placeholder="Milanesa de nalga rebozada acompañada de papas fritas."
+                        [autoGrow]="true"
+                        [rows]="2"
+                    ></ion-textarea>
+                </div>
+            </div>
 
-            <ion-item>
-                <ion-input
-                    formControlName="tiempoElaboracionMinutos"
-                    type="number"
-                    inputmode="numeric"
-                    min="1"
-                    label="Tiempo de elaboración (minutos)"
-                    labelPlacement="floating"
-                    placeholder="20"
-                ></ion-input>
-            </ion-item>
+            <!-- Tiempo y precio comparten fila: son dos datos cortos y juntos
+                 evitan dos renglones casi vacíos. -->
+            <div class="fila-doble">
+                <div class="grupo-input">
+                    <label class="input-label">Tiempo (minutos)</label>
+                    <div class="caja-input">
+                        <ion-icon name="time-outline" class="icono-campo"></ion-icon>
+                        <ion-input
+                            formControlName="tiempoElaboracionMinutos"
+                            type="number"
+                            inputmode="numeric"
+                            min="1"
+                            placeholder="20"
+                        ></ion-input>
+                    </div>
+                </div>
 
-            <ion-item>
-                <ion-input
-                    formControlName="precio"
-                    type="number"
-                    inputmode="decimal"
-                    min="0.01"
-                    step="0.01"
-                    label="Precio"
-                    labelPlacement="floating"
-                    placeholder="4500.00"
-                ></ion-input>
-            </ion-item>
+                <div class="grupo-input">
+                    <label class="input-label">Precio</label>
+                    <div class="caja-input">
+                        <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
+                        <ion-input
+                            formControlName="precio"
+                            type="number"
+                            inputmode="decimal"
+                            min="0.01"
+                            step="0.01"
+                            placeholder="4500.00"
+                        ></ion-input>
+                    </div>
+                </div>
+            </div>
 
-            <ion-item>
-                <label class="input-archivo">
-                    Fotos del producto (3 requeridas)
-                    <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        (change)="onFotosSeleccionadas($event)"
-                    />
-                </label>
-            </ion-item>
+            <div class="bloque-fotos">
+                <p class="fotos-etiqueta">
+                    @if (modoEdicion()) {
+                        Fotos del producto: tocá el signo menos para quitar una y el más para reemplazarla. Siempre tienen que ser tres.
+                    } @else {
+                        Fotos del producto: se necesitan tres.
+                    }
+                </p>
+                <app-subida-imagenes
+                    [maxImages]="3"
+                    [modoCamara]="'camara'"
+                    [direccionCamara]="'trasera'"
+                    [permitirGaleria]="true"
+                    [imagenesIniciales]="fotosIniciales()"
+                    (imagenesChange)="onFotosSeleccionadas($event)"
+                    (urlsExistentesChange)="onUrlsExistentes($event)"
+                ></app-subida-imagenes>
+            </div>
 
-            <ion-button expand="full" fill="outline" type="submit"
-                >Dar de alta</ion-button
-            >
+            <div class="acciones">
+                <ion-button expand="block" type="submit" class="btn-principal">{{ textoBoton() }}</ion-button>
+            </div>
         </form>
-    </ion-card-content>
-</ion-card>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+/**
+ * Sección todavía sin implementar.
+ *
+ * Antes mostraban el armazón que genera Ionic: el nombre del archivo en
+ * minúscula y con guiones, sobre una pantalla vacía. Eso se lee como una
+ * aplicación rota. Acá quedan como una pantalla intencional, corta y sin
+ * instructivos.
+ */
+
+.aviso-preparacion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+
+    flex: 1;
+    padding: 2rem 1.5rem;
+    text-align: center;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: 0.125rem dashed var(--hoja-borde);
+    border-radius: var(--radio-grande);
+
+    .medallon {
+        width: 3.75rem;
+        height: 3.75rem;
+        font-size: 1.875rem;
+    }
+
+    h2 {
+        margin: 0;
+        font-size: var(--texto-subtitulo);
+        font-weight: 800;
+        color: var(--tinta);
+    }
+
+    p {
+        margin: 0;
+        max-width: 22rem;
+        font-size: var(--texto-apoyo);
+        color: var(--tinta-media);
+    }
+}
+
+.sello-preparacion {
+    padding: 0.3125rem 0.75rem;
+    border-radius: 999px;
+
+    background: var(--alerta-velo);
+    border: 0.0625rem solid rgba(217, 139, 20, 0.4);
+
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--alerta-tinta);
+}

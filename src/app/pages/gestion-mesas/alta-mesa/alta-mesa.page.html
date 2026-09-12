@@ -1,0 +1,10 @@
+<app-header [defaultHref]="'/gestion-mesas'" [tituloHeader]="'Crear mesa'"></app-header>
+
+<ion-content [fullscreen]="true">
+    <div class="hoja hoja-angosta">
+        <app-formulario-alta-mesa
+            [direccionCamara]="'frontal'"
+            (mesaSubmit)="onAltaMesa($event)"
+        ></app-formulario-alta-mesa>
+    </div>
+</ion-content>

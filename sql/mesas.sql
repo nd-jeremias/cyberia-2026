@@ -30,9 +30,10 @@ CREATE TABLE public.mesas (
     tipo public.tipo_mesa NOT NULL DEFAULT 'estándar',
     disponibilidad public.disponibilidad_mesa NOT NULL DEFAULT 'disponible',
     
-    -- IDs de clientes asignados actualmente (Admite registrados o anónimos)
-    cliente_registrado_id UUID NULL REFERENCES public.usuarios(id) ON DELETE SET NULL,
-    cliente_anonimo_id UUID NULL REFERENCES public.clientes_anonimos(id) ON DELETE SET NULL,
+    -- Cliente que ocupa la mesa ahora mismo, registrado o anónimo: los dos son
+    -- filas de `usuarios`, así que alcanza con una sola columna.
+    -- NULL = mesa libre.
+    cliente_id UUID NULL REFERENCES public.usuarios(id) ON DELETE SET NULL,
     
     -- URLs de recursos multimedia almacenados en tu bucket manual de Supabase
     qr_url TEXT NOT NULL,
@@ -56,3 +57,13 @@ VALUES
 (3, 4, 'movilidad reducida', 'ocupada',    'https://supabase.co', 'https://supabase.co'),
 (4, 6, 'VIP',                'Reservada',  'https://supabase.co', 'https://supabase.co'),
 (5, 2, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co');
+
+-- =========================================================================
+-- 6. CLAVE FORÁNEA DIFERIDA
+-- =========================================================================
+-- `usuarios.mesa_id` apunta acá, pero no puede declararse en usuarios.sql
+-- porque ese script corre antes y `mesas` todavía no existe. Se agrega al
+-- final: si se borra una mesa, el cliente queda sin mesa pero no se pierde.
+ALTER TABLE public.usuarios
+    ADD CONSTRAINT usuarios_mesa_id_fkey
+    FOREIGN KEY (mesa_id) REFERENCES public.mesas(id) ON DELETE SET NULL;

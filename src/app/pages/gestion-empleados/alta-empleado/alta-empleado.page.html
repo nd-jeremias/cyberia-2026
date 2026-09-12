@@ -1,0 +1,10 @@
+<app-header [defaultHref]="'/gestion-empleados'" [tituloHeader]="titulo()"></app-header>
+
+<ion-content [fullscreen]="true">
+    <app-formulario-registro
+        [empleadoExistente]="empleadoExistente()"
+        [usuarioRol]="'dueño'"
+        (registroSubmit)="handleRegistro($event)"
+        [direccionCamara]="'frontal'"
+    ></app-formulario-registro>
+</ion-content>

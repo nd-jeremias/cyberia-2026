@@ -1,36 +1,75 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Perfil: {{ perfil() ?? 'sin asignar' }}</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="cerrarSesion()" aria-label="Cerrar sesión" style="--background: red; --color: var(--ion-color-danger);">
-        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-header modo="usuario"></app-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Perfil: {{ perfil() ?? 'sin asignar' }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <div class="hoja">
+        <div class="grilla-acciones">
+            @for (boton of botonesDelRol(); track boton.ruta) {
+            <a class="tarjeta-accion" [routerLink]="boton.ruta">
+                <span class="medallon">
+                    <ion-icon [name]="boton.icono"></ion-icon>
+                </span>
 
-  <div class="grilla-botones">
-    @for (boton of botonesDelRol(); track boton.ruta) {
-      <ion-button expand="block" class="boton-home" [routerLink]="boton.ruta">
-        <ion-icon [name]="boton.icono" slot="start"></ion-icon>
-        {{ boton.texto }}
-      </ion-button>
-    } @empty {
-      @if (perfil() === null) {
-        <p class="sin-botones">
-          No se pudo determinar tu perfil. Verificá que tu usuario tenga una fila
-          cargada en la tabla "usuarios" (con el mismo id que en auth.users).
-        </p>
-      } @else {
-        <p class="sin-botones">Todavía no hay funciones asignadas a tu perfil.</p>
-      }
-    }
-  </div>
+                <span class="titulo-accion">{{ boton.texto }}</span>
+
+                <ion-icon class="flecha-accion" name="chevron-forward-outline"></ion-icon>
+            </a>
+            } @empty {
+            <div class="estado-vacio">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                @if (authService.perfilError(); as motivo) {
+                <p>No se pudo consultar tu perfil: {{ motivo }}</p>
+                } @else if (authService.perfil() === null) {
+                <p>Tu usuario todavía no tiene un perfil asignado.</p>
+                } @else {
+                <p>Todavía no hay funciones asignadas a tu perfil.</p>
+                }
+            </div>
+            }
+        </div>
+
+        <!--
+          Panel de estado. El contenido lo arma `panel()` según el rol: el mapa
+          del salón para quien lo atiende, los pedidos en curso para cocina y
+          barra. Si todavía no hay datos, no se dibuja.
+        -->
+        @if (panel(); as estado) {
+        <section class="panel-estado">
+            <h2 class="titulo-seccion">{{ estado.titulo }}</h2>
+
+            <div class="cifras">
+                @for (cifra of estado.cifras; track cifra.rotulo) {
+                <div class="ficha-cifra">
+                    <b [class]="'valor valor-' + cifra.tono">{{ cifra.valor }}</b>
+                    <span class="rotulo">{{ cifra.rotulo }}</span>
+                </div>
+                }
+            </div>
+
+            @if (estado.fichas.length) {
+            <div class="mapa">
+                @for (ficha of estado.fichas; track $index) {
+                <span class="ficha-mapa" [class.ficha-verde]="ficha.enVerde">
+                    {{ ficha.numero }}
+                </span>
+                }
+            </div>
+
+            <p class="leyenda">
+                <span class="punto punto-verde"></span> {{ estado.leyendaVerde }}
+                <span class="punto punto-naranja"></span> {{ estado.leyendaNaranja }}
+            </p>
+            } @else {
+            <p class="panel-vacio">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                {{ estado.vacio }}
+            </p>
+            }
+        </section>
+        }
+
+        <footer class="pie-marca">
+            <span class="linea-marca"></span>
+            <p>Cyberia Restó</p>
+        </footer>
+    </div>
 </ion-content>

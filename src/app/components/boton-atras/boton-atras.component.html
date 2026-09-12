@@ -1,0 +1,19 @@
+<!--
+  `ion-back-button` no tiene <slot> en su plantilla interna: todo lo que se
+  escriba entre sus etiquetas NO se renderiza. La versión anterior envolvía un
+  <div> con un círculo y un icono propios que el navegador descartaba, y en
+  pantalla terminaba viéndose la flecha por defecto de Ionic, sin la pastilla.
+
+  Por eso ahora no lleva contenido: el aspecto se le da desde el .scss usando
+  las variables que el propio componente expone (--background, --color,
+  --border-radius, --icon-font-size).
+-->
+<ion-buttons slot="start">
+    <ion-back-button
+        class="boton-personalizado"
+        [defaultHref]="rutaPorDefecto()"
+        text=""
+        icon="chevron-back-outline"
+        aria-label="Volver"
+    ></ion-back-button>
+</ion-buttons>

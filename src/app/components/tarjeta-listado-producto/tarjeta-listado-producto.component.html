@@ -1,15 +1,21 @@
 <section class="listado-productos">
-  <h2 class="titulo-listado">{{ tituloListado() }}</h2>
+  <h2 class="titulo-listado titulo-seccion">{{ tituloListado() }}</h2>
 
   @if (productos().length === 0) {
-    <p class="listado-vacio">Todavía no hay productos cargados en esta sección.</p>
+    <div class="estado-vacio">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      <p>Todavía no hay productos cargados en esta sección.</p>
+    </div>
   } @else {
     <div class="lista">
       @for (producto of productos(); track producto.id) {
         <app-tarjeta-producto
           class="item-lista"
           [producto]="producto"
+          [modo]="modo()"
           (agregarCarrito)="onAgregarCarrito($event)"
+          (editar)="onEditar($event)"
+          (eliminar)="onEliminar($event)"
         ></app-tarjeta-producto>
       }
     </div>

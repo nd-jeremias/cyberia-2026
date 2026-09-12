@@ -17,6 +17,7 @@ describe('FormularioRegistroComponent', () => {
             cuil: '20123456783',
             correo: 'juan@ejemplo.com',
             tipoEmpleado: 'mozo',
+            perfil: '',
             // El componente exige al menos una foto (validador minLengthArray).
             foto: [new File(['x'], 'perfil.jpg', { type: 'image/jpeg' })],
             password: 'unaClave123',

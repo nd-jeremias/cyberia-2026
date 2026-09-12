@@ -1,12 +1,14 @@
 import { Service, inject, signal } from '@angular/core';
 import { BarcodeScanner, ScanResult } from '@capacitor-mlkit/barcode-scanning';
 import { DniInterface } from '../interfaces/dni.interface';
+import { QrMesa, QrPayload, QrPropina } from '../interfaces/qr.interface';
 import { Platform } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
 import { ModalService } from './modal.service';
 import html2canvas from 'html2canvas';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import * as QRCode from 'qrcode'; // Importamos la librería nativa
 
 @Service()
 export class QrService {
@@ -15,6 +17,7 @@ export class QrService {
 
     mostrarQr = signal<boolean>(false);
     variableQr = signal<string>('');
+    archivoQr = signal<File | null>(null);
     showedText = signal<string>('');
 
     parseDNI(data: string | undefined): DniInterface | null {
@@ -62,14 +65,33 @@ export class QrService {
 
     // Verificar y solicitar permisos de la cámara
     async checkPermissions(): Promise<boolean> {
-        const status = await BarcodeScanner.checkPermissions();
+        try {
+            const status = await BarcodeScanner.checkPermissions();
+            // Si ya está concedido, perfecto
+            if (status.camera === 'granted') {
+                return true;
+            }
 
-        if (status.camera === 'denied' || status.camera === 'prompt') {
-            const request = await BarcodeScanner.requestPermissions();
-            return request.camera === 'granted';
+            // Si está denegado permanentemente, requestPermissions NO mostrará nada.
+            // Debes avisar al usuario que vaya a los ajustes del teléfono.
+            if (status.camera === 'denied') {
+                console.warn(
+                    'El permiso fue denegado previamente. El usuario debe activarlo desde los ajustes de la app.'
+                );
+                return false;
+            }
+
+            // Si está en 'prompt' o 'prompt-with-rationale', se solicita activamente
+            if (status.camera === 'prompt' || status.camera === 'prompt-with-rationale') {
+                const request = await BarcodeScanner.requestPermissions();
+                return request.camera === 'granted';
+            }
+
+            return false;
+        } catch (error) {
+            console.error('Error verificando permisos:', error);
+            return false;
         }
-
-        return status.camera === 'granted';
     }
 
     // Iniciar escaneo en tiempo real (Modo Webview Transparente)
@@ -80,9 +102,7 @@ export class QrService {
 
             // 💡 Condición: Solo añade la clase transparente si estás corriendo en la App Nativa
             if (this.platform.is('hybrid')) {
-                document
-                    .querySelector('body')
-                    ?.classList.add('barcode-scanner-active');
+                document.querySelector('body')?.classList.add('barcode-scanner-active');
             }
 
             // Iniciar el lector limitándolo solo a códigos QR (mejora la velocidad)
@@ -119,94 +139,215 @@ export class QrService {
     stopScan(): void {
         BarcodeScanner.stopScan();
         if (this.platform.is('hybrid')) {
-            document
-                .querySelector('body')
-                ?.classList.remove('barcode-scanner-active');
+            document.querySelector('body')?.classList.remove('barcode-scanner-active');
         }
     }
 
-    generateQr(data: string, texto: string) {
-        if (data.trim().length == 0) {
-            this.modal.setOpen(
-                'Error recibiendo informacion',
-                'No se ha recibido información para generar el código QR, por favor intente nuevamente.'
-            );
-            return;
-        }
-        this.variableQr.set(data);
-        this.mostrarQr.set(true);
-        this.showedText.set(texto);
+    // ----------------------------------------------------------------------
+    // Contenido de los QR
+    //
+    // Un solo lugar arma y otro interpreta, para que las dos puntas no se
+    // desincronicen: si cambia el formato, cambia acá y nada más.
+    // ----------------------------------------------------------------------
+
+    /** QR de ingreso al local: uno para todo el restaurante (punto 9). */
+    contenidoIngresoLocal(): string {
+        return JSON.stringify({ tipo: 'ingreso-local' });
     }
 
-    // Método auxiliar para transformar el Canvas en Blob (se mantiene igual)
+    /** QR de una mesa: sólo el id, para que el papel no envejezca (punto 10). */
+    contenidoMesa(mesaId: string): string {
+        const payload: QrMesa = { tipo: 'mesa', id: mesaId };
+
+        return JSON.stringify(payload);
+    }
+
+    /** QR de propina, uno por nivel de satisfacción (punto 21). */
+    contenidoPropina(porcentaje: number): string {
+        const payload: QrPropina = { tipo: 'propina', porcentaje };
+
+        return JSON.stringify(payload);
+    }
+
+    /**
+     * Interpreta lo que devolvió el lector.
+     *
+     * Devuelve `null` ante cualquier código que no sea de la aplicación: un QR
+     * de otra app, un texto suelto o un JSON con una forma que no reconocemos.
+     * Quien llama decide qué decirle al usuario.
+     */
+    interpretarQr(raw: string | undefined): QrPayload | null {
+        if (!raw) return null;
+
+        let dato: unknown;
+
+        try {
+            dato = JSON.parse(raw);
+        } catch {
+            return null;
+        }
+
+        if (!dato || typeof dato !== 'object') return null;
+
+        const payload = dato as Partial<QrPayload>;
+
+        switch (payload.tipo) {
+            case 'ingreso-local':
+                return { tipo: 'ingreso-local' };
+
+            case 'mesa':
+                return typeof (payload as QrMesa).id === 'string'
+                    ? { tipo: 'mesa', id: (payload as QrMesa).id }
+                    : null;
+
+            case 'propina':
+                return typeof (payload as QrPropina).porcentaje === 'number'
+                    ? { tipo: 'propina', porcentaje: (payload as QrPropina).porcentaje }
+                    : null;
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Abre el lector y devuelve ya interpretado lo que se escaneó.
+     *
+     * Es el método que usan las pantallas: `escanearQR()` devuelve el resultado
+     * crudo del plugin, que sólo sirve para depurar.
+     */
+    async escanearPayload(): Promise<QrPayload | null> {
+        const hasPermission = await this.checkPermissions();
+
+        if (!hasPermission) {
+            throw new Error('Sin permiso de cámara. Habilitalo desde los ajustes del teléfono.');
+        }
+
+        // Vuelve transparente el webview para que se vea la cámara detrás.
+        if (this.platform.is('hybrid')) {
+            document.querySelector('body')?.classList.add('barcode-scanner-active');
+        }
+
+        try {
+            const result = await BarcodeScanner.scan();
+
+            if (!result.barcodes.length) return null;
+
+            return this.interpretarQr(result.barcodes[0].rawValue);
+        } finally {
+            this.stopScan();
+        }
+    }
+
+    public async generateQrFile(text: string, fileName: string = 'qr-code.png'): Promise<File> {
+        if (!text) {
+            throw new Error('El texto para el QR no puede estar vacío');
+        }
+
+        try {
+            // 1. Generamos el QR directamente como una URL Base64 en memoria
+            // Puedes pasarle un objeto de configuración para ajustar tamaño, colores, etc.
+            const base64Data = await QRCode.toDataURL(text, {
+                width: 300,
+                margin: 2,
+                errorCorrectionLevel: 'M',
+            });
+
+            // 2. Convertimos el string Base64 a un Blob binario
+            const blob = await this.base64ToBlob(base64Data);
+
+            // 3. Retornamos el objeto File listo para enviar a Supabase
+            return new File([blob], fileName, { type: 'image/png' });
+        } catch (error) {
+            console.error('Error al generar el QR programático:', error);
+            throw error;
+        }
+    }
+
+    // Método auxiliar para convertir Base64 a Blob de forma eficiente
+    private async base64ToBlob(base64WithHeader: string): Promise<Blob> {
+        const response = await fetch(base64WithHeader);
+        return await response.blob();
+    }
+
+    public async shareFile(file: File): Promise<void> {
+        try {
+            // 1. Convertimos el File a una cadena Base64
+            const base64Data = await this.fileToBase64(file);
+
+            // Usamos el nombre del archivo original o uno basado en el timestamp
+            const path = `${Date.now()}_${file.name}`;
+
+            // 2. Escribimos el archivo en el directorio de Cache de Capacitor
+            const res = await Filesystem.writeFile({
+                path,
+                data: base64Data,
+                directory: Directory.Cache,
+            });
+
+            // 3. Abrimos la hoja de compartir nativa del sistema operativo
+            await Share.share({
+                url: res.uri,
+            });
+
+            // 4. Limpiamos la caché eliminando el archivo temporal
+            await Filesystem.deleteFile({
+                path,
+                directory: Directory.Cache,
+            });
+        } catch (error) {
+            console.error('Error al compartir el archivo con Capacitor:', error);
+            throw error;
+        }
+    }
+
+    // Método auxiliar para convertir un File de JS a un string Base64 limpio para Capacitor
+    private fileToBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const result = reader.result as string;
+                // Filesystem.writeFile requiere solo el string base64 puro,
+                // por lo que removemos el prefijo "data:image/png;base64," si existe
+                const base64Pure = result.split(',')[1] || result;
+                resolve(base64Pure);
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 1. FUNCIÓN PURA: Solo captura el HTML y genera el archivo binario
+    public async generateFileFromElement(elementId: string, fileName: string = 'qr-code.png'): Promise<File> {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            throw new Error(`No se encontró el elemento con el ID: ${elementId}`);
+        }
+
+        const canvas = await html2canvas(element);
+        const blob = await this.canvasToBlob(canvas);
+
+        // Retornamos directamente un objeto File listo para formularios o APIs
+        return new File([blob], fileName, { type: 'image/png' });
+    }
+
+    // 2. ACCIÓN: Descargar un archivo (web)
+    public downloadFile(file: File): void {
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        a.click();
+        URL.revokeObjectURL(url); // Liberar memoria
+    }
+
+    // Método auxiliar para transformar el Canvas en Blob
     private canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
         return new Promise((resolve, reject) => {
             canvas.toBlob((blob) => {
                 if (blob) resolve(blob);
                 else reject(new Error('No se pudo convertir el canvas a Blob'));
             }, 'image/png');
-        });
-    }
-
-    // Captura la pantalla, ejecuta las acciones nativas y RETORNA el Blob de IMG
-    captureScreen(id: string): Promise<Blob> {
-        return new Promise((resolve, reject) => {
-            const element = document.getElementById(id) as HTMLElement;
-
-            if (!element) {
-                reject(
-                    new Error(`No se encontró el elemento con el ID: ${id}`)
-                );
-                return;
-            }
-
-            html2canvas(element)
-                .then(async (canvas: HTMLCanvasElement) => {
-                    if (this.platform.is('capacitor')) {
-                        this.shareCanvaImg(canvas);
-                    } else {
-                        this.downloadCanvaImg(canvas);
-                    }
-
-                    try {
-                        const imageBlob = await this.canvasToBlob(canvas);
-                        resolve(imageBlob);
-                    } catch (error) {
-                        reject(error);
-                    }
-                })
-                .catch((err) => reject(err));
-        });
-    }
-
-    downloadCanvaImg(canva: HTMLCanvasElement) {
-        console.log('descargando');
-        const link = document.createElement('a');
-        link.href = canva.toDataURL();
-        link.download = Date.now() + '.png';
-        link.click();
-    }
-
-    async shareCanvaImg(canva: HTMLCanvasElement) {
-        let base64 = canva.toDataURL();
-        let path = Date.now() + '.png';
-
-        await Filesystem.writeFile({
-            path,
-            data: base64,
-            directory: Directory.Cache,
-        }).then(async (res) => {
-            let uri = res.uri;
-            await Share.share({
-                // title: 'See cool stuff',
-                // text: 'Really awesome thing you need to see right meow',
-                url: uri,
-                // dialogTitle: 'Share with buddies',
-            });
-            await Filesystem.deleteFile({
-                path,
-                directory: Directory.Cache,
-            });
         });
     }
 }

@@ -1,51 +1,60 @@
+/**
+ * Listado de productos.
+ *
+ * La grilla se acomoda sola al ancho disponible con `auto-fill`: una columna en
+ * el celular, dos o tres en tablet y escritorio, sin puntos de corte fijos.
+ *
+ * `align-items: stretch` (el valor por omisión de la grilla) es intencional:
+ * hace que todas las tarjetas de una misma fila queden del mismo alto aunque
+ * las descripciones sean de largo distinto. Antes estaba en `start` y las
+ * tarjetas quedaban desparejas, con escalones de fondo vacío entre una y otra.
+ */
+
+/* Columna flexible: es lo que permite que el contenido de adentro se estire
+   hasta el borde inferior. Con `min-height: 100%` a secas no alcanza, porque un
+   alto porcentual de los hijos se resuelve contra la altura del padre, que acá
+   es automática. */
 :host {
-  display: block;
-  width: 100%;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    background: transparent;
 }
 
 .listado-productos {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  background-color: var(--ion-background-color, #1a3a60);
-  padding: 12px;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    flex: 1;
+
+    width: 100%;
+    max-width: 75rem;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 2rem;
+    box-sizing: border-box;
 }
 
+/* Sin productos cargados, el recuadro se lleva el alto sobrante en lugar de
+   dejar media pantalla de fondo vacío. */
+.listado-productos > .estado-vacio {
+    flex: 1;
+}
+
+/* El aspecto del título viene de `.titulo-seccion` (global.scss): riel de neón
+   a la izquierda y texto en blanco alto. */
 .titulo-listado {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #ffffff;
-  flex-shrink: 0;
+    flex-shrink: 0;
 }
 
-.listado-vacio {
-  margin: 0;
-  padding: 16px;
-  border-radius: 10px;
-  background-color: var(--ion-card-background, #254d7d);
-  color: #e2e8f0;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* Scroll vertical con snap: cada tarjeta queda siempre completa, nunca cortada */
 .lista {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow-y: auto;
-  scroll-snap-type: y proximity;
-  padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
 }
 
 .item-lista {
-  scroll-snap-align: start;
-  scroll-margin-top: 8px;
+    display: block;
+    height: 100%;
 }

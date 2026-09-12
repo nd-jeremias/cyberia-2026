@@ -1,11 +1,11 @@
-<ion-modal [isOpen]="modalService.isModalOpen()">
-    <ng-template>
+<ion-modal [isOpen]="modalService.isModalOpen()" class="modal-personalizado">
+    <ng-template class="box">
         <ion-header>
             <ion-toolbar>
                 <ion-title>{{ modalService.tituloModal() }}</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content class="ion-padding">
+        <ion-content class="contenido">
             <p>{{ modalService.mensajeModal() }}</p>
         </ion-content>
         <ion-footer>

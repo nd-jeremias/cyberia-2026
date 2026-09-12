@@ -1,22 +1,262 @@
-.grilla-botones {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
+/**
+ * Pantalla de inicio.
+ *
+ * Los accesos del rol y, debajo, el panel de estado. El saludo, la foto y el
+ * perfil los muestra la banda (`app-header` en modo 'usuario'), pegada arriba.
+ */
+
+.grilla-acciones {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
 }
 
-.boton-home {
-  --border-radius: 10px;
-  height: 64px;
-  font-size: 1.05rem;
-  font-weight: 700;
+/* Sin accesos (los perfiles de cliente todavía no tienen) el cartel se lleva
+   el alto sobrante, en lugar de dejar medio papel cortado. */
+.grilla-acciones:has(> .estado-vacio) {
+    flex: 1;
+    align-content: stretch;
 }
 
-.sin-botones {
-  text-align: center;
-  color: #e2e8f0;
-  font-weight: 600;
-  margin-top: 24px;
+/* Medallón, nombre y flecha: el patrón de lista de cualquier aplicación de
+   gastronomía. El área de toque ocupa toda la fila. */
+.tarjeta-accion {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition:
+        transform 0.16s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+
+    &:hover {
+        border-color: var(--naranja);
+        box-shadow: var(--sombra-tarjeta);
+
+        .flecha-accion {
+            transform: translateX(0.1875rem);
+            color: var(--naranja);
+        }
+    }
+
+    &:active {
+        transform: scale(0.985);
+    }
+}
+
+.titulo-accion {
+    flex: 1;
+    min-width: 0;
+
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--tinta);
+}
+
+.flecha-accion {
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    color: var(--tinta-tenue);
+    transition:
+        transform 0.18s ease,
+        color 0.18s ease;
+}
+
+/* --- Panel de estado ------------------------------------------------------
+   Es lo que llena la mitad de abajo con algo que se usa, en lugar de con un
+   adorno: las cifras del turno y el mapa de mesas, que es lo que muestran en
+   su pantalla principal todas las aplicaciones de restaurante.
+   ------------------------------------------------------------------------- */
+
+.panel-estado {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    margin-top: 0.875rem;
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+}
+
+.cifras {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+.ficha-cifra {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+
+    padding: 0.5rem 0.375rem;
+    box-sizing: border-box;
+
+    background: var(--velo-tinta);
+    border-radius: var(--radio-chico);
+    text-align: center;
+}
+
+.valor {
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.valor-verde {
+    color: var(--exito-tinta);
+}
+
+.valor-naranja {
+    color: var(--naranja-hondo);
+}
+
+.valor-neutro {
+    color: var(--tinta);
+}
+
+.rotulo {
+    font-size: var(--texto-epigrafe);
+    line-height: 1.2;
+    color: var(--tinta-suave);
+}
+
+/* Mapa de mesas: fichas cuadradas con el número, como el plano de salón de un
+   sistema de restaurante. El color dice el estado de un vistazo. */
+.mapa {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4375rem;
+}
+
+.ficha-mapa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 2.75rem;
+    height: 2.75rem;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+
+    border-radius: var(--radio-chico);
+    background: rgba(226, 87, 28, 0.14);
+    border: 0.125rem solid rgba(226, 87, 28, 0.45);
+
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    color: var(--naranja-hondo);
+}
+
+.ficha-verde {
+    background: var(--exito-velo);
+    border-color: rgba(27, 122, 75, 0.45);
+    color: var(--exito-tinta);
+}
+
+/* Sin datos el panel dice qué pasa, en vez de desaparecer. */
+.panel-vacio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin: 0;
+    padding: 0.5rem 0.25rem;
+
+    font-size: var(--texto-apoyo);
+    font-weight: 600;
+    color: var(--tinta-media);
+
+    ion-icon {
+        flex-shrink: 0;
+        font-size: 1.375rem;
+        color: var(--exito);
+    }
+}
+
+/* El color no puede ser el único indicio: la referencia lo dice con palabras. */
+.leyenda {
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    color: var(--tinta-suave);
+}
+
+.punto {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.punto-verde {
+    background: var(--exito);
+}
+
+.punto-naranja {
+    background: var(--naranja);
+    margin-left: 0.75rem;
+}
+
+/* En pantalla ancha los accesos entran de a dos. */
+@media (min-width: 34rem) {
+    .grilla-acciones {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grilla-acciones .estado-vacio {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Cierra el papel abajo: sin él, con un rol de pocos accesos la pantalla
+   terminaba en un corte seco de textura. */
+.pie-marca {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin-top: auto;
+    padding-top: 1rem;
+
+    p {
+        margin: 0;
+        font-size: var(--texto-apoyo);
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--tinta-tenue);
+        text-align: center;
+    }
+}
+
+.linea-marca {
+    width: 3rem;
+    height: 0.1875rem;
+    border-radius: 999px;
+    background: var(--naranja);
+    opacity: 0.5;
 }

@@ -1,5 +1,6 @@
 import { Service } from '@angular/core';
 import { Camera, MediaResult, MediaTypeSelection } from '@capacitor/camera';
+import { supabase } from './supabase.service';
 
 // export interface ImagenGaleria {
 //     blob: Blob;
@@ -83,11 +84,57 @@ export class GaleriaService {
             return results;
         } catch (e) {
             const error = e as any;
-            const message = error.code
-                ? `[${error.code}] ${error.message}`
-                : error.message;
+            const message = error.code ? `[${error.code}] ${error.message}` : error.message;
             console.error('chooseFromGallery failed:', message);
             throw new Error(message);
+        }
+    }
+
+    /**
+     * Sube un archivo al bucket y devuelve su URL pública.
+     *
+     * `reemplazar` en true pisa el archivo si ya existe. Hace falta cuando el
+     * nombre es determinístico (el QR de una mesa, por ejemplo): sin eso, al
+     * regenerarlo la subida falla porque el archivo ya está.
+     */
+    async subirImagenDb(
+        fotoArchivo: File,
+        ruta: string,
+        nombre?: string,
+        reemplazar = false
+    ): Promise<string> {
+        const nombreNuevo =  nombre ? nombre : fotoArchivo.name;
+        const rutaArchivo = `${ruta}/${nombreNuevo}`;
+
+        const { error: storageError } = await supabase.storage
+            .from('Fotos')
+            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: reemplazar });
+
+        if (storageError) throw storageError;
+
+        // Obtener la URL pública del archivo subido
+        const { data: urlData } = supabase.storage.from('Fotos').getPublicUrl(rutaArchivo);
+
+        return urlData.publicUrl;
+    }
+
+    obtenerPathDesdeUrl(url: string, bucketName: string): string {
+        try {
+            const urlObjeto = new URL(url);
+            const pathname = urlObjeto.pathname; // Devuelve: "/storage/v1/object/public/Fotos/mesas/mesa55-foto-1.jpg"
+
+            // Construimos exactamente el prefijo de la URL pública de Supabase
+            const prefijo = `/storage/v1/object/public/${bucketName}/`;
+
+            if (pathname.includes(prefijo)) {
+                // Retorna todo lo que esté después de la carpeta del bucket: "mesas/mesa55-foto-1.jpg"
+                return pathname.substring(pathname.indexOf(prefijo) + prefijo.length);
+            }
+
+            return '';
+        } catch (error) {
+            console.error('La URL provista no es válida:', error);
+            return '';
         }
     }
 }

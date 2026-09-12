@@ -2,15 +2,23 @@ import { Preferences } from '@capacitor/preferences';
 import { Producto, ProductoCarrito } from './../interfaces/producto.interface';
 import { computed, effect, Service, signal } from '@angular/core';
 
+/**
+ * Carrito de compras del cliente.
+ *
+ * El contenido se guarda en el dispositivo, no en memoria: si el cliente cierra
+ * la aplicación mientras arma el pedido, al volver lo encuentra intacto.
+ */
 @Service()
 export class ChartService {
+    /** Productos elegidos, con su cantidad y subtotal. */
     carrito = signal<ProductoCarrito[]>([]);
 
     constructor() {
-        // 2. Cargamos el carrito de forma asíncrona al iniciar el servicio
+        // Se recupera lo que hubiera quedado de una sesión anterior.
         this.cargarCarrito();
 
-        // 3. El effect sigue funcionando igual: guarda automáticamente al cambiar
+        // El effect persiste ante cada cambio del carrito, sin que quien lo
+        // modifica tenga que acordarse de guardar.
         effect(async () => {
             await Preferences.set({
                 key: 'carrito',
@@ -19,6 +27,7 @@ export class ChartService {
         });
     }
 
+    /** Restaura el carrito guardado en el dispositivo, si existe. */
     private async cargarCarrito() {
         const { value } = await Preferences.get({ key: 'carrito' });
         if (value) {
@@ -26,6 +35,7 @@ export class ChartService {
         }
     }
 
+    /** Importe acumulado. El enunciado pide que esté siempre visible. */
     total = computed(() => this.carrito().reduce((acc, item) => acc + item.precioTotal, 0));
 
     tiempoEstimado = computed(() =>

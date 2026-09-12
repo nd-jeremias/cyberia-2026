@@ -6,19 +6,34 @@ DROP TABLE IF EXISTS public.usuarios;
 DROP TABLE IF EXISTS public.clientes_anonimos;
 DROP TYPE IF EXISTS public.usuarios_rol;
 DROP TYPE IF EXISTS public.usuarios_estado;
+DROP TYPE IF EXISTS public.estado_en_resto;
 
 -- =========================================================================
 -- 2. CREACIÓN DE TIPOS ENUM
 -- =========================================================================
--- Eliminamos 'anónimo' de aquí, ya que tendrá su propia tabla
+-- El cliente anónimo es un perfil más: entra con signInAnonymously(), que le
+-- crea su usuario en auth.users igual que a cualquier otro. Por eso ya no
+-- necesita una tabla aparte y vive en `usuarios` como el resto.
 CREATE TYPE public.usuarios_rol AS ENUM (
-    'dueño', 
-    'supervisor', 
-    'metre', 
-    'mozo', 
-    'cocinero', 
-    'cantinero', 
-    'cliente registrado'
+    'dueño',
+    'supervisor',
+    'metre',
+    'mozo',
+    'cocinero',
+    'cantinero',
+    'cliente registrado',
+    'cliente anónimo'
+);
+
+-- Dónde está parado el cliente dentro del circuito del local. Arranca en
+-- 'libre' y avanza al escanear el QR de ingreso (punto 9), al recibir mesa del
+-- metre (punto 10), al sentarse y al pedir la cuenta (punto 21).
+CREATE TYPE public.estado_en_resto AS ENUM (
+    'libre',
+    'esperando_mesa',
+    'mesa_asignada',
+    'sentado',
+    'pagando'
 );
 
 CREATE TYPE public.usuarios_estado AS ENUM (
@@ -33,34 +48,34 @@ CREATE TYPE public.usuarios_estado AS ENUM (
 
 -- Tabla de Usuarios Autenticados (El ID es DIRECTAMENTE el de Supabase Auth)
 CREATE TABLE public.usuarios (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE, 
-    apellidos TEXT NOT NULL, 
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    -- Apellidos, DNI y correo son NULL sólo por el cliente anónimo, que entra
+    -- con nombre y foto y nada más (punto 9). El resto de los perfiles los
+    -- exige el formulario de registro.
+    apellidos TEXT NULL,
     nombres TEXT NOT NULL,
-    dni TEXT NOT NULL,
+    dni TEXT NULL,
     cuil TEXT NULL, -- Sigue siendo opcional por si el perfil es Cliente Registrado
-    correo_electronico TEXT NOT NULL UNIQUE,
+    -- UNIQUE tolera varios NULL, así que los anónimos conviven sin chocar.
+    correo_electronico TEXT NULL UNIQUE,
     perfil public.usuarios_rol NOT NULL,
     foto_url TEXT NULL, 
     estado public.usuarios_estado NOT NULL DEFAULT 'Activo',
     token_push TEXT NULL, -- Token de FCM del dispositivo, para notificaciones push
+
+    -- Circuito del cliente dentro del local. La lista de espera del metre es,
+    -- justamente, quienes están en 'esperando_mesa'.
+    estado_en_resto public.estado_en_resto NOT NULL DEFAULT 'libre',
+    -- Mesa que tiene asignada ahora mismo. Sin REFERENCES acá porque `mesas`
+    -- todavía no existe: la clave foránea se agrega al final de mesas.sql.
+    mesa_id UUID NULL,
     fecha_registro TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
--- Tabla Exclusiva para Clientes Anónimos (Según Funcionalidad 9: solo nombre y foto)
-CREATE TABLE public.clientes_anonimos (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nombres TEXT NOT NULL,
-    foto_url TEXT NULL,
-    token_push TEXT NULL, -- Token de FCM del dispositivo, para notificaciones push
-    fecha_ingreso TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
-);
-
--- Habilitar Seguridad a Nivel de Fila (RLS) en ambas tablas
+-- Habilitar Seguridad a Nivel de Fila (RLS)
 ALTER TABLE public.usuarios ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.clientes_anonimos ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Permitir acceso público usuarios" ON public.usuarios FOR ALL USING (true);
-CREATE POLICY "Permitir acceso público anónimos" ON public.clientes_anonimos FOR ALL USING (true);
 
 -- =========================================================================
 -- 4. INSERCIÓN DE DATOS DE PRUEBA
@@ -98,9 +113,7 @@ BEGIN
     (id_canti,  'Sosa',     'Franco',    '42444555', '20424445552', 'cantinero@test.com',  'cantinero',          'https://supabase.co',  'Activo'),
     (id_clireg, 'Paz',      'Gisela',    '45666777', NULL,          'cliente@test.com',    'cliente registrado', 'https://supabase.co',    'Activo');
 
-    -- C. Inserción en la tabla independiente de Clientes Anónimos
-    INSERT INTO public.clientes_anonimos (nombres, foto_url)
-    VALUES 
-    ('JuanAnonimo', 'https://supabase.co');
+    -- Los clientes anónimos no se siembran acá: los crea la propia aplicación
+    -- con signInAnonymously() cuando alguien entra desde el celular.
 
 END $$;

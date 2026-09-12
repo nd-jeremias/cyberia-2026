@@ -1,0 +1,55 @@
+/**
+ * QR de ingreso al local.
+ *
+ * El código va sobre fondo blanco sí o sí: los lectores necesitan contraste
+ * entre los módulos oscuros y el fondo, y sobre el papel oscuro de la
+ * aplicación muchos teléfonos no lo enfocan.
+ */
+
+.pantalla-qr {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100%;
+}
+
+.tarjeta-qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    max-width: 20rem;
+    aspect-ratio: 1 / 1;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+}
+
+.imagen-qr {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.leyenda {
+    margin: 0;
+    font-size: var(--texto-apoyo);
+    color: #555555;
+}
+
+.ayuda {
+    margin: 0;
+    max-width: 24rem;
+
+    font-size: var(--texto-apoyo);
+    line-height: 1.45;
+    color: var(--tinta-suave);
+    text-align: center;
+}

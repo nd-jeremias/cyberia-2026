@@ -22,12 +22,27 @@ const COLORES_TIPO: Record<TipoProducto, string> = {
 })
 export class TarjetaProductoComponent {
     producto = input.required<Producto>();
+
+    // 'pedido' (default): cliente arma su pedido -> agregar al carrito.
+    // 'gestion': cocinero/cantinero administran la carta -> editar/eliminar.
+    modo = input<'pedido' | 'gestion'>('pedido');
+
     agregarCarrito = output<Producto>();
+    editar = output<Producto>();
+    eliminar = output<Producto>();
 
     fotoActual = signal(0);
+    fotosConError = signal<ReadonlySet<number>>(new Set());
 
     etiquetaTipo = computed(() => ETIQUETAS_TIPO[this.producto().tipo]);
     colorTipo = computed(() => COLORES_TIPO[this.producto().tipo]);
+
+    // Placeholder si no hay fotos cargadas o si todas las que hay fallaron al cargar.
+    sinFotoValida = computed(() => {
+        const fotos = this.producto().fotosUrls;
+        const errores = this.fotosConError();
+        return fotos.length === 0 || fotos.every((_, i) => errores.has(i));
+    });
 
     precioFormateado = computed(() =>
         this.producto().precio.toLocaleString('es-AR', {
@@ -54,6 +69,14 @@ export class TarjetaProductoComponent {
         this.fotoActual.update((actual) => (actual + 1) % total);
     }
 
+    fotoTieneError(indice: number): boolean {
+        return this.fotosConError().has(indice);
+    }
+
+    onErrorFoto(indice: number) {
+        this.fotosConError.update((actuales) => new Set(actuales).add(indice));
+    }
+
     onToqueInicio(evento: TouchEvent) {
         this.inicioToqueX = evento.changedTouches[0].clientX;
     }
@@ -71,5 +94,13 @@ export class TarjetaProductoComponent {
 
     onAgregarCarrito() {
         this.agregarCarrito.emit(this.producto());
+    }
+
+    onEditar() {
+        this.editar.emit(this.producto());
+    }
+
+    onEliminar() {
+        this.eliminar.emit(this.producto());
     }
 }

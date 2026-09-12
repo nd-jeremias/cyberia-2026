@@ -1,12 +1,9 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>Alta de producto</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/gestion-productos'" [tituloHeader]="titulo()"></app-header>
 
 <ion-content [fullscreen]="true">
     <app-formulario-alta-producto
         [tipo]="tipo()"
+        [productoExistente]="productoExistente()"
         (productoSubmit)="onAltaProducto($event)"
     ></app-formulario-alta-producto>
 </ion-content>

@@ -25,8 +25,7 @@ function pedidoDePrueba(
         id: 'pedido-1',
         mesaId: 'mesa-1',
         numeroMesa: 4,
-        clienteRegistradoId: 'cliente-1',
-        clienteAnonimoId: null,
+        clienteId: 'cliente-1',
         estado: 'Pendiente de Confirmación',
         precioTotalNeto: 10000,
         descuentoJuego: 0,
@@ -143,11 +142,40 @@ describe('PedidoService', () => {
     });
 
     describe('crear', () => {
+        /**
+         * Deja resolviendo las tres escrituras de `crear`: el pedido, sus
+         * detalles y el paso del cliente a "sentado".
+         */
+        function mockCrear(errorEstado: Error | null = null) {
+            const insertPedido = vi.fn().mockReturnValue({
+                select: vi.fn().mockReturnValue({
+                    single: vi
+                        .fn()
+                        .mockResolvedValue({ data: { id: 'nuevo' }, error: null }),
+                }),
+            });
+
+            const filtroEstado = vi.fn().mockResolvedValue({ error: errorEstado });
+            const updateCliente = vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({ eq: filtroEstado }),
+            });
+
+            supabase.from
+                .mockReturnValueOnce({ insert: insertPedido })
+                .mockReturnValueOnce({
+                    insert: vi.fn().mockResolvedValue({ error: null }),
+                })
+                .mockReturnValueOnce({ update: updateCliente });
+
+            return { insertPedido, updateCliente, filtroEstado };
+        }
+
         it('rechaza un pedido sin ítems y avisa al usuario', async () => {
             const espia = vi.spyOn(modal, 'setOpen');
 
             const resultado = await servicio.crear({
                 mesaId: 'mesa-1',
+                clienteId: 'cliente-1',
                 items: [],
             });
 
@@ -158,22 +186,11 @@ describe('PedidoService', () => {
         });
 
         it('calcula el total como cantidad por precio unitario', async () => {
-            const insertPedido = vi.fn().mockReturnValue({
-                select: vi.fn().mockReturnValue({
-                    single: vi
-                        .fn()
-                        .mockResolvedValue({ data: { id: 'nuevo' }, error: null }),
-                }),
-            });
-
-            supabase.from
-                .mockReturnValueOnce({ insert: insertPedido })
-                .mockReturnValueOnce({
-                    insert: vi.fn().mockResolvedValue({ error: null }),
-                });
+            const { insertPedido } = mockCrear();
 
             const id = await servicio.crear({
                 mesaId: 'mesa-1',
+                clienteId: 'cliente-1',
                 items: [
                     { productoId: 'p1', cantidad: 2, precioUnitario: 4000 },
                     { productoId: 'p2', cantidad: 3, precioUnitario: 1000 },
@@ -188,28 +205,149 @@ describe('PedidoService', () => {
         });
 
         it('nace en estado Pendiente de Confirmación, esperando al mozo', async () => {
-            const insertPedido = vi.fn().mockReturnValue({
-                select: vi.fn().mockReturnValue({
-                    single: vi
-                        .fn()
-                        .mockResolvedValue({ data: { id: 'nuevo' }, error: null }),
-                }),
-            });
-
-            supabase.from
-                .mockReturnValueOnce({ insert: insertPedido })
-                .mockReturnValueOnce({
-                    insert: vi.fn().mockResolvedValue({ error: null }),
-                });
+            const { insertPedido } = mockCrear();
 
             await servicio.crear({
                 mesaId: 'mesa-1',
+                clienteId: 'cliente-1',
                 items: [{ productoId: 'p1', cantidad: 1, precioUnitario: 100 }],
             });
 
             expect(insertPedido).toHaveBeenCalledWith(
                 expect.objectContaining({ estado: 'Pendiente de Confirmación' })
             );
+        });
+
+        // Punto 13: al pedir, el cliente deja de estar "con mesa asignada".
+        it('pasa al cliente con mesa asignada a sentado', async () => {
+            const { updateCliente, filtroEstado } = mockCrear();
+
+            await servicio.crear({
+                mesaId: 'mesa-1',
+                clienteId: 'cliente-1',
+                items: [{ productoId: 'p1', cantidad: 1, precioUnitario: 100 }],
+            });
+
+            expect(supabase.from).toHaveBeenNthCalledWith(3, 'usuarios');
+            expect(updateCliente).toHaveBeenCalledWith({
+                estado_en_resto: 'sentado',
+            });
+            // No pisa un estado posterior, como el de quien ya pidió la cuenta.
+            expect(filtroEstado).toHaveBeenCalledWith(
+                'estado_en_resto',
+                'mesa_asignada'
+            );
+        });
+
+        it('conserva el pedido aunque falle el cambio de estado del cliente', async () => {
+            vi.spyOn(console, 'error').mockImplementation(() => undefined);
+            const espia = vi.spyOn(modal, 'setOpen');
+            mockCrear(new Error('sin permiso'));
+
+            const id = await servicio.crear({
+                mesaId: 'mesa-1',
+                clienteId: 'cliente-1',
+                items: [{ productoId: 'p1', cantidad: 1, precioUnitario: 100 }],
+            });
+
+            expect(id).toBe('nuevo');
+            expect(espia).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('pedidoActualDelCliente', () => {
+        /** Encadena select → eq → neq → order → limit → maybeSingle. */
+        function mockConsulta(respuesta: { data: unknown; error: unknown }) {
+            const consulta = {
+                select: vi.fn(),
+                eq: vi.fn(),
+                neq: vi.fn(),
+                order: vi.fn(),
+                limit: vi.fn(),
+                maybeSingle: vi.fn().mockResolvedValue(respuesta),
+            };
+
+            for (const paso of ['select', 'eq', 'neq', 'order', 'limit'] as const) {
+                consulta[paso].mockReturnValue(consulta);
+            }
+
+            supabase.from.mockReturnValue(consulta);
+
+            return consulta;
+        }
+
+        it('busca el último pedido no pagado del cliente', async () => {
+            const consulta = mockConsulta({ data: null, error: null });
+
+            await servicio.pedidoActualDelCliente('cliente-1');
+
+            expect(supabase.from).toHaveBeenCalledWith('pedidos');
+            expect(consulta.eq).toHaveBeenCalledWith('cliente_id', 'cliente-1');
+            expect(consulta.neq).toHaveBeenCalledWith('estado', 'Pagado');
+            expect(consulta.order).toHaveBeenCalledWith('fecha', {
+                ascending: false,
+            });
+        });
+
+        it('devuelve null si el cliente todavía no pidió', async () => {
+            mockConsulta({ data: null, error: null });
+
+            await expect(
+                servicio.pedidoActualDelCliente('cliente-1')
+            ).resolves.toBeNull();
+        });
+
+        it('une la mesa y los productos del pedido', async () => {
+            mockConsulta({
+                data: {
+                    id: 'pedido-1',
+                    mesa_id: 'mesa-1',
+                    cliente_id: 'cliente-1',
+                    estado: 'Confirmado',
+                    precio_total_neto: '8000.00',
+                    descuento_juego: '0',
+                    propina_porcentaje: '0',
+                    fecha: '2026-09-12T20:00:00.000Z',
+                    mesas: { numero_mesa: 1 },
+                    pedido_detalles: [
+                        {
+                            id: 'detalle-1',
+                            pedido_id: 'pedido-1',
+                            producto_id: 'producto-1',
+                            cantidad: 2,
+                            precio_unitario: '4000.00',
+                            precio_total_parcial: '8000.00',
+                            estado_producto: 'Pendiente',
+                            productos: {
+                                nombre: 'Milanesa',
+                                tiempo_elaboracion_minutos: 25,
+                            },
+                        },
+                    ],
+                },
+                error: null,
+            });
+
+            const pedido = await servicio.pedidoActualDelCliente('cliente-1');
+
+            expect(pedido?.numeroMesa).toBe(1);
+            // Postgres devuelve NUMERIC como texto: el servicio lo convierte.
+            expect(pedido?.precioTotalNeto).toBe(8000);
+            expect(pedido?.detalles[0]).toEqual(
+                expect.objectContaining({
+                    nombreProducto: 'Milanesa',
+                    precioTotalParcial: 8000,
+                    tiempoElaboracionMinutos: 25,
+                })
+            );
+        });
+
+        it('propaga el error para que la pantalla lo muestre', async () => {
+            mockConsulta({ data: null, error: new Error('sin conexión') });
+
+            await expect(
+                servicio.pedidoActualDelCliente('cliente-1')
+            ).rejects.toThrow('sin conexión');
         });
     });
 

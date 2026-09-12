@@ -1,13 +1,12 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>gestion-clientes</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Clientes'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <ion-header collapse="condense">
-        <ion-toolbar>
-            <ion-title size="large">gestion-clientes</ion-title>
-        </ion-toolbar>
-    </ion-header>
+    <div class="hoja">
+        <div class="aviso-preparacion">
+            <span class="medallon"><ion-icon name="person-circle-outline"></ion-icon></span>
+            <span class="sello-preparacion">En preparación</span>
+            <h2>Aprobación de clientes</h2>
+            <p>Acá se van a revisar las solicitudes de registro para aceptarlas o rechazarlas.</p>
+        </div>
+    </div>
 </ion-content>

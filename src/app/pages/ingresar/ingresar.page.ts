@@ -1,17 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonHeader, IonToolbar, IonTitle } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { LoginFormComponent } from '../../components/login-form/login-form.component';
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { AuthService } from '../../services/auth.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
+import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 
 @Component({
     selector: 'app-ingresar',
     templateUrl: './ingresar.page.html',
-    imports: [IonHeader, IonToolbar, IonTitle, IonContent, LoginFormComponent],
+    styleUrls: ['./ingresar.page.scss'],
+    imports: [IonContent, LoginFormComponent, HeaderLogoComponent],
 })
 export class IngresarPage {
     private router = inject(Router);
@@ -19,6 +21,11 @@ export class IngresarPage {
     private modal = inject(ModalService);
     private authService = inject(AuthService);
     private notificaciones = inject(NotificacionesService);
+
+    /** Punto 9: el invitado no se loguea acá, va a cargar su nombre y su foto. */
+    irAIngresoAnonimo() {
+        this.router.navigate(['/ingreso-anonimo']);
+    }
 
     async handleLogin(credentials: LoginInterface) {
         this.spinner.show();
@@ -29,7 +36,7 @@ export class IngresarPage {
             // Recien ahora hay sesion, asi que el token puede asociarse al usuario.
             await this.notificaciones.sincronizarToken();
 
-            this.router.navigate(['/home']);
+            this.router.navigate(['/inicio']);
         } catch (error: any) {
             // 1. Mostramos el mensaje amigable en la interfaz
 
