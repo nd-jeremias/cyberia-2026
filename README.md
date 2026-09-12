@@ -315,8 +315,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | **Puntos del TP a realizar:**                                                                |
 | 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
 | 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |
-| 13.- El mozo rechaza el pedido                                                               |   14/09/2026    | --/--/---- | Pendiente  |                                                              |
-| 14.- El mozo confirma el pedido                                                              |   14/09/2026    | --/--/---- | Pendiente  |                                                              |
+| 13.- El mozo rechaza el pedido                                                               |   14/09/2026    | 12/09/2026 | Completado |                                                              |
+| 14.- El mozo confirma el pedido                                                              |   14/09/2026    | 12/09/2026 | Completado |                                                              |
+| 15.- El cliente accede a los juegos en busca de descuentos                                   |   12/09/2026    | 12/09/2026 | Completado |                                                              |
 | 19.- El mozo entrega el pedido completo                                                      |   14/09/2026    | --/--/---- | Pendiente  |                                                              |
 | 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | --/--/---- | Pendiente  |                                                              |
 
