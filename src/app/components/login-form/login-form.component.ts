@@ -2,7 +2,6 @@ import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonIcon, IonInput, IonInputPasswordToggle } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { ModalService } from '../../services/modal.service';
 
@@ -94,8 +93,7 @@ export class LoginFormComponent {
       // Ionic solo pinta el error si el control esta "tocado".
       this.formulario.markAllAsTouched();
 
-      await Haptics.notification({ type: NotificationType.Error });
-
+      // El modal vibra solo al detectar un título de error.
       this.modal.setOpen(
         'Datos inválidos',
         'Revise el correo y la contraseña antes de continuar.'

@@ -1,7 +1,6 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
@@ -97,8 +96,7 @@ export class FormularioAltaMesaComponent {
             // nunca visitó.
             this.formulario.markAllAsTouched();
 
-            await Haptics.notification({ type: NotificationType.Error });
-
+            // El modal vibra solo al detectar un título de error.
             this.modal.setOpen(
                 'Datos inválidos',
                 !this.fotos
