@@ -26,6 +26,7 @@ function pedidoDePrueba(
         mesaId: 'mesa-1',
         numeroMesa: 4,
         clienteId: 'cliente-1',
+        estadoCliente: 'sentado',
         estado: 'Pendiente de Confirmación',
         precioTotalNeto: 10000,
         descuentoJuego: 0,

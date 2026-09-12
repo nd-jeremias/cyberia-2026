@@ -2,14 +2,16 @@ import { Component, OnInit, inject } from '@angular/core';
 import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
+import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 
 /**
- * Pantalla del mozo: confirmar, rechazar y entregar pedidos.
+ * Pantalla del mozo: confirmar, rechazar, entregar y cobrar pedidos.
  *
- * Cubre los puntos 13, 14 y 19 del enunciado. Se muestran dos grupos separados
- * porque son dos tareas distintas: revisar lo que el cliente acaba de mandar, y
- * llevar a la mesa lo que los sectores ya terminaron.
+ * Cubre los puntos 13, 14, 19 y 22 del enunciado. Se muestran tres grupos
+ * separados porque son tres tareas distintas: revisar lo que el cliente acaba
+ * de mandar, llevar a la mesa lo que los sectores ya terminaron y confirmar el
+ * pago de quien ya pagó.
  */
 @Component({
     selector: 'app-pedidos',
@@ -19,20 +21,16 @@ import { PedidoService } from '../../services/pedido.service';
 })
 export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);
+    private modal = inject(ModalService);
 
     pedidos = this.pedidoService.pedidos;
     pendientes = this.pedidoService.pendientesDeConfirmacion;
     listos = this.pedidoService.listosParaEntregar;
+    pagos = this.pedidoService.pagosPorConfirmar;
     cargando = this.pedidoService.cargando;
 
-    /** Se piden sólo los estados sobre los que el mozo puede actuar. */
     ngOnInit() {
-        // El mozo trabaja sobre lo que espera su confirmacion y lo que los
-        // sectores ya terminaron (puntos 13, 14 y 19).
-        this.pedidoService.listar([
-            'Pendiente de Confirmación',
-            'Listo para Entregar',
-        ]);
+        void this.recargar();
     }
 
     tiempoEstimado(pedido: PedidoInterface): number {
@@ -75,9 +73,21 @@ export class PedidosPage implements OnInit {
         await this.recargar();
     }
 
+    // Punto 19: el pedido queda "Entregado" hasta que el cliente confirma.
     async onEntregar(pedido: PedidoInterface) {
         await this.pedidoService.entregar(pedido.id);
         await this.recargar();
+    }
+
+    // Punto 22: se cobra, se libera la mesa y el cliente queda libre.
+    async onConfirmarPago(pedido: PedidoInterface) {
+        const cobrado = await this.pedidoService.confirmarPago(pedido);
+
+        await this.recargar();
+
+        if (cobrado) {
+            this.modal.setOpen('Pago confirmado', `La mesa ${pedido.numeroMesa} quedó libre.`, 'info');
+        }
     }
 
     /**
@@ -87,11 +97,11 @@ export class PedidosPage implements OnInit {
      * pantalla carga una sola vez al entrar, y sin ese botón el mozo no vería
      * los pedidos que llegan mientras la tiene abierta. Además, otro mozo pudo
      * haber tocado el mismo pedido mientras tanto.
+     *
+     * Trae todo lo que no está pagado y cada grupo filtra lo suyo: el de pagos
+     * depende del estado del cliente, no sólo del pedido.
      */
     recargar(): Promise<void> {
-        return this.pedidoService.listar([
-            'Pendiente de Confirmación',
-            'Listo para Entregar',
-        ]);
+        return this.pedidoService.listarSinPagar();
     }
 }

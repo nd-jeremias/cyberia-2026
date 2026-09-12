@@ -1,4 +1,4 @@
-import { PerfilUsuario } from '../../interfaces/auth.interface';
+import { EstadoEnResto, PerfilUsuario } from '../../interfaces/auth.interface';
 import { EstadoPedido } from '../../interfaces/pedido.interface';
 
 /**
@@ -15,9 +15,16 @@ export const LEYENDA_PEDIDO: Record<EstadoPedido, string> = {
     Confirmado: 'El mozo confirmó tu pedido y ya pasó a cocina y barra.',
     'En Preparación': 'Tu pedido se está preparando.',
     'Listo para Entregar': 'Tu pedido está listo. El mozo te lo lleva enseguida.',
-    Entregado: 'Tu pedido ya está en la mesa. ¡Buen provecho!',
+    Entregado: 'El mozo te llevó el pedido. Confirmá que lo recibiste.',
+    Recibido: 'Recibiste tu pedido. ¡Buen provecho!',
     Pagado: 'Tu cuenta ya fue pagada. ¡Gracias por venir!',
 };
+
+/**
+ * Leyenda mientras el mozo cobra. Pagar no cambia el pedido sino al cliente,
+ * que queda 'pagando' hasta que el mozo confirma (puntos 21 y 22).
+ */
+export const LEYENDA_PAGANDO = 'Pediste la cuenta. Esperá a que el mozo confirme el pago.';
 
 /**
  * Estados desde los que el cliente ya puede entrar a los juegos: el punto 14
@@ -28,6 +35,7 @@ const ESTADOS_CON_JUEGOS: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>([
     'En Preparación',
     'Listo para Entregar',
     'Entregado',
+    'Recibido',
 ]);
 
 /**
@@ -36,4 +44,17 @@ const ESTADOS_CON_JUEGOS: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>([
  */
 export function puedeAccederAJuegos(estado: EstadoPedido | null, perfil: PerfilUsuario | null): boolean {
     return perfil === 'cliente registrado' && estado !== null && ESTADOS_CON_JUEGOS.has(estado);
+}
+
+/** Punto 19: el cliente confirma la recepción recién cuando el mozo marcó la entrega. */
+export function puedeConfirmarRecepcion(estado: EstadoPedido | null): boolean {
+    return estado === 'Entregado';
+}
+
+/**
+ * Punto 19: con el pedido recibido, el cliente accede a la encuesta y puede
+ * pedir la cuenta. Una vez que la pidió, no se le vuelve a ofrecer.
+ */
+export function puedeUsarServiciosDeMesa(estado: EstadoPedido | null, estadoCliente: EstadoEnResto | null): boolean {
+    return estado === 'Recibido' && estadoCliente !== 'pagando';
 }

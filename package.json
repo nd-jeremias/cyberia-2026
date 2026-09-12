@@ -16,7 +16,9 @@
     "e2e:ui": "playwright test --ui",
     "e2e:informe": "playwright show-report",
     "verificar": "npm run lint && npm run test:ci && npm run build",
-    "datos:prueba": "node scripts/cargar-datos-prueba.mjs"
+    "datos:prueba": "node scripts/cargar-datos-prueba.mjs",
+    "datos:prueba:entrega": "node scripts/cargar-datos-prueba.mjs sql/datos-prueba/pedido-listo.json",
+    "datos:prueba:pago": "node scripts/cargar-datos-prueba.mjs sql/datos-prueba/pedido-por-cobrar.json"
   },
   "private": true,
   "dependencies": {

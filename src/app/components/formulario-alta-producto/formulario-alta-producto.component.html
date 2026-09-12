@@ -6,6 +6,8 @@
 
     <div class="seccion-form panel">
         <form [formGroup]="formulario" (ngSubmit)="onAltaProducto()">
+            <!-- Cada campo muestra su error: el aviso general pide "revisar los
+                 campos marcados", y sin estos mensajes no había nada marcado. -->
             <div class="grupo-input">
                 <label class="input-label">Nombre</label>
                 <div class="caja-input">
@@ -16,6 +18,9 @@
                         placeholder="Milanesa con papas fritas"
                     ></ion-input>
                 </div>
+                @if (hayError("nombre", "required")) {
+                <span class="mensaje-error">Ingrese el nombre del producto</span>
+                }
             </div>
 
             <div class="grupo-input">
@@ -29,6 +34,9 @@
                         [rows]="2"
                     ></ion-textarea>
                 </div>
+                @if (hayError("descripcion", "required")) {
+                <span class="mensaje-error">Ingrese una descripción</span>
+                }
             </div>
 
             <!-- Tiempo y precio comparten fila: son dos datos cortos y juntos
@@ -46,6 +54,11 @@
                             placeholder="20"
                         ></ion-input>
                     </div>
+                    @if (hayError("tiempoElaboracionMinutos", "required")) {
+                    <span class="mensaje-error">Ingrese el tiempo</span>
+                    } @if (hayError("tiempoElaboracionMinutos", "min")) {
+                    <span class="mensaje-error">Mínimo 1 minuto</span>
+                    }
                 </div>
 
                 <div class="grupo-input">
@@ -61,6 +74,11 @@
                             placeholder="4500.00"
                         ></ion-input>
                     </div>
+                    @if (hayError("precio", "required")) {
+                    <span class="mensaje-error">Ingrese el precio</span>
+                    } @if (hayError("precio", "min")) {
+                    <span class="mensaje-error">Debe ser mayor a cero</span>
+                    }
                 </div>
             </div>
 

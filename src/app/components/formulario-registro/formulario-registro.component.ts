@@ -306,8 +306,10 @@ export class FormularioRegistroComponent {
 
             if (this.usuarioRol() === 'dueño') {
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+                // El select escribe en tipoEmpleado, que es lo que el registro
+                // guarda como perfil. Antes también se exigía `perfil`, que no
+                // tiene campo en pantalla, y el alta nunca pasaba la validación.
                 tipoEmpleado.setValidators([Validators.required]);
-                perfil.setValidators([Validators.required]);
             } else {
                 cuil.clearValidators();
                 tipoEmpleado.clearValidators();
@@ -408,6 +410,7 @@ export class FormularioRegistroComponent {
             this.formulario.hasError('passwordsDistintas')
         );
     }
+
     private separarCuil(cuil: string | null | undefined): void {
         if (!cuil) {
             this.cuilPrefijo.set('');
@@ -471,7 +474,8 @@ export class FormularioRegistroComponent {
         if (this.validateForm(this.formulario) || this.formulario.invalid) {
             return;
         }
-        console.log('ONREGISTRO FORM: ', this.formulario.value); // Aqui imprime el formulario con los valores modificados
+
+        // Sin console.log del formulario: imprimía la contraseña en la consola.
         const datosRegistro = this.formulario.getRawValue();
         const formData = new FormData();
 

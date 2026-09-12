@@ -42,11 +42,32 @@
             </p>
         </article>
 
+        @if (puedeConfirmar()) {
+        <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme que lo recibió. -->
+        <button type="button" class="btn-principal" [disabled]="procesando()" (click)="confirmarRecepcion()">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            Confirmar recepción
+        </button>
+        }
+
         @if (puedeJugar()) {
         <!-- Punto 15: sólo el cliente registrado, con el pedido ya confirmado. -->
-        <button type="button" class="btn-principal" (click)="irAJuegos()">
+        <button type="button" class="btn-principal" (click)="irA('juegos')">
             <ion-icon name="game-controller-outline"></ion-icon>
             Ir a los juegos
+        </button>
+        }
+
+        @if (serviciosHabilitados()) {
+        <!-- Punto 19: con el pedido recibido se habilitan la encuesta y la cuenta. -->
+        <button type="button" class="btn-principal" (click)="irA('encuesta')">
+            <ion-icon name="chatbubbles-outline"></ion-icon>
+            Responder la encuesta
+        </button>
+
+        <button type="button" class="btn-principal" (click)="irA('cuenta')">
+            <ion-icon name="cash-outline"></ion-icon>
+            Pedir la cuenta
         </button>
         }
         } @else if (cargando()) {

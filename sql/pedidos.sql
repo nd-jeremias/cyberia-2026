@@ -10,7 +10,7 @@ DROP TYPE IF EXISTS public.estado_item_producto;
 -- 2. CREACIÓN DE TIPOS ENUM (Estados del Flujo del PDF)
 -- =========================================================================
 
--- Estados globales del pedido según las funcionalidades 12, 13, 14, 19 y 21
+-- Estados globales del pedido según las funcionalidades 12, 13, 14, 19 y 22
 CREATE TYPE public.estado_general_pedido AS ENUM (
     'Pendiente de Confirmación', -- Cliente terminó el pedido, espera al mozo (F12)
     'Rechazado',                 -- Mozo rechazó el pedido para corrección (F13)
@@ -18,6 +18,7 @@ CREATE TYPE public.estado_general_pedido AS ENUM (
     'En Preparación',            -- Los sectores están cocinando/armando
     'Listo para Entregar',       -- Cocina y bar terminaron todo (F18)
     'Entregado',                 -- El mozo llevó el pedido a la mesa (F19)
+    'Recibido',                  -- El cliente confirmó la recepción (F19)
     'Pagado'                     -- Mozo confirmó el pago y libera mesa (F22)
 );
 
