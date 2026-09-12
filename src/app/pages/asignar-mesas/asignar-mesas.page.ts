@@ -23,14 +23,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
-    imports: [
-        IonContent,
-        IonButton,
-        IonBadge,
-        IonIcon,
-        TarjetaUsuarioComponent,
-        HeaderComponent
-    ],
+    imports: [IonContent, IonButton, IonBadge, IonIcon, TarjetaUsuarioComponent, HeaderComponent],
 })
 export class AsignarMesasPage implements OnInit {
     private mesaService = inject(MesaService);
@@ -84,9 +77,7 @@ export class AsignarMesasPage implements OnInit {
         try {
             const { data, error } = await supabase
                 .from('usuarios')
-                .select(
-                    'id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro'
-                )
+                .select('id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro')
                 .eq('estado_en_resto', 'esperando_mesa')
                 .order('fecha_registro', { ascending: true });
 
@@ -100,26 +91,20 @@ export class AsignarMesasPage implements OnInit {
                     // de los campos vienen en null y la tarjeta los muestra vacíos.
                     apellidos: fila.apellidos ?? '',
                     dni: fila.dni ?? '',
-                    correo: fila.correo_electronico ?? '',
-                    fotoUrl: fila.foto_url,
+                    correo_electronico: fila.correo_electronico ?? '',
+                    foto_url: fila.foto_url,
                     estado: 'Activo' as const,
-                    fechaRegistro: fila.fecha_registro,
+                    fecha_registro: fila.fecha_registro,
                 }))
             );
         } catch (error) {
-            const mensaje =
-                error instanceof Error
-                    ? error.message
-                    : 'No se pudieron cargar los clientes.';
+            const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
 
             this.modal.setOpen('Error', mensaje);
         }
     }
 
-    onSeleccionCliente(evento: {
-        accion: string;
-        usuario: ClientePendienteInterface;
-    }) {
+    onSeleccionCliente(evento: { accion: string; usuario: ClientePendienteInterface }) {
         this.clienteElegido.set(evento.usuario);
     }
 
@@ -137,18 +122,12 @@ export class AsignarMesasPage implements OnInit {
         const cliente = this.clienteElegido();
 
         if (!cliente) {
-            this.modal.setOpen(
-                'Falta el cliente',
-                'Seleccione primero al cliente al que le va a asignar la mesa.'
-            );
+            this.modal.setOpen('Falta el cliente', 'Seleccione primero al cliente al que le va a asignar la mesa.');
 
             return;
         }
 
-        const asignada = await this.mesaService.asignarCliente(
-            mesa.id,
-            cliente.id
-        );
+        const asignada = await this.mesaService.asignarCliente(mesa.id, cliente.id);
 
         if (!asignada) return;
 

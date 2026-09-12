@@ -22,6 +22,7 @@
         "foto datos"
         "acciones acciones";
     gap: 0.875rem 1rem;
+    height: 16rem;
 
     padding: 1rem;
     box-sizing: border-box;
@@ -45,8 +46,8 @@
     grid-area: foto;
     display: flex;
     align-self: center;
-    width: 6rem;
-    height: 6rem;
+    width: 9rem;
+    height: 9rem;
     overflow: hidden;
 
     border-radius: var(--radio);
@@ -130,11 +131,11 @@ ion-badge {
     gap: 0.625rem;
     padding-top: 0.75rem;
     border-top: 0.0625rem solid var(--hoja-borde);
+    height: 2.8rem;
 
     ion-button {
         flex: 1 1 0;
         margin: 0;
-        min-height: 3.25rem;
         font-size: var(--texto-apoyo);
         font-weight: 800;
     }

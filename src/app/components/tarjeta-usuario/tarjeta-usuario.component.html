@@ -1,7 +1,7 @@
 <article class="tarjeta-usuario">
     <div class="contenedor-foto">
-        @if (usuario().fotoUrl) {
-        <img class="foto-usuario" [src]="usuario().fotoUrl" [alt]="'Foto de ' + nombreCompleto()" />
+        @if (usuario().foto_url) {
+        <img class="foto-usuario" [src]="usuario().foto_url" [alt]="'Foto de ' + nombreCompleto()" />
         } @else {
         <div class="foto-ausente">
             <ion-icon name="person"></ion-icon>

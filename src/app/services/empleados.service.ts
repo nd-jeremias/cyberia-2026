@@ -20,8 +20,6 @@ export class EmpleadosService {
         return (data ?? []).map((row) => this.mapEmpleado(row));
     }
 
-    
-
     mapEmpleado(row: any): EmpleadoInterface {
         return {
             id: row.id,

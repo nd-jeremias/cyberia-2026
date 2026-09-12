@@ -53,7 +53,7 @@ export class TarjetaUsuarioComponent {
     );
 
     fechaFormateada = computed(() =>
-        new Date(this.usuario().fechaRegistro).toLocaleString('es-AR', {
+        new Date(this.usuario().fecha_registro).toLocaleString('es-AR', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
