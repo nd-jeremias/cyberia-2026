@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
@@ -16,11 +16,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     styleUrls: ['./metre-registrar-cliente.page.scss'],
     imports: [IonContent, CommonModule, FormsModule, FormularioRegistroComponent, HeaderComponent],
 })
-export class MetreRegistrarClientePage implements OnInit {
-    constructor() {}
-
-    ngOnInit() {}
-
+export class MetreRegistrarClientePage {
     private router = inject(Router);
     private spinner = inject(SpinnerService);
     private modal = inject(ModalService);

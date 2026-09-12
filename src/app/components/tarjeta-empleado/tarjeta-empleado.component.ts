@@ -1,4 +1,4 @@
-import { Component, computed, input, OnInit, output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { IonButton } from '@ionic/angular';
 
@@ -8,17 +8,13 @@ import { IonButton } from '@ionic/angular';
     styleUrls: ['./tarjeta-empleado.component.scss'],
     imports: [IonButton],
 })
-export class TarjetaEmpleadoComponent implements OnInit {
+export class TarjetaEmpleadoComponent {
     
     nombreCompleto = computed(() => `${this.usuario().apellidos}, ${this.usuario().nombres}`);
     
     usuario = input.required<EmpleadoInterface>();
     editarEmpleado = output<EmpleadoInterface>();
     eliminarEmpleado = output<EmpleadoInterface>();
-
-    constructor() {}
-
-    ngOnInit() {}
 
     onEditar() {
         this.editarEmpleado.emit(this.usuario());

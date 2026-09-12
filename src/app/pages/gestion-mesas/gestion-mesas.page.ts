@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonContent, IonIcon } from '@ionic/angular';
@@ -12,10 +12,7 @@ import { ModalService } from '../../services/modal.service';
 import { MesaDbService } from '../../services/mesa.db.service';
 
 /**
- * Administración de mesas del salón (punto 4).
- *
- * Pantalla todavía sin implementar: por ahora sólo tiene el armazón
- * generado y la ruta declarada.
+ * Administración de mesas del salón (punto 4): listado, edición y baja.
  */
 @Component({
     selector: 'app-gestion-mesas',
@@ -23,7 +20,7 @@ import { MesaDbService } from '../../services/mesa.db.service';
     styleUrls: ['./gestion-mesas.page.scss'],
     imports: [IonContent, IonIcon, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaMesaComponent],
 })
-export class GestionMesasPage {
+export class GestionMesasPage implements OnInit {
     mesaService = inject(MesaService);
     mesaDbService = inject(MesaDbService);
     router = inject(Router);

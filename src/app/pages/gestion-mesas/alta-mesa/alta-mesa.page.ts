@@ -1,5 +1,5 @@
 import { MesaDbService } from './../../../services/mesa.db.service';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
@@ -16,16 +16,12 @@ import { Router } from '@angular/router';
     styleUrls: ['./alta-mesa.page.scss'],
     imports: [IonContent, CommonModule, FormsModule, FormularioAltaMesaComponent, HeaderComponent],
 })
-export class AltaMesaPage implements OnInit {
+export class AltaMesaPage {
 
     private spinner = inject(SpinnerService)
     private modal = inject(ModalService)
     private mesaDbService = inject(MesaDbService)
     private router = inject(Router)
-
-    constructor() {}
-
-    ngOnInit() {}
 
     async onAltaMesa(mesa: MesaAltaInterface) {
         this.spinner.show();

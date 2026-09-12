@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
@@ -17,7 +17,7 @@ import { EmpleadoInterface } from '../../../interfaces/empleado.interface';
     styleUrls: ['./alta-empleado.page.scss'],
     imports: [IonContent, CommonModule, FormsModule, FormularioRegistroComponent, HeaderComponent],
 })
-export class AltaEmpleadoPage implements OnInit {
+export class AltaEmpleadoPage {
     private router = inject(Router);
     private spinner = inject(SpinnerService);
     private modal = inject(ModalService);
@@ -35,8 +35,6 @@ export class AltaEmpleadoPage implements OnInit {
             if (id) this.cargarEmpleado(id);
         });
     }
-
-    ngOnInit() {}
 
     private async cargarEmpleado(id: string) {
         this.spinner.show();
