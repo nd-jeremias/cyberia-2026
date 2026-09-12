@@ -7,12 +7,13 @@ import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { AuthService } from '../../services/auth.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
+import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 
 @Component({
     selector: 'app-ingresar',
     templateUrl: './ingresar.page.html',
     styleUrls: ['./ingresar.page.scss'],
-    imports: [IonContent, LoginFormComponent],
+    imports: [IonContent, LoginFormComponent, HeaderLogoComponent],
 })
 export class IngresarPage {
     private router = inject(Router);

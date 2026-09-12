@@ -29,3 +29,16 @@
     border: var(--borde-hoja);
     border-radius: var(--radio);
 }
+
+/* Las dos alternativas comparten fila: apiladas dejaban un bloque muerto. */
+.fila-alternativas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    .btn-secundario {
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
+        font-size: var(--texto-apoyo);
+    }
+}

@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
-import { HeaderComponent } from '../../components/header/header.component';
 import { FormularioUsuarioAnonimoComponent } from '../../components/formulario-usuario-anonimo/formulario-usuario-anonimo.component';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
-
+import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 
 /**
  * Ingreso de cliente anónimo (punto 9 del enunciado).
@@ -19,7 +18,7 @@ import { SpinnerService } from '../../services/spinner.service';
     selector: 'app-ingreso-anonimo',
     templateUrl: './ingreso-anonimo.page.html',
     styleUrls: ['./ingreso-anonimo.page.scss'],
-    imports: [IonContent, HeaderComponent, FormularioUsuarioAnonimoComponent],
+    imports: [IonContent, FormularioUsuarioAnonimoComponent, HeaderLogoComponent],
 })
 export class IngresoAnonimoPage {
     private router = inject(Router);
@@ -33,17 +32,11 @@ export class IngresoAnonimoPage {
         try {
             await this.authService.ingresarComoAnonimo(cliente);
 
-            this.modal.setOpen(
-                'Bienvenido',
-                `${cliente.nombres}, ya podés escanear el código QR de ingreso.`
-            );
+            this.modal.setOpen('Bienvenido', `${cliente.nombres}, ya podés escanear el código QR de ingreso.`);
 
             this.router.navigate(['/inicio']);
         } catch (error) {
-            const mensaje =
-                error instanceof Error
-                    ? error.message
-                    : 'No se pudo ingresar como invitado.';
+            const mensaje = error instanceof Error ? error.message : 'No se pudo ingresar como invitado.';
 
             this.modal.setOpen('Error', mensaje);
         } finally {

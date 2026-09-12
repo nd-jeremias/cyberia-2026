@@ -225,11 +225,13 @@
 
                 <!-- Redirección al Login -->
                 @if (usuarioRol() == 'cliente') {
-                <div class="divisor">
+                <!-- <div class="divisor">
                     <span class="estaRegistrado"> ¿Ya tenés una cuenta? </span>
+                </div> -->
+                <div class="fila-alternativas">
+                    <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">Invitado</button>
+                    <button type="button" routerLink="/ingresar" class="btn-secundario">Iniciar sesión</button>
                 </div>
-                <button type="button" routerLink="/ingresar" class="btn-secundario">Ingresar</button>
-
                 }
             </div>
         </form>

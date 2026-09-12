@@ -3,16 +3,16 @@ import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
-import { HeaderComponent } from '../../components/header/header.component';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 import { AuthService } from '../../services/auth.service';
 import { EmailService } from '../../services/email.service';
+import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 
 @Component({
     selector: 'app-registrarse',
     templateUrl: './registrarse.page.html',
     styleUrls: ['./registrarse.page.scss'],
-    imports: [IonContent, HeaderComponent, FormularioRegistroComponent],
+    imports: [IonContent, HeaderLogoComponent, FormularioRegistroComponent],
 })
 export class RegistrarsePage {
     private router = inject(Router);

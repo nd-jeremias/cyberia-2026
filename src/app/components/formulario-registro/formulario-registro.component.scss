@@ -61,9 +61,7 @@
     font-size: 1.375rem;
     cursor: pointer;
 
-    transition:
-        background 0.18s ease,
-        transform 0.14s ease;
+    transition: background 0.18s ease, transform 0.14s ease;
 
     &:hover {
         background: rgba(226, 87, 28, 0.2);
@@ -147,4 +145,17 @@
     font-size: var(--texto-apoyo);
     font-weight: 600;
     color: var(--tinta-media);
+}
+
+/* Las dos alternativas comparten fila: apiladas dejaban un bloque muerto. */
+.fila-alternativas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    .btn-secundario {
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
+        font-size: var(--texto-apoyo);
+    }
 }
