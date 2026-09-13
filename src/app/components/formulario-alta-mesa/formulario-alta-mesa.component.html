@@ -74,6 +74,8 @@
                     (imagenesChange)="recibirImagenes($event)"
                     [modoCamara]="'camara'"
                     [direccionCamara]="direccionCamara()"
+                    [imagenesIniciales]="fotosIniciales()"
+                    (urlsExistentesChange)="onUrlsExistentes($event)"
                 >
                 </app-subida-imagenes>
                 <!-- El control se llama "fotos": antes se consultaba "imagenes", que no
@@ -84,7 +86,7 @@
             </div>
 
             <div class="enlaces-secundarios">
-                <ion-button expand="block" type="submit" class="btn-principal">Agregar mesa</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal">{{ mesaExistente() ? 'Editar mesa' : 'Agregar mesa' }} </ion-button>
             </div>
         </form>
     </div>

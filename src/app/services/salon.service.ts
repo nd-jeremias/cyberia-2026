@@ -1,5 +1,6 @@
 import { Service, signal } from '@angular/core';
 import { EstadoEnResto } from '../interfaces/auth.interface';
+import { ClientePendienteInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
 
 /** Un cliente esperando mesa, tal como lo ve el metre. */
@@ -110,6 +111,36 @@ export class SalonService {
                 esAnonimo: fila.perfil === 'cliente anónimo',
             }))
         );
+    }
+
+    /**
+     * Clientes esperando mesa con los datos que muestra la tarjeta de usuario
+     * en la pantalla del metre (punto 10), del que llegó primero al último.
+     *
+     * Entran los dos perfiles de cliente, porque el anónimo también se anota, y
+     * salen solos al recibir mesa: el filtro es el propio estado.
+     */
+    async clientesParaAsignar(): Promise<ClientePendienteInterface[]> {
+        const { data, error } = await supabase
+            .from('usuarios')
+            .select('id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro')
+            .eq('estado_en_resto', 'esperando_mesa')
+            .order('fecha_registro', { ascending: true });
+
+        if (error) throw error;
+
+        return (data ?? []).map((fila) => ({
+            id: fila.id,
+            nombres: fila.nombres,
+            // El cliente anónimo entra sólo con nombre y foto: el resto de los
+            // campos vienen en null y la tarjeta los muestra vacíos.
+            apellidos: fila.apellidos ?? '',
+            dni: fila.dni ?? '',
+            correo_electronico: fila.correo_electronico ?? '',
+            foto_url: fila.foto_url,
+            estado: 'Activo' as const,
+            fecha_registro: fila.fecha_registro,
+        }));
     }
 
     /** El metre le asigna una mesa: sale de la lista y queda vinculado (punto 10). */

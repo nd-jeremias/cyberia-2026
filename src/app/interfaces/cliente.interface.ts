@@ -22,10 +22,10 @@ export interface ClientePendienteInterface {
     nombres: string;
     apellidos: string;
     dni: string;
-    correo: string;
-    fotoUrl: string | null;
+    correo_electronico: string;
+    foto_url: string | null;
     estado: EstadoCliente;
-    fechaRegistro: string;
+    fecha_registro: string;
 }
 
 /**

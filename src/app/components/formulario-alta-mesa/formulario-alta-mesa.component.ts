@@ -1,7 +1,8 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
-import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
+import { Haptics, NotificationType } from '@capacitor/haptics';
+import { MesaAltaInterface, MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
@@ -26,9 +27,10 @@ const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
     private fileService = inject(FileService);
-    qrService = inject(QrService)
+    qrService = inject(QrService);
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
+    mesaExistente = input<MesaInterface>();
 
     /** Se dispara sólo con datos ya validados. */
     mesaSubmit = output<MesaAltaInterface>();
@@ -41,6 +43,34 @@ export class FormularioAltaMesaComponent {
      * `fotos`, que es el que valida que haya al menos una.
      */
     fotos: File[] = [];
+    fotosUrlsExistentes: string[] = [];
+
+    fotosIniciales = computed<string[]>(() => {
+        const fotoUrl = this.mesaExistente()?.fotoUrl;
+        return fotoUrl ? [fotoUrl] : [];
+    });
+
+    constructor() {
+        effect(() => {
+            const mesa = this.mesaExistente();
+            const fotos = this.formulario.controls.fotos;
+
+            if (mesa) {
+                this.formulario.patchValue({
+                    numeroMesa: mesa.numeroMesa,
+                    cantidadLugares: mesa.cantidadLugares,
+                    tipo: mesa.tipo,
+                    fotos: [],
+                });
+
+                fotos.clearValidators();
+                fotos.updateValueAndValidity();
+            } else {
+                fotos.setValidators([this.fileService.minLengthArray(1)]);
+                fotos.updateValueAndValidity();
+            }
+        });
+    }
 
     formulario = new FormGroup({
         // Los mínimos replican los CHECK (> 0) que ya impone la tabla `mesas`.
@@ -55,7 +85,7 @@ export class FormularioAltaMesaComponent {
             validators: [Validators.required],
         }),
         fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
-        qr: new FormControl<File | null>(null, ),
+        qr: new FormControl<File | null>(null),
     });
 
     recibirImagenes(imagenes: File[]) {
@@ -66,6 +96,10 @@ export class FormularioAltaMesaComponent {
 
         // Opcional: Marca el control como "dirty" o "touched" para la validación
         this.formulario.get('fotos')?.markAsTouched();
+    }
+
+    onUrlsExistentes(urls: string[]) {
+        this.fotosUrlsExistentes = urls;
     }
 
     /**

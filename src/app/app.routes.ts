@@ -70,9 +70,14 @@ export const routes: Routes = [
     },
     // Puntos 6, 7 y 8: el dueño o supervisor aprueba o rechaza clientes.
     {
-        path: 'clientes-pendientes',
+        path: 'gestion-clientes',
         loadComponent: () =>
-            import('./pages/clientes-pendientes/clientes-pendientes.page').then((m) => m.ClientesPendientesPage),
+            import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
+    },
+    {
+        path: 'gestion-clientes/clientes-pendientes',
+        loadComponent: () =>
+            import('./pages/gestion-clientes/clientes-pendientes/clientes-pendientes.page').then((m) => m.ClientesPendientesPage),
         canActivate: [authGuard],
     },
     {
@@ -107,11 +112,7 @@ export const routes: Routes = [
         path: 'gestion-mesas/alta',
         loadComponent: () => import('./pages/gestion-mesas/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
     },
-    {
-        path: 'gestion-clientes',
-        loadComponent: () =>
-            import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
-    },
+
     {
         path: 'consultas-clientes',
         loadComponent: () =>

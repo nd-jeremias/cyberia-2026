@@ -97,13 +97,8 @@ export class GaleriaService {
      * nombre es determinístico (el QR de una mesa, por ejemplo): sin eso, al
      * regenerarlo la subida falla porque el archivo ya está.
      */
-    async subirImagenDb(
-        fotoArchivo: File,
-        ruta: string,
-        nombre?: string,
-        reemplazar = false
-    ): Promise<string> {
-        const nombreNuevo =  nombre ? nombre : fotoArchivo.name;
+    async subirImagenDb(fotoArchivo: File, ruta: string, reemplazar = false, nombre?: string): Promise<string> {
+        const nombreNuevo = nombre ? nombre : fotoArchivo.name;
         const rutaArchivo = `${ruta}/${nombreNuevo}`;
 
         const { error: storageError } = await supabase.storage
@@ -136,5 +131,25 @@ export class GaleriaService {
             console.error('La URL provista no es válida:', error);
             return '';
         }
+    }
+
+    parseFotoUrl(raw: unknown): string[] | null {
+        if (!raw) return null;
+
+        // Puede venir como array real (columna jsonb bien tipada)
+        if (Array.isArray(raw)) return raw as string[];
+
+        // O como string con JSON adentro
+        if (typeof raw === 'string') {
+            try {
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [parsed];
+            } catch {
+                // URL plana sin JSON.stringify
+                return [raw];
+            }
+        }
+
+        return null;
     }
 }

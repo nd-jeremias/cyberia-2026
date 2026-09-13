@@ -11,10 +11,10 @@ function usuarioDePrueba(
         nombres: 'Juan',
         apellidos: 'Gómez',
         dni: '12345678',
-        correo: 'juan@ejemplo.com',
-        fotoUrl: 'https://ejemplo/foto.jpg',
+        correo_electronico: 'juan@ejemplo.com',
+        foto_url: 'https://ejemplo/foto.jpg',
         estado: 'Pendiente',
-        fechaRegistro: '2026-08-31T15:30:00.000Z',
+        fecha_registro: '2026-08-31T15:30:00.000Z',
         ...parcial,
     };
 }
@@ -121,10 +121,12 @@ describe('TarjetaUsuarioComponent', () => {
     // La tarjeta se reutiliza en pantallas que muestran distinta información:
     // el listado de pendientes muestra el contacto, la del metre no.
     describe('datos opcionales', () => {
+        // El bloque de contacto muestra el DNI y la fecha de la solicitud; el
+        // correo quedó fuera de la tarjeta.
         it('muestra el contacto por defecto', () => {
             const texto = fixture.nativeElement.textContent as string;
 
-            expect(texto).toContain('juan@ejemplo.com');
+            expect(texto).toContain('DNI: 12345678');
         });
 
         it('oculta el contacto cuando se lo desactiva', () => {
@@ -133,7 +135,7 @@ describe('TarjetaUsuarioComponent', () => {
 
             const texto = fixture.nativeElement.textContent as string;
 
-            expect(texto).not.toContain('juan@ejemplo.com');
+            expect(texto).not.toContain('12345678');
         });
 
         it('muestra el estado sólo si se lo pide', () => {
@@ -161,7 +163,7 @@ describe('TarjetaUsuarioComponent', () => {
         it('muestra un ícono de reemplazo si no hay foto', () => {
             fixture.componentRef.setInput(
                 'usuario',
-                usuarioDePrueba({ fotoUrl: null })
+                usuarioDePrueba({ foto_url: null })
             );
             fixture.detectChanges();
 

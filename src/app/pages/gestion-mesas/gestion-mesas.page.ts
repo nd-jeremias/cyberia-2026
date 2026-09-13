@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonContent, IonIcon } from '@ionic/angular';
@@ -20,7 +20,7 @@ import { MesaDbService } from '../../services/mesa.db.service';
     styleUrls: ['./gestion-mesas.page.scss'],
     imports: [IonContent, IonIcon, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaMesaComponent],
 })
-export class GestionMesasPage implements OnInit {
+export class GestionMesasPage {
     mesaService = inject(MesaService);
     mesaDbService = inject(MesaDbService);
     router = inject(Router);
@@ -30,15 +30,26 @@ export class GestionMesasPage implements OnInit {
 
     mesasCargadas = signal<MesaInterface[]>([]);
 
-    async ngOnInit() {
-        const mesas = await this.mesaService.listar();
-        if (!mesas) return;
-        console.log(mesas);
-        this.mesasCargadas.set(mesas);
+    async ionViewWillEnter() {
+        this.cargarMesas()
+    }
+
+    async cargarMesas() {
+        this.spinner.show();
+        try {
+            const mesas = await this.mesaService.listar();
+            if (!mesas) return;
+            this.mesasCargadas.set(mesas);
+        } catch (error) {
+            console.log(error);
+            this.modal.setOpen('Error', 'No se pudieron cargar las mesas. Por favor, intente nuevamente más tarde.');
+        } finally {
+            this.spinner.hide();
+        }
     }
 
     onEditar(mesa: MesaInterface) {
-        this.router.navigate(['/gestion-mesas/alta'], { queryParams: { id: mesa.id } });
+        this.router.navigate(['/gestion-mesas/alta'], { queryParams: { mesaId: mesa.id } });
     }
 
     private async confirmarEliminar(mesa: MesaInterface) {
@@ -51,6 +62,7 @@ export class GestionMesasPage implements OnInit {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el producto.';
             this.modal.setOpen('Error', mensaje);
         } finally {
+            await this.cargarMesas();
             this.spinner.hide();
         }
     }
@@ -64,7 +76,6 @@ export class GestionMesasPage implements OnInit {
                 { text: 'Eliminar', role: 'destructive', handler: () => this.confirmarEliminar(mesa) },
             ],
         });
-
         await alerta.present();
     }
 }

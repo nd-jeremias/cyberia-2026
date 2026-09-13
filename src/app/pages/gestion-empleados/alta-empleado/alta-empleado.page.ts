@@ -53,11 +53,7 @@ export class AltaEmpleadoPage {
 
     async handleRegistro(formData: FormData) {
         this.spinner.show();
-        console.log('FORM DATA:');
 
-        formData.forEach((valor, clave) => {
-            console.log(clave, ':', valor);
-        });
         try {
             const id = this.empleadoId();
             const nombre = formData.get('nombres') as String;

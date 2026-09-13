@@ -5,7 +5,6 @@ import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
 import { SalonService } from '../../services/salon.service';
 import { ModalService } from '../../services/modal.service';
-import { supabase } from '../../services/supabase.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
 import { HeaderComponent } from '../../components/header/header.component';
 
@@ -17,20 +16,14 @@ import { HeaderComponent } from '../../components/header/header.component';
  * poder tomarla, y esa reserva a medias es justo lo que causa mesas trabadas.
  *
  * Las verificaciones del enunciado viven en `MesaService`, no acá: son reglas
- * de negocio y deben valer sin importar desde qué pantalla se asigne.
+ * de negocio y deben valer sin importar desde qué pantalla se asigne. Las
+ * consultas a Supabase también van por los servicios.
  */
 @Component({
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
-    imports: [
-        IonContent,
-        IonButton,
-        IonBadge,
-        IonIcon,
-        TarjetaUsuarioComponent,
-        HeaderComponent
-    ],
+    imports: [IonContent, IonButton, IonBadge, IonIcon, TarjetaUsuarioComponent, HeaderComponent],
 })
 export class AsignarMesasPage implements OnInit {
     private mesaService = inject(MesaService);
@@ -76,50 +69,19 @@ export class AsignarMesasPage implements OnInit {
      * Trae la lista de espera: los clientes que escanearon el QR de la puerta.
      *
      * No es la lista de todos los clientes del local, sino la de quienes están
-     * esperando mesa ahora mismo (punto 9). Entran los dos perfiles de cliente,
-     * porque el anónimo también se anota, y salen solos al recibir mesa: el
-     * filtro es el propio estado, no una tabla aparte que haya que mantener.
+     * esperando mesa ahora mismo (punto 9).
      */
     async cargarClientes() {
         try {
-            const { data, error } = await supabase
-                .from('usuarios')
-                .select(
-                    'id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro'
-                )
-                .eq('estado_en_resto', 'esperando_mesa')
-                .order('fecha_registro', { ascending: true });
-
-            if (error) throw error;
-
-            this.clientes.set(
-                (data ?? []).map((fila) => ({
-                    id: fila.id,
-                    nombres: fila.nombres,
-                    // El cliente anónimo entra sólo con nombre y foto: el resto
-                    // de los campos vienen en null y la tarjeta los muestra vacíos.
-                    apellidos: fila.apellidos ?? '',
-                    dni: fila.dni ?? '',
-                    correo: fila.correo_electronico ?? '',
-                    fotoUrl: fila.foto_url,
-                    estado: 'Activo' as const,
-                    fechaRegistro: fila.fecha_registro,
-                }))
-            );
+            this.clientes.set(await this.salonService.clientesParaAsignar());
         } catch (error) {
-            const mensaje =
-                error instanceof Error
-                    ? error.message
-                    : 'No se pudieron cargar los clientes.';
+            const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
 
             this.modal.setOpen('Error', mensaje);
         }
     }
 
-    onSeleccionCliente(evento: {
-        accion: string;
-        usuario: ClientePendienteInterface;
-    }) {
+    onSeleccionCliente(evento: { accion: string; usuario: ClientePendienteInterface }) {
         this.clienteElegido.set(evento.usuario);
     }
 
@@ -137,18 +99,12 @@ export class AsignarMesasPage implements OnInit {
         const cliente = this.clienteElegido();
 
         if (!cliente) {
-            this.modal.setOpen(
-                'Falta el cliente',
-                'Seleccione primero al cliente al que le va a asignar la mesa.'
-            );
+            this.modal.setOpen('Falta el cliente', 'Seleccione primero al cliente al que le va a asignar la mesa.');
 
             return;
         }
 
-        const asignada = await this.mesaService.asignarCliente(
-            mesa.id,
-            cliente.id
-        );
+        const asignada = await this.mesaService.asignarCliente(mesa.id, cliente.id);
 
         if (!asignada) return;
 
