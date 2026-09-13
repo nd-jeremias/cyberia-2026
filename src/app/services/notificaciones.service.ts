@@ -258,4 +258,47 @@ export class NotificacionesService {
             console.error('Error al intentar limpiar el token_push en la base de datos:', error);
         }
     }
+
+    // Método para notificar a varios perfiles (ej: ['dueño', 'supervisor', 'barman'])
+    async enviarAvisos(perfiles: string[], titulo: string, cuerpo: string, tipo: string) {
+        try {
+            // 1. Buscamos TODOS los usuarios que coincidan con CUALQUIERA de los perfiles.
+            // Al usar .in() no hace falta un bucle "for", Supabase trae todos juntos.
+            const { data: usuarios, error: userError } = await supabase
+                .from('usuarios')
+                .select('token_push')
+                .in('perfil', perfiles) // Busca múltiples perfiles a la vez!
+                .eq('estado', 'Activo')
+                .not('token_push', 'is', null); // Evitamos traer a los que no tienen su celu registrado
+
+            if (userError) throw userError;
+
+            // Extraemos solo los valores de push (ignoramos los nulos por precaución)
+            const tokens = usuarios?.map((u) => u.token_push).filter((t) => !!t) || [];
+
+            if (tokens.length === 0) {
+                console.log('No hay usuarios activos con esos perfiles listos para recibir avisos.');
+                return;
+            }
+
+            // 2. Invocamos la Edge Function UNA SOLA VEZ pasando toda la lista de tokens juntos.
+            // La función de Supabase se encarga internamente de enviar todos los mensajes sin saturar la app.
+            const { data, error } = await supabase.functions.invoke('enviar-notificacion', {
+                body: {
+                    tokens: tokens, // ¡Le pasamos el arreglo gigante de corrido!
+                    titulo: titulo,
+                    cuerpo: cuerpo,
+                    tipo: tipo,
+                },
+            });
+
+            if (error) throw error;
+
+            console.log(`Se enviaron notificaciones a ${tokens.length} dispositivos exitosamente:`, data);
+            return data;
+        } catch (error) {
+            console.error('Error al intentar enviar notificación grupal:', error);
+            throw new Error('Error al enviar notificaciones.')
+        }
+    }
 }

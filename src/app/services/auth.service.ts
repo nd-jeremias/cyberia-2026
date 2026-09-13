@@ -1,5 +1,5 @@
 import { inject, Service, signal } from '@angular/core';
-import { AuthResponse, Session } from '@supabase/supabase-js';
+import { AuthResponse, Session, User } from '@supabase/supabase-js';
 import { LoginInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
 import { AnonimoAltaInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
@@ -214,7 +214,7 @@ export class AuthService {
         await this.cargarPerfil(data.user.id);
     }
 
-    async register(form: FormData): Promise<void> {
+    async register(form: FormData): Promise<User | null> {
         try {
             const correo = form.get('correo') as string;
             const password = form.get('password') as string;
@@ -262,10 +262,14 @@ export class AuthService {
                 });
 
                 if (error) throw error;
+
+                return data.user;
             }
+            return null;
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo crear el usuario.';
             this.modal.setOpen('Error', mensaje);
+            return null;
         } finally {
             // signUp() deja la sesión abierta, pero un registro nuevo queda en
             // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:
