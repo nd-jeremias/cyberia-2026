@@ -22,11 +22,18 @@
         }
     </div>
 
-    @if (acciones().length > 0) {
+    @if (accionesVisibles().length > 0) {
     <div class="acciones">
-        @for (accion of acciones(); track accion.id) {
-        <ion-button expand="block" [color]="accion.color" (click)="onAccion(accion.id)">
+        @for (accion of accionesVisibles(); track accion.id) {
+        <ion-button
+            expand="block"
+            [color]="accion.color || 'primary'"
+            [fill]="accion.fill || 'solid'"
+            (click)="onAccion(accion.id)"
+        >
+            @if (accion.icono) {
             <ion-icon slot="start" [name]="accion.icono"></ion-icon>
+            }
             {{ accion.etiqueta }}
         </ion-button>
         }

@@ -17,13 +17,13 @@ export type EstadoCliente = 'Pendiente' | 'Activo' | 'Rechazado';
  * un registro cargado a mano en la base podría no tenerla, y la interfaz debe
  * poder mostrarlo igual.
  */
-export interface ClientePendienteInterface {
+export interface ClienteInterface {
     id: string;
     nombres: string;
     apellidos: string;
     dni: string;
     correo_electronico: string;
-    foto_url: string | null;
+    foto_url: string[] | null;
     estado: EstadoCliente;
     fecha_registro: string;
 }

@@ -3,7 +3,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { ListadoClientesPendientesComponent } from '../../../components/listado-clientes-pendientes/listado-clientes-pendientes.component';
-import { ClientePendienteInterface } from '../../../interfaces/cliente.interface';
+import { ClienteInterface } from '../../../interfaces/cliente.interface';
 import { ModalService } from '../../../services/modal.service';
 import { SpinnerService } from '../../../services/spinner.service';
 import { supabase } from '../../../services/supabase.service';
@@ -28,7 +28,7 @@ export class ClientesPendientesPage implements OnInit {
     emailService = inject(EmailService);
     clientesService = inject(ClientesService);
 
-    clientes = signal<ClientePendienteInterface[]>([]);
+    clientes = signal<ClienteInterface[]>([]);
 
     ngOnInit() {
         this.cargar();
@@ -43,7 +43,7 @@ export class ClientesPendientesPage implements OnInit {
         this.spinner.show();
 
         try {
-            const usuarios = await this.clientesService.getUsuariosPendientes();
+            const usuarios = await this.clientesService.getUsuarios('Pendiente');
 
             this.clientes.set(
                 (usuarios ?? []).map((fila) => ({
@@ -66,11 +66,11 @@ export class ClientesPendientesPage implements OnInit {
         }
     }
 
-    async onAprobar(cliente: ClientePendienteInterface) {
+    async onAprobar(cliente: ClienteInterface) {
         await this.cambiarEstado(cliente, 'Activo');
     }
 
-    async onRechazar(cliente: ClientePendienteInterface) {
+    async onRechazar(cliente: ClienteInterface) {
         await this.cambiarEstado(cliente, 'Rechazado');
     }
 
@@ -80,7 +80,7 @@ export class ClientesPendientesPage implements OnInit {
      * Al resolverse, el cliente sale del listado: ya no está pendiente. Se
      * quita de la copia local en vez de recargar todo, que sería más lento.
      */
-    private async cambiarEstado(cliente: ClientePendienteInterface, estado: 'Activo' | 'Rechazado') {
+    private async cambiarEstado(cliente: ClienteInterface, estado: 'Activo' | 'Rechazado') {
         this.spinner.show();
 
         try {

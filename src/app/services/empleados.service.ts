@@ -28,7 +28,7 @@ export class EmpleadosService {
             dni: row.dni,
             cuil: row.cuil,
             correo_electronico: row.correo_electronico,
-            foto_url: this.galeriaService.parseFotoUrl(row.foto_url),
+            foto_url: row.foto_url ?? '',
             token_push: row.token_push,
             perfil: row.perfil,
             tipoEmpleado: row.perfil,

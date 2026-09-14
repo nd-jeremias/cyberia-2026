@@ -1,6 +1,6 @@
 import { Service, signal } from '@angular/core';
 import { EstadoEnResto } from '../interfaces/auth.interface';
-import { ClientePendienteInterface } from '../interfaces/cliente.interface';
+import { ClienteInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
 
 /** Un cliente esperando mesa, tal como lo ve el metre. */
@@ -120,7 +120,7 @@ export class SalonService {
      * Entran los dos perfiles de cliente, porque el anónimo también se anota, y
      * salen solos al recibir mesa: el filtro es el propio estado.
      */
-    async clientesParaAsignar(): Promise<ClientePendienteInterface[]> {
+    async clientesParaAsignar(): Promise<ClienteInterface[]> {
         const { data, error } = await supabase
             .from('usuarios')
             .select('id, nombres, apellidos, dni, correo_electronico, foto_url, estado, fecha_registro')

@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmpleadoInterface } from '../../interfaces/empleado.interface';
+import { ClienteInterface } from '../../interfaces/cliente.interface';
 
 /**
  * Validador para comprobar que las contraseñas coincidan.
@@ -71,7 +72,7 @@ export class FormularioRegistroComponent {
 
     textoBoton = computed(() => {
         // Si llega el input de empleado, significa que estamos EDITANDO
-        if (this.empleadoExistente()) {
+        if (this.usuarioExistente()) {
             return 'Guardar cambios'; // Texto único para edición
         }
 
@@ -80,7 +81,8 @@ export class FormularioRegistroComponent {
         return rol ? this.botonesPorRol[rol] : 'Enviar';
     });
     fotosIniciales = computed<string[]>(() => {
-        const fotoUrl = this.empleadoExistente()?.foto_url;
+        const fotoUrl = this.usuarioExistente()?.foto_url;
+
         return fotoUrl ? fotoUrl : [];
     });
 
@@ -94,7 +96,7 @@ export class FormularioRegistroComponent {
      * Si existe un empleado, estamos en modo edición.
      * Si es undefined, estamos en modo creación.
      */
-    empleadoExistente = input<EmpleadoInterface>();
+    usuarioExistente = input<EmpleadoInterface | ClienteInterface>();
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
     registroSubmit = output<FormData>();
 
@@ -117,7 +119,7 @@ export class FormularioRegistroComponent {
      * Indica si el formulario está siendo utilizado
      * para modificar un empleado existente.
      */
-    esEdicion = computed(() => !!this.empleadoExistente());
+    esEdicion = computed(() => !!this.usuarioExistente());
 
     // ============================================================
     // DATOS
@@ -205,13 +207,13 @@ export class FormularioRegistroComponent {
         /**
          * Este effect se ejecuta cuando cambia:
          *
-         * - empleadoExistente()
+         * - usuarioExistente()
          * - usuarioRol()
          *
          * Por lo tanto sirve tanto para crear como para editar.
          */
         effect(() => {
-            const empleado = this.empleadoExistente();
+            const usuario = this.usuarioExistente();
 
             const cuil = this.formulario.controls.cuil;
             const perfil = this.formulario.controls.perfil;
@@ -223,15 +225,15 @@ export class FormularioRegistroComponent {
             // MODO EDICIÓN
             // ====================================================
 
-            if (empleado) {
+            if (usuario) {
                 this.formulario.patchValue({
-                    nombres: empleado.nombres ?? '',
-                    apellidos: empleado.apellidos ?? '',
-                    dni: empleado.dni ?? '',
-                    cuil: empleado.cuil ?? '',
-                    correo: empleado.correo_electronico ?? '',
-                    perfil: empleado.perfil ?? '',
-                    tipoEmpleado: empleado.tipoEmpleado ?? '',
+                    nombres: usuario.nombres ?? '',
+                    apellidos: usuario.apellidos ?? '',
+                    dni: usuario.dni ?? '',
+                    cuil: 'cuil' in usuario && usuario.cuil ? usuario.cuil : '',
+                    correo: usuario.correo_electronico ?? '',
+                    perfil: 'perfil' in usuario && usuario.cuil ? usuario.cuil : '',
+                    tipoEmpleado: 'tipoEmpleado' in usuario && usuario.cuil ? usuario.cuil : '',
 
                     /**
                      * NO colocamos empleado.fotoUrl acá.
@@ -251,8 +253,7 @@ export class FormularioRegistroComponent {
                     password: '',
                     confirmPassword: '',
                 });
-
-                this.separarCuil(empleado.cuil);
+                if ('cuil' in usuario) this.separarCuil(usuario.cuil);
 
                 // ------------------------------------------------
                 // FOTO OPCIONAL EN EDICIÓN
@@ -403,10 +404,7 @@ export class FormularioRegistroComponent {
      * Por eso el error se consulta en el FormGroup y no en confirmPassword.
      */
     get passwordsNoCoinciden(): boolean {
-        return (
-            !!this.formulario.controls.confirmPassword.touched &&
-            this.formulario.hasError('passwordsDistintas')
-        );
+        return !!this.formulario.controls.confirmPassword.touched && this.formulario.hasError('passwordsDistintas');
     }
 
     private separarCuil(cuil: string | null | undefined): void {

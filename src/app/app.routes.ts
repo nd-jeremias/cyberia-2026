@@ -75,9 +75,15 @@ export const routes: Routes = [
             import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
     },
     {
+        path: 'gestion-clientes/modificar',
+        loadComponent: () => import('./pages/gestion-clientes/modificar/modificar.page').then((m) => m.ModificarPage),
+    },
+    {
         path: 'gestion-clientes/clientes-pendientes',
         loadComponent: () =>
-            import('./pages/gestion-clientes/clientes-pendientes/clientes-pendientes.page').then((m) => m.ClientesPendientesPage),
+            import('./pages/gestion-clientes/clientes-pendientes/clientes-pendientes.page').then(
+                (m) => m.ClientesPendientesPage
+            ),
         canActivate: [authGuard],
     },
     {

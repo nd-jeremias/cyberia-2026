@@ -1,0 +1,12 @@
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Registrar cliente'"></app-header>
+
+<ion-content [fullscreen]="true">
+    <div class="hoja hoja-angosta">
+        <app-formulario-registro
+            [usuarioExistente]="clienteExistente()"
+            [usuarioRol]="'dueño'"
+            (registroSubmit)="handleModificar($event)"
+            [direccionCamara]="'trasera'"
+        ></app-formulario-registro>
+    </div>
+</ion-content>

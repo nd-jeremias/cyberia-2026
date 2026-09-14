@@ -1,14 +1,14 @@
 import { Service } from '@angular/core';
 import { supabase } from './supabase.service';
-import { ClientePendienteInterface } from '../interfaces/cliente.interface';
+import { ClienteInterface, EstadoCliente } from '../interfaces/cliente.interface';
 
 @Service()
 export class ClientesService {
-    async getUsuariosPendientes(): Promise<ClientePendienteInterface[]> {
+    async getUsuarios(estado: EstadoCliente): Promise<ClienteInterface[]> {
         const { data, error } = await supabase
             .from('usuarios')
             .select('*')
-            .eq('estado', 'Pendiente')
+            .eq('estado', estado)
             .order('fecha_registro', { ascending: true });
 
         if (error) throw error;
@@ -16,7 +16,7 @@ export class ClientesService {
         return (data ?? []).map((row) => this.mapCliente(row));
     }
 
-    mapCliente(row: any): ClientePendienteInterface {
+    mapCliente(row: any): ClienteInterface {
         return {
             id: row.id,
             nombres: row.nombres,
@@ -27,5 +27,24 @@ export class ClientesService {
             estado: row.estado,
             fecha_registro: row.fecha_registro,
         };
+    }
+
+    async eliminar(id: string): Promise<void> {
+        const { error } = await supabase.from('usuarios').update({ estado: 'Rechazado' }).eq('id', id);
+        if (error) throw error;
+    }
+
+    async actualizar(id: string, datos: Partial<ClienteInterface>): Promise<void> {
+        const { error } = await supabase.from('usuarios').update(datos).eq('id', id);
+        if (error) throw error;
+    }
+
+    
+    async obtenerPorId(id: string): Promise<ClienteInterface> {
+        const { data, error } = await supabase.from('usuarios').select('*').eq('id', id).single();
+
+        if (error) throw error;
+
+        return this.mapCliente(data);
     }
 }
