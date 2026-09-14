@@ -39,10 +39,15 @@ const CANAL_ANDROID = 'avisos-cyberia';
 const ALCANCE_FCM = 'https://www.googleapis.com/auth/firebase.messaging';
 const URL_TOKEN_GOOGLE = 'https://oauth2.googleapis.com/token';
 
+export const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
 function responder(cuerpo: unknown, status = 200): Response {
     return new Response(JSON.stringify(cuerpo), {
         status,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
     });
 }
 
@@ -118,8 +123,13 @@ async function obtenerTokenAcceso(cuenta: CuentaServicio): Promise<string> {
 }
 
 Deno.serve(async (peticion: Request) => {
+    // Para que los navegadores aprueben la política de CORS (preflight CORS)
+    if (peticion.method === 'OPTIONS') {
+        return new Response('ok', { headers: corsHeaders });
+    }
+
     if (peticion.method !== 'POST') {
-        return new Response('Método no permitido', { status: 405 });
+        return new Response('Método no permitido', { status: 405, headers: corsHeaders });
     }
 
     const credenciales = Deno.env.get('FIREBASE_SERVICE_ACCOUNT');
