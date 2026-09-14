@@ -36,6 +36,7 @@ export class EmailService {
             email: email,
             to_name: nombre,
             message: 'Gracias por registrarte. Tu cuenta está pendiente de aprobación por el dueño o supervisor.',
+            
         });
     }
 
@@ -46,6 +47,7 @@ export class EmailService {
      * entre sí, no sólo del correo por defecto.
      */
     async enviarResolucionCuenta(email: string, nombre: string, aprobado: boolean) {
+      
         const mensaje = aprobado
             ? '¡Tu cuenta ha sido aprobada con éxito! Ya podés ingresar a la aplicación.'
             : 'Lamentamos informarte que tu solicitud de registro no fue aprobada.';
@@ -55,6 +57,7 @@ export class EmailService {
             email: email,
             to_name: nombre,
             message: mensaje,
+           
         });
     }
 }
