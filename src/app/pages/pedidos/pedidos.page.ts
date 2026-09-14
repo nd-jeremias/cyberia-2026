@@ -3,6 +3,7 @@ import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { ModalService } from '../../services/modal.service';
+import { formatearImporte } from '../../utils/importe';
 import { PedidoService } from '../../services/pedido.service';
 
 /**
@@ -44,14 +45,7 @@ export class PedidosPage implements OnInit {
      * agregarían ruido a un número que se lee de reojo.
      */
     totalFormateado(pedido: PedidoInterface): string {
-        return this.pedidoService
-            .totalConDescuento(pedido)
-            .toLocaleString('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-            });
+        return formatearImporte(this.pedidoService.totalConDescuento(pedido));
     }
 
     fechaFormateada(pedido: PedidoInterface): string {

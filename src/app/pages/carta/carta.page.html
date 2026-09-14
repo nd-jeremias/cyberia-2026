@@ -1,11 +1,68 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Carta'"></app-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"></app-header>
 
 <ion-content [fullscreen]="true">
-    <div class="hoja">
+    <div class="hoja pantalla-carta">
+        @if (corrigiendo()) {
+        <!-- Punto 13: se entró desde un pedido rechazado, con lo pedido ya cargado. -->
+        <p class="aviso-correccion">
+            <ion-icon name="create-outline"></ion-icon>
+            El mozo pidió cambios. Ajustá lo que haga falta y volvé a enviarlo.
+        </p>
+        }
+
+        <!-- Comidas, bebidas y postres: el filtro es de pantalla, la carta ya está cargada. -->
+        <nav class="solapas" aria-label="Secciones de la carta">
+            @for (solapa of solapas; track solapa.tipo) {
+            <button
+                type="button"
+                class="solapa"
+                [class.solapa-activa]="solapaActiva() === solapa.tipo"
+                [attr.aria-pressed]="solapaActiva() === solapa.tipo"
+                (click)="cambiarSolapa(solapa.tipo)"
+            >
+                <ion-icon [name]="solapa.icono"></ion-icon>
+                <span class="solapa-etiqueta">{{ solapa.etiqueta }}</span>
+                <span class="solapa-cuenta">{{ cuentaDe(solapa.tipo) }}</span>
+            </button>
+            }
+        </nav>
+
+        @if (cargando()) {
         <div class="estado-vacio">
-            <ion-icon name="construct-outline"></ion-icon>
-            <p>Esta pantalla todavía no está hecha.</p>
-            <p>Puntos 11 y 12: listado de productos con sus tres fotos, y armado del pedido.</p>
+            <ion-icon name="restaurant-outline"></ion-icon>
+            <p>Cargando la carta…</p>
         </div>
+        } @else {
+        <app-tarjeta-listado-producto
+            [productos]="productosVisibles()"
+            [tituloListado]="tituloListado()"
+            [cantidades]="cantidades()"
+            modo="pedido"
+            (agregarCarrito)="agregar($event)"
+            (quitarCarrito)="quitar($event)"
+        ></app-tarjeta-listado-producto>
+        }
     </div>
 </ion-content>
+
+<!--
+  Pie fijo con el importe acumulado. El enunciado pide que el total esté
+  visible en todo momento y con buen tamaño, así que vive fuera del scroll.
+-->
+<footer class="pie-pedido">
+    <div class="pie-importe">
+        <span class="pie-rotulo">
+            @if (hayPedido()) { {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} ·
+            {{ carrito.tiempoEstimado() }} min } @else { Tu pedido está vacío }
+        </span>
+        <span class="pie-total">{{ totalFormateado() }}</span>
+    </div>
+
+    <div class="pie-acciones">
+        <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
+        <button type="button" class="btn-principal pie-boton" [disabled]="!hayPedido()" (click)="irAlResumen()">
+            <ion-icon name="receipt-outline"></ion-icon>
+            {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
+        </button>
+    </div>
+</footer>

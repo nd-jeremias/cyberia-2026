@@ -2,10 +2,13 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
-import { PedidoInterface } from '../../interfaces/pedido.interface';
+import { ItemNuevoPedido, PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
+import { ChartService } from '../../services/chart.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
+import { SalonService } from '../../services/salon.service';
+import { formatearImporte } from '../../utils/importe';
 import {
     LEYENDA_PAGANDO,
     LEYENDA_PEDIDO,
@@ -30,27 +33,33 @@ export type SeccionCliente = keyof typeof SECCIONES;
 /**
  * Pedido del cliente: en qué estado está y qué puede hacer mientras espera.
  *
- * Cubre, del lado del cliente, los puntos 13 a 15 y 19: ver si el mozo todavía
- * lo revisa, si lo rechazó o si ya lo confirmó; volver a consultarlo sin salir
- * de la pantalla; entrar a los juegos; confirmar la recepción cuando el mozo lo
- * entrega, y desde ahí ir a la encuesta o pedir la cuenta.
+ * La pantalla tiene dos caras, según haya o no un pedido enviado:
  *
- * La única escritura es la confirmación de recepción: el resto del pedido lo
- * cambian el mozo y los sectores.
+ *  - BORRADOR: lo que el cliente eligió en la carta, todavía en su teléfono.
+ *    Se puede ajustar cantidad por cantidad y se envía desde acá (punto 12).
+ *    Es también donde se reenvía un pedido que el mozo rechazó (punto 13).
+ *  - ENVIADO: el pedido ya está en la base y lo mueven el mozo y los sectores.
+ *    Acá sólo se sigue su estado y se confirma la recepción (puntos 14 y 19).
+ *
+ * El envío vive acá y no en la carta a propósito: el cliente repasa lo elegido
+ * y recién ahí manda, en vez de que la carta cree pedidos mientras navega.
  */
 @Component({
     selector: 'app-mi-pedido',
     templateUrl: './mi-pedido.page.html',
-    // La tarjeta se ve igual que la del mozo: se reutilizan sus estilos en vez
-    // de copiarlos.
-    styleUrls: ['../pedidos/pedidos.page.scss', './mi-pedido.page.scss'],
+    // La tarjeta se ve igual que la del mozo y el pie igual que el de la carta:
+    // se reutilizan esos estilos en vez de copiarlos.
+    styleUrls: ['../pedidos/pedidos.page.scss', '../carta/carta.page.scss', './mi-pedido.page.scss'],
     imports: [IonContent, IonIcon, HeaderComponent],
 })
 export class MiPedidoPage {
     private authService = inject(AuthService);
     private pedidoService = inject(PedidoService);
+    private salonService = inject(SalonService);
     private modal = inject(ModalService);
     private router = inject(Router);
+
+    carrito = inject(ChartService);
 
     pedido = signal<PedidoInterface | null>(null);
     cargando = signal(true);
@@ -67,6 +76,101 @@ export class MiPedidoPage {
     });
 
     rechazado = computed(() => this.pedido()?.estado === 'Rechazado');
+
+    /** Líneas del borrador, con su cantidad y subtotal. */
+    lineas = this.carrito.carrito;
+
+    unidades = computed(() => this.lineas().reduce((suma, item) => suma + item.cantidad, 0));
+
+    hayBorrador = computed(() => this.unidades() > 0);
+
+    /**
+     * La pantalla muestra el borrador cuando no hay nada enviado, o cuando el
+     * mozo rechazó el pedido y el cliente lo está corrigiendo.
+     */
+    modoBorrador = computed(() => this.pedido() === null || this.rechazado());
+
+    totalBorrador = computed(() => formatearImporte(this.carrito.total()));
+
+    /** Bloquea el botón de enviar mientras la operación está en curso. */
+    enviando = this.pedidoService.cargando;
+
+    sumar(productoId: string) {
+        this.carrito.sumar(productoId);
+    }
+
+    restar(productoId: string) {
+        this.carrito.quitar(productoId);
+    }
+
+    importeDeLinea(precioTotal: number): string {
+        return formatearImporte(precioTotal);
+    }
+
+    /**
+     * Punto 12: manda el pedido al mozo. Si se está corrigiendo uno rechazado,
+     * reemplaza sus líneas en lugar de crear otro (punto 13).
+     */
+    async enviarPedido() {
+        const items: ItemNuevoPedido[] = this.lineas().map((item) => ({
+            productoId: item.id,
+            cantidad: item.cantidad,
+            precioUnitario: item.precioUnitario,
+        }));
+
+        const aCorregir = this.pedido();
+
+        if (this.rechazado() && aCorregir) {
+            const reenviado = await this.pedidoService.reenviar(aCorregir.id, items);
+
+            if (!reenviado) return;
+
+            await this.terminarEnvio('Pedido reenviado', 'El mozo va a revisar los cambios.');
+            return;
+        }
+
+        const clienteId = this.authService.session()?.user.id;
+        const mesaId = this.salonService.situacion()?.mesaId;
+
+        if (!clienteId || !mesaId) {
+            this.modal.setOpen(
+                'Falta la mesa',
+                'Escaneá el código QR de tu mesa antes de enviar el pedido.'
+            );
+
+            return;
+        }
+
+        const creado = await this.pedidoService.crear({ mesaId, clienteId, items });
+
+        if (!creado) return;
+
+        await this.terminarEnvio('Pedido enviado', 'El mozo lo va a revisar en un momento.');
+    }
+
+    /** Vacía el borrador y vuelve a leer el pedido ya enviado. */
+    private async terminarEnvio(titulo: string, mensaje: string) {
+        this.carrito.vaciarCarrito();
+
+        await this.recargar();
+
+        this.modal.setOpen(titulo, mensaje, 'info');
+    }
+
+    /** Lleva a la carta para seguir eligiendo. */
+    irALaCarta() {
+        void this.router.navigate(['/carta']);
+    }
+
+    /**
+     * Punto 13: lleva a la carta para corregir el pedido rechazado.
+     *
+     * La carta detecta sola que hay un pedido en ese estado y arranca con lo
+     * ya pedido cargado, así que desde acá alcanza con navegar.
+     */
+    corregirPedido() {
+        this.router.navigate(['/carta']);
+    }
 
     puedeJugar = computed(() => puedeAccederAJuegos(this.pedido()?.estado ?? null, this.authService.perfil()));
 
@@ -128,13 +232,9 @@ export class MiPedidoPage {
     }
 
     totalFormateado(pedido: PedidoInterface): string {
-        return this.pedidoService.totalConDescuento(pedido).toLocaleString('es-AR', {
-            style: 'currency',
-            currency: 'ARS',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        });
+        return formatearImporte(this.pedidoService.totalConDescuento(pedido));
     }
+
 
     /**
      * Lleva a los juegos (punto 15), a la encuesta o a pedir la cuenta

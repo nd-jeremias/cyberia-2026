@@ -4,6 +4,7 @@ import {
     DetallePedidoInterface,
     EstadoItem,
     EstadoPedido,
+    ItemNuevoPedido,
     NuevoPedidoInterface,
     PedidoInterface,
 } from '../interfaces/pedido.interface';
@@ -363,6 +364,86 @@ export class PedidoService {
     // Punto 13: el mozo rechaza para que el cliente lo corrija.
     rechazar(pedidoId: string): Promise<boolean> {
         return this.cambiarEstado(pedidoId, 'Rechazado');
+    }
+
+    /**
+     * Punto 13: el cliente corrige un pedido rechazado y lo vuelve a enviar.
+     *
+     * Se reemplazan las líneas en vez de editarlas una por una: el cliente pudo
+     * agregar, quitar y cambiar cantidades, y comparar el pedido viejo con el
+     * nuevo para deducir qué cambió sería más trabajo y más frágil que borrar y
+     * volver a escribir.
+     *
+     * El estado vuelve a 'Pendiente de Confirmación' recién al final, y sólo si
+     * el pedido seguía rechazado: si el mozo lo confirmó mientras el cliente lo
+     * editaba, el UPDATE no afecta ninguna fila y se avisa en vez de pisarlo.
+     *
+     * @returns `true` si el pedido volvió a quedar en revisión del mozo.
+     */
+    async reenviar(pedidoId: string, items: ItemNuevoPedido[]): Promise<boolean> {
+        if (items.length === 0) {
+            this.modal.setOpen(
+                'Pedido vacío',
+                'Debe quedar al menos un producto para volver a enviarlo.'
+            );
+
+            return false;
+        }
+
+        this.cargando.set(true);
+
+        try {
+            const total = items.reduce(
+                (suma, item) => suma + item.cantidad * item.precioUnitario,
+                0
+            );
+
+            const { error: errorBorrado } = await supabase
+                .from('pedido_detalles')
+                .delete()
+                .eq('pedido_id', pedidoId);
+
+            if (errorBorrado) throw errorBorrado;
+
+            const { error: errorDetalles } = await supabase
+                .from('pedido_detalles')
+                .insert(
+                    items.map((item) => ({
+                        pedido_id: pedidoId,
+                        producto_id: item.productoId,
+                        cantidad: item.cantidad,
+                        precio_unitario: item.precioUnitario,
+                    }))
+                );
+
+            if (errorDetalles) throw errorDetalles;
+
+            const { data, error } = await supabase
+                .from('pedidos')
+                .update({ estado: 'Pendiente de Confirmación', precio_total_neto: total })
+                .eq('id', pedidoId)
+                .eq('estado', 'Rechazado')
+                .select('id');
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                this.modal.setOpen(
+                    'El pedido ya no estaba rechazado',
+                    'El mozo lo revisó mientras lo editabas. Consultá el estado antes de volver a enviarlo.'
+                );
+
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            this.avisarError(error, 'No se pudo volver a enviar el pedido.');
+
+            return false;
+        } finally {
+            this.cargando.set(false);
+        }
     }
 
     // Punto 19: el mozo entrega el pedido completo; falta que el cliente

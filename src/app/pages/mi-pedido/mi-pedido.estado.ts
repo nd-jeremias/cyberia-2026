@@ -11,7 +11,7 @@ import { EstadoPedido } from '../../interfaces/pedido.interface';
 /** Qué decirle al cliente según en qué punto está su pedido. */
 export const LEYENDA_PEDIDO: Record<EstadoPedido, string> = {
     'Pendiente de Confirmación': 'Enviaste tu pedido. El mozo lo está revisando.',
-    Rechazado: 'El mozo pidió cambios en tu pedido. Consultalo con él para corregirlo.',
+    Rechazado: 'El mozo pidió cambios en tu pedido. Corregilo y volvé a enviarlo.',
     Confirmado: 'El mozo confirmó tu pedido y ya pasó a cocina y barra.',
     'En Preparación': 'Tu pedido se está preparando.',
     'Listo para Entregar': 'Tu pedido está listo. El mozo te lo lleva enseguida.',

@@ -11,11 +11,15 @@
  * la pantalla dependa de si el panel está abierto o cerrado.
  */
 
+/* El alto lo reparte la página: acá se toma el espacio que queda libre debajo
+   de la banda del logo, en vez de pedir el 100% del viewport y empujar los
+   accesos rápidos fuera de la pantalla. */
 :host {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 100%;
+    flex: 1;
+    min-height: 0;
 }
 
 /* --- Papel ---------------------------------------------------------------- */

@@ -13,26 +13,61 @@ export class ChartService {
     /** Productos elegidos, con su cantidad y subtotal. */
     carrito = signal<ProductoCarrito[]>([]);
 
+    /** Hasta que no termina la lectura inicial no se guarda nada. */
+    private restaurado = false;
+
+    /** Cola de escrituras, para que se apliquen en orden. */
+    private escrituras: Promise<unknown> = Promise.resolve();
+
     constructor() {
         // Se recupera lo que hubiera quedado de una sesión anterior.
-        this.cargarCarrito();
+        void this.cargarCarrito();
 
         // El effect persiste ante cada cambio del carrito, sin que quien lo
         // modifica tenga que acordarse de guardar.
-        effect(async () => {
-            await Preferences.set({
-                key: 'carrito',
-                value: JSON.stringify(this.carrito()),
-            });
+        effect(() => {
+            const items = this.carrito();
+
+            // La primera pasada del effect ve el carrito vacío, todavía sin
+            // restaurar. Guardarlo ahí borraría del dispositivo justo lo que
+            // se está terminando de leer.
+            if (!this.restaurado) return;
+
+            this.guardar(items);
         });
     }
 
     /** Restaura el carrito guardado en el dispositivo, si existe. */
     private async cargarCarrito() {
-        const { value } = await Preferences.get({ key: 'carrito' });
-        if (value) {
-            this.carrito.set(JSON.parse(value));
+        try {
+            const { value } = await Preferences.get({ key: 'carrito' });
+
+            // Si el cliente ya empezó a elegir mientras se leía, gana lo que
+            // tiene en pantalla: lo guardado es más viejo.
+            if (value && this.carrito().length === 0) {
+                this.carrito.set(JSON.parse(value));
+            }
+        } catch (error) {
+            // Un carrito ilegible no puede dejar al cliente sin poder pedir:
+            // se arranca vacío y se sigue.
+            console.error('No se pudo recuperar el carrito guardado', error);
+        } finally {
+            this.restaurado = true;
         }
+    }
+
+    /**
+     * Guarda el carrito, encadenando las escrituras.
+     *
+     * Sin la cola, tocar "+" varias veces seguidas dispara varios `set` a la
+     * vez, y el almacenamiento del dispositivo no garantiza en qué orden los
+     * resuelve: podía quedar guardado un carrito viejo y, al volver a entrar,
+     * aparecían menos productos de los que el cliente había elegido.
+     */
+    private guardar(items: ProductoCarrito[]) {
+        this.escrituras = this.escrituras
+            .catch(() => undefined)
+            .then(() => Preferences.set({ key: 'carrito', value: JSON.stringify(items) }));
     }
 
     /** Importe acumulado. El enunciado pide que esté siempre visible. */
@@ -74,6 +109,28 @@ export class ChartService {
         });
     }
 
+    /**
+     * Suma una unidad de algo que ya está en el carrito.
+     *
+     * Existe además de `agregar` porque el resumen del pedido trabaja con
+     * líneas del carrito y no tiene el producto entero a mano para pasarlo.
+     */
+    sumar(productoId: string) {
+        this.carrito.update((items) =>
+            items.map((p) => {
+                if (p.id !== productoId) return p;
+
+                const nuevaCantidad = p.cantidad + 1;
+
+                return {
+                    ...p,
+                    cantidad: nuevaCantidad,
+                    precioTotal: p.precioUnitario * nuevaCantidad,
+                };
+            })
+        );
+    }
+
     quitar(productoId: string) {
         this.carrito.update((items) => {
             const carritoModificado = items.map((p) => {
@@ -94,6 +151,17 @@ export class ChartService {
 
     eliminar(productoId: string) {
         this.carrito.update((items) => items.filter((p) => p.id !== productoId));
+    }
+
+    /**
+     * Pisa el carrito con una lista ya armada.
+     *
+     * Lo usa la corrección de un pedido rechazado (punto 13): el carrito
+     * arranca con lo que el cliente ya había pedido para que pueda ajustarlo,
+     * en vez de obligarlo a cargar todo de nuevo.
+     */
+    reemplazar(items: ProductoCarrito[]) {
+        this.carrito.set(items);
     }
 
     vaciarCarrito() {
