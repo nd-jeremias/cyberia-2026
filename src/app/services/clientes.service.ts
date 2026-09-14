@@ -8,6 +8,7 @@ export class ClientesService {
         const { data, error } = await supabase
             .from('usuarios')
             .select('*')
+            .in('perfil', ['cliente registrado']) // Aca se puede agregar 'cliente anónimo' si es necesario
             .eq('estado', estado)
             .order('fecha_registro', { ascending: true });
 
@@ -23,7 +24,7 @@ export class ClientesService {
             apellidos: row.apellidos,
             dni: row.dni,
             correo_electronico: row.correo_electronico,
-            foto_url: row.foto_url,
+            foto_url: [row.foto_url], // Aca se convierte de nuevo en array para coincidir con el componente subir-imagenes
             estado: row.estado,
             fecha_registro: row.fecha_registro,
         };

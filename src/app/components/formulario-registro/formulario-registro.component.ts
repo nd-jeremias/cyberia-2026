@@ -91,7 +91,7 @@ export class FormularioRegistroComponent {
     // ============================================================
 
     usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
-
+    modo = input<'modificar_empleado' | null>(null);
     /**
      * Si existe un empleado, estamos en modo edición.
      * Si es undefined, estamos en modo creación.

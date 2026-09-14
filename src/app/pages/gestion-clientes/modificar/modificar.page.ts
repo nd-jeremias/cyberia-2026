@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, effect, inject, input, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
@@ -26,7 +26,12 @@ export class ModificarPage implements OnInit {
 
     clienteId = input<string | undefined>(undefined);
     clienteExistente = signal<ClienteInterface | undefined>(undefined);
-    constructor() {}
+    constructor() {
+        effect(() => {
+            const id = this.clienteId();
+            if (id) this.cargarCliente(id);
+        });
+    }
 
     ngOnInit() {}
 
@@ -59,12 +64,10 @@ export class ModificarPage implements OnInit {
                     `Se modificaron correctamente los datos de:\n ${nombre} ${apellido}.`
                 );
             }
-
-            this.router.navigate(['/gestion-empleados']);
+            this.router.navigate(['/gestion-clientes']);
         } catch (error: any) {
-            this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro');
+            this.modal.setOpen('Error', error.message || 'No se pudo completar la modificación');
         } finally {
             this.spinner.hide();
         }
