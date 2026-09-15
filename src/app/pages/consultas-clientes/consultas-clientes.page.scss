@@ -1,2 +1,119 @@
-/* La estructura la aportan `app-header` y `.hoja`; el aviso, la hoja compartida. */
-@use "../_compartido/pantalla-en-preparacion.scss";
+/**
+ * Consultas de los clientes: lista de chats como la de WhatsApp.
+ * La ficha de mesa viene de global.scss; acá sólo se apila para que entre en
+ * la fila.
+ */
+
+.lista-chats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+.hoja > .lista-chats:has(> .estado-vacio) {
+    flex: 1;
+
+    .estado-vacio {
+        flex: 1;
+    }
+}
+
+.fila-chat {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+
+    width: 100%;
+    padding: 0.75rem;
+    box-sizing: border-box;
+    text-align: left;
+
+    font-family: var(--fuente);
+    color: var(--tinta);
+
+    background: var(--grad-tarjeta);
+    border: var(--borde-hoja);
+    border-left: 0.3125rem solid var(--hoja-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+    cursor: pointer;
+
+    &:active {
+        transform: scale(0.99);
+    }
+}
+
+/* La que espera respuesta se marca con palabra y con color. */
+.fila-chat.pendiente {
+    border-left-color: var(--naranja);
+}
+
+.fila-chat .ficha-mesa {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    flex-shrink: 0;
+    min-width: 3.75rem;
+}
+
+.fila-datos {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.fila-arriba,
+.fila-abajo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.fila-nombre {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    font-size: var(--texto-cuerpo);
+    font-weight: 800;
+}
+
+.fila-hora {
+    flex-shrink: 0;
+
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--tinta-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+.fila-ultimo {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    font-size: var(--texto-apoyo);
+    color: var(--tinta-media);
+}
+
+.fila-aviso {
+    flex-shrink: 0;
+    padding: 0.1875rem 0.5625rem;
+
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: var(--naranja-hondo);
+
+    background: rgba(226, 87, 28, 0.14);
+    border-radius: 999px;
+}

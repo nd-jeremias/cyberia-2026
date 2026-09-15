@@ -1,12 +1,49 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Consultas'"></app-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Consultas'">
+    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+        <ion-icon name="refresh-outline"></ion-icon>
+        Actualizar
+    </button>
+</app-header>
 
 <ion-content [fullscreen]="true">
     <div class="hoja">
-        <div class="aviso-preparacion">
-            <span class="medallon"><ion-icon name="chatbubbles-outline"></ion-icon></span>
-            <span class="sello-preparacion">En preparación</span>
-            <h2>Sala de conversación</h2>
-            <p>Acá van a llegar las consultas que los clientes hacen desde su mesa.</p>
+        @if (cargando()) {
+        <div class="estado-vacio">
+            <ion-icon name="time-outline"></ion-icon>
+            <p>Buscando consultas…</p>
         </div>
+        } @else {
+        <ul class="lista-chats">
+            @for (chat of chats(); track chat.id) {
+            <li>
+                <button type="button" class="fila-chat" [class.pendiente]="esperaRespuesta(chat)" (click)="abrir(chat)">
+                    <span class="ficha-mesa">
+                        <span class="ficha-mesa-rotulo">Mesa</span>
+                        <span class="ficha-mesa-numero">{{ chat.numeroMesa }}</span>
+                    </span>
+
+                    <span class="fila-datos">
+                        <span class="fila-arriba">
+                            <span class="fila-nombre">{{ chat.nombreCliente }}</span>
+                            <span class="fila-hora">{{ horaDe(chat) }}</span>
+                        </span>
+
+                        <span class="fila-abajo">
+                            <span class="fila-ultimo">{{ chat.ultimoMensaje?.cuerpo }}</span>
+                            @if (esperaRespuesta(chat)) {
+                            <span class="fila-aviso">Sin responder</span>
+                            }
+                        </span>
+                    </span>
+                </button>
+            </li>
+            } @empty {
+            <li class="estado-vacio">
+                <ion-icon name="chatbubbles-outline"></ion-icon>
+                <p>No hay consultas de clientes por ahora.</p>
+            </li>
+            }
+        </ul>
+        }
     </div>
 </ion-content>
