@@ -5,9 +5,9 @@
                 <ion-title>{{ modalService.tituloModal() }}</ion-title>
             </ion-toolbar>
         </ion-header>
-        <ion-content class="contenido">
+        <div class="contenido">
             <p>{{ modalService.mensajeModal() }}</p>
-        </ion-content>
+        </div>
         <ion-footer>
             <ion-buttons class="botonContainer">
                 <ion-button class="botonCerrar" (click)="modalService.setClose()">Cerrar</ion-button>

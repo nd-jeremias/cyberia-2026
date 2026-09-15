@@ -39,7 +39,9 @@ ion-modal.modal-personalizado ion-title {
     --padding-top: 1.5rem;
     --padding-bottom: 1rem;
 
-    min-height: 6rem;
+    min-height: 10rem;
+    display: flex;
+    align-items: center;
 
     p {
         margin: 0;
