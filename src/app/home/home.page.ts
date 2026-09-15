@@ -166,7 +166,7 @@ export class HomePage {
                 ],
                 fichas: mesas.map((mesa) => ({
                     numero: mesa.numeroMesa,
-                    enVerde: mesa.disponibilidad === 'disponible',
+                    enVerde: mesa.disponibilidad === 'Disponible',
                 })),
                 vacio: 'Todavía no hay mesas cargadas.',
                 leyendaVerde: 'Libre',

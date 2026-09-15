@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
-import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
+import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
 import { SalonService } from '../../services/salon.service';
@@ -30,8 +30,8 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
 
-    clientes = signal<ClientePendienteInterface[]>([]);
-    clienteElegido = signal<ClientePendienteInterface | null>(null);
+    clientes = signal<ClienteInterface[]>([]);
+    clienteElegido = signal<ClienteInterface | null>(null);
 
     mesas = this.mesaService.mesas;
     mesasDisponibles = this.mesaService.disponibles;

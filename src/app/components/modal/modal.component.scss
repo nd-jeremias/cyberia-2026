@@ -56,10 +56,9 @@ ion-modal.modal-personalizado ion-title {
     background: var(--hoja-alta);
     padding: 1.5rem 1.5rem 1rem;
 
-    // Un mensaje largo hace scroll adentro del modal en lugar de crecer hasta
-    // salirse de la pantalla.
-    max-height: 60vh;
-    overflow-y: auto;
+    min-height: 10rem;
+    display: flex;
+    align-items: center;
 
     p {
         margin: 0;

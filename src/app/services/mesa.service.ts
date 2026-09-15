@@ -37,9 +37,9 @@ export class MesaService {
     /** Bloquea los botones mientras hay una operación en curso. */
     cargando = signal<boolean>(false);
 
-    disponibles = computed(() => this.mesas().filter((m) => m.disponibilidad === 'disponible'));
+    disponibles = computed(() => this.mesas().filter((m) => m.disponibilidad === 'Disponible'));
 
-    ocupadas = computed(() => this.mesas().filter((m) => m.disponibilidad === 'ocupada'));
+    ocupadas = computed(() => this.mesas().filter((m) => m.disponibilidad === 'Ocupada'));
 
     /** Traduce una fila de la base al modelo que usan las pantallas. */
     private mapear(fila: FilaMesa): MesaInterface {
@@ -123,7 +123,7 @@ export class MesaService {
         // Verificación 2: la mesa no puede estar tomada por otro cliente.
         const ocupadaPorOtro = mesa.clienteId !== null && mesa.clienteId !== clienteId;
 
-        if (ocupadaPorOtro || mesa.disponibilidad === 'ocupada') {
+        if (ocupadaPorOtro || mesa.disponibilidad === 'Ocupada') {
             this.modal.setOpen('Mesa ocupada', `La mesa N° ${mesa.numeroMesa} ya está asignada a otro cliente.`);
 
             return false;
@@ -136,9 +136,9 @@ export class MesaService {
             // misma mesa a la vez: el segundo update no afecta ninguna fila.
             const { data, error } = await supabase
                 .from('mesas')
-                .update({ cliente_id: clienteId, disponibilidad: 'ocupada' })
+                .update({ cliente_id: clienteId, disponibilidad: 'Ocupada' })
                 .eq('id', mesaId)
-                .eq('disponibilidad', 'disponible')
+                .eq('disponibilidad', 'Disponible')
                 .select('id');
 
             if (error) throw error;
@@ -169,7 +169,7 @@ export class MesaService {
             const { error } = await supabase
                 .from('mesas')
                 .update({
-                    disponibilidad: 'disponible',
+                    disponibilidad: 'Disponible',
                     cliente_id: null,
                 })
                 .eq('id', mesaId);

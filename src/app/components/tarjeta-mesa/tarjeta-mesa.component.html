@@ -22,8 +22,16 @@
     </div>
 
     <div class="contenido">
-        <h3 class="numero">NÚMERO: {{ mesa().numeroMesa }}</h3>
-
+        <div class="header">
+            <h3 class="numero">NÚMERO: {{ mesa().numeroMesa }}</h3>
+            <span
+                [class.color-disponible]="mesa().disponibilidad === 'Disponible'"
+                [class.color-reservada]="mesa().disponibilidad === 'Reservada'"
+                [class.color-pcupada]="mesa().disponibilidad === 'Ocupada'"
+                class="disponibilidad"
+                >{{ mesa().disponibilidad }}</span
+            >
+        </div>
         <div class="detalles">
             <span class="detalle">
                 <ion-icon name="time-outline"></ion-icon>

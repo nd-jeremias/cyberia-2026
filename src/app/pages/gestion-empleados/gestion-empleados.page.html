@@ -3,19 +3,21 @@
 </app-header>
 
 <ion-content [fullscreen]="true">
-    <section class="listado-clientes">
-        @if (listaEmpleados().length === 0) {
-        <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
-        } @else {
+    <div class="hoja">
         <div class="lista">
-            @for (empleado of listaEmpleados(); track empleado.id) {
-            <app-tarjeta-empleado
-                [usuario]="empleado"
-                (editarEmpleado)="onEditar($event)"
-                (eliminarEmpleado)="onEliminar($event)"
-            ></app-tarjeta-empleado>
+            @if (listaEmpleados().length === 0) {
+            <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
+            } @else {
+            <div class="lista">
+                @for (empleado of listaEmpleados(); track empleado.id) {
+                <app-tarjeta-empleado
+                    [usuario]="empleado"
+                    (editarEmpleado)="onEditar($event)"
+                    (eliminarEmpleado)="onEliminar($event)"
+                ></app-tarjeta-empleado>
+                }
+            </div>
             }
         </div>
-        }
-    </section>
+    </div>
 </ion-content>

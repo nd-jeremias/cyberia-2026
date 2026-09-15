@@ -1,6 +1,7 @@
 import { Service } from '@angular/core';
 import { Camera, MediaResult, MediaTypeSelection } from '@capacitor/camera';
 import { supabase } from './supabase.service';
+import { FileObject } from '@supabase/storage-js'
 
 // export interface ImagenGaleria {
 //     blob: Blob;
@@ -10,68 +11,6 @@ import { supabase } from './supabase.service';
 
 @Service()
 export class GaleriaService {
-    //     /**
-    //    * Abre la galería del dispositivo para seleccionar una única imagen
-    //    */
-    //   async seleccionarFoto(): Promise<ImagenGaleria | null> {
-    //     try {
-    //       const imagen = await Camera.getPhoto({
-    //         quality: 85,
-    //         allowEditing: false,
-    //         resultType: CameraResultType.Uri,
-    //         source: CameraSource.Photos, // Fuerza la galería/fotos
-    //       });
-
-    //       if (!imagen.webPath) return null;
-
-    //       const respuesta = await fetch(imagen.webPath);
-    //       const blob = await respuesta.blob();
-    //       const extension = imagen.format || 'jpg';
-    //       const nombreArchivo = `img_${Date.now()}.${extension}`;
-
-    //       return {
-    //         blob,
-    //         previewUrl: imagen.webPath,
-    //         nombreArchivo,
-    //       };
-    //     } catch (error) {
-    //       console.warn('Selección de galería cancelada:', error);
-    //       return null;
-    //     }
-    // }
-
-    // /**
-    //    * Abre la galería permitiendo selección múltiple (para productos o encuestas)
-    //    */
-    //   async seleccionarMultiplesFotos(limite: number = 3): Promise<ImagenGaleria[]> {
-    //     try {
-    //       const { photos } = await Camera.pickImages({
-    //         quality: 85,
-    //         limit: limite,
-    //       });
-
-    //       const imagenesProcesadas: ImagenGaleria[] = [];
-
-    //       for (const [index, foto] of photos.entries()) {
-    //         if (foto.webPath) {
-    //           const res = await fetch(foto.webPath);
-    //           const blob = await res.blob();
-    //           const extension = foto.format || 'jpg';
-
-    //           imagenesProcesadas.push({
-    //             blob,
-    //             previewUrl: foto.webPath,
-    //             nombreArchivo: `img_${Date.now()}_${index}.${extension}`,
-    //           });
-    //         }
-    //       }
-
-    //       return imagenesProcesadas;
-    //     } catch (error) {
-    //       console.warn('Selección múltiple cancelada:', error);
-    //       return [];
-    //     }
-    //   }
     async subirImagen(maxImg: number = 3): Promise<MediaResult[]> {
         try {
             const { results } = await Camera.chooseFromGallery({
@@ -151,5 +90,17 @@ export class GaleriaService {
         }
 
         return null;
+    }
+
+    async eliminarImgDb(path: string): Promise<FileObject[]> {
+        try {
+            const { data, error } = await supabase.storage.from('avatars').remove(['folder/avatar2.png']);
+            if(error) throw error
+
+            return data
+        } catch (error) {
+            console.error('Error al eliminar la imagen:', error);
+            throw error;
+        }
     }
 }

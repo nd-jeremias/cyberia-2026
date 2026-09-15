@@ -34,6 +34,7 @@ export class AltaEmpleadoPage implements OnInit {
             const id = this.empleadoId();
             if (id) this.cargarEmpleado(id);
         });
+        
     }
 
     ngOnInit() {}

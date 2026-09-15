@@ -215,6 +215,7 @@ export class AuthService {
     }
 
     async register(form: FormData): Promise<User | null> {
+        let publicUrl: string | null = null;
         try {
             const correo = form.get('correo') as string;
             const password = form.get('password') as string;
@@ -225,17 +226,15 @@ export class AuthService {
             const tipoEmpleado = form.get('tipoEmpleado') as string;
             const fotoArchivo = form.get('foto') as File;
 
-            const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
-
-            if (!publicUrl) throw Error;
+            publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
+            if (!publicUrl) throw new Error('No se pudo cargar la imágen');
 
             // Normalizacion de datos
             const correoRaw = form.get('correo') as string;
             const correolimpio = correoRaw.replace(/["']/g, '').trim().toLowerCase();
-
             const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
 
-            const { data, error } = await supabase.auth.signUp({
+            const { data, error: authError } = await supabase.auth.signUp({
                 email: correo,
                 password,
                 options: {
@@ -244,12 +243,10 @@ export class AuthService {
                 },
             });
 
-            if (error) {
-                throw error;
-            }
+            if (authError) throw authError;
 
             if (data.user) {
-                const { error } = await supabase.from('usuarios').insert({
+                const { error: dbError } = await supabase.from('usuarios').insert({
                     id: data.user.id,
                     nombres,
                     apellidos,
@@ -261,15 +258,16 @@ export class AuthService {
                     estado: tipoEmpleado ? 'Activo' : 'Pendiente',
                 });
 
-                if (error) throw error;
+                if (dbError) throw new Error('Error al insertar datos del usuario.');
 
                 return data.user;
             }
             return null;
         } catch (error) {
+            if (publicUrl) await this.galeriaService.eliminarImgDb(publicUrl);
+
             const mensaje = error instanceof Error ? error.message : 'No se pudo crear el usuario.';
-            this.modal.setOpen('Error', mensaje);
-            return null;
+            throw new Error(mensaje);
         } finally {
             // signUp() deja la sesión abierta, pero un registro nuevo queda en
             // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:
@@ -321,8 +319,7 @@ export class AuthService {
             }
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el usuario.';
-            this.modal.setOpen('Error', mensaje);
-            throw error;
+            throw new Error(mensaje);
         }
     }
 }

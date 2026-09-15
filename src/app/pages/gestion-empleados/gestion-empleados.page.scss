@@ -1,1 +1,7 @@
 /* La estructura la aportan `app-header` y la clase `.hoja` de global.scss. */
+
+.lista {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+}
