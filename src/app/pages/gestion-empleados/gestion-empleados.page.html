@@ -1,23 +1,26 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
-    <a accion class="btn-banda" routerLink="/gestion-empleados/alta"> Agregar </a>
-</app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja">
-        <div class="lista">
-            @if (listaEmpleados().length === 0) {
-            <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
-            } @else {
-            <div class="lista">
-                @for (empleado of listaEmpleados(); track empleado.id) {
-                <app-tarjeta-empleado
-                    [usuario]="empleado"
-                    (editarEmpleado)="onEditar($event)"
-                    (eliminarEmpleado)="onEliminar($event)"
-                ></app-tarjeta-empleado>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
+            <a accion class="btn-banda" routerLink="/gestion-empleados/alta"> Agregar </a>
+        </app-header>
+        
+        <div class="superior hoja">
+            <section class="listado-clientes">
+                @if (listaEmpleados().length === 0) {
+                <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
+                } @else {
+                <div class="lista">
+                    @for (empleado of listaEmpleados(); track empleado.id) {
+                    <app-tarjeta-empleado
+                        [usuario]="empleado"
+                        (editarEmpleado)="onEditar($event)"
+                        (eliminarEmpleado)="onEliminar($event)"
+                    ></app-tarjeta-empleado>
+                    }
+                </div>
                 }
-            </div>
-            }
+            </section>
         </div>
     </div>
 </ion-content>
+

@@ -1,26 +1,22 @@
-/**
- * Ingreso.
- *
- * La estructura la aportan `app-header-logo` y la clase `.hoja` de global.scss.
- *
- * Acá sólo se reparte el alto: la banda del logo ocupa lo suyo y el papel se
- * queda con TODO lo que sobra, ni más ni menos. Antes el papel pedía el 100%
- * del viewport por su cuenta, así que entre la banda y él la pantalla medía más
- * de lo que entra y los accesos rápidos —anclados al pie del papel— quedaban
- * apenas debajo del corte, invisibles sin desplazarse.
- */
-
-ion-content::part(scroll) {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
+// El fondo naranja de ion-content asoma detrás de la banda naranja al rebotar
+// el scroll, lo que da continuidad visual sin un corte brusco.
+ion-content {
+    --background: var(--naranja);
+    --padding-bottom: 0;
 }
 
-app-header-logo {
-    flex-shrink: 0;
-}
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+:host ::ng-deep {
+    .layout-superpuesto {
+        min-height: 100vh;
+    }
 
-app-login-form {
-    flex: 1;
-    min-height: 0;
+    .inferior {
+        height: auto;
+        padding-bottom: 50px;
+    }
+
+    .superior {
+        padding-top: 1.5rem;
+    }
 }
