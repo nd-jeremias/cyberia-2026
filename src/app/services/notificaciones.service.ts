@@ -301,4 +301,39 @@ export class NotificacionesService {
             throw new Error('Error al enviar notificaciones.')
         }
     }
+
+    // Igual que enviarAvisos, pero para UNA persona puntual y no para un perfil.
+    // Lo usa el chat (punto 11): la respuesta del mozo le llega sólo al cliente de ese chat.
+    async enviarAvisoAUsuario(usuarioId: string, titulo: string, cuerpo: string, tipo: string) {
+        try {
+            const { data: usuario, error: userError } = await supabase
+                .from('usuarios')
+                .select('token_push')
+                .eq('id', usuarioId)
+                .maybeSingle();
+
+            if (userError) throw userError;
+
+            if (!usuario?.token_push) {
+                console.log('El usuario no tiene el celular registrado para recibir avisos.');
+                return;
+            }
+
+            const { data, error } = await supabase.functions.invoke('enviar-notificacion', {
+                body: {
+                    tokens: [usuario.token_push],
+                    titulo: titulo,
+                    cuerpo: cuerpo,
+                    tipo: tipo,
+                },
+            });
+
+            if (error) throw error;
+
+            return data;
+        } catch (error) {
+            console.error('Error al intentar enviar la notificación al usuario:', error);
+            throw new Error('Error al enviar la notificación.');
+        }
+    }
 }

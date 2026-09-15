@@ -14,6 +14,7 @@ import {
     LEYENDA_PEDIDO,
     puedeAccederAJuegos,
     puedeConfirmarRecepcion,
+    puedeEnviarOtroPedido,
     puedeUsarServiciosDeMesa,
 } from './mi-pedido.estado';
 
@@ -23,6 +24,7 @@ import {
  * botón avisa en lugar de no hacer nada.
  */
 const SECCIONES = {
+    estado: { ruta: 'estado-pedido', titulo: 'Estado del pedido', aviso: 'El seguimiento del pedido todavía no está habilitado.' },
     juegos: { ruta: 'juegos', titulo: 'Juegos', aviso: 'La sección de juegos todavía no está habilitada.' },
     encuesta: { ruta: 'encuestas', titulo: 'Encuesta', aviso: 'La encuesta todavía no está habilitada.' },
     cuenta: { ruta: 'pedir-cuenta', titulo: 'Cuenta', aviso: 'El pedido de la cuenta todavía no está habilitado.' },
@@ -31,15 +33,24 @@ const SECCIONES = {
 export type SeccionCliente = keyof typeof SECCIONES;
 
 /**
- * Pedido del cliente: en qué estado está y qué puede hacer mientras espera.
+ * Pedido del cliente: lo que está armando y lo que ya mandó.
  *
- * La pantalla tiene dos caras, según haya o no un pedido enviado:
+ * La pantalla muestra DOS cosas a la vez, porque pueden convivir:
  *
  *  - BORRADOR: lo que el cliente eligió en la carta, todavía en su teléfono.
- *    Se puede ajustar cantidad por cantidad y se envía desde acá (punto 12).
- *    Es también donde se reenvía un pedido que el mozo rechazó (punto 13).
- *  - ENVIADO: el pedido ya está en la base y lo mueven el mozo y los sectores.
- *    Acá sólo se sigue su estado y se confirma la recepción (puntos 14 y 19).
+ *    Se ajusta cantidad por cantidad y se envía desde el pie (punto 12). Es
+ *    también donde se reenvía un pedido que el mozo rechazó (punto 13).
+ *  - ENVIADOS: los pedidos que ya están en la base y mueven el mozo y los
+ *    sectores. Acá se sigue el estado de cada uno y se confirma la recepción
+ *    (puntos 14 y 19).
+ *
+ * Antes eran excluyentes: con un pedido enviado se escondía el borrador entero,
+ * incluido el botón de enviar. Si el cliente seguía eligiendo en la carta, no
+ * veía lo que armaba y la pantalla mostraba otro pedido, con otros productos y
+ * otro total. Ahora el borrador aparece siempre que tenga algo.
+ *
+ * Puede haber varios enviados: el punto 21 habla de "los pedidos realizados" y
+ * la cuenta los suma a todos, así que el cliente puede pedir más de una vez.
  *
  * El envío vive acá y no en la carta a propósito: el cliente repasa lo elegido
  * y recién ahí manda, en vez de que la carta cree pedidos mientras navega.
@@ -61,21 +72,19 @@ export class MiPedidoPage {
 
     carrito = inject(ChartService);
 
-    pedido = signal<PedidoInterface | null>(null);
+    /** Pedidos ya enviados en esta visita, del primero al último. */
+    pedidos = signal<PedidoInterface[]>([]);
     cargando = signal(true);
 
     /** Bloquea "Confirmar recepción" mientras se guarda. */
     procesando = this.pedidoService.cargando;
 
-    leyenda = computed(() => {
-        const pedido = this.pedido();
+    /** El pedido que el mozo devolvió para corregir, si hay alguno. */
+    pedidoRechazado = computed(() => this.pedidos().find((p) => p.estado === 'Rechazado') ?? null);
 
-        if (!pedido) return '';
+    rechazado = computed(() => this.pedidoRechazado() !== null);
 
-        return pedido.estadoCliente === 'pagando' ? LEYENDA_PAGANDO : LEYENDA_PEDIDO[pedido.estado];
-    });
-
-    rechazado = computed(() => this.pedido()?.estado === 'Rechazado');
+    hayEnviados = computed(() => this.pedidos().length > 0);
 
     /** Líneas del borrador, con su cantidad y subtotal. */
     lineas = this.carrito.carrito;
@@ -84,11 +93,21 @@ export class MiPedidoPage {
 
     hayBorrador = computed(() => this.unidades() > 0);
 
+    /** Si todavía se puede mandar un pedido nuevo: no, con alguno ya confirmado. */
+    puedeEnviar = computed(() => puedeEnviarOtroPedido(this.pedidos().map((p) => p.estado)));
+
+    /** Algún pedido ya bajó a cocina: se puede seguir su preparación (punto 14). */
+    hayConfirmado = computed(() => !this.puedeEnviar());
+
     /**
-     * La pantalla muestra el borrador cuando no hay nada enviado, o cuando el
-     * mozo rechazó el pedido y el cliente lo está corrigiendo.
+     * El borrador se muestra si se puede mandar, o si hay que corregir uno
+     * rechazado (reenviarlo no es "otro" pedido). Con un pedido confirmado y
+     * nada que corregir, lo que quedó en el carrito ya no se puede mandar.
      */
-    modoBorrador = computed(() => this.pedido() === null || this.rechazado());
+    mostrarBorrador = computed(() => this.hayBorrador() && (this.puedeEnviar() || this.rechazado()));
+
+    /** Quedaron productos elegidos que ya no se pueden mandar. */
+    borradorBloqueado = computed(() => this.hayBorrador() && !this.mostrarBorrador());
 
     totalBorrador = computed(() => formatearImporte(this.carrito.total()));
 
@@ -112,15 +131,26 @@ export class MiPedidoPage {
      * reemplaza sus líneas en lugar de crear otro (punto 13).
      */
     async enviarPedido() {
+        // La pantalla ya no ofrece el botón en este caso; se vuelve a verificar
+        // acá para que la regla no dependa sólo de lo que se dibuja.
+        if (!this.pedidoRechazado() && !this.puedeEnviar()) {
+            this.modal.setOpen(
+                'Pedido ya confirmado',
+                'Tu pedido ya pasó a cocina y barra. No se pueden agregar más productos en esta visita.'
+            );
+
+            return;
+        }
+
         const items: ItemNuevoPedido[] = this.lineas().map((item) => ({
             productoId: item.id,
             cantidad: item.cantidad,
             precioUnitario: item.precioUnitario,
         }));
 
-        const aCorregir = this.pedido();
+        const aCorregir = this.pedidoRechazado();
 
-        if (this.rechazado() && aCorregir) {
+        if (aCorregir) {
             const reenviado = await this.pedidoService.reenviar(aCorregir.id, items);
 
             if (!reenviado) return;
@@ -148,13 +178,18 @@ export class MiPedidoPage {
         await this.terminarEnvio('Pedido enviado', 'El mozo lo va a revisar en un momento.');
     }
 
-    /** Vacía el borrador y vuelve a leer el pedido ya enviado. */
+    /** Vacía el borrador y vuelve a leer los pedidos enviados. */
     private async terminarEnvio(titulo: string, mensaje: string) {
         this.carrito.vaciarCarrito();
 
         await this.recargar();
 
         this.modal.setOpen(titulo, mensaje, 'info');
+    }
+
+    /** Descarta lo que quedó en el carrito y ya no se puede mandar. */
+    descartarBorrador() {
+        this.carrito.vaciarCarrito();
     }
 
     /** Lleva a la carta para seguir eligiendo. */
@@ -172,22 +207,37 @@ export class MiPedidoPage {
         this.router.navigate(['/carta']);
     }
 
-    puedeJugar = computed(() => puedeAccederAJuegos(this.pedido()?.estado ?? null, this.authService.perfil()));
+    /** Punto 15: alcanza con que alguno de sus pedidos ya esté confirmado. */
+    puedeJugar = computed(() =>
+        this.pedidos().some((p) => puedeAccederAJuegos(p.estado, this.authService.perfil()))
+    );
 
-    puedeConfirmar = computed(() => puedeConfirmarRecepcion(this.pedido()?.estado ?? null));
-
+    /**
+     * Punto 19: la encuesta y la cuenta se habilitan cuando recibió TODO lo que
+     * pidió. Con un solo pedido pendiente todavía no tiene sentido pagar.
+     */
     serviciosHabilitados = computed(() => {
-        const pedido = this.pedido();
+        const pedidos = this.pedidos();
 
-        return puedeUsarServiciosDeMesa(pedido?.estado ?? null, pedido?.estadoCliente ?? null);
+        return pedidos.length > 0 && pedidos.every((p) => puedeUsarServiciosDeMesa(p.estado, p.estadoCliente));
     });
+
+    /** Qué decirle al cliente sobre un pedido en particular. */
+    leyendaDe(pedido: PedidoInterface): string {
+        return pedido.estadoCliente === 'pagando' ? LEYENDA_PAGANDO : LEYENDA_PEDIDO[pedido.estado];
+    }
+
+    /** Punto 19: la recepción se confirma pedido por pedido. */
+    puedeConfirmarDe(pedido: PedidoInterface): boolean {
+        return puedeConfirmarRecepcion(pedido.estado);
+    }
 
     /** Se consulta cada vez que se entra: el estado cambia mientras el cliente espera. */
     ionViewWillEnter() {
         void this.recargar();
     }
 
-    /** Punto 14: vuelve a pedir el pedido a la base, para ver si el mozo ya lo confirmó. */
+    /** Punto 14: vuelve a pedir los pedidos a la base, para ver si el mozo ya los confirmó. */
     async recargar() {
         const usuarioId = this.authService.session()?.user.id;
 
@@ -200,7 +250,7 @@ export class MiPedidoPage {
         this.cargando.set(true);
 
         try {
-            this.pedido.set(await this.pedidoService.pedidoActualDelCliente(usuarioId));
+            this.pedidos.set(await this.pedidoService.pedidosActivosDelCliente(usuarioId));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo consultar tu pedido.';
 
@@ -211,11 +261,10 @@ export class MiPedidoPage {
     }
 
     /** Punto 19: el cliente confirma que el mozo le entregó el pedido. */
-    async confirmarRecepcion() {
-        const pedido = this.pedido();
+    async confirmarRecepcion(pedido: PedidoInterface) {
         const usuarioId = this.authService.session()?.user.id;
 
-        if (!pedido || !usuarioId) return;
+        if (!usuarioId) return;
 
         const confirmado = await this.pedidoService.confirmarRecepcion(pedido.id, usuarioId);
 
@@ -237,8 +286,8 @@ export class MiPedidoPage {
 
 
     /**
-     * Lleva a los juegos (punto 15), a la encuesta o a pedir la cuenta
-     * (punto 19).
+     * Lleva al estado del pedido o a los juegos (punto 14), a la encuesta o a
+     * pedir la cuenta (punto 19).
      */
     irA(seccion: SeccionCliente) {
         const { ruta, titulo, aviso } = SECCIONES[seccion];

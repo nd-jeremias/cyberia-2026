@@ -238,6 +238,30 @@ export class PedidoService {
      * pedido desde que lo envía hasta que paga. Si hubiera más de uno, se toma
      * el último.
      */
+    /**
+     * Todos los pedidos de la visita que todavía no se pagaron.
+     *
+     * El cliente puede pedir más de una vez en la misma visita: el punto 21
+     * habla de "los pedidos realizados", en plural, y la cuenta los suma a
+     * todos. Por eso la pantalla del cliente necesita la lista completa y no
+     * sólo el último: si mostrara uno, al hacer un segundo pedido el primero
+     * desaparecería de su vista aunque el mozo lo siguiera teniendo pendiente.
+     *
+     * Orden de llegada: el primero que pidió queda arriba.
+     */
+    async pedidosActivosDelCliente(clienteId: string): Promise<PedidoInterface[]> {
+        const { data, error } = await supabase
+            .from('pedidos')
+            .select(SELECT_PEDIDO)
+            .eq('cliente_id', clienteId)
+            .neq('estado', 'Pagado')
+            .order('fecha', { ascending: true });
+
+        if (error) throw error;
+
+        return ((data ?? []) as unknown as FilaPedido[]).map((fila) => this.mapear(fila));
+    }
+
     async pedidoActualDelCliente(clienteId: string): Promise<PedidoInterface | null> {
         const { data, error } = await supabase
             .from('pedidos')

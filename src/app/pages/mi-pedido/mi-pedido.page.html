@@ -1,6 +1,6 @@
 <app-header [defaultHref]="'/inicio'" [tituloHeader]="'Mi pedido'">
-    <!-- Punto 14: el cliente vuelve a consultar su pedido sin salir de la pantalla. -->
-    @if (!modoBorrador()) {
+    <!-- Punto 14: el cliente vuelve a consultar sus pedidos sin salir de la pantalla. -->
+    @if (hayEnviados()) {
     <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
         <ion-icon name="refresh-outline"></ion-icon>
         Actualizar
@@ -15,13 +15,8 @@
             <ion-icon name="time-outline"></ion-icon>
             <p>Consultando tu pedido…</p>
         </div>
-        }
+        } @else {
 
-        <!--
-          BORRADOR: lo elegido en la carta, todavía en el teléfono. Se ajusta
-          acá y se manda con el botón del pie (puntos 12 y 13).
-        -->
-        @else if (modoBorrador()) {
         @if (rechazado()) {
         <p class="aviso-correccion">
             <ion-icon name="create-outline"></ion-icon>
@@ -29,12 +24,30 @@
         </p>
         }
 
-        @if (hayBorrador()) {
+        <!--
+          BORRADOR: lo elegido en la carta, todavía en el teléfono. Va arriba
+          porque es lo que el cliente tiene que revisar y mandar (puntos 12 y 13).
+          Aparece aunque ya haya pedidos enviados, salvo que alguno ya esté
+          confirmado: ahí la visita no admite otro pedido.
+        -->
+        @if (borradorBloqueado()) {
+        <p class="aviso-correccion">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            Tu pedido ya fue confirmado y pasó a cocina. No se pueden agregar más productos en esta visita.
+        </p>
+
+        <button type="button" class="btn-secundario" (click)="descartarBorrador()">
+            <ion-icon name="trash-outline"></ion-icon>
+            Descartar lo elegido
+        </button>
+        }
+
+        @if (mostrarBorrador()) {
         <article class="tarjeta-pedido">
             <div class="encabezado">
                 <span class="ficha-mesa">
                     <span class="ficha-mesa-rotulo">Tu pedido</span>
-                    <span class="ficha-mesa-numero">{{ unidades() }}</span>
+                    <!-- <span class="ficha-mesa-numero">{{ unidades() }}</span> -->
                 </span>
                 <span class="estado">Sin enviar</span>
             </div>
@@ -86,27 +99,19 @@
             <ion-icon name="restaurant-outline"></ion-icon>
             Seguir eligiendo
         </button>
-        } @else {
-        <div class="estado-vacio">
-            <ion-icon name="receipt-outline"></ion-icon>
-            <p>
-                @if (rechazado()) { El mozo pidió cambios en tu pedido. Entrá a la carta para corregirlo. }
-                @else { Todavía no elegiste nada de la carta. }
-            </p>
-        </div>
-
-        <button type="button" class="btn-principal" (click)="irALaCarta()">
-            <ion-icon name="restaurant-outline"></ion-icon>
-            {{ rechazado() ? 'Corregir pedido' : 'Ver la carta' }}
-        </button>
-        }
         }
 
         <!--
-          ENVIADO: el pedido ya está en la base. Acá sólo se sigue su estado y
-          se confirma la recepción (puntos 14 y 19).
+          ENVIADOS: los pedidos que ya están en la base. Puede haber más de uno
+          en la visita (el punto 21 habla de "los pedidos realizados"), y cada
+          uno se sigue y se confirma por separado (puntos 14 y 19).
         -->
-        @else if (pedido(); as pedido) {
+        @if (hayEnviados()) {
+        @if (mostrarBorrador()) {
+        <h2 class="titulo-seccion">Pedidos enviados</h2>
+        }
+
+        @for (pedido of pedidos(); track pedido.id) {
         <article class="tarjeta-pedido">
             <div class="encabezado">
                 <span class="ficha-mesa">
@@ -116,7 +121,7 @@
                 <span class="estado">{{ pedido.estado }}</span>
             </div>
 
-            <p class="leyenda">{{ leyenda() }}</p>
+            <p class="leyenda">{{ leyendaDe(pedido) }}</p>
 
             <div class="datos-pedido">
                 <span class="chip">
@@ -138,18 +143,48 @@
                 <span class="total-rotulo">Total</span>
                 <span class="total-importe">{{ totalFormateado(pedido) }}</span>
             </p>
-        </article>
 
-        @if (puedeConfirmar()) {
-        <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme que lo recibió. -->
-        <button type="button" class="btn-principal" [disabled]="procesando()" (click)="confirmarRecepcion()">
-            <ion-icon name="checkmark-circle"></ion-icon>
-            Confirmar recepción
+            @if (puedeConfirmarDe(pedido)) {
+            <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme que lo recibió. -->
+            <button type="button" class="btn-principal" [disabled]="procesando()" (click)="confirmarRecepcion(pedido)">
+                <ion-icon name="checkmark-circle"></ion-icon>
+                Confirmar recepción
+            </button>
+            }
+        </article>
+        }
+        }
+
+        <!-- Sin nada armado ni enviado. -->
+        @if (!hayBorrador() && !hayEnviados()) {
+        <div class="estado-vacio">
+            <ion-icon name="receipt-outline"></ion-icon>
+            <p>Todavía no elegiste nada de la carta.</p>
+        </div>
+
+        <button type="button" class="btn-principal" (click)="irALaCarta()">
+            <ion-icon name="restaurant-outline"></ion-icon>
+            Ver la carta
+        </button>
+        }
+
+        @if (rechazado() && !hayBorrador()) {
+        <button type="button" class="btn-principal" (click)="corregirPedido()">
+            <ion-icon name="create-outline"></ion-icon>
+            Corregir pedido
+        </button>
+        }
+
+        @if (hayConfirmado()) {
+        <!-- Punto 14: con el pedido confirmado, el cliente sigue su preparación plato por plato. -->
+        <button type="button" class="btn-principal" (click)="irA('estado')">
+            <ion-icon name="time-outline"></ion-icon>
+            Ver estado del pedido
         </button>
         }
 
         @if (puedeJugar()) {
-        <!-- Punto 15: sólo el cliente registrado, con el pedido ya confirmado. -->
+        <!-- Punto 15: sólo el cliente registrado, con algún pedido ya confirmado. -->
         <button type="button" class="btn-principal" (click)="irA('juegos')">
             <ion-icon name="game-controller-outline"></ion-icon>
             Ir a los juegos
@@ -157,7 +192,7 @@
         }
 
         @if (serviciosHabilitados()) {
-        <!-- Punto 19: con el pedido recibido se habilitan la encuesta y la cuenta. -->
+        <!-- Punto 19: con todo recibido se habilitan la encuesta y la cuenta. -->
         <button type="button" class="btn-principal" (click)="irA('encuesta')">
             <ion-icon name="chatbubbles-outline"></ion-icon>
             Responder la encuesta
@@ -173,11 +208,11 @@
 </ion-content>
 
 <!--
-  Pie fijo, el mismo de la carta: el total siempre a la vista. Sólo aparece
-  mientras hay un borrador para enviar; con el pedido ya enviado no hay nada
-  que confirmar acá.
+  Pie fijo, el mismo de la carta: el importe siempre a la vista, que es lo que
+  exige el punto 12. Aparece siempre que haya un borrador para mandar, aunque
+  ya existan pedidos enviados.
 -->
-@if (!cargando() && modoBorrador() && hayBorrador()) {
+@if (!cargando() && mostrarBorrador()) {
 <footer class="pie-pedido">
     <div class="pie-importe">
         <span class="pie-rotulo">

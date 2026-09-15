@@ -10,6 +10,14 @@
         </p>
         }
 
+        @if (!puedePedir()) {
+        <!-- Con un pedido confirmado, la carta queda para mirar: ya no se agrega nada. -->
+        <p class="aviso-correccion">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            Tu pedido ya fue confirmado. Podés ver la carta, pero no agregar productos.
+        </p>
+        }
+
         <!-- Comidas, bebidas y postres: el filtro es de pantalla, la carta ya está cargada. -->
         <nav class="solapas" aria-label="Secciones de la carta">
             @for (solapa of solapas; track solapa.tipo) {

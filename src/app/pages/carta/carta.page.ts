@@ -11,6 +11,7 @@ import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { ProductosService } from '../../services/productos.service';
 import { formatearImporte } from '../../utils/importe';
+import { puedeEnviarOtroPedido } from '../mi-pedido/mi-pedido.estado';
 
 /** Las tres solapas de la carta, en el orden en que se come. */
 const SOLAPAS: { tipo: TipoProducto; etiqueta: string; icono: string }[] = [
@@ -66,11 +67,23 @@ export class CartaPage {
      */
     pedidoEnCurso = signal<PedidoInterface | null>(null);
 
+    /** Todos los pedidos de la visita que todavía no se pagaron. */
+    private pedidosActivos = signal<PedidoInterface[]>([]);
+
     pedidoACorregir = computed(() =>
         this.pedidoEnCurso()?.estado === 'Rechazado' ? this.pedidoEnCurso() : null
     );
 
     corrigiendo = computed(() => this.pedidoACorregir() !== null);
+
+    /**
+     * Con un pedido ya confirmado no se arma otro: la comanda bajó a cocina.
+     * Corregir uno rechazado sí se permite, porque no es un pedido nuevo.
+     * Es la misma regla que aplica "Mi pedido", para que no se contradigan.
+     */
+    puedePedir = computed(
+        () => this.corrigiendo() || puedeEnviarOtroPedido(this.pedidosActivos().map((p) => p.estado))
+    );
 
     productosVisibles = computed(() =>
         this.productos().filter((p) => p.tipo === this.solapaActiva())
@@ -147,7 +160,13 @@ export class CartaPage {
 
         if (!clienteId) return;
 
-        const pedido = await this.pedidoService.pedidoActualDelCliente(clienteId);
+        const activos = await this.pedidoService.pedidosActivosDelCliente(clienteId);
+
+        this.pedidosActivos.set(activos);
+
+        // El rechazado se busca por estado y no tomando el último: con varios
+        // pedidos en la visita, el que hay que corregir puede no ser el más nuevo.
+        const pedido = activos.find((p) => p.estado === 'Rechazado') ?? null;
         const yaEstabaCorrigiendo = this.pedidoACorregir()?.id === pedido?.id;
 
         this.pedidoEnCurso.set(pedido);
@@ -179,6 +198,15 @@ export class CartaPage {
     }
 
     agregar(producto: Producto) {
+        if (!this.puedePedir()) {
+            this.modal.setOpen(
+                'Pedido ya confirmado',
+                'Tu pedido ya pasó a cocina y barra. No se pueden agregar más productos en esta visita.'
+            );
+
+            return;
+        }
+
         this.carrito.agregar(producto);
     }
 
