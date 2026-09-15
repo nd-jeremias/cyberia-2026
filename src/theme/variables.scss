@@ -1,63 +1,199 @@
+/**
+ * Sistema de diseño — Cyberia Restó
+ *
+ * Naranja de horno sobre papel de estraza, como las cartas impresas y las
+ * aplicaciones de gastronomía. Cada pantalla se arma en dos capas: una BANDA
+ * naranja arriba y una HOJA crema redondeada que sube por encima.
+ *
+ * El enunciado no admite fondos claritos. El crema no es blanco roto: es cálido
+ * y lleva el patrón de cubiertos encima. Si igual lo objetan, alcanza con
+ * oscurecer `--hoja` y `--hoja-alta`: todo lo demás deriva de ahí.
+ */
+
 :root {
-    --bg-dark: #000a21;
-    --bg-darkblue: #2d394d;
-    --bg-blue-petrol: #3d5a80;
-    --bg-blue: #44a6ec;
-    --bg-petrol: #0c5678;
-    --bg-sky: #bad8fd;
-    --bg-lightblue: #e6f1fe;
+    /* --- Naranja de marca -------------------------------------------------
+       La media es EL color; la honda es la que va de fondo cuando encima hay
+       texto claro chico, que necesita más contraste. */
+    --naranja-claro: #f5883e;
+    --naranja: #e2571c;
+    --naranja-hondo: #c0430f;
+    --naranja-brasa: #9c3409;
+    --bordo: #8e2f14;
 
-    --color-darkred: #be1321;
-    --color-red: #ec4452;
-    --color-orange: #ee6c4d;
+    /* --- Hoja de papel ----------------------------------------------------
+       `--hoja` es la superficie base; `--hoja-alta` es lo que se eleva por
+       encima (tarjetas, campos) y va más CLARO: la luz entra desde arriba.
+       Los dos tonos están CERCA a propósito: cuando se separaban mucho, la
+       tira de papel visible entre la banda y la primera tarjeta se leía como
+       una franja gris sucia. */
+    --hoja: #f0e4d2;
+    --hoja-alta: #faf3e8;
+    --hoja-honda: #e5d5bb;
+    --hoja-borde: #d8c3a3;
+    --hoja-borde-fuerte: #c3a67e;
 
-    --text-dark: #1e1e1e;
-    --text-light: #e6f1fe;
-    --text-secondary: #8aa0b8;
-    --text-placeholder: #6b84a0;
+    /* --- Tintas -----------------------------------------------------------
+       Marrones, no grises: un gris neutro sobre fondo cálido se ve sucio. */
+    --tinta: #3a2214;
+    --tinta-media: #6b4a33;
+    --tinta-suave: #8a6b52;
+    --tinta-tenue: #a98d73;
+    --sobre-naranja: #fff6ee;
+    --sobre-naranja-tenue: #ffdcc4;
 
-    // --border-field: rgba(255, 255, 255, 0.1);
-    // --border-card: rgba(255, 255, 255, 0.08);
-    // --divider: rgba(255, 255, 255, 0.12);
-    // --accent-primary: #2d8cf0;
-    // --accent-on-primary: #042c53;
-    // --accent-link: #6fb0f5;
+    /* --- Velos: para apoyarse sobre la banda o sobre la hoja --------------- */
+    --velo-blanco: rgba(255, 255, 255, 0.16);
+    --velo-blanco-fuerte: rgba(255, 255, 255, 0.28);
+    --velo-tinta: rgba(58, 34, 20, 0.1);
+    --velo-tinta-fuerte: rgba(58, 34, 20, 0.18);
 
-    --badge-bg: rgba(29, 158, 117, 0.18);
-    --badge-text: #9fe1cb;
+    /* --- Estados ----------------------------------------------------------
+       De cada uno: el de RELLENO (texto claro encima), el de TINTA (texto
+       sobre el crema, más oscuro para superar 4.5:1) y un velo de fondo. */
+    --exito: #1b7a4b;
+    --exito-tinta: #0f5233;
+    --exito-velo: rgba(27, 122, 75, 0.14);
 
-    --icon-dueno: #ef9f27;
-    --icon-supervisor: #7f77dd;
-    --icon-maitre: #85b7eb;
-    --icon-mozo: #5dcaa5;
-    --icon-cocinero: #f0997b;
-    --icon-cliente: #ed93b1;
-    /* Fondo general: Azul profundo medio (sin blanco ni negro) */
+    --peligro: #c0392b;
+    --peligro-tinta: #8e2018;
+    --peligro-velo: rgba(192, 57, 43, 0.13);
 
-    /* Éxito y peligro */
-    --ion-color-success: #44ec8a;
-    --ion-color-danger: #ec4451;
-    --ion-color-info: #44a6ec;
-    --ion-color-warning: #ecde44;
+    --alerta: #d98b14;
+    --alerta-tinta: #8a5606;
+    --alerta-velo: rgba(217, 139, 20, 0.16);
 
-    // /* Colores de Perfiles Rápidos */
-    // --color-duenio: #d97706; /* Ámbar */
-    // --color-supervisor: #0d9488; /* Verde azulado */
-    // --color-mozo: #e11d48; /* Carmesí */
-    // --color-cocinero: #ea580c; /* Naranja terracota */
-    // --color-metre: #7c3aed; /* Violeta */
-    // --color-cliente: #16a34a; /* Verde esmeralda */
-    
-    // --ion-background-color: #bad8fd; /* Ionic pinta el fondo de la app con esto */
-    --ion-background-color: transparent !important;
-    --ion-text-color: var(--text-dark); /* Ionic pinta el texto general con esto */
+    --dato: #2372a8;
+    --dato-tinta: #17547e;
+    --dato-velo: rgba(35, 114, 168, 0.13);
+
+    /* --- Perfiles: oscuros a propósito, todos van sobre el crema ----------- */
+    --perfil-duenio: #c4700d;
+    --perfil-supervisor: #6d4aa8;
+    --perfil-metre: #1b7a8c;
+    --perfil-mozo: #1b7a4b;
+    --perfil-cocinero: #c0392b;
+    --perfil-cantinero: #a8347a;
+    --perfil-cliente: #2372a8;
+
+    /* --- Forma ------------------------------------------------------------
+       Radios generosos: es lo que separa una carta de una planilla de cálculo.
+       Las sombras van en marrón, no en negro: sobre un fondo cálido una sombra
+       gris se ve como suciedad. */
+    --radio-chico: 0.625rem;
+    --radio: 1rem;
+    --radio-grande: 1.25rem;
+    --radio-hoja: 1.75rem;
+
+    --sombra-apoyada: 0 0.125rem 0.5rem rgba(90, 55, 30, 0.1);
+    --sombra-tarjeta: 0 0.375rem 1rem rgba(90, 55, 30, 0.12);
+    --sombra-elevada: 0 0.875rem 1.75rem rgba(90, 55, 30, 0.18);
+    --sombra-hoja: 0 -0.5rem 1.5rem rgba(90, 55, 30, 0.22);
+    --sombra-naranja: 0 0.375rem 1rem rgba(192, 67, 15, 0.32);
+
+    --borde-hoja: 0.0625rem solid var(--hoja-borde);
+
+    /* --- Degradados -------------------------------------------------------- */
+    --grad-banda: linear-gradient(165deg, #ee6a2a 0%, #e2571c 45%, #c8460f 100%);
+    --grad-naranja: linear-gradient(135deg, #f5883e 0%, #e2571c 55%, #cf4a13 100%);
+    --grad-tarjeta: linear-gradient(170deg, #fdf8f0 0%, #f7ecdc 100%);
+    --grad-campo: linear-gradient(180deg, #faf3e8 0%, #f4ead9 100%);
+
+    /* --- Patrón de cubiertos ----------------------------------------------
+       El PNG de la pantalla de presentación. Es blanco sobre transparente: va
+       tal cual sobre la banda naranja, e invertido por CSS sobre el crema. */
+    --patron: url("../assets/patron_full_blanco.png");
+
+    /* --- Tipografía --------------------------------------------------------
+       Escala grande a propósito: la aplicación se usa de pie y a un brazo de
+       distancia, y en la corrección se mira desde lejos. */
+    --fuente: "Montserrat", "Segoe UI", "Roboto", system-ui, -apple-system, sans-serif;
+
+    /* Espaciado de las mayúsculas: sin él, un botón en caja alta se lee como un
+       bloque macizo. */
+    --traqueo: 0.06em;
+
+    --texto-titulo-grande: 1.9375rem;
+    --texto-titulo: 1.5rem;
+    --texto-subtitulo: 1.25rem;
+    --texto-cuerpo: 1.0625rem;
+    --texto-apoyo: 1rem;
+    --texto-epigrafe: 0.9375rem;
+
+    /* --- Puente con Ionic --------------------------------------------------
+       El fondo lo pintan la banda y la hoja, así que Ionic va transparente. */
+    --ion-font-family: var(--fuente);
+
+    --ion-background-color: transparent;
+    --ion-background-color-rgb: 240, 228, 210;
+    --ion-text-color: #3a2214;
+    --ion-text-color-rgb: 58, 34, 20;
+    --ion-card-background: #faf3e8;
+    --ion-item-background: transparent;
+    --ion-toolbar-background: transparent;
+    --ion-toolbar-color: #fff6ee;
+    --ion-border-color: #d8c3a3;
+    --ion-overlay-background-color: #faf3e8;
+
+    --ion-color-primary: #e2571c;
+    --ion-color-primary-rgb: 226, 87, 28;
+    --ion-color-primary-contrast: #fff6ee;
+    --ion-color-primary-contrast-rgb: 255, 246, 238;
+    --ion-color-primary-shade: #c0430f;
+    --ion-color-primary-tint: #f5883e;
+
+    --ion-color-secondary: #8e2f14;
+    --ion-color-secondary-rgb: 142, 47, 20;
+    --ion-color-secondary-contrast: #fff6ee;
+    --ion-color-secondary-contrast-rgb: 255, 246, 238;
+    --ion-color-secondary-shade: #75260f;
+    --ion-color-secondary-tint: #a54426;
+
+    --ion-color-tertiary: #c4700d;
+    --ion-color-tertiary-rgb: 196, 112, 13;
+    --ion-color-tertiary-contrast: #fff6ee;
+    --ion-color-tertiary-contrast-rgb: 255, 246, 238;
+    --ion-color-tertiary-shade: #a35d09;
+    --ion-color-tertiary-tint: #d68520;
+
+    --ion-color-success: #1b7a4b;
+    --ion-color-success-rgb: 27, 122, 75;
+    --ion-color-success-contrast: #ffffff;
+    --ion-color-success-contrast-rgb: 255, 255, 255;
+    --ion-color-success-shade: #14603a;
+    --ion-color-success-tint: #2f9160;
+
+    --ion-color-warning: #d98b14;
+    --ion-color-warning-rgb: 217, 139, 20;
+    --ion-color-warning-contrast: #33210a;
+    --ion-color-warning-contrast-rgb: 51, 33, 10;
+    --ion-color-warning-shade: #b57210;
+    --ion-color-warning-tint: #e79c2c;
+
+    --ion-color-danger: #c0392b;
+    --ion-color-danger-rgb: 192, 57, 43;
+    --ion-color-danger-contrast: #ffffff;
+    --ion-color-danger-contrast-rgb: 255, 255, 255;
+    --ion-color-danger-shade: #9e2b20;
+    --ion-color-danger-tint: #d24f41;
+
+    --ion-color-light: #faf3e8;
+    --ion-color-light-rgb: 250, 243, 232;
+    --ion-color-light-contrast: #3a2214;
+    --ion-color-light-contrast-rgb: 58, 34, 20;
+    --ion-color-light-shade: #e5ddd2;
+    --ion-color-light-tint: #fcf6ec;
+
+    --ion-color-medium: #8a6b52;
+    --ion-color-medium-rgb: 138, 107, 82;
+    --ion-color-medium-contrast: #ffffff;
+    --ion-color-medium-contrast-rgb: 255, 255, 255;
+    --ion-color-medium-shade: #735943;
+    --ion-color-medium-tint: #9c8168;
+
+    --ion-color-dark: #3a2214;
+    --ion-color-dark-rgb: 58, 34, 20;
+    --ion-color-dark-contrast: #fff6ee;
+    --ion-color-dark-contrast-rgb: 255, 246, 238;
+    --ion-color-dark-shade: #2e1b10;
+    --ion-color-dark-tint: #52392c;
 }
-
-/* Forzar que no aplique temas claros u oscuros del sistema operativo */
-// @media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
-//     :root {
-//         --ion-background-color: #1a3a60 !important;
-//         --ion-text-color: #ffffff !important;
-//         --ion-card-background: #254d7d !important;
-//     }
-// }

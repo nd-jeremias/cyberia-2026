@@ -1,22 +1,14 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button defaultHref="/inicio"></ion-back-button>
-        </ion-buttons>
-        <ion-title>{{ titulo() }}</ion-title>
-        <ion-buttons slot="end">
-            <ion-button (click)="irACrear()">
-                <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-                {{ textoBotonCrear() }}
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="titulo()">
+    <button accion type="button" class="btn-banda" (click)="irACrear()">
+        <ion-icon name="add-circle-outline"></ion-icon>
+        {{ textoBotonCrear() }}
+    </button>
+</app-header>
 
 <ion-content [fullscreen]="true">
     <app-tarjeta-listado-producto
         [productos]="productos()"
-        [tituloListado]="titulo()"
+        [tituloListado]="tituloListado()"
         modo="gestion"
         (editarProducto)="onEditar($event)"
         (eliminarProducto)="onEliminar($event)"

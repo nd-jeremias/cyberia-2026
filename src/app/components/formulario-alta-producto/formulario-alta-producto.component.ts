@@ -5,16 +5,7 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms';
-import {
-    IonButton,
-    IonCard,
-    IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonInput,
-    IonItem,
-    IonTextarea,
-} from '@ionic/angular';
+import { IonButton, IonIcon, IonInput, IonTextarea } from '@ionic/angular';
 import {
     Producto,
     ProductoAltaInterface,
@@ -38,18 +29,7 @@ const CANTIDAD_FOTOS_REQUERIDA = 3;
     selector: 'app-formulario-alta-producto',
     templateUrl: './formulario-alta-producto.component.html',
     styleUrls: ['./formulario-alta-producto.component.scss'],
-    imports: [
-        IonCard,
-        IonCardContent,
-        IonCardHeader,
-        IonCardTitle,
-        IonInput,
-        IonItem,
-        IonTextarea,
-        IonButton,
-        ReactiveFormsModule,
-        SubidaImagenesComponent,
-    ],
+    imports: [IonIcon, IonInput, IonTextarea, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaProductoComponent {
     private modal = inject(ModalService);
@@ -114,6 +94,19 @@ export class FormularioAltaProductoComponent {
 
     private cantidadFotos(): number {
         return this.fotos.length + this.fotosUrlsExistentes.length;
+    }
+
+    /**
+     * Indica si un campo debe mostrar cierto error.
+     *
+     * Se exige que esté "tocado" para no pintar de rojo un formulario que el
+     * usuario todavía no completó. Al enviar se tocan todos, así que ahí
+     * aparecen los mensajes de lo que falta.
+     */
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
     }
 
     onAltaProducto() {

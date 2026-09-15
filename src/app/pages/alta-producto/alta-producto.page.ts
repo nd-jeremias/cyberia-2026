@@ -1,13 +1,7 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    IonBackButton,
-    IonButtons,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-} from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
+import { HeaderComponent } from '../../components/header/header.component';
 import { FormularioAltaProductoComponent } from '../../components/formulario-alta-producto/formulario-alta-producto.component';
 import {
     Producto,
@@ -28,15 +22,8 @@ import { ProductosService } from '../../services/productos.service';
 @Component({
     selector: 'app-alta-producto',
     templateUrl: './alta-producto.page.html',
-    imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
-        IonContent,
-        IonButtons,
-        IonBackButton,
-        FormularioAltaProductoComponent,
-    ],
+    styleUrls: ['./alta-producto.page.scss'],
+    imports: [IonContent, HeaderComponent, FormularioAltaProductoComponent],
 })
 export class AltaProductoPage {
     private modal = inject(ModalService);

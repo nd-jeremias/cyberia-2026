@@ -9,28 +9,36 @@ import {
     Validators,
 } from '@angular/forms';
 import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton, IonIcon } from '@ionic/angular';
-import { RegisterInterface } from '../../interfaces/auth.interface';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
 import { RouterLink } from '@angular/router';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
-import {
-    personAddOutline,
-    personOutline,
-    cardOutline,
-    qrCodeOutline,
-    briefcaseOutline,
-    peopleOutline,
-    mailOutline,
-    lockClosedOutline,
-} from 'ionicons/icons';
-import { addIcons } from 'ionicons';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { EmpleadoInterface } from '../../interfaces/empleado.interface';
+import { ClienteInterface } from '../../interfaces/cliente.interface';
 
+/**
+ * Validador para comprobar que las contraseñas coincidan.
+ *
+ * En modo creación:
+ * - password es obligatorio
+ * - confirmPassword es obligatorio
+ *
+ * En modo edición:
+ * - ambos vacíos = no se modifica la contraseña → válido
+ * - ambos completos e iguales = se modifica la contraseña → válido
+ * - uno solo completo o diferentes = inválido
+ */
 const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
+
+    // En edición, ambos vacíos significa:
+    // "no quiero modificar la contraseña".
+    if (!password && !confirmPassword) {
+        return null;
+    }
 
     return password === confirmPassword ? null : { passwordsDistintas: true };
 };
@@ -52,34 +60,78 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     ],
 })
 export class FormularioRegistroComponent {
-    private titulosPorRol = {
-        cliente: 'Crear Cuenta',
-        dueño: 'Registrar empleado',
-        metre: 'Registrar cliente', // Ejemplo de tercer texto
-    };
-    tituloEncabezado = computed(() => this.titulosPorRol[this.usuarioRol()]);
+    // ============================================================
+    // CONFIGURACIÓN
+    // ============================================================
 
     private botonesPorRol = {
         cliente: 'Registrarse',
-        dueño: 'Registrar Empleado',
+        dueño: 'Registrar empleado',
         metre: 'Registrar cliente', // Ajusta este texto según tu necesidad
     };
-    textoBoton = computed(() => this.botonesPorRol[this.usuarioRol()]);
+
+    textoBoton = computed(() => {
+        // Si llega el input de empleado, significa que estamos EDITANDO
+        if (this.usuarioExistente()) {
+            return 'Guardar cambios'; // Texto único para edición
+        }
+
+        // Si no hay empleado, es una ALTA. Usamos el rol actual.
+        const rol = this.usuarioRol();
+        return rol ? this.botonesPorRol[rol] : 'Enviar';
+    });
+    fotosIniciales = computed<string[]>(() => {
+        const fotoUrl = this.usuarioExistente()?.foto_url;
+
+        return fotoUrl ? fotoUrl : [];
+    });
+
+    // ============================================================
+    // INPUTS / OUTPUTS
+    // ============================================================
 
     usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
+    modo = input<'modificar_empleado' | null>(null);
+    /**
+     * Si existe un empleado, estamos en modo edición.
+     * Si es undefined, estamos en modo creación.
+     */
+    usuarioExistente = input<EmpleadoInterface | ClienteInterface>();
+    direccionCamara = input<'frontal' | 'trasera'>('frontal');
+    registroSubmit = output<FormData>();
+
+    // ============================================================
+    // SERVICIOS
+    // ============================================================
 
     qrService = inject(QrService);
     modal = inject(ModalService);
     fileService = inject(FileService);
 
-    direccionCamara = input<'frontal' | 'trasera'>('frontal');
-    registroSubmit = output<FormData>();
+    // ============================================================
+    // SIGNALS
+    // ============================================================
+
     cuilPrefijo = signal<string>('');
     cuilSufijo = signal<string>('');
 
-    tiposEmpleado = ['dueño', 'supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
+    /**
+     * Indica si el formulario está siendo utilizado
+     * para modificar un empleado existente.
+     */
+    esEdicion = computed(() => !!this.usuarioExistente());
 
-    foto: File[] = [];
+    // ============================================================
+    // DATOS
+    // ============================================================
+
+    tiposEmpleado = ['supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
+    fotosUrlsExistentes: string[] = [];
+
+    // ============================================================
+    // FORMULARIO
+    // ============================================================
+
     formulario = new FormGroup(
         {
             nombres: new FormControl('', {
@@ -96,53 +148,194 @@ export class FormularioRegistroComponent {
                 validators: [Validators.required, Validators.email],
             }),
             tipoEmpleado: new FormControl(''),
-            foto: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
+            perfil: new FormControl(''),
+
+            /**
+             * IMPORTANTE:
+             *
+             * El control contiene únicamente Files nuevos.
+             *
+             * Si estamos editando y el empleado ya tiene una
+             * foto en Supabase, NO intentamos convertir la URL
+             * en File.
+             */
+            foto: new FormControl<File[]>([]),
+
+            /**
+             * En creación se agregan:
+             * required + minLength(8)
+             *
+             * En edición son opcionales.
+             */
             password: new FormControl('', {
                 validators: [Validators.required, Validators.minLength(8)],
             }),
+
             confirmPassword: new FormControl('', {
                 validators: [Validators.required],
             }),
         },
-        { validators: [passwordsIguales] }
+        {
+            validators: [passwordsIguales],
+        }
     );
+
+    // ============================================================
+    // SIGNALS DERIVADOS
+    // ============================================================
 
     dniSignal = toSignal(this.formulario.controls.dni.valueChanges, { initialValue: '' });
     cuilCentral = computed(() => this.dniSignal() || '');
 
-    constructor() {
-        // Registramos los íconos para que se puedan renderizar en el HTML
-        addIcons({
-            personAddOutline,
-            personOutline,
-            cardOutline,
-            qrCodeOutline,
-            briefcaseOutline,
-            peopleOutline,
-            mailOutline,
-            lockClosedOutline,
-        });
-        effect(() => {
-            const cuil = this.formulario.controls.cuil;
-            const tipoEmpleado = this.formulario.controls.tipoEmpleado;
+    // ============================================================
+    // CONSTRUCTOR
+    // ============================================================
 
-            if (this.usuarioRol() == 'dueño') {
+    constructor() {
+        // Registramos los íconos
+        // addIcons({
+        //     personAddOutline,
+        //     personOutline,
+        //     cardOutline,
+        //     qrCodeOutline,
+        //     briefcaseOutline,
+        //     peopleOutline,
+        //     mailOutline,
+        //     lockClosedOutline,
+        // });
+
+        /**
+         * Este effect se ejecuta cuando cambia:
+         *
+         * - usuarioExistente()
+         * - usuarioRol()
+         *
+         * Por lo tanto sirve tanto para crear como para editar.
+         */
+        effect(() => {
+            const usuario = this.usuarioExistente();
+
+            const cuil = this.formulario.controls.cuil;
+            const perfil = this.formulario.controls.perfil;
+            const foto = this.formulario.controls.foto;
+            const password = this.formulario.controls.password;
+            const confirmPassword = this.formulario.controls.confirmPassword;
+            const tipoEmpleado = this.formulario.controls.tipoEmpleado;
+            // ====================================================
+            // MODO EDICIÓN
+            // ====================================================
+
+            if (usuario) {
+                this.formulario.patchValue({
+                    nombres: usuario.nombres ?? '',
+                    apellidos: usuario.apellidos ?? '',
+                    dni: usuario.dni ?? '',
+                    cuil: 'cuil' in usuario && usuario.cuil ? usuario.cuil : '',
+                    correo: usuario.correo_electronico ?? '',
+                    perfil: 'perfil' in usuario && usuario.perfil ? usuario.perfil : '',
+                    tipoEmpleado: 'tipoEmpleado' in usuario && usuario.tipoEmpleado ? usuario.tipoEmpleado : '',
+
+                    /**
+                     * NO colocamos empleado.fotoUrl acá.
+                     *
+                     * El FormControl espera File[] y
+                     * Supabase nos devuelve un string.
+                     *
+                     * La foto existente debe utilizarse
+                     * únicamente para el preview.
+                     */
+                    foto: [],
+
+                    /**
+                     * Nunca intentamos recuperar la contraseña
+                     * almacenada.
+                     */
+                    password: '',
+                    confirmPassword: '',
+                });
+                if ('cuil' in usuario) this.separarCuil(usuario.cuil);
+
+                // ------------------------------------------------
+                // FOTO OPCIONAL EN EDICIÓN
+                // ------------------------------------------------
+
+                foto.clearValidators();
+
+                // ------------------------------------------------
+                // PASSWORD OPCIONAL EN EDICIÓN
+                // ------------------------------------------------
+
+                password.clearValidators();
+                confirmPassword.clearValidators();
+
+                // ------------------------------------------------
+                // Actualizamos validaciones
+                // ------------------------------------------------
+
+                foto.updateValueAndValidity();
+                password.updateValueAndValidity();
+                confirmPassword.updateValueAndValidity();
+            }
+
+            // ====================================================
+            // MODO CREACIÓN
+            // ====================================================
+            else {
+                /**
+                 * La foto es obligatoria al registrarse.
+                 */
+                foto.setValidators([this.fileService.minLengthArray(1)]);
+
+                /**
+                 * La contraseña es obligatoria al registrarse.
+                 */
+                password.setValidators([Validators.required, Validators.minLength(8)]);
+                confirmPassword.setValidators([Validators.required]);
+
+                // Actualizamos validaciones
+
+                foto.updateValueAndValidity();
+                password.updateValueAndValidity();
+                confirmPassword.updateValueAndValidity();
+            }
+
+            // ====================================================
+            // VALIDACIONES SEGÚN ROL
+            // ====================================================
+
+            if (this.usuarioRol() === 'dueño') {
                 cuil.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+                // El select escribe en tipoEmpleado, que es lo que el registro
+                // guarda como perfil. Antes también se exigía `perfil`, que no
+                // tiene campo en pantalla, y el alta nunca pasaba la validación.
                 tipoEmpleado.setValidators([Validators.required]);
             } else {
                 cuil.clearValidators();
                 tipoEmpleado.clearValidators();
+                perfil.clearValidators();
+
+                /**
+                 * No necesitamos conservar estos valores
+                 * cuando el rol no los utiliza.
+                 */
                 cuil.reset('');
                 tipoEmpleado.reset('');
+                perfil.reset('');
             }
 
             cuil.updateValueAndValidity();
+            perfil.updateValueAndValidity();
             tipoEmpleado.updateValueAndValidity();
         });
     }
 
+    // ============================================================
+    // DNI
+    // ============================================================
+
     async scanearDNI() {
         const dniData: DniInterface | null = await this.qrService.scanDNI();
+
         if (dniData) {
             this.formulario.patchValue({
                 nombres: dniData.nombres,
@@ -152,65 +345,194 @@ export class FormularioRegistroComponent {
         }
     }
 
+    // ============================================================
+    // IMÁGENES
+    // ============================================================
+
+    /**
+     * Recibe los archivos emitidos por
+     * SubidaImagenesComponent.
+     *
+     * El componente puede manejar una o varias imágenes,
+     * por eso mantenemos File[].
+     *
+     * En este formulario utilizamos solamente la primera.
+     */
     recibirImagenes(imagenes: File[]) {
-        this.foto = imagenes;
+        this.formulario.patchValue({
+            foto: imagenes,
+        });
 
-        // Almacena el array de Files directamente en el formulario
-        this.formulario.patchValue({ foto: imagenes });
-
-        // Opcional: Marca el control como "dirty" o "touched" para la validación
-        this.formulario.get('imagenes')?.markAsTouched();
+        /**
+         * Marca el control para mostrar errores.
+         */
+        this.formulario.controls.foto.markAsTouched();
+        this.formulario.controls.foto.markAsDirty();
     }
 
+    onUrlsExistentes(urls: string[]) {
+        this.fotosUrlsExistentes = urls;
+    }
+
+    // ============================================================
+    // UTILIDADES
+    // ============================================================
+
     toCapitalize(word: string): string {
-        if (!word || word.length === 0) return '';
+        if (!word || word.length === 0) {
+            return '';
+        }
+
         return word[0].toUpperCase() + word.slice(1);
     }
 
+    /**
+     * Indica si un campo debe mostrar un error concreto.
+     *
+     * Se exige que el control esté "tocado" para no llenar de rojo un
+     * formulario que el usuario todavía no completó.
+     */
+    hayError(control: string, error: string): boolean {
+        const campo = this.formulario.get(control);
+
+        return !!campo && campo.touched && campo.hasError(error);
+    }
+
+    /**
+     * La coincidencia de contraseñas se valida a nivel de grupo, porque
+     * comparar dos controles entre sí no lo puede hacer un validador de campo.
+     * Por eso el error se consulta en el FormGroup y no en confirmPassword.
+     */
+    get passwordsNoCoinciden(): boolean {
+        return !!this.formulario.controls.confirmPassword.touched && this.formulario.hasError('passwordsDistintas');
+    }
+
+    private separarCuil(cuil: string | null | undefined): void {
+        if (!cuil) {
+            this.cuilPrefijo.set('');
+            this.cuilSufijo.set('');
+            return;
+        }
+
+        const cuilLimpio = cuil.replace(/\D/g, '');
+
+        if (cuilLimpio.length !== 11) {
+            console.warn('CUIL inválido:', cuil);
+            this.cuilPrefijo.set('');
+            this.cuilSufijo.set('');
+            return;
+        }
+
+        this.cuilPrefijo.set(cuilLimpio.substring(0, 2));
+        this.cuilSufijo.set(cuilLimpio.substring(10, 11));
+    }
+
+    // ============================================================
+    // VALIDACIÓN
+    // ============================================================
+
     validateForm(form: FormGroup): boolean {
-        if (this.usuarioRol() == 'dueño') {
+        // --------------------------------------------------------
+        // CUIL
+        // --------------------------------------------------------
+
+        if (this.usuarioRol() === 'dueño') {
             const cuilCompleto = `${this.cuilPrefijo()}${this.cuilCentral()}${this.cuilSufijo()}`;
+
             this.formulario.controls.cuil.setValue(cuilCompleto);
         }
 
+        // --------------------------------------------------------
+        // Mostrar errores
+        // --------------------------------------------------------
+
         form.markAllAsTouched();
+
+        // --------------------------------------------------------
+        // Formulario inválido
+        // --------------------------------------------------------
 
         if (!form.valid) {
             this.modal.setOpen('Datos inválidos', 'Revise los datos ingresados');
-            return true; // Retorna true si hay errores (el formulario NO es válido)
+
+            return true;
         }
 
-        return false; // Retorna false si todo está correcto
+        return false;
     }
 
+    // ============================================================
+    // SUBMIT
+    // ============================================================
+
     onRegistro() {
-        if (this.validateForm(this.formulario) || this.formulario.invalid) return;
+        // Validamos
+        if (this.validateForm(this.formulario) || this.formulario.invalid) {
+            return;
+        }
 
-        // 1. Forzamos a que los datos extraídos cumplan con la interfaz
-        const datosRegistro = this.formulario.value as RegisterInterface;
-
+        // Sin console.log del formulario: imprimía la contraseña en la consola.
+        const datosRegistro = this.formulario.getRawValue();
         const formData = new FormData();
 
-        formData.append('dni', datosRegistro.dni.toString());
-        formData.append('cuil', datosRegistro.cuil?.toString() ?? '');
-        formData.append('apellidos', this.toCapitalize(datosRegistro.apellidos));
-        formData.append('nombres', this.toCapitalize(datosRegistro.nombres));
-        formData.append('correo', datosRegistro.correo.toLowerCase().trim());
-        formData.append('tipoEmpleado', datosRegistro.tipoEmpleado ?? '');
-        formData.append('password', datosRegistro.password);
-        formData.append('confirmPassword', datosRegistro.confirmPassword);
+        // ========================================================
+        // DATOS GENERALES
+        // ========================================================
 
-        const fotosArray = this.formulario.get('foto')?.value as File[] | null;
+        formData.append('dni', datosRegistro.dni?.toString() ?? '');
+        formData.append('cuil', datosRegistro.cuil?.toString() ?? '');
+        formData.append('apellidos', this.toCapitalize(datosRegistro.apellidos ?? ''));
+        formData.append('nombres', this.toCapitalize(datosRegistro.nombres ?? ''));
+        formData.append('correo', (datosRegistro.correo ?? '').toLowerCase().trim());
+        formData.append('perfil', datosRegistro.perfil ?? '');
+        formData.append('tipoEmpleado', datosRegistro.tipoEmpleado ?? '');
+
+        // ========================================================
+        // PASSWORD
+        // ========================================================
+
+        /**
+         * En creación:
+         * password siempre está presente.
+         *
+         * En edición:
+         * solamente lo enviamos si el usuario escribió
+         * una nueva contraseña.
+         */
+        if (datosRegistro.password) {
+            formData.append('password', datosRegistro.password);
+            formData.append('confirmPassword', datosRegistro.confirmPassword ?? '');
+        }
+
+        // ========================================================
+        // FOTO
+        // ========================================================
+
+        /**
+         * El control contiene solamente imágenes nuevas.
+         *
+         * Si estamos creando:
+         *   → debe existir una imagen porque el validator
+         *     la hizo obligatoria.
+         *
+         * Si estamos editando:
+         *   → puede estar vacío.
+         *   → eso significa "mantener la foto actual".
+         *
+         * Si contiene un File:
+         *   → significa "reemplazar la foto actual".
+         */
+        const fotosArray = datosRegistro.foto as File[] | null;
 
         if (fotosArray && fotosArray.length > 0) {
             const archivoReal = fotosArray[0];
             formData.append('foto', archivoReal);
         }
 
-        // formData.forEach((value, key) => {
-        //     console.log(`${key}:`, value);
-        // });
+        // ========================================================
+        // EMIT
+        // ========================================================
+
         this.registroSubmit.emit(formData);
-        this.formulario.reset();
     }
 }

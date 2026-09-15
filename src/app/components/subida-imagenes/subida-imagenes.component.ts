@@ -1,6 +1,6 @@
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ChangeDetectorRef, Component, effect, inject, input, NgZone, output } from '@angular/core';
-import { IonButton, Platform } from '@ionic/angular';
+import { IonButton, IonIcon, Platform } from '@ionic/angular';
 import { faSquareMinus, faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { FileService } from '../../services/file.service';
 import { ModalService } from '../../services/modal.service';
@@ -18,7 +18,7 @@ interface ImageSlot {
     selector: 'app-subida-imagenes',
     templateUrl: './subida-imagenes.component.html',
     styleUrls: ['./subida-imagenes.component.scss'],
-    imports: [IonButton, FontAwesomeModule],
+    imports: [IonButton, IonIcon, FontAwesomeModule],
 })
 export class SubidaImagenesComponent {
     archivosService = inject(FileService);

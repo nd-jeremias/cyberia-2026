@@ -1,46 +1,141 @@
 import { inject, Service } from '@angular/core';
-import { MesaAltaInterface } from '../interfaces/mesa.interface';
+import { MesaAltaInterface, MesaInterface } from '../interfaces/mesa.interface';
 import { supabase } from './supabase.service';
 import { GaleriaService } from './galeria.service';
+import { QrService } from './qr.service';
 
 @Service()
 export class MesaDbService {
     galeriaService = inject(GaleriaService);
+    qrService = inject(QrService);
 
-    async altaMesa(mesa: MesaAltaInterface) {
+    /**
+     * Da de alta una mesa con su código QR (punto 4 del enunciado).
+     *
+     * El identificador se genera acá y no se deja en manos de la base. Suena al
+     * revés, pero es lo que permite que el QR lleve adentro el id definitivo de
+     * la mesa: si se esperara al `insert` para conocerlo, habría que generar el
+     * QR después y volver a actualizar la fila.
+     */
+    async altaMesa(mesa: MesaAltaInterface): Promise<void> {
         try {
-            const publicQrUrl = await this.galeriaService.subirImagenDb(mesa.qrFile, 'qr', `${mesa.numeroMesa}-qr`);
-            if (!publicQrUrl) throw Error;
+            // Postgres acepta un id propio; su DEFAULT sólo actúa si no se envía.
+            const mesaId = crypto.randomUUID();
 
-            // Mapeamos el array de Files directamente utilizando el índice para nombrarlos
-            const promesasDeSubida = mesa.fotos.map((archivo, index) => {
-                // Genera nombres automáticos: 'foto-1.png', 'foto-2.png', etc.
-                // Manteniendo la extensión original del archivo subido
-                const extension = archivo.name.split('.').pop() || 'png';
-                const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${index + 1}.${extension}`;
+            // Dentro del QR va únicamente el id. Nada de número, tipo ni cantidad de
+            // lugares: son datos editables, y el QR se imprime y se pega en la mesa,
+            // así que cualquier cambio posterior dejaría el papel mintiendo.
+            const archivoQr = await this.qrService.generateQrFile(
+                this.qrService.contenidoMesa(mesaId),
+                `mesa-${mesa.numeroMesa}-qr.png`
+            );
 
-                // Llamamos directamente a tu función existente
-                return this.galeriaService.subirImagenDb(archivo, 'mesas', nombrePersonalizado);
-            });
+            // `upsert` en true: el nombre del archivo es fijo por mesa, así que al
+            // regenerar el QR de una mesa existente se pisa el anterior en lugar de
+            // fallar por duplicado.
+            const publicQrUrl = await this.galeriaService.subirImagenDb(archivoQr, 'qr', true, `${mesaId}-qr.png`);
 
-            // Ejecutamos las subidas en paralelo
-            const urlsPublicas = await Promise.all(promesasDeSubida);
+            // Las siguientes 3 lineas suben 1 sola img:
+            const extension = mesa.fotos.name.split('.').pop() || 'png';
+            const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
+            const urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', false, nombrePersonalizado);
 
-            if(!urlsPublicas) throw Error;
+            if (!urlPublica) throw Error;
 
             const { error } = await supabase.from('mesas').insert({
+                id: mesaId,
                 numero_mesa: mesa.numeroMesa,
                 cantidad_lugares: mesa.cantidadLugares,
                 tipo: mesa.tipo,
-                disponibilidad: 'disponible',
+                disponibilidad: 'Disponible',
                 qr_url: publicQrUrl,
-                foto_url: urlsPublicas
-            })
+                foto_url: urlPublica,
+            });
 
             if (error) throw error;
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            throw error;
+        }
+    }
+
+    async eliminar(mesaId: string, fotoUrl: string) {
+        // 1. Si la mesa tiene foto, la borramos primero del bucket
+        if (fotoUrl) {
+            const filePath = this.galeriaService.obtenerPathDesdeUrl(fotoUrl, 'Fotos');
+            if (filePath) {
+                const { error: storageError } = await supabase.storage.from('Fotos').remove([filePath]); // Recibe un array de rutas
+
+                if (storageError) {
+                    console.error('Error al borrar la foto del bucket:', storageError);
+                    throw new Error();
+                }
+            }
         }
 
+        // 2. Procedemos a borrar el registro de la mesa en la base de datos
+        const { error: dbError } = await supabase.from('mesas').delete().eq('id', mesaId);
+
+        if (dbError) throw dbError;
+    }
+
+    mapMesa(row: any): MesaInterface {
+        return {
+            id: row.id,
+            numeroMesa: row.numero_mesa,
+            cantidadLugares: row.cantidad_lugares,
+            tipo: row.tipo,
+            disponibilidad: row.disponibilidad,
+            clienteId: row.clienteId,
+            qrUrl: row.qr_url,
+            fotoUrl: row.foto_url,
+        };
+    }
+
+    async obtenerPorId(mesaId: string) {
+        try {
+            const { data, error } = await supabase.from('mesas').select('*').eq('id', mesaId).single();
+            if (error) throw error;
+            return this.mapMesa(data);
+        } catch (error) {
+            console.log(error);
+            throw new Error();
+        }
+    }
+
+    async editarMesa(id: string, mesa: MesaAltaInterface): Promise<void> {
+        try {
+            const numeroMesa = mesa.numeroMesa;
+            const cantidadLugares = mesa.cantidadLugares;
+            const tipo = mesa.tipo;
+            const fotoUrl = mesa.fotos;
+            const disponibilidad = mesa.disponibilidad
+
+            const mesaNueva: any = {
+                numero_mesa: numeroMesa,
+                cantidad_lugares: cantidadLugares,
+                tipo,
+                disponibilidad
+            };
+
+            if (fotoUrl instanceof File) {
+                const publicUrl = await this.galeriaService.subirImagenDb(fotoUrl, 'mesas', true);
+
+                if (!publicUrl) {
+                    throw new Error('No se pudo subir la imagen.');
+                }
+
+                mesaNueva.foto_url = publicUrl;
+            }
+
+            const { error } = await supabase.from('mesas').update(mesaNueva).eq('id', id);
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            console.log(error);
+            throw new Error();
+        }
     }
 }

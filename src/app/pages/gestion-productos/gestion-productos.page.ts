@@ -1,16 +1,7 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-    AlertController,
-    IonBackButton,
-    IonButton,
-    IonButtons,
-    IonContent,
-    IonHeader,
-    IonIcon,
-    IonTitle,
-    IonToolbar,
-} from '@ionic/angular';
+import { AlertController, IonContent, IonIcon } from '@ionic/angular';
+import { HeaderComponent } from '../../components/header/header.component';
 import { TarjetaListadoProductoComponent } from '../../components/tarjeta-listado-producto/tarjeta-listado-producto.component';
 import { Producto, TipoProducto } from '../../interfaces/producto.interface';
 import { PerfilUsuario } from '../../interfaces/auth.interface';
@@ -36,17 +27,7 @@ const TIPO_POR_PERFIL: Partial<Record<PerfilUsuario, TipoProducto>> = {
     selector: 'app-gestion-productos',
     templateUrl: './gestion-productos.page.html',
     styleUrls: ['./gestion-productos.page.scss'],
-    imports: [
-        IonHeader,
-        IonToolbar,
-        IonTitle,
-        IonContent,
-        IonButtons,
-        IonBackButton,
-        IonButton,
-        IonIcon,
-        TarjetaListadoProductoComponent,
-    ],
+    imports: [IonContent, IonIcon, HeaderComponent, TarjetaListadoProductoComponent],
 })
 export class GestionProductosPage {
     private authService = inject(AuthService);
@@ -60,6 +41,11 @@ export class GestionProductosPage {
     esBebida = computed(() => this.tipo() === 'Bebida');
     titulo = computed(() => (this.esBebida() ? 'Gestión de bebidas' : 'Gestión de platos'));
     textoBotonCrear = computed(() => (this.esBebida() ? 'Nueva bebida' : 'Nuevo plato'));
+
+    // Título del listado. Es distinto al de la barra superior a propósito: si
+    // fueran el mismo texto, la pantalla arrancaba con el mismo título repetido
+    // dos veces, uno debajo del otro.
+    tituloListado = computed(() => (this.esBebida() ? 'Bebidas en la carta' : 'Platos en la carta'));
 
     productos = signal<Producto[]>([]);
 

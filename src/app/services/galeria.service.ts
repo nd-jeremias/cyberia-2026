@@ -1,6 +1,7 @@
 import { Service } from '@angular/core';
 import { Camera, MediaResult, MediaTypeSelection } from '@capacitor/camera';
 import { supabase } from './supabase.service';
+import { FileObject } from '@supabase/storage-js'
 
 // export interface ImagenGaleria {
 //     blob: Blob;
@@ -10,68 +11,6 @@ import { supabase } from './supabase.service';
 
 @Service()
 export class GaleriaService {
-    //     /**
-    //    * Abre la galería del dispositivo para seleccionar una única imagen
-    //    */
-    //   async seleccionarFoto(): Promise<ImagenGaleria | null> {
-    //     try {
-    //       const imagen = await Camera.getPhoto({
-    //         quality: 85,
-    //         allowEditing: false,
-    //         resultType: CameraResultType.Uri,
-    //         source: CameraSource.Photos, // Fuerza la galería/fotos
-    //       });
-
-    //       if (!imagen.webPath) return null;
-
-    //       const respuesta = await fetch(imagen.webPath);
-    //       const blob = await respuesta.blob();
-    //       const extension = imagen.format || 'jpg';
-    //       const nombreArchivo = `img_${Date.now()}.${extension}`;
-
-    //       return {
-    //         blob,
-    //         previewUrl: imagen.webPath,
-    //         nombreArchivo,
-    //       };
-    //     } catch (error) {
-    //       console.warn('Selección de galería cancelada:', error);
-    //       return null;
-    //     }
-    // }
-
-    // /**
-    //    * Abre la galería permitiendo selección múltiple (para productos o encuestas)
-    //    */
-    //   async seleccionarMultiplesFotos(limite: number = 3): Promise<ImagenGaleria[]> {
-    //     try {
-    //       const { photos } = await Camera.pickImages({
-    //         quality: 85,
-    //         limit: limite,
-    //       });
-
-    //       const imagenesProcesadas: ImagenGaleria[] = [];
-
-    //       for (const [index, foto] of photos.entries()) {
-    //         if (foto.webPath) {
-    //           const res = await fetch(foto.webPath);
-    //           const blob = await res.blob();
-    //           const extension = foto.format || 'jpg';
-
-    //           imagenesProcesadas.push({
-    //             blob,
-    //             previewUrl: foto.webPath,
-    //             nombreArchivo: `img_${Date.now()}_${index}.${extension}`,
-    //           });
-    //         }
-    //       }
-
-    //       return imagenesProcesadas;
-    //     } catch (error) {
-    //       console.warn('Selección múltiple cancelada:', error);
-    //       return [];
-    //     }
-    //   }
     async subirImagen(maxImg: number = 3): Promise<MediaResult[]> {
         try {
             const { results } = await Camera.chooseFromGallery({
@@ -84,21 +23,26 @@ export class GaleriaService {
             return results;
         } catch (e) {
             const error = e as any;
-            const message = error.code
-                ? `[${error.code}] ${error.message}`
-                : error.message;
+            const message = error.code ? `[${error.code}] ${error.message}` : error.message;
             console.error('chooseFromGallery failed:', message);
             throw new Error(message);
         }
     }
 
-    async subirImagenDb(fotoArchivo: File, ruta:string, nombre?: string): Promise<string> {
-        const nombreNuevo =  nombre ? nombre : fotoArchivo.name;
+    /**
+     * Sube un archivo al bucket y devuelve su URL pública.
+     *
+     * `reemplazar` en true pisa el archivo si ya existe. Hace falta cuando el
+     * nombre es determinístico (el QR de una mesa, por ejemplo): sin eso, al
+     * regenerarlo la subida falla porque el archivo ya está.
+     */
+    async subirImagenDb(fotoArchivo: File, ruta: string, reemplazar = false, nombre?: string): Promise<string> {
+        const nombreNuevo = nombre ? nombre : fotoArchivo.name;
         const rutaArchivo = `${ruta}/${nombreNuevo}`;
 
-        const { data: storageData, error: storageError } = await supabase.storage
+        const { error: storageError } = await supabase.storage
             .from('Fotos')
-            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: false });
+            .upload(rutaArchivo, fotoArchivo, { cacheControl: '3600', upsert: reemplazar });
 
         if (storageError) throw storageError;
 
@@ -106,5 +50,57 @@ export class GaleriaService {
         const { data: urlData } = supabase.storage.from('Fotos').getPublicUrl(rutaArchivo);
 
         return urlData.publicUrl;
+    }
+
+    obtenerPathDesdeUrl(url: string, bucketName: string): string {
+        try {
+            const urlObjeto = new URL(url);
+            const pathname = urlObjeto.pathname; // Devuelve: "/storage/v1/object/public/Fotos/mesas/mesa55-foto-1.jpg"
+
+            // Construimos exactamente el prefijo de la URL pública de Supabase
+            const prefijo = `/storage/v1/object/public/${bucketName}/`;
+
+            if (pathname.includes(prefijo)) {
+                // Retorna todo lo que esté después de la carpeta del bucket: "mesas/mesa55-foto-1.jpg"
+                return pathname.substring(pathname.indexOf(prefijo) + prefijo.length);
+            }
+
+            return '';
+        } catch (error) {
+            console.error('La URL provista no es válida:', error);
+            return '';
+        }
+    }
+
+    parseFotoUrl(raw: unknown): string[] | null {
+        if (!raw) return null;
+
+        // Puede venir como array real (columna jsonb bien tipada)
+        if (Array.isArray(raw)) return raw as string[];
+
+        // O como string con JSON adentro
+        if (typeof raw === 'string') {
+            try {
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [parsed];
+            } catch {
+                // URL plana sin JSON.stringify
+                return [raw];
+            }
+        }
+
+        return null;
+    }
+
+    async eliminarImgDb(path: string): Promise<FileObject[]> {
+        try {
+            const { data, error } = await supabase.storage.from('avatars').remove(['folder/avatar2.png']);
+            if(error) throw error
+
+            return data
+        } catch (error) {
+            console.error('Error al eliminar la imagen:', error);
+            throw error;
+        }
     }
 }

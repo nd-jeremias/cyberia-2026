@@ -1,15 +1,11 @@
 <article class="tarjeta-usuario">
     <div class="contenedor-foto">
-        @if (usuario().fotoUrl) {
-            <img
-                class="foto-usuario"
-                [src]="usuario().fotoUrl"
-                [alt]="'Foto de ' + nombreCompleto()"
-            />
+        @if (usuario().foto_url) {
+        <img class="foto-usuario" [src]="usuario().foto_url" [alt]="'Foto de ' + nombreCompleto()" />
         } @else {
-            <div class="foto-ausente">
-                <ion-icon name="person"></ion-icon>
-            </div>
+        <div class="foto-ausente">
+            <ion-icon name="person"></ion-icon>
+        </div>
         }
     </div>
 
@@ -17,28 +13,31 @@
         <h3 class="nombre-usuario">{{ nombreCompleto() }}</h3>
 
         @if (mostrarEstado()) {
-            <ion-badge [color]="colorEstado()">{{ usuario().estado }}</ion-badge>
-        }
-
-        @if (mostrarContacto()) {
-            <p class="dato">Documento: {{ usuario().dni }}</p>
-            <p class="dato">{{ usuario().correo }}</p>
-            <p class="dato fecha">Solicitud: {{ fechaFormateada() }}</p>
-        }
+        <ion-badge [color]="colorEstado()">{{ usuario().estado }}</ion-badge>
+        } @if (mostrarContacto()) {
+        <p class="dato">DNI: {{ usuario().dni }}</p>
+        <p class="dato">{{ usuario().correo_electronico }}</p>
+        @if(rutaActual() == '/gestion-clientes/clientes-pendientes'){
+        <p class="dato fecha">Solicitud hecha el:</p>
+        <p class="dato fecha">{{ fechaFormateada() }}</p>
+        }}
     </div>
 
-    @if (acciones().length > 0) {
-        <div class="acciones">
-            @for (accion of acciones(); track accion.id) {
-                <ion-button
-                    expand="block"
-                    [color]="accion.color"
-                    (click)="onAccion(accion.id)"
-                >
-                    <ion-icon slot="start" [name]="accion.icono"></ion-icon>
-                    {{ accion.etiqueta }}
-                </ion-button>
+    @if (accionesVisibles().length > 0) {
+    <div class="acciones">
+        @for (accion of accionesVisibles(); track accion.id) {
+        <ion-button
+            expand="block"
+            [color]="accion.color || 'primary'"
+            [fill]="accion.fill || 'solid'"
+            (click)="onAccion(accion.id)"
+        >
+            @if (accion.icono) {
+            <ion-icon slot="start" [name]="accion.icono"></ion-icon>
             }
-        </div>
+            {{ accion.etiqueta }}
+        </ion-button>
+        }
+    </div>
     }
 </article>

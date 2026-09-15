@@ -6,12 +6,14 @@ import { ModalService } from '../../services/modal.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 import { AuthService } from '../../services/auth.service';
 import { EmailService } from '../../services/email.service';
+import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 @Component({
     selector: 'app-registrarse',
     templateUrl: './registrarse.page.html',
     styleUrls: ['./registrarse.page.scss'],
-    imports: [IonContent, FormularioRegistroComponent],
+    imports: [IonContent, HeaderLogoComponent, FormularioRegistroComponent],
 })
 export class RegistrarsePage {
     private router = inject(Router);
@@ -19,6 +21,7 @@ export class RegistrarsePage {
     private modal = inject(ModalService);
     authService = inject(AuthService);
     emailService = inject(EmailService);
+    notificaciones = inject(NotificacionesService)
 
     async handleRegistro(formData: FormData) {
         this.spinner.show();
@@ -32,6 +35,7 @@ export class RegistrarsePage {
             // 3. Disparar el aviso automático de registro pendiente
             if (correo && nombres) {
                 await this.emailService.enviarAvisoRegistroPendiente(correo, nombres);
+                await this.notificaciones.enviarAvisos(['dueño', 'supervisor'], "Nuevo usuario registrado", "Hay un usuario nuevo a la espera de admisión.", 'cliente-pendiente')
             }
 
             this.spinner.hide();

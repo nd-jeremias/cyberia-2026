@@ -1,0 +1,55 @@
+/**
+ * Ingreso al local.
+ *
+ * Una sola acción por pantalla: el cartel dice en qué estado está el cliente y
+ * el botón aparece únicamente cuando hay algo que hacer.
+ */
+
+.pantalla-ingreso {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    justify-content: center;
+
+    min-height: 100%;
+}
+
+.tarjeta-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1.75rem 1.25rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+
+    text-align: center;
+}
+
+.tarjeta-estado .medallon {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+}
+
+.leyenda {
+    margin: 0;
+    font-size: var(--texto-apoyo);
+    line-height: 1.45;
+    color: var(--tinta-suave);
+}
+
+.ayuda {
+    margin: 0;
+    padding: 0 0.5rem;
+
+    font-size: var(--texto-epigrafe);
+    line-height: 1.45;
+    color: var(--tinta-tenue);
+    text-align: center;
+}

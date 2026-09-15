@@ -1,9 +1,5 @@
 import { Service, computed, inject, signal } from '@angular/core';
-import {
-    DisponibilidadMesa,
-    MesaInterface,
-    TipoMesa,
-} from '../interfaces/mesa.interface';
+import { DisponibilidadMesa, MesaInterface, TipoMesa } from '../interfaces/mesa.interface';
 import { ModalService } from './modal.service';
 import { supabase } from './supabase.service';
 
@@ -29,9 +25,7 @@ interface FilaMesa {
 
 // Columnas pedidas en cada consulta, declaradas una sola vez para que todas
 // devuelvan la misma forma.
-const SELECT_MESA =
-    'id, numero_mesa, cantidad_lugares, tipo, disponibilidad, ' +
-    'cliente_id, qr_url, foto_url';
+const SELECT_MESA = 'id, numero_mesa, cantidad_lugares, tipo, disponibilidad, ' + 'cliente_id, qr_url, foto_url';
 
 @Service()
 export class MesaService {
@@ -43,13 +37,9 @@ export class MesaService {
     /** Bloquea los botones mientras hay una operación en curso. */
     cargando = signal<boolean>(false);
 
-    disponibles = computed(() =>
-        this.mesas().filter((m) => m.disponibilidad === 'disponible')
-    );
+    disponibles = computed(() => this.mesas().filter((m) => m.disponibilidad === 'Disponible'));
 
-    ocupadas = computed(() =>
-        this.mesas().filter((m) => m.disponibilidad === 'ocupada')
-    );
+    ocupadas = computed(() => this.mesas().filter((m) => m.disponibilidad === 'Ocupada'));
 
     /** Traduce una fila de la base al modelo que usan las pantallas. */
     private mapear(fila: FilaMesa): MesaInterface {
@@ -72,7 +62,7 @@ export class MesaService {
     }
 
     /** Trae todas las mesas ordenadas por número, como están en el salón. */
-    async listar(): Promise<void> {
+    async listar(): Promise<MesaInterface[] | null> {
         this.cargando.set(true);
 
         try {
@@ -83,13 +73,12 @@ export class MesaService {
 
             if (error) throw error;
 
-            this.mesas.set(
-                ((data ?? []) as unknown as FilaMesa[]).map((f) =>
-                    this.mapear(f)
-                )
-            );
+            this.mesas.set(((data ?? []) as unknown as FilaMesa[]).map((f) => this.mapear(f)));
+
+            return this.mesas();
         } catch (error) {
             this.avisarError(error, 'No se pudieron cargar las mesas.');
+            return null;
         } finally {
             this.cargando.set(false);
         }
@@ -132,14 +121,10 @@ export class MesaService {
         }
 
         // Verificación 2: la mesa no puede estar tomada por otro cliente.
-        const ocupadaPorOtro =
-            mesa.clienteId !== null && mesa.clienteId !== clienteId;
+        const ocupadaPorOtro = mesa.clienteId !== null && mesa.clienteId !== clienteId;
 
-        if (ocupadaPorOtro || mesa.disponibilidad === 'ocupada') {
-            this.modal.setOpen(
-                'Mesa ocupada',
-                `La mesa N° ${mesa.numeroMesa} ya está asignada a otro cliente.`
-            );
+        if (ocupadaPorOtro || mesa.disponibilidad === 'Ocupada') {
+            this.modal.setOpen('Mesa ocupada', `La mesa N° ${mesa.numeroMesa} ya está asignada a otro cliente.`);
 
             return false;
         }
@@ -151,28 +136,22 @@ export class MesaService {
             // misma mesa a la vez: el segundo update no afecta ninguna fila.
             const { data, error } = await supabase
                 .from('mesas')
-                .update({ cliente_id: clienteId, disponibilidad: 'ocupada' })
+                .update({ cliente_id: clienteId, disponibilidad: 'Ocupada' })
                 .eq('id', mesaId)
-                .eq('disponibilidad', 'disponible')
+                .eq('disponibilidad', 'Disponible')
                 .select('id');
 
             if (error) throw error;
 
             if (!data || data.length === 0) {
-                this.modal.setOpen(
-                    'Mesa ocupada',
-                    'Otro usuario tomó esa mesa hace instantes. Elija otra.'
-                );
+                this.modal.setOpen('Mesa ocupada', 'Otro usuario tomó esa mesa hace instantes. Elija otra.');
 
                 return false;
             }
 
             await this.listar();
 
-            this.modal.setOpen(
-                'Mesa asignada',
-                `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`
-            );
+            this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
 
             return true;
         } catch (error) {
@@ -190,7 +169,7 @@ export class MesaService {
             const { error } = await supabase
                 .from('mesas')
                 .update({
-                    disponibilidad: 'disponible',
+                    disponibilidad: 'Disponible',
                     cliente_id: null,
                 })
                 .eq('id', mesaId);

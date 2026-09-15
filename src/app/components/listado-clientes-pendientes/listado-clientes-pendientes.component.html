@@ -1,10 +1,11 @@
 <section class="listado-clientes">
-    <h2 class="titulo-listado">{{ tituloListado() }}</h2>
+    <!-- <h2 class="titulo-listado titulo-seccion">{{ tituloListado() }}</h2> -->
 
     @if (clientes().length === 0) {
-        <p class="listado-vacio">
-            No hay clientes esperando aprobación en este momento.
-        </p>
+        <div class="estado-vacio">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <p>No hay clientes esperando aprobación en este momento.</p>
+        </div>
     } @else {
         <div class="lista">
             @for (cliente of clientes(); track cliente.id) {

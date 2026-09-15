@@ -1,19 +1,11 @@
 import { Service, computed, inject, signal } from '@angular/core';
-import {
-    ActionPerformed,
-    PushNotificationSchema,
-    PushNotifications,
-    Token,
-} from '@capacitor/push-notifications';
-import { Haptics, NotificationType } from '@capacitor/haptics';
+import { ActionPerformed, PushNotificationSchema, PushNotifications, Token } from '@capacitor/push-notifications';
 import { Preferences } from '@capacitor/preferences';
 import { Platform, ToastController } from '@ionic/angular';
-import {
-    NotificacionInterface,
-    TipoNotificacion,
-} from '../interfaces/notificacion.interface';
+import { NotificacionInterface, TipoNotificacion } from '../interfaces/notificacion.interface';
 import { ModalService } from './modal.service';
 import { supabase } from './supabase.service';
+import { VibracionService } from './vibracion.service';
 
 const CLAVE_TOKEN = 'token-push';
 
@@ -26,14 +18,16 @@ export class NotificacionesService {
     private platform = inject(Platform);
     private modal = inject(ModalService);
     private toastCtrl = inject(ToastController);
+    private vibracion = inject(VibracionService);
+
+    /** Evita registrar los listeners dos veces si se inicializa de nuevo. */
+    private inicializado = false;
 
     token = signal<string | null>(null);
     permisoConcedido = signal<boolean>(false);
     notificaciones = signal<NotificacionInterface[]>([]);
 
-    sinLeer = computed(
-        () => this.notificaciones().filter((n) => !n.leida).length
-    );
+    sinLeer = computed(() => this.notificaciones().filter((n) => !n.leida).length);
 
     // En el navegador el plugin nativo no existe, asi que las pantallas
     // deben poder seguir funcionando sin notificaciones.
@@ -42,17 +36,39 @@ export class NotificacionesService {
     }
 
     async inicializar(): Promise<void> {
-        if (!this.esNativo) return;
+        // Una sola vez: repetirlo duplicaría los listeners y cada aviso se
+        // mostraría dos veces.
+        if (!this.esNativo || this.inicializado) return;
 
         const permiso = await this.pedirPermiso();
 
         if (!permiso) return;
 
+        this.inicializado = true;
+
         await this.crearCanal();
 
         this.escucharEventos();
+        this.sincronizarAlCambiarSesion();
 
         await PushNotifications.register();
+    }
+
+    /**
+     * Vuelve a guardar el token cada vez que se abre o se restaura una sesión.
+     *
+     * El token puede llegar antes de que Supabase termine de leer la sesión
+     * guardada en el dispositivo: en ese caso `sincronizarToken` no encuentra
+     * usuario y no guarda nada, y antes no se volvía a intentar. Escuchar los
+     * cambios de sesión cubre ese caso y también el ingreso anónimo y el de los
+     * botones rápidos, que no pasan por la pantalla de ingreso.
+     */
+    private sincronizarAlCambiarSesion(): void {
+        supabase.auth.onAuthStateChange((_evento, sesion) => {
+            // Supabase advierte que llamar a otros métodos suyos dentro de este
+            // callback puede trabar el cliente: se difiere al siguiente ciclo.
+            if (sesion) setTimeout(() => void this.sincronizarToken(), 0);
+        });
     }
 
     private async crearCanal(): Promise<void> {
@@ -61,8 +77,7 @@ export class NotificacionesService {
         await PushNotifications.createChannel({
             id: CANAL_AVISOS,
             name: 'Avisos del restaurante',
-            description:
-                'Pedidos, mesas, consultas y aprobaciones de clientes.',
+            description: 'Pedidos, mesas, consultas y aprobaciones de clientes.',
             importance: 5,
             visibility: 1,
             sound: 'default',
@@ -102,38 +117,26 @@ export class NotificacionesService {
             await this.sincronizarToken();
         });
 
-        PushNotifications.addListener('registrationError', async () => {
-            await Haptics.notification({ type: NotificationType.Error });
-
-            this.modal.setOpen(
-                'Error de registro',
-                'No se pudo registrar el dispositivo para recibir notificaciones.'
-            );
+        // La vibración la pone el modal, que vibra ante cualquier error.
+        PushNotifications.addListener('registrationError', () => {
+            this.modal.setOpen('Error de registro', 'No se pudo registrar el dispositivo para recibir notificaciones.');
         });
 
         // Con la app en primer plano Android no dibuja nada en la barra:
         // entrega el aviso y la app decide como mostrarlo.
-        PushNotifications.addListener(
-            'pushNotificationReceived',
-            async (notificacion: PushNotificationSchema) => {
-                const nueva = this.agregar(notificacion);
-                await this.avisarEnPantalla(nueva);
-            }
-        );
+        PushNotifications.addListener('pushNotificationReceived', async (notificacion: PushNotificationSchema) => {
+            const nueva = this.agregar(notificacion);
+            await this.avisarEnPantalla(nueva);
+        });
 
-        PushNotifications.addListener(
-            'pushNotificationActionPerformed',
-            (accion: ActionPerformed) => {
-                const nueva = this.agregar(accion.notification);
-                this.marcarLeida(nueva.id);
-            }
-        );
+        PushNotifications.addListener('pushNotificationActionPerformed', (accion: ActionPerformed) => {
+            const nueva = this.agregar(accion.notification);
+            this.marcarLeida(nueva.id);
+        });
     }
 
-    private async avisarEnPantalla(
-        notificacion: NotificacionInterface
-    ): Promise<void> {
-        await Haptics.notification({ type: NotificationType.Success });
+    private async avisarEnPantalla(notificacion: NotificacionInterface): Promise<void> {
+        await this.vibracion.exito();
 
         const toast = await this.toastCtrl.create({
             header: notificacion.titulo,
@@ -167,15 +170,11 @@ export class NotificacionesService {
     }
 
     marcarLeida(id: string): void {
-        this.notificaciones.update((actuales) =>
-            actuales.map((n) => (n.id === id ? { ...n, leida: true } : n))
-        );
+        this.notificaciones.update((actuales) => actuales.map((n) => (n.id === id ? { ...n, leida: true } : n)));
     }
 
     marcarTodasLeidas(): void {
-        this.notificaciones.update((actuales) =>
-            actuales.map((n) => ({ ...n, leida: true }))
-        );
+        this.notificaciones.update((actuales) => actuales.map((n) => ({ ...n, leida: true })));
     }
 
     async limpiar(): Promise<void> {
@@ -190,22 +189,25 @@ export class NotificacionesService {
     // token y tambien despues del login, porque el orden entre ambos no esta
     // garantizado: el registro puede resolverse antes de que exista sesion.
     async sincronizarToken(): Promise<void> {
-        const token = await this.recuperarToken();
+        try {
+            const token = await this.recuperarToken();
+            if (!token) return;
 
-        if (!token) return;
+            const { data, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError) throw sessionError;
 
-        const { data } = await supabase.auth.getSession();
-        const usuarioId = data.session?.user.id;
+            const usuarioId = data.session?.user.id;
+            if (!usuarioId) return;
 
-        if (!usuarioId) return;
+            const { error: updateError } = await supabase
+                .from('usuarios')
+                .update({ token_push: token })
+                .eq('id', usuarioId);
 
-        const { error } = await supabase
-            .from('usuarios')
-            .update({ token_push: token })
-            .eq('id', usuarioId);
-
-        if (error) {
-            console.error('No se pudo guardar el token push:', error.message);
+            if (updateError) throw updateError;
+        } catch (error) {
+            // Capturamos cualquier error (de sesión, de la query o del método recuperarToken)
+            console.error('No se pudo guardar o sincronizar el token push:', error);
         }
     }
 
@@ -236,14 +238,102 @@ export class NotificacionesService {
     }
 
     private async olvidarTokenEnBase(): Promise<void> {
-        const { data } = await supabase.auth.getSession();
-        const usuarioId = data.session?.user.id;
+        try {
+            const { data, error: sessionError } = await supabase.auth.getSession();
+            if (sessionError) throw sessionError;
 
-        if (!usuarioId) return;
+            const usuarioId = data.session?.user.id;
+            if (!usuarioId) return;
 
-        await supabase
-            .from('usuarios')
-            .update({ token_push: null })
-            .eq('id', usuarioId);
+            // Ejecutamos la consulta guardando la respuesta para evaluar errores
+            const { error: updateError } = await supabase
+                .from('usuarios')
+                .update({ token_push: null })
+                .eq('id', usuarioId);
+
+            if (updateError) throw updateError;
+        } catch (error) {
+            // Captura el error en la consola para debugging, pero no lo relanza (no usa throw)
+            // para que el proceso de cerrar sesión local de la app pueda continuar con éxito.
+            console.error('Error al intentar limpiar el token_push en la base de datos:', error);
+        }
+    }
+
+    // Método para notificar a varios perfiles (ej: ['dueño', 'supervisor', 'barman'])
+    async enviarAvisos(perfiles: string[], titulo: string, cuerpo: string, tipo: string) {
+        try {
+            // 1. Buscamos TODOS los usuarios que coincidan con CUALQUIERA de los perfiles.
+            // Al usar .in() no hace falta un bucle "for", Supabase trae todos juntos.
+            const { data: usuarios, error: userError } = await supabase
+                .from('usuarios')
+                .select('token_push')
+                .in('perfil', perfiles) // Busca múltiples perfiles a la vez!
+                .eq('estado', 'Activo')
+                .not('token_push', 'is', null); // Evitamos traer a los que no tienen su celu registrado
+
+            if (userError) throw userError;
+
+            // Extraemos solo los valores de push (ignoramos los nulos por precaución)
+            const tokens = usuarios?.map((u) => u.token_push).filter((t) => !!t) || [];
+
+            if (tokens.length === 0) {
+                console.log('No hay usuarios activos con esos perfiles listos para recibir avisos.');
+                return;
+            }
+
+            // 2. Invocamos la Edge Function UNA SOLA VEZ pasando toda la lista de tokens juntos.
+            // La función de Supabase se encarga internamente de enviar todos los mensajes sin saturar la app.
+            const { data, error } = await supabase.functions.invoke('enviar-notificacion', {
+                body: {
+                    tokens: tokens, // ¡Le pasamos el arreglo gigante de corrido!
+                    titulo: titulo,
+                    cuerpo: cuerpo,
+                    tipo: tipo,
+                },
+            });
+
+            if (error) throw error;
+
+            console.log(`Se enviaron notificaciones a ${tokens.length} dispositivos exitosamente:`, data);
+            return data;
+        } catch (error) {
+            console.error('Error al intentar enviar notificación grupal:', error);
+            throw new Error('Error al enviar notificaciones.')
+        }
+    }
+
+    // Igual que enviarAvisos, pero para UNA persona puntual y no para un perfil.
+    // Lo usa el chat (punto 11): la respuesta del mozo le llega sólo al cliente de ese chat.
+    async enviarAvisoAUsuario(usuarioId: string, titulo: string, cuerpo: string, tipo: string) {
+        try {
+            const { data: usuario, error: userError } = await supabase
+                .from('usuarios')
+                .select('token_push')
+                .eq('id', usuarioId)
+                .maybeSingle();
+
+            if (userError) throw userError;
+
+            if (!usuario?.token_push) {
+                console.log('El usuario no tiene el celular registrado para recibir avisos.');
+                return;
+            }
+
+            const { data, error } = await supabase.functions.invoke('enviar-notificacion', {
+                body: {
+                    tokens: [usuario.token_push],
+                    titulo: titulo,
+                    cuerpo: cuerpo,
+                    tipo: tipo,
+                },
+            });
+
+            if (error) throw error;
+
+            return data;
+        } catch (error) {
+            console.error('Error al intentar enviar la notificación al usuario:', error);
+            throw new Error('Error al enviar la notificación.');
+        }
     }
 }

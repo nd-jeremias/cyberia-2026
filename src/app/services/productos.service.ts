@@ -46,6 +46,25 @@ export class ProductosService {
         return (data ?? []).map(mapearProducto);
     }
 
+    /**
+     * Toda la carta de una vez (punto 11).
+     *
+     * El cliente alterna entre comidas, bebidas y postres mientras arma el
+     * pedido, así que se traen los tres tipos juntos y el filtro se resuelve
+     * en pantalla: una sola consulta en lugar de una por solapa.
+     */
+    async listarTodos(): Promise<Producto[]> {
+        const { data, error } = await supabase
+            .from('productos')
+            .select('id, nombre, descripcion, tiempo_elaboracion_minutos, precio, fotos_urls, tipo')
+            .order('tipo', { ascending: true })
+            .order('nombre', { ascending: true });
+
+        if (error) throw error;
+
+        return (data ?? []).map(mapearProducto);
+    }
+
     async obtenerPorId(id: string): Promise<Producto> {
         const { data, error } = await supabase
             .from('productos')

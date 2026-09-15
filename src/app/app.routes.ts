@@ -39,6 +39,66 @@ export const routes: Routes = [
         path: 'registrarse',
         loadComponent: () => import('./pages/registrarse/registrarse.page').then((m) => m.RegistrarsePage),
     },
+    // Punto 9: el cliente escanea el QR de la puerta y entra a la lista de espera.
+    {
+        path: 'escanear-ingreso',
+        loadComponent: () =>
+            import('./pages/escanear-ingreso/escanear-ingreso.page').then((m) => m.EscanearIngresoPage),
+        canActivate: [authGuard],
+    },
+    // Puntos 10 y 11: el cliente escanea el QR de su mesa y se sienta.
+    {
+        path: 'escanear-mesa',
+        loadComponent: () => import('./pages/escanear-mesa/escanear-mesa.page').then((m) => m.EscanearMesaPage),
+        canActivate: [authGuard],
+    },
+    // ---------------------------------------------------------------
+    // Circuito del cliente sentado. Todas son armazones todavía: existen
+    // para que los accesos del inicio lleven a algún lado y se pueda
+    // recorrer el flujo completo mientras se completan una por una.
+    // ---------------------------------------------------------------
+    {
+        path: 'carta',
+        loadComponent: () => import('./pages/carta/carta.page').then((m) => m.CartaPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'consulta-mozo',
+        loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then((m) => m.ConsultaMozoPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'estado-pedido',
+        loadComponent: () => import('./pages/estado-pedido/estado-pedido.page').then((m) => m.EstadoPedidoPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'juegos',
+        loadComponent: () => import('./pages/juegos/juegos.page').then((m) => m.JuegosPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'encuestas',
+        loadComponent: () => import('./pages/encuestas/encuestas.page').then((m) => m.EncuestasPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'pedir-cuenta',
+        loadComponent: () => import('./pages/pedir-cuenta/pedir-cuenta.page').then((m) => m.PedirCuentaPage),
+        canActivate: [authGuard],
+    },
+    // El QR de una mesa, para imprimirlo y pegarlo sobre ella.
+    {
+        path: 'qr-mesa',
+        loadComponent: () => import('./pages/qr-mesa/qr-mesa.page').then((m) => m.QrMesaPage),
+        canActivate: [authGuard],
+    },
+    // El QR de ingreso, para imprimirlo y pegarlo en la puerta.
+    {
+        path: 'qr-local',
+        loadComponent: () => import('./pages/qr-local/qr-local.page').then((m) => m.QrLocalPage),
+        canActivate: [authGuard],
+    },
     // Punto 9: el cliente anónimo entra con nombre y foto, sin aprobación.
     {
         path: 'ingreso-anonimo',
@@ -57,9 +117,20 @@ export const routes: Routes = [
     },
     // Puntos 6, 7 y 8: el dueño o supervisor aprueba o rechaza clientes.
     {
-        path: 'clientes-pendientes',
+        path: 'gestion-clientes',
         loadComponent: () =>
-            import('./pages/clientes-pendientes/clientes-pendientes.page').then((m) => m.ClientesPendientesPage),
+            import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
+    },
+    {
+        path: 'gestion-clientes/modificar',
+        loadComponent: () => import('./pages/gestion-clientes/modificar/modificar.page').then((m) => m.ModificarPage),
+    },
+    {
+        path: 'gestion-clientes/clientes-pendientes',
+        loadComponent: () =>
+            import('./pages/gestion-clientes/clientes-pendientes/clientes-pendientes.page').then(
+                (m) => m.ClientesPendientesPage
+            ),
         canActivate: [authGuard],
     },
     {
@@ -70,7 +141,8 @@ export const routes: Routes = [
     // ---------------------------------------------------------------
     // Operación diaria: mozo, metre y sectores
     // ---------------------------------------------------------------
-    // Puntos 13, 14 y 19: el mozo confirma, rechaza y entrega pedidos.
+    // Pedidos de cocina y barra (puntos 16 y 17). Por ahora muestra la misma
+    // pantalla que el mozo, hasta que se implemente la vista de cada sector.
     {
         path: 'pedidos',
         loadComponent: () => import('./pages/pedidos/pedidos.page').then((m) => m.PedidosPage),
@@ -93,20 +165,24 @@ export const routes: Routes = [
         path: 'gestion-mesas/alta',
         loadComponent: () => import('./pages/gestion-mesas/alta-mesa/alta-mesa.page').then((m) => m.AltaMesaPage),
     },
-    {
-        path: 'gestion-clientes',
-        loadComponent: () =>
-            import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
-    },
+
     {
         path: 'consultas-clientes',
         loadComponent: () =>
             import('./pages/consultas-clientes/consultas-clientes.page').then((m) => m.ConsultasClientesPage),
     },
+    // Puntos 13, 14 y 19: el mozo confirma, rechaza y entrega pedidos. Es la
+    // ruta a la que lleva su botón "Pedidos de clientes" desde el inicio.
     {
         path: 'pedidos-clientes',
-        loadComponent: () =>
-            import('./pages/pedidos-clientes/pedidos-clientes.page').then((m) => m.PedidosClientesPage),
+        loadComponent: () => import('./pages/pedidos/pedidos.page').then((m) => m.PedidosPage),
+        canActivate: [authGuard],
+    },
+    // Puntos 13 a 15, del lado del cliente: estado de su pedido y acceso a los juegos.
+    {
+        path: 'mi-pedido',
+        loadComponent: () => import('./pages/mi-pedido/mi-pedido.page').then((m) => m.MiPedidoPage),
+        canActivate: [authGuard],
     },
     // Punto 10: el metre asigna una mesa a un cliente registrado.
     {

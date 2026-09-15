@@ -1,14 +1,15 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
+import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { Haptics, NotificationType } from '@capacitor/haptics';
-import { MesaAltaInterface, TipoMesa } from '../../interfaces/mesa.interface';
+import { MesaAltaInterface, MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
-import { QrGenerateComponent } from '../qr-generate/qr-generate.component';
 import { QrService } from '../../services/qr.service';
-import { IonIcon } from '@ionic/angular';
+
+/** Campos que el usuario ve marcados en rojo; la foto se avisa aparte. */
+const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
 
 /**
  * Formulario de alta de mesa (punto 4 del enunciado).
@@ -29,19 +30,49 @@ export class FormularioAltaMesaComponent {
     qrService = inject(QrService);
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
+    mesaExistente = input<MesaInterface>();
 
     /** Se dispara sólo con datos ya validados. */
     mesaSubmit = output<MesaAltaInterface>();
 
     /** Espeja el ENUM `tipo_mesa` de la base: otro valor sería rechazado. */
-    tiposMesa: TipoMesa[] = ['estándar', 'VIP', 'movilidad reducida'];
+    tiposMesa: TipoMesa[] = ['Estándar', 'VIP', 'Movilidad reducida'];
+    disponibilidad: string[] = ['Disponible', 'Ocupada', 'Reservada'];
 
     /**
-     * La foto se maneja aparte del FormGroup: un `<input type="file">` no se
-     * integra bien con Reactive Forms, así que se valida a mano en el submit.
+     * Fotos elegidas en el componente de subida. También se copian al control
+     * `fotos`, que es el que valida que haya al menos una.
      */
-    // foto: File | null = null;
     fotos: File[] = [];
+    fotosUrlsExistentes: string[] = [];
+
+    fotosIniciales = computed<string[]>(() => {
+        const fotoUrl = this.mesaExistente()?.fotoUrl;
+        return fotoUrl ? [fotoUrl] : [];
+    });
+
+    constructor() {
+        effect(() => {
+            const mesa = this.mesaExistente();
+            const fotos = this.formulario.controls.fotos;
+
+            if (mesa) {
+                this.formulario.patchValue({
+                    numeroMesa: mesa.numeroMesa,
+                    cantidadLugares: mesa.cantidadLugares,
+                    tipo: mesa.tipo,
+                    disponibilidad: mesa.disponibilidad,
+                    fotos: [],
+                });
+
+                fotos.clearValidators();
+                fotos.updateValueAndValidity();
+            } else {
+                fotos.setValidators([this.fileService.minLengthArray(1)]);
+                fotos.updateValueAndValidity();
+            }
+        });
+    }
 
     formulario = new FormGroup({
         // Los mínimos replican los CHECK (> 0) que ya impone la tabla `mesas`.
@@ -55,15 +86,10 @@ export class FormularioAltaMesaComponent {
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],
         }),
+        disponibilidad: new FormControl<string>('Disponible'),
         fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
-        qr: new FormControl<File | null>(null, ),
+        qr: new FormControl<File | null>(null),
     });
-
-    /** Guarda la foto elegida; si el usuario cancela, queda en null. */
-    // onFotoSeleccionada(event: Event) {
-    //     const input = event.target as HTMLInputElement;
-    //     this.foto = input.files?.[0] ?? null;
-    // }
 
     recibirImagenes(imagenes: File[]) {
         this.fotos = imagenes;
@@ -73,6 +99,10 @@ export class FormularioAltaMesaComponent {
 
         // Opcional: Marca el control como "dirty" o "touched" para la validación
         this.formulario.get('fotos')?.markAsTouched();
+    }
+
+    onUrlsExistentes(urls: string[]) {
+        this.fotosUrlsExistentes = urls;
     }
 
     /**
@@ -94,33 +124,26 @@ export class FormularioAltaMesaComponent {
      * usuario. Sin este aviso el botón parecería estar roto.
      */
     async onAltaMesa() {
-        console.log("Formulario: ", this.formulario.value)
-        console.log("fotos: ", this.fotos)
-        if (this.formulario.invalid || !this.fotos) {
+        if (this.formulario.invalid) {
             // Sin esto Ionic no muestra el error de los campos que el usuario
             // nunca visitó.
             this.formulario.markAllAsTouched();
 
-            await Haptics.notification({ type: NotificationType.Error });
-
-            this.modal.setOpen(
-                'Datos inválidos',
-                !this.fotos
-                    ? 'Debe cargar tres fotos de la mesa para continuar.'
-                    : 'Revise los datos ingresados antes de continuar.'
-            );
+            // El modal vibra solo al detectar un título de error.
+            this.modal.setOpen('Datos inválidos', this.motivoDelRechazo());
 
             return;
         }
-        
-        const valores = this.formulario.getRawValue();
 
+        const valores = this.formulario.getRawValue();
+        
         const datosMesa = {
             numeroMesa: valores.numeroMesa,
             cantidadLugares: valores.cantidadLugares,
             tipo: valores.tipo,
+            disponibilidad: valores.disponibilidad
         };
-        
+
         const data = JSON.stringify(datosMesa);
         const filename = `mesa_${valores.numeroMesa}_qr.png`;
 
@@ -133,10 +156,31 @@ export class FormularioAltaMesaComponent {
             numeroMesa: Number(valores.numeroMesa),
             cantidadLugares: Number(valores.cantidadLugares),
             tipo: valores.tipo as TipoMesa,
-            fotos: this.fotos,
+            fotos: this.fotos[0],
             qrFile: this.formulario.value.qr!,
+            disponibilidad: valores.disponibilidad as string
         };
+
+        // No se limpia el formulario al emitir: si el guardado falla, la página
+        // se queda y el usuario no tiene que volver a cargar todo.
         this.mesaSubmit.emit(mesa);
-        this.formulario.reset();
+    }
+
+    /**
+     * Explica qué falta corregir.
+     *
+     * La foto se nombra aparte porque no se marca en rojo como un campo. Antes
+     * se preguntaba `!this.fotos`, que nunca es verdadero (un arreglo vacío
+     * también es un valor), así que el aviso de la foto no aparecía jamás.
+     */
+    private motivoDelRechazo(): string {
+        const faltaFoto = this.formulario.controls.fotos.invalid;
+        const hayDatosInvalidos = CAMPOS_DE_DATOS.some((campo) => this.formulario.controls[campo].invalid);
+
+        if (faltaFoto && hayDatosInvalidos) return 'Revise los campos marcados y cargue la foto de la mesa.';
+
+        if (faltaFoto) return 'Debe cargar la foto de la mesa para continuar.';
+
+        return 'Revise los datos ingresados antes de continuar.';
     }
 }

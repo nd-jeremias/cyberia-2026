@@ -1,17 +1,11 @@
 <div class="pantalla-anonimo">
-    <header class="cabecera">
-        <div class="isotipo-icono">
-            <img src="../../../assets/logo.png">
-        </div>
-        <h1>Ingreso anónimo</h1>
-    </header>
-
     <section class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onRegistrar()">
             <!-- Campo Nombres -->
             <div class="grupo-input">
                 <label class="input-label">Nombres</label>
                 <div class="caja-input">
+                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="nombres"
                         type="text"
@@ -39,41 +33,15 @@
                 }
             </div>
 
-            <!-- <div class="bloque-foto">
-                <div class="contenedor-foto">
-                    @if (foto(); as fotoTomada) {
-                        <img
-                            class="foto-previa"
-                            [src]="fotoTomada.previewUrl"
-                            alt="Foto del cliente anónimo"
-                        />
-                    } @else {
-                        <div class="foto-ausente">
-                            <ion-icon name="camera"></ion-icon>
-                            <span>Todavía no tomaste tu foto</span>
-                        </div>
-                    }
-                </div>
+            <button type="submit" class="btn-principal">
+                <ion-icon name="enter-outline"></ion-icon>
+                Ingresar al local
+            </button>
 
-                <button
-                    expand="block"
-                    fill="outline"
-                    type="button"
-                    (click)="onTomarFoto()"
-                    class="btn-secundario"
-                >
-                    <ion-icon slot="start" name="camera"></ion-icon>
-                    @if (foto()) {
-                        Tomar otra foto
-                    } @else {
-                        Tomar foto
-                    }
-                </button>
-            </div> -->
-
-            <button expand="block" type="submit" class="btn-principal"
-                >Ingresar al local</button
-            >
+            <div class="fila-alternativas">
+                <button type="button" routerLink="/registrarse" class="btn-secundario">Crear cuenta</button>
+                <button type="button" routerLink="/ingresar" class="btn-secundario">Iniciar sesión</button>
+            </div>
         </form>
     </section>
 </div>

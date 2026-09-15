@@ -1,30 +1,44 @@
+/**
+ * Ingreso como cliente anónimo (punto 9 del enunciado).
+ *
+ * Dos campos y un botón. El título lo pone la banda de `app-header`, y el
+ * recuadro explicativo que había antes se quitó: la pantalla se entiende sola.
+ */
+
 :host {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     width: 100%;
-    min-height: 100vh;
-    padding: 0.75rem;
-    box-sizing: border-box;
-    flex-direction: column;
-    background-color: var(--bg-dark);
 }
 
 .pantalla-anonimo {
-    padding: 2rem;
-    padding-top: 0;
     display: flex;
     flex-direction: column;
+    gap: 1.25rem;
     width: 100%;
-    max-width: 32rem;
-    border-radius: 1rem;
-    box-sizing: border-box;
-    gap: 2rem;
 }
 
-img {
-    margin-top: 2.2rem;
-}
 .img-preview {
-    --background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: var(--borde-hoja);
+    border-radius: var(--radio);
+}
+
+/* Las dos alternativas comparten fila: apiladas dejaban un bloque muerto. */
+.fila-alternativas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    .btn-secundario {
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
+        font-size: var(--texto-apoyo);
+    }
 }

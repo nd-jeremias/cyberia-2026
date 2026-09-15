@@ -1,0 +1,32 @@
+<app-header [defaultHref]="volverA()" [tituloHeader]="titulo()"></app-header>
+
+@if (cargando()) {
+<ion-content [fullscreen]="true">
+    <div class="hoja">
+        <div class="estado-vacio">
+            <ion-icon name="time-outline"></ion-icon>
+            <p>Abriendo la conversación…</p>
+        </div>
+    </div>
+</ion-content>
+} @else if (sinMesa()) {
+<ion-content [fullscreen]="true">
+    <div class="hoja">
+        <div class="estado-vacio">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <p>Para consultar al mozo primero necesitás una mesa asignada.</p>
+        </div>
+    </div>
+</ion-content>
+} @else {
+<app-sala-conversacion
+    [mensajes]="mensajes()"
+    [usuarioId]="usuarioId()"
+    [clienteId]="chatActual()?.clienteId ?? usuarioId()"
+    [numeroMesa]="numeroMesa()"
+    [enviando]="enviando()"
+    [sugerencias]="esMozo() ? [] : sugerencias"
+    [textoVacio]="textoVacio()"
+    (enviar)="enviar($event)"
+></app-sala-conversacion>
+}

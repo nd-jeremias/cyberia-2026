@@ -1,0 +1,54 @@
+/**
+ * Escaneo del QR de la mesa.
+ *
+ * Mismo molde que el ingreso al local: una sola acción, y el botón aparece
+ * sólo cuando hay algo que escanear.
+ */
+
+.pantalla-mesa {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    justify-content: center;
+
+    min-height: 100%;
+}
+
+.tarjeta-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+
+    padding: 1.75rem 1.25rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+
+    text-align: center;
+}
+
+.tarjeta-estado .medallon {
+    width: 4rem;
+    height: 4rem;
+    font-size: 2rem;
+}
+
+/* El número es el dato que el cliente va a buscar de un vistazo. */
+.mesa-numero {
+    margin: 0;
+    font-size: var(--texto-titulo-grande);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--naranja-hondo);
+}
+
+.leyenda {
+    margin: 0;
+    font-size: var(--texto-apoyo);
+    line-height: 1.45;
+    color: var(--tinta-suave);
+}

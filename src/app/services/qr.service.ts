@@ -1,6 +1,7 @@
 import { Service, inject, signal } from '@angular/core';
 import { BarcodeScanner, ScanResult } from '@capacitor-mlkit/barcode-scanning';
 import { DniInterface } from '../interfaces/dni.interface';
+import { QrMesa, QrPayload, QrPropina } from '../interfaces/qr.interface';
 import { Platform } from '@ionic/angular';
 import { Preferences } from '@capacitor/preferences';
 import { ModalService } from './modal.service';
@@ -139,6 +140,102 @@ export class QrService {
         BarcodeScanner.stopScan();
         if (this.platform.is('hybrid')) {
             document.querySelector('body')?.classList.remove('barcode-scanner-active');
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // Contenido de los QR
+    //
+    // Un solo lugar arma y otro interpreta, para que las dos puntas no se
+    // desincronicen: si cambia el formato, cambia acá y nada más.
+    // ----------------------------------------------------------------------
+
+    /** QR de ingreso al local: uno para todo el restaurante (punto 9). */
+    contenidoIngresoLocal(): string {
+        return JSON.stringify({ tipo: 'ingreso-local' });
+    }
+
+    /** QR de una mesa: sólo el id, para que el papel no envejezca (punto 10). */
+    contenidoMesa(mesaId: string): string {
+        const payload: QrMesa = { tipo: 'mesa', id: mesaId };
+
+        return JSON.stringify(payload);
+    }
+
+    /** QR de propina, uno por nivel de satisfacción (punto 21). */
+    contenidoPropina(porcentaje: number): string {
+        const payload: QrPropina = { tipo: 'propina', porcentaje };
+
+        return JSON.stringify(payload);
+    }
+
+    /**
+     * Interpreta lo que devolvió el lector.
+     *
+     * Devuelve `null` ante cualquier código que no sea de la aplicación: un QR
+     * de otra app, un texto suelto o un JSON con una forma que no reconocemos.
+     * Quien llama decide qué decirle al usuario.
+     */
+    interpretarQr(raw: string | undefined): QrPayload | null {
+        if (!raw) return null;
+
+        let dato: unknown;
+
+        try {
+            dato = JSON.parse(raw);
+        } catch {
+            return null;
+        }
+
+        if (!dato || typeof dato !== 'object') return null;
+
+        const payload = dato as Partial<QrPayload>;
+
+        switch (payload.tipo) {
+            case 'ingreso-local':
+                return { tipo: 'ingreso-local' };
+
+            case 'mesa':
+                return typeof (payload as QrMesa).id === 'string'
+                    ? { tipo: 'mesa', id: (payload as QrMesa).id }
+                    : null;
+
+            case 'propina':
+                return typeof (payload as QrPropina).porcentaje === 'number'
+                    ? { tipo: 'propina', porcentaje: (payload as QrPropina).porcentaje }
+                    : null;
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Abre el lector y devuelve ya interpretado lo que se escaneó.
+     *
+     * Es el método que usan las pantallas: `escanearQR()` devuelve el resultado
+     * crudo del plugin, que sólo sirve para depurar.
+     */
+    async escanearPayload(): Promise<QrPayload | null> {
+        const hasPermission = await this.checkPermissions();
+
+        if (!hasPermission) {
+            throw new Error('Sin permiso de cámara. Habilitalo desde los ajustes del teléfono.');
+        }
+
+        // Vuelve transparente el webview para que se vea la cámara detrás.
+        if (this.platform.is('hybrid')) {
+            document.querySelector('body')?.classList.add('barcode-scanner-active');
+        }
+
+        try {
+            const result = await BarcodeScanner.scan();
+
+            if (!result.barcodes.length) return null;
+
+            return this.interpretarQr(result.barcodes[0].rawValue);
+        } finally {
+            this.stopScan();
         }
     }
 

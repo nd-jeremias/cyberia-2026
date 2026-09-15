@@ -1,8 +1,17 @@
 @if (spinnerService.isLoading()) {
-    <div class="backdrop-spinner">
-        <div class="spinner-container">
+<div class="backdrop-spinner">
+    <div class="spinner-container">
+        <!--
+              El enunciado pide "indicadores visuales (spinners) con el logo de
+              la empresa en todas las esperas". El arco de Ionic gira alrededor
+              del isotipo, que late en el centro.
+            -->
+        <div class="aro-spinner">
             <ion-spinner name="crescent" [color]="spinnerService.color()"></ion-spinner>
-            <p class="spinner-text">Cargando...</p>
+            <img class="logo-spinner" src="/assets/logo-3d.png" alt="Cyberia Restó" />
         </div>
+
+        <p class="spinner-text">Cargando...</p>
     </div>
+</div>
 }

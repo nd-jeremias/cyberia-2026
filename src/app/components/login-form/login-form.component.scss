@@ -1,137 +1,291 @@
+/**
+ * Pantalla de ingreso.
+ *
+ * Misma estructura de dos capas que el resto —banda naranja arriba, papel crema
+ * abajo— pero acá la banda lleva el logotipo en lugar de la barra: todavía no
+ * hay sesión ni a dónde volver.
+ *
+ * Los accesos rápidos por perfil van plegados detrás de un disparador, porque
+ * el enunciado los pide pero no fijos. Al abrirse se montan POR ENCIMA del
+ * formulario, fuera del flujo: así las fichas entran grandes sin que el alto de
+ * la pantalla dependa de si el panel está abierto o cerrado.
+ */
+
+/* El alto lo reparte la página: acá se toma el espacio que queda libre debajo
+   de la banda del logo, en vez de pedir el 100% del viewport y empujar los
+   accesos rápidos fuera de la pantalla. */
 :host {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 100vh;
-    padding: 0.75rem;
-    box-sizing: border-box;
-    flex-direction: column;
-    background-color: var(--bg-dark);
-}
-
-.pantalla-login {
-    padding: 2rem;
-    padding-top: 0;
-    display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 32rem;
-    border-radius: 1rem;
+    flex: 1;
+    min-height: 0;
+}
+
+/* --- Papel ---------------------------------------------------------------- */
+
+.hoja {
+    flex: 1;
+    gap: 1rem;
+    padding-top: 0.75rem;
+}
+
+.encabezado-ingreso {
+    text-align: center;
+
+    h1 {
+        margin: 0;
+        font-size: var(--texto-titulo-grande);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: var(--traqueo);
+        color: var(--bordo);
+    }
+}
+
+/* Las dos alternativas comparten fila: apiladas dejaban un bloque muerto. */
+.fila-alternativas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    .btn-secundario {
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
+        font-size: var(--texto-apoyo);
+    }
+}
+
+/* --- Accesos rápidos por perfil ------------------------------------------- */
+
+/* Anclado al pie: separa el ingreso real de los accesos de demostración, y de
+   paso reparte el aire sobrante en lugar de dejarlo todo junto abajo. Ahora que
+   el panel se despliega por encima, bajarlo ya no obliga a desplazarse. */
+.accesos {
+    position: relative;
+    margin-top: auto;
+    padding-top: 0.75rem;
+}
+
+/* Pastilla discreta, no un botón principal: la acción importante de esta
+   pantalla sigue siendo iniciar sesión. La flecha gira al abrir. */
+.accesos-disparador {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+
+    width: 100%;
+    min-height: 3.5rem;
+    padding: 0 1.125rem;
     box-sizing: border-box;
-    gap: 2rem;
-}
 
-/* Accesos Rápidos Demo */
-.seccion-demo {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    padding: 0.5rem;
-}
+    background: transparent;
+    border: 0.125rem dashed var(--hoja-borde-fuerte);
+    border-radius: var(--radio);
 
-.divisor {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-family: var(--fuente);
+    font-size: var(--texto-apoyo);
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    width: 100%; /* Asegura que el divisor use todo el ancho disponible */
-    margin: 16px 0; /* Espaciado opcional arriba y abajo del divisor */
+    letter-spacing: var(--traqueo);
+    color: var(--tinta-media);
+    cursor: pointer;
 
-    &::before,
-    &::after {
-        content: "";
-        flex: 1; 
-        border-bottom: 1px solid #4a77ab;
-    }
+    transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
 
-    span {
-        padding: 0 12px; /* Un poco más de espacio al lado de la letra "o" */
+    &:hover {
+        border-color: var(--naranja);
+        color: var(--naranja-hondo);
     }
 }
 
-.divisor-demo {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.accesos-rayo,
+.accesos-flecha {
+    flex-shrink: 0;
+    font-size: 1.5rem;
+}
 
-    &::before,
-    &::after {
-        content: "";
-        flex: 1;
-        border-bottom: 1px solid #4a77ab;
+.accesos-rayo {
+    color: var(--naranja);
+}
+
+.accesos-flecha {
+    transition: transform 0.25s ease;
+}
+
+.accesos-texto {
+    flex: 1;
+    text-align: left;
+}
+
+/**
+ * Panel desplegable.
+ *
+ * Va fuera del flujo, apoyado sobre el formulario y anclado al disparador. Se
+ * anima con desplazamiento y opacidad en lugar de aparecer de golpe: el
+ * movimiento explica de dónde salieron los botones. `visibility` acompaña para
+ * que, cerrado, el panel no sea alcanzable con el teclado (además del `inert`
+ * que pone la plantilla).
+ */
+.accesos-panel {
+    position: absolute;
+    bottom: calc(100% + 0.625rem);
+    left: 0;
+    right: 0;
+    z-index: 5;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.75rem) scale(0.98);
+    transform-origin: bottom center;
+
+    transition: opacity 0.2s ease, transform 0.24s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.24s;
+}
+
+.accesos-abiertos {
+    .accesos-disparador {
+        border-style: solid;
+        border-color: var(--naranja);
+        background: rgba(226, 87, 28, 0.08);
+        color: var(--naranja-hondo);
     }
 
-    span {
-        padding: 0 8px;
+    .accesos-flecha {
+        transform: rotate(180deg);
+    }
+
+    .accesos-panel {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
     }
 }
 
+/* Fondo opaco: el panel se apoya sobre el formulario, así que no puede dejar
+   ver lo que hay debajo. */
 .grilla-perfiles {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+
+    padding: 0.75rem;
+
+    background: var(--hoja-alta);
+    border: 0.125rem solid var(--naranja);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-elevada);
 }
 
+/* Cada rol lleva su color en el medallón: seis fichas iguales serían seis
+   rectángulos indistinguibles, y en una demostración que salta de perfil en
+   perfil se encuentra el que se busca sin leer. */
 .card-perfil {
-    background-color: rgba(80, 105, 150, 0.75);
-    // #516a94;
-    // background-color: #293241;
-    //var(--color-supervisor);
-    border: 0.093rem solid var(--bg-cyan);
-    // background-color: #1a3a60;
-    // border: 0.093rem solid #4a77ab;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
+    --color-perfil: var(--naranja);
+
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
+    gap: 0.5rem;
+
+    min-height: 3.75rem;
+    padding: 0.5rem 0.5625rem;
+    box-sizing: border-box;
+
+    background: var(--hoja);
+    border: 0.0938rem solid var(--hoja-borde);
+    border-radius: var(--radio-chico);
+
     text-align: left;
-    min-height: 3.5rem;
+    cursor: pointer;
+
+    transition: transform 0.14s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+
+    &:hover {
+        border-color: var(--color-perfil);
+        box-shadow: var(--sombra-apoyada);
+    }
+
+    &:active {
+        transform: scale(0.96);
+    }
 
     .icono-perfil-wrapper {
-        // background-color: var(--bg-darkblue);
-        color: white;
-        // background-color: #2b5488;
-        // color: #38bdf8;
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.75rem;
         flex-shrink: 0;
+
+        width: 2.375rem;
+        height: 2.375rem;
+        border-radius: 50%;
+
+        /* Respaldo para navegadores sin color-mix(): el medallón queda neutro
+           pero el icono conserva el color del rol. */
+        background: var(--velo-tinta);
+        background: color-mix(in srgb, var(--color-perfil) 16%, transparent);
+
+        font-size: 1.3125rem;
+        color: var(--color-perfil);
     }
 
-    .textos-perfil {
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+    /* Nunca parte una palabra al medio: el enunciado no admite texto cortado
+       y "Cantinero" es justo el que no entraba. */
+    .rol {
+        min-width: 0;
+        font-size: var(--texto-apoyo);
+        font-weight: 800;
+        line-height: 1.15;
+        color: var(--tinta);
+        overflow-wrap: normal;
+        word-break: keep-all;
+        hyphens: none;
+    }
+}
 
-        .rol {
-            color: #ffffff;
-            font-size: 0.95rem;
-            font-weight: 800;
-            line-height: 1.1;
-        }
+.perfil-duenio {
+    --color-perfil: var(--perfil-duenio);
+}
+.perfil-supervisor {
+    --color-perfil: var(--perfil-supervisor);
+}
+.perfil-metre {
+    --color-perfil: var(--perfil-metre);
+}
+.perfil-mozo {
+    --color-perfil: var(--perfil-mozo);
+}
+.perfil-cocinero {
+    --color-perfil: var(--perfil-cocinero);
+}
+.perfil-cantinero {
+    --color-perfil: var(--perfil-cantinero);
+}
+.perfil-cliente {
+    --color-perfil: var(--perfil-cliente);
+}
 
-        .email {
-            color: #cbd5e1;
-            font-size: 0.75rem;
-            font-weight: 500;
-            word-break: break-all;
-            margin-top: 0.25rem;
+/* Teléfonos de pantalla baja: se recorta lo que no es control para que el
+   formulario entre sin desplazarse. */
+@media (max-height: 48rem) {
+    .banda-ingreso {
+        padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+
+        .isotipo-icono {
+            padding-bottom: 0.625rem;
+
+            img {
+                width: 7rem;
+            }
         }
+    }
+
+    .hoja {
+        gap: 0.75rem;
+    }
+
+    .caja-input,
+    .btn-principal,
+    .fila-alternativas .btn-secundario,
+    .accesos-disparador {
+        min-height: 3.125rem;
     }
 }

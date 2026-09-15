@@ -1,3 +1,13 @@
 <ion-content [fullscreen]="true" [scrollY]="true">
-    <app-formulario-registro (registroSubmit)="handleRegistro($event)" [direccionCamara]="'trasera'"></app-formulario-registro>
+    <div class="layout-superpuesto fondo-texturizado">
+        <div class="inferior">
+            <app-header-logo class="sin-labio"></app-header-logo>
+        </div>
+        <div class="superior hoja hoja-angosta">
+            <app-formulario-registro
+                (registroSubmit)="handleRegistro($event)"
+                [direccionCamara]="'trasera'"
+            ></app-formulario-registro>
+        </div>
+    </div>
 </ion-content>

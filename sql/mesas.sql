@@ -57,3 +57,13 @@ VALUES
 (3, 4, 'movilidad reducida', 'ocupada',    'https://supabase.co', 'https://supabase.co'),
 (4, 6, 'VIP',                'Reservada',  'https://supabase.co', 'https://supabase.co'),
 (5, 2, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co');
+
+-- =========================================================================
+-- 6. CLAVE FORÁNEA DIFERIDA
+-- =========================================================================
+-- `usuarios.mesa_id` apunta acá, pero no puede declararse en usuarios.sql
+-- porque ese script corre antes y `mesas` todavía no existe. Se agrega al
+-- final: si se borra una mesa, el cliente queda sin mesa pero no se pierde.
+ALTER TABLE public.usuarios
+    ADD CONSTRAINT usuarios_mesa_id_fkey
+    FOREIGN KEY (mesa_id) REFERENCES public.mesas(id) ON DELETE SET NULL;

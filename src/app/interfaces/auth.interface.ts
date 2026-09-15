@@ -49,3 +49,15 @@ export type PerfilUsuario =
     | 'cantinero'
     | 'cliente registrado'
     | 'cliente anónimo';
+/**
+ * Dónde está parado el cliente dentro del circuito del local.
+ *
+ * Espeja el ENUM `estado_en_resto` de la base. La lista de espera del metre
+ * (punto 9) no es una tabla: son los usuarios en 'esperando_mesa'.
+ */
+export type EstadoEnResto =
+    | 'libre'
+    | 'esperando_mesa'
+    | 'mesa_asignada'
+    | 'sentado'
+    | 'pagando';

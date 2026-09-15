@@ -1,6 +1,6 @@
 import { inject, Service, signal } from '@angular/core';
-import { AuthResponse, Session } from '@supabase/supabase-js';
-import { LoginInterface, RegisterInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
+import { AuthResponse, Session, User } from '@supabase/supabase-js';
+import { LoginInterface, LocalUserInterface, PerfilUsuario } from '../interfaces/auth.interface';
 import { AnonimoAltaInterface } from '../interfaces/cliente.interface';
 import { supabase } from './supabase.service';
 import { GaleriaService } from './galeria.service';
@@ -16,8 +16,19 @@ export class AuthService {
     // Se resuelve solo cada vez que cambia la sesión (login/logout/refresh).
     perfil = signal<PerfilUsuario | null>(null);
 
-    galeriaService = inject(GaleriaService)
-    modal = inject(ModalService)
+    // Motivo por el que no se pudo leer el perfil, cuando la consulta falló.
+    // En null significa que la consulta anduvo (haya traído fila o no).
+    perfilError = signal<string | null>(null);
+
+    // Datos de identidad para la cabecera: nombre y foto de la persona que
+    // está usando la aplicación. Vienen de la misma consulta que el perfil, así
+    // que no agregan un viaje extra a la base.
+    nombres = signal<string | null>(null);
+    apellidos = signal<string | null>(null);
+    fotoUrl = signal<string | null>(null);
+
+    galeriaService = inject(GaleriaService);
+    modal = inject(ModalService);
 
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
@@ -27,6 +38,8 @@ export class AuthService {
                 this.cargarPerfil(session.user.id);
             } else {
                 this.perfil.set(null);
+                this.limpiarIdentidad();
+                this.limpiarIdentidad();
             }
         });
     }
@@ -41,14 +54,19 @@ export class AuthService {
         // 406 que ensucia la consola sin aportar nada.
         const { data, error } = await supabase
             .from('usuarios')
-            .select('perfil')
+            .select('perfil, nombres, apellidos, foto_url')
             .eq('id', userId)
             .maybeSingle();
 
         if (error) {
+            // La consulta falló: no es que falte la fila. Se guarda el motivo
+            // para que la pantalla no mande a revisar la base cuando en
+            // realidad fue la red, los permisos o el token.
             console.error('No se pudo cargar el perfil del usuario', userId, error);
 
+            this.perfilError.set(error.message);
             this.perfil.set(null);
+            this.limpiarIdentidad();
             return;
         }
 
@@ -59,11 +77,25 @@ export class AuthService {
             // recrea la tabla y sólo repone los usuarios de prueba).
             console.warn('El usuario no tiene fila en "usuarios"', userId);
 
+            this.perfilError.set(null);
             this.perfil.set(null);
+            this.limpiarIdentidad();
             return;
         }
 
+        this.perfilError.set(null);
         this.perfil.set(data.perfil);
+
+        this.nombres.set(data.nombres ?? null);
+        this.apellidos.set(data.apellidos ?? null);
+        this.fotoUrl.set(data.foto_url ?? null);
+    }
+
+    /** Deja la identidad en blanco cuando no hay fila que mostrar. */
+    private limpiarIdentidad() {
+        this.nombres.set(null);
+        this.apellidos.set(null);
+        this.fotoUrl.set(null);
     }
 
     setLocalUser(user: LocalUserInterface) {
@@ -71,6 +103,8 @@ export class AuthService {
     }
 
     async login({ email, password }: LoginInterface): Promise<void> {
+        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
         const response: AuthResponse = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -81,6 +115,8 @@ export class AuthService {
         if (!response.data.session || !response.data.user) {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
+
+        await delay(1500);
 
         // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
         // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
@@ -178,7 +214,8 @@ export class AuthService {
         await this.cargarPerfil(data.user.id);
     }
 
-    async register(form: FormData): Promise<void> {
+    async register(form: FormData): Promise<User | null> {
+        let publicUrl: string | null = null;
         try {
             const correo = form.get('correo') as string;
             const password = form.get('password') as string;
@@ -189,17 +226,15 @@ export class AuthService {
             const tipoEmpleado = form.get('tipoEmpleado') as string;
             const fotoArchivo = form.get('foto') as File;
 
-            const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
-
-            if (!publicUrl) throw Error;
+            publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
+            if (!publicUrl) throw new Error('No se pudo cargar la imágen');
 
             // Normalizacion de datos
             const correoRaw = form.get('correo') as string;
             const correolimpio = correoRaw.replace(/["']/g, '').trim().toLowerCase();
-
             const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
 
-            const { data, error } = await supabase.auth.signUp({
+            const { data, error: authError } = await supabase.auth.signUp({
                 email: correo,
                 password,
                 options: {
@@ -208,12 +243,10 @@ export class AuthService {
                 },
             });
 
-            if (error) {
-                throw error;
-            }
+            if (authError) throw authError;
 
             if (data.user) {
-                const { error } = await supabase.from('usuarios').insert({
+                const { error: dbError } = await supabase.from('usuarios').insert({
                     id: data.user.id,
                     nombres,
                     apellidos,
@@ -225,11 +258,16 @@ export class AuthService {
                     estado: tipoEmpleado ? 'Activo' : 'Pendiente',
                 });
 
-                if (error) throw error;
+                if (dbError) throw new Error('Error al insertar datos del usuario.');
+
+                return data.user;
             }
+            return null;
         } catch (error) {
+            if (publicUrl) await this.galeriaService.eliminarImgDb(publicUrl);
+
             const mensaje = error instanceof Error ? error.message : 'No se pudo crear el usuario.';
-            this.modal.setOpen('Error', mensaje);
+            throw new Error(mensaje);
         } finally {
             // signUp() deja la sesión abierta, pero un registro nuevo queda en
             // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:
@@ -240,5 +278,48 @@ export class AuthService {
         }
     }
 
-    
+    async actualizar(id: string, form: FormData): Promise<void> {
+        try {
+            const correo = form.get('correo') as string;
+            const dni = form.get('dni') as string;
+            const nombres = form.get('nombres') as string;
+            const apellidos = form.get('apellidos') as string;
+            const cuil = form.get('cuil') as string;
+            const tipoEmpleado = form.get('tipoEmpleado') as string;
+            const fotoArchivo = form.get('foto');
+
+            const correolimpio = correo.replace(/["']/g, '').trim().toLowerCase();
+            const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
+
+            const datosActualizar: any = {
+                nombres,
+                apellidos,
+                dni,
+                cuil,
+                correo_electronico: correolimpio,
+                perfil: perfilFinal,
+                estado: tipoEmpleado ? 'Activo' : 'Pendiente',
+            };
+
+            // Solo subimos una imagen si realmente llegó un archivo
+            if (fotoArchivo instanceof File) {
+                const publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios', true);
+
+                if (!publicUrl) {
+                    throw new Error('No se pudo subir la imagen.');
+                }
+
+                datosActualizar.foto_url = publicUrl;
+            }
+
+            const { error } = await supabase.from('usuarios').update(datosActualizar).eq('id', id);
+
+            if (error) {
+                throw error;
+            }
+        } catch (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el usuario.';
+            throw new Error(mensaje);
+        }
+    }
 }

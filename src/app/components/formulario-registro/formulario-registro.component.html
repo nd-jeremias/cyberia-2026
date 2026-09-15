@@ -1,11 +1,4 @@
 <div class="pantalla-registro">
-    <div class="cabecera">
-        <div class="isotipo-icono">
-            <img src="../../../assets/logo.png" />
-        </div>
-        <h1>{{ tituloEncabezado() }}</h1>
-    </div>
-
     <div class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onRegistro()" class="formulario-cuerpo">
             <!-- Nombres -->
@@ -72,12 +65,12 @@
             </div>
 
             <!-- CUIL (Solo si es Dueño) -->
-            @if (usuarioRol() === 'dueño') {
+            @if (usuarioRol() === 'dueño') { @if(modo() === 'modificar_empleado'){
             <div class="grupo-input">
                 <label class="input-label">CUIL</label>
 
                 <!-- Contenedor alineado horizontalmente -->
-                <div style="display: flex; gap: 8px; align-items: center">
+                <div class="fila-cuil">
                     <!-- Prefijo (Escribe directo a la signal local) -->
                     <div class="caja-input" style="flex: 1">
                         <ion-input
@@ -90,7 +83,7 @@
                         ></ion-input>
                     </div>
 
-                    <span>-</span>
+                    <span class="guion-cuil">-</span>
 
                     <!-- Central (Muestra el computed que se alimenta del DNI - Deshabilitado) -->
                     <div class="caja-input" style="flex: 3; opacity: 0.8">
@@ -98,7 +91,7 @@
                         <ion-input type="text" [disabled]="true" [value]="cuilCentral()" placeholder="DNI"></ion-input>
                     </div>
 
-                    <span>-</span>
+                    <span class="guion-cuil">-</span>
 
                     <!-- Sufijo (Escribe directo a la signal local) -->
                     <div class="caja-input" style="flex: 1">
@@ -113,11 +106,11 @@
                     </div>
                 </div>
 
-                <!-- Validaciones unificadas del grupo CUIL -->
-                @let prefijoControl = formulario.get("cuilPrefijo"); @let sufijoControl = formulario.get("cuilSufijo");
-                @if ((prefijoControl?.touched || sufijoControl?.touched) && (prefijoControl?.errors?.["required"] ||
-                sufijoControl?.errors?.["required"])) {
-                <span class="mensaje-error">Debe completar los campos del CUIL</span>
+                <!-- El CUIL se arma al enviar (prefijo + DNI + dígito final), así que el
+                     error aparece tras el primer intento. Antes se consultaban controles
+                     "cuilPrefijo" y "cuilSufijo" que no existen, y nunca se mostraba. -->
+                @if (hayError("cuil", "required") || hayError("cuil", "pattern")) {
+                <span class="mensaje-error">Complete el CUIL: dos dígitos, el DNI y el dígito final</span>
                 }
             </div>
 
@@ -126,6 +119,8 @@
                 <label class="input-label">Tipo de Empleado</label>
                 <div class="caja-input">
                     <ion-icon name="people-outline" class="icono-campo"></ion-icon>
+                    <!-- Escribe en tipoEmpleado: es lo que se valida y lo que el registro
+                         guarda como perfil. -->
                     <ion-select
                         formControlName="tipoEmpleado"
                         label="Tipo de empleado"
@@ -142,7 +137,7 @@
                 <span class="mensaje-error">Seleccione el tipo de empleado a registrar.</span>
                 }
             </div>
-            }
+            } }
 
             <div class="img-preview">
                 <app-subida-imagenes
@@ -151,10 +146,14 @@
                     (imagenesChange)="recibirImagenes($event)"
                     [modoCamara]="'camara'"
                     [direccionCamara]="direccionCamara()"
+                    [imagenesIniciales]="fotosIniciales()"
+                    (urlsExistentesChange)="onUrlsExistentes($event)"
                 >
                 </app-subida-imagenes>
-                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <span>Debe cargar la foto de perfil</span>
+                <!-- El control se llama "foto": antes se consultaba "imagenes", que no
+                     existe, y el mensaje no se mostraba nunca. -->
+                @if (hayError("foto", "minLengthArray")) {
+                <span class="mensaje-error">Debe cargar la foto de perfil</span>
                 }
             </div>
 
@@ -178,6 +177,7 @@
                 }
             </div>
 
+            @if (!usuarioExistente()) {
             <!-- Contraseña -->
             <div class="grupo-input">
                 <label class="input-label">Contraseña</label>
@@ -194,8 +194,10 @@
                 </div>
                 @if (formulario.get("password")?.errors?.["required"] && formulario.get("password")?.touched) {
                 <span class="mensaje-error">Ingrese una contraseña.</span>
-                } @if (formulario.get("password")?.errors?.["minLength"] && formulario.get("password")?.touched) {
-                <span class="mensaje-error">La contraseña es demasiado corta.</span>
+                } @if (hayError("password", "minlength")) {
+                <!-- La clave del error es "minlength" en minúscula: con "minLength" el
+                     mensaje no aparecía nunca. -->
+                <span class="mensaje-error">La contraseña debe tener al menos 8 caracteres.</span>
                 }
             </div>
 
@@ -217,24 +219,26 @@
                         ></ion-input-password-toggle>
                     </ion-input>
                 </div>
-                @if (formulario.get("confirmPassword")?.errors?.["passwordMismatch"] &&
-                formulario.get("confirmPassword")?.touched) {
+                <!-- El validador es del grupo y marca "passwordsDistintas"; se consultaba
+                     "passwordMismatch" en el campo y el mensaje no aparecía nunca. -->
+                @if (passwordsNoCoinciden) {
                 <span class="mensaje-error">Las contraseñas no coinciden.</span>
                 }
             </div>
+            }
             <div class="enlaces-secundarios">
                 <!-- Botón de acción dinámico -->
-                <ion-button expand="full" fill="outline" type="submit" class="btn-principal">{{
-                    textoBoton()
-                }}</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal">{{ textoBoton() }}</ion-button>
 
                 <!-- Redirección al Login -->
-                @if (usuarioRol() == 'cliente') {
-                <div class="divisor">
+                @if (usuarioRol() === 'cliente') {
+                <!-- <div class="divisor">
                     <span class="estaRegistrado"> ¿Ya tenés una cuenta? </span>
+                </div> -->
+                <div class="fila-alternativas">
+                    <button type="button" routerLink="/ingreso-anonimo" class="btn-secundario">Invitado</button>
+                    <button type="button" routerLink="/ingresar" class="btn-secundario">Iniciar sesión</button>
                 </div>
-                <button type="button" routerLink="/ingresar" class="btn-secundario">Ingresar</button>
-
                 }
             </div>
         </form>

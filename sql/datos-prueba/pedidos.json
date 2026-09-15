@@ -1,0 +1,15 @@
+{
+    "descripcion": "Pedidos de prueba para los puntos 13 y 14. Cada dato se nombra por su clave natural (correo del cliente, número de mesa, nombre del producto); `npm run datos:prueba` resuelve los IDs contra la base y congela el precio actual de cada producto.",
+    "pedidos": [
+        {
+            "cliente": "cliente@restaurante.com",
+            "mesa": 1,
+            "estado": "Pendiente de Confirmación",
+            "detalles": [
+                { "producto": "Milanesa con Papas Fritas", "cantidad": 2 },
+                { "producto": "Fernet con Coca XL", "cantidad": 1 },
+                { "producto": "Agua Mineral Villavicencio", "cantidad": 2 }
+            ]
+        }
+    ]
+}

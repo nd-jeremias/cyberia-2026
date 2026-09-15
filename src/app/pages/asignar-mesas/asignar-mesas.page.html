@@ -1,8 +1,36 @@
 <app-header [defaultHref]="'/inicio'" [tituloHeader]="'Asignar mesas'"></app-header>
 
 <ion-content [fullscreen]="true">
+  <div class="hoja">
+    <!-- Estado del salón de un vistazo, antes de entrar al procedimiento. -->
+    <div class="resumen">
+        <div class="ficha-resumen">
+            <span class="cifra">
+                <ion-icon name="grid-outline"></ion-icon>
+                {{ mesasDisponibles().length }}
+            </span>
+            <span class="rotulo">Mesas libres</span>
+        </div>
+
+        <div class="ficha-resumen">
+            <span class="cifra">
+                <ion-icon name="pricetag-outline"></ion-icon>
+                {{ mesas().length }}
+            </span>
+            <span class="rotulo">Total de mesas</span>
+        </div>
+
+        <div class="ficha-resumen">
+            <span class="cifra">
+                <ion-icon name="people-outline"></ion-icon>
+                {{ clientes().length }}
+            </span>
+            <span class="rotulo">Clientes activos</span>
+        </div>
+    </div>
+
     <section class="paso">
-        <h2 class="titulo-paso">1. Elegí el cliente</h2>
+        <h2 class="titulo-paso titulo-seccion">1. Elegí el cliente</h2>
 
         @if (clienteElegido(); as cliente) {
             <div class="cliente-elegido">
@@ -24,12 +52,18 @@
 
             @if (mesaYaAsignada(); as asignada) {
                 <p class="aviso-asignada">
-                    Este cliente ya tiene la mesa N° {{ asignada.numeroMesa }}.
-                    Debe dirigirse a esa mesa.
+                    <ion-icon name="alert-circle-outline"></ion-icon>
+                    <span>
+                        Este cliente ya tiene la mesa N° {{ asignada.numeroMesa }}.
+                        Debe dirigirse a esa mesa.
+                    </span>
                 </p>
             }
         } @else if (clientes().length === 0) {
-            <p class="vacio">No hay clientes registrados activos.</p>
+            <div class="estado-vacio">
+                <ion-icon name="people-outline"></ion-icon>
+                <p>No hay clientes registrados activos.</p>
+            </div>
         } @else {
             <div class="lista">
                 @for (cliente of clientes(); track cliente.id) {
@@ -45,33 +79,42 @@
     </section>
 
     <section class="paso">
-        <h2 class="titulo-paso">2. Elegí la mesa</h2>
+        <h2 class="titulo-paso titulo-seccion">2. Elegí la mesa</h2>
 
         @if (mesasDisponibles().length === 0) {
-            <p class="vacio">No hay mesas disponibles en este momento.</p>
+            <div class="estado-vacio">
+                <ion-icon name="grid-outline"></ion-icon>
+                <p>No hay mesas disponibles en este momento.</p>
+            </div>
         } @else {
             <div class="lista-mesas">
                 @for (mesa of mesasDisponibles(); track mesa.id) {
                     <article class="tarjeta-mesa">
                         <div class="encabezado-mesa">
-                            <h3>Mesa N° {{ mesa.numeroMesa }}</h3>
+                            <span class="ficha-mesa">
+                                <span class="ficha-mesa-rotulo">Mesa</span>
+                                <span class="ficha-mesa-numero">{{ mesa.numeroMesa }}</span>
+                            </span>
                             <ion-badge color="success">disponible</ion-badge>
                         </div>
 
-                        <p class="dato-mesa">{{ mesa.tipo }}</p>
-                        <p class="dato-mesa">
-                            {{ mesa.cantidadLugares }} lugares
-                        </p>
+                        <div class="datos-mesa">
+                            <span class="chip chip-tipo">
+                                <ion-icon name="pricetag-outline"></ion-icon>
+                                {{ mesa.tipo }}
+                            </span>
+                            <span class="chip">
+                                <ion-icon name="people-outline"></ion-icon>
+                                {{ mesa.cantidadLugares }} lugares
+                            </span>
+                        </div>
 
                         <ion-button
                             expand="block"
                             [disabled]="!clienteElegido() || cargando()"
                             (click)="onAsignar(mesa)"
                         >
-                            <ion-icon
-                                slot="start"
-                                name="checkmark-circle"
-                            ></ion-icon>
+                            <ion-icon slot="start" name="checkmark-circle"></ion-icon>
                             Asignar esta mesa
                         </ion-button>
                     </article>
@@ -79,4 +122,5 @@
             </div>
         }
     </section>
+  </div>
 </ion-content>

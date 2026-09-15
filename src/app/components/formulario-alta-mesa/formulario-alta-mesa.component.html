@@ -1,17 +1,11 @@
 <div class="pantalla-alta-mesa">
-    <div class="cabecera">
-        <div class="isotipo-icono">
-            <img src="../../../assets/logo.png" />
-        </div>
-        <h1>Crear Mesa</h1>
-    </div>
     <div class="seccion-form">
         <form [formGroup]="formulario" (ngSubmit)="onAltaMesa()" class="formulario-cuerpo">
             <!-- Numero de Mesa -->
             <div class="grupo-input">
                 <label class="input-label">Número de mesa</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <ion-icon name="grid-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="numeroMesa"
                         type="number"
@@ -23,16 +17,18 @@
                     >
                     </ion-input>
                 </div>
+                @if (hayError("numeroMesa", "required")) {
+                <span class="mensaje-error">Ingrese el número correspondiente a la mesa</span>
+                } @if (hayError("numeroMesa", "min")) {
+                <span class="mensaje-error">El número de mesa debe ser mayor a cero</span>
+                }
             </div>
-            @if (formulario.get("numeroMesa")?.errors?.["required"] && formulario.get("numeroMesa")?.touched) {
-            <span class="mensaje-error">Ingrese el número correspondiente a la mesa</span>
-            }
 
             <!-- Cantidad de lugares -->
             <div class="grupo-input">
                 <label class="input-label">Cantidad de lugares</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <ion-icon name="people-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="cantidadLugares"
                         type="number"
@@ -43,9 +39,10 @@
                         placeholder="4"
                     ></ion-input>
                 </div>
-                @if (formulario.get("cantidadLugares")?.errors?.["required"] &&
-                formulario.get("cantidadLugares")?.touched) {
+                @if (hayError("cantidadLugares", "required")) {
                 <span class="mensaje-error">Ingrese la cantidad de lugares disponibles</span>
+                } @if (hayError("cantidadLugares", "min")) {
+                <span class="mensaje-error">La mesa debe tener al menos un lugar</span>
                 }
             </div>
 
@@ -53,7 +50,7 @@
             <div class="grupo-input">
                 <label class="input-label">Tipo de mesa</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
                     <ion-select
                         formControlName="tipo"
                         label="Tipo de mesa"
@@ -65,33 +62,51 @@
                         }
                     </ion-select>
                 </div>
-                @if (formulario.get("tipo")?.errors?.["required"] && formulario.get("tipo")?.touched) {
+                @if (hayError("tipo", "required")) {
                 <span class="mensaje-error">Seleccione el tipo de mesa a cargar</span>
                 }
             </div>
 
-            <!-- <ion-item>
-                <label class="input-archivo">
-                    Foto de la mesa
-                    <input type="file" accept="image/*" (change)="onFotoSeleccionada($event)" />
-                </label>
-            </ion-item> -->
+            <!-- Disponibilidad en Edicion -->
+            @if(mesaExistente()){
+            <div class="grupo-input">
+                <label class="input-label">Disponibilidad</label>
+                <div class="caja-input">
+                    <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
+                    <ion-select formControlName="disponibilidad" labelPlacement="floating" placeholder="Seleccionar">
+                        @for (d of disponibilidad; track d) {
+                        <ion-select-option [value]="d">{{ d }}</ion-select-option>
+                        }
+                    </ion-select>
+                </div>
+                @if (hayError("tipo", "required")) {
+                <span class="mensaje-error">Seleccione el tipo de mesa a cargar</span>
+                }
+            </div>
+            }
+
             <div class="img-preview">
                 <app-subida-imagenes
-                    [label]="'Foto: '"
+                    [label]="'Foto de la mesa'"
                     [maxImages]="1"
                     (imagenesChange)="recibirImagenes($event)"
                     [modoCamara]="'camara'"
                     [direccionCamara]="direccionCamara()"
+                    [imagenesIniciales]="fotosIniciales()"
+                    (urlsExistentesChange)="onUrlsExistentes($event)"
                 >
                 </app-subida-imagenes>
-                @if (formulario.get("imagenes")?.errors?.["minLengthArray"] && formulario.get("imagenes")?.touched) {
-                <span>Debe cargar 3 fotos de la mesa</span>
+                <!-- El control se llama "fotos": antes se consultaba "imagenes", que no
+                     existe, y el mensaje no se mostraba nunca. -->
+                @if (hayError("fotos", "minLengthArray")) {
+                <span class="mensaje-error">Debe cargar la foto de la mesa</span>
                 }
             </div>
 
             <div class="enlaces-secundarios">
-                <ion-button expand="full" fill="outline" type="submit" class="btn-principal">Agregar mesa</ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal"
+                    >{{ mesaExistente() ? "Editar mesa" : "Agregar mesa" }}
+                </ion-button>
             </div>
         </form>
     </div>

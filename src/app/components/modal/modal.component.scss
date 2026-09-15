@@ -1,47 +1,102 @@
-/* Configuración estructural del Modal */
+/**
+ * Ventana de aviso de la aplicación.
+ *
+ * El enunciado prohíbe los `alert()` del navegador: todos los mensajes de error
+ * e información salen por acá. Es la pieza que más veces aparece, así que se
+ * viste con la paleta de la aplicación: barra naranja arriba, papel crema
+ * abajo.
+ */
+
 ion-modal.modal-personalizado {
-    --width: 85%;
-    --max-width: 400px;
-    --height: fit-content;
-    --border-radius: 16px;
-    --backdrop-opacity: 0.6;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+    --width: 90%;
+    --max-width: 27rem;
+    --height: auto;
+    --border-radius: var(--radio-hoja);
+    --backdrop-opacity: 0.45;
+    --box-shadow: var(--sombra-elevada);
+    --background: var(--hoja-alta);
 }
 
-/* Header más alto */
+/**
+ * Alto automático.
+ *
+ * Ionic posiciona el contenido del modal en absoluto, así que sin esto el
+ * alto no lo define lo que hay adentro: quedaba una ventana chica con el
+ * texto cortado y el botón encima. Estas dos reglas son la receta de la
+ * documentación para modales que se miden por su contenido.
+ */
+ion-modal.modal-personalizado::part(content) {
+    position: relative;
+    display: block;
+    contain: content;
+}
+
+ion-modal.modal-personalizado .ion-page {
+    position: relative;
+    display: block;
+    contain: content;
+}
+
 ion-modal.modal-personalizado ion-header ion-toolbar {
-    --padding-top: 16px;
-    --padding-bottom: 16px;
-    --background: var(--bg-petrol);
+    --padding-top: 0.875rem;
+    --padding-bottom: 0.875rem;
+    --background: var(--grad-banda);
+    --color: var(--sobre-naranja);
+    --border-width: 0;
 }
 
-/* Contenido con Padding correcto */
+ion-modal.modal-personalizado ion-title {
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    text-align: center;
+    color: var(--sobre-naranja);
+}
+
 .contenido {
-    min-height: 300px;
-    --padding-start: 20px;
-    --padding-end: 20px;
-    --padding-top: 20px;
-    --padding-bottom: 20px;
-    background-color: var(--bg-blue-petrol);
+    background: var(--hoja-alta);
+    padding: 1.5rem 1.5rem 1rem;
+
+    min-height: 10rem;
+    display: flex;
+    align-items: center;
+
+    p {
+        margin: 0;
+        font-size: var(--texto-cuerpo);
+        line-height: 1.55;
+        color: var(--tinta-media);
+        text-align: center;
+    }
 }
 
-/* Footer y Botón Centrado */
 ion-modal.modal-personalizado ion-footer {
-    padding-top: 12px;
-    padding-bottom: 16px;
-    background-color: var(--bg-blue-petrol);
+    padding: 0.75rem 1.5rem 1.5rem;
+    background: var(--hoja-alta);
+
+    &::before {
+        display: none;
+    }
 }
 
 .botonContainer {
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     width: 100%;
 }
 
 .botonCerrar {
-    color: var(--text-light);
-    --border-radius: 8px;
-    --padding-start: 24px;
-    --padding-end: 24px;
-    font-weight: 600;
+    --background: var(--grad-naranja);
+    --background-activated: var(--naranja-hondo);
+    --background-hover: var(--naranja-claro);
+    --color: var(--sobre-naranja);
+    --border-radius: var(--radio);
+    --box-shadow: var(--sombra-naranja);
+    --padding-start: 2.5rem;
+    --padding-end: 2.5rem;
+
+    min-height: 3rem;
+    font-size: var(--texto-cuerpo);
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
 }

@@ -1,0 +1,15 @@
+{
+    "descripcion": "Punto 19: pedido completo, listo para que el mozo lo entregue. `npm run datos:prueba:entrega` lo carga; después el mozo lo marca como entregado y el cliente confirma la recepción desde \"Mi pedido\".",
+    "pedidos": [
+        {
+            "cliente": "cliente@restaurante.com",
+            "mesa": 1,
+            "estado": "Listo para Entregar",
+            "detalles": [
+                { "producto": "Milanesa con Papas Fritas", "cantidad": 2 },
+                { "producto": "Fernet con Coca XL", "cantidad": 1 },
+                { "producto": "Agua Mineral Villavicencio", "cantidad": 2 }
+            ]
+        }
+    ]
+}

@@ -1,30 +1,12 @@
 import { Component, input, output } from '@angular/core';
-import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
-import {
-    AccionTarjetaUsuario,
-    TarjetaUsuarioComponent,
-} from '../tarjeta-usuario/tarjeta-usuario.component';
+import { IonIcon } from '@ionic/angular';
+import { ClienteInterface } from '../../interfaces/cliente.interface';
+import { ACCIONES_APROBACION, AccionTarjetaUsuario, TarjetaUsuarioComponent } from '../tarjeta-usuario/tarjeta-usuario.component';
 
 /**
- * Botones que ofrece cada fila del listado.
- *
- * Se declaran como datos y no en la plantilla para que la tarjeta siga siendo
- * genérica: es el listado quien decide qué se puede hacer con cada usuario.
+ * Botones que ofrece cada fila del listado (Aceptar y Rechazar).
  */
-const ACCIONES: AccionTarjetaUsuario[] = [
-    {
-        id: 'aprobar',
-        etiqueta: 'Aprobar',
-        icono: 'checkmark-circle',
-        color: 'success',
-    },
-    {
-        id: 'rechazar',
-        etiqueta: 'Rechazar',
-        icono: 'close-circle',
-        color: 'danger',
-    },
-];
+const ACCIONES: AccionTarjetaUsuario[] = ACCIONES_APROBACION;
 
 /**
  * Listado de clientes esperando aprobación (punto 6 del enunciado).
@@ -37,15 +19,15 @@ const ACCIONES: AccionTarjetaUsuario[] = [
     selector: 'app-listado-clientes-pendientes',
     templateUrl: './listado-clientes-pendientes.component.html',
     styleUrls: ['./listado-clientes-pendientes.component.scss'],
-    imports: [TarjetaUsuarioComponent],
+    imports: [IonIcon, TarjetaUsuarioComponent],
 })
 export class ListadoClientesPendientesComponent {
     /** Los clientes los provee la página; este componente no consulta la base. */
-    clientes = input.required<ClientePendienteInterface[]>();
+    clientes = input.required<ClienteInterface[]>();
     tituloListado = input<string>('Clientes pendientes de aprobación');
 
-    aprobarCliente = output<ClientePendienteInterface>();
-    rechazarCliente = output<ClientePendienteInterface>();
+    aprobarCliente = output<ClienteInterface>();
+    rechazarCliente = output<ClienteInterface>();
 
     acciones = ACCIONES;
 
@@ -54,8 +36,8 @@ export class ListadoClientesPendientesComponent {
      *
      * Así la tarjeta no necesita saber que existen "aprobar" y "rechazar".
      */
-    onAccion(evento: { accion: string; usuario: ClientePendienteInterface }) {
-        if (evento.accion === 'aprobar') {
+    onAccion(evento: { accion: string; usuario: ClienteInterface }) {
+        if (evento.accion === 'aceptar' || evento.accion === 'aprobar') {
             this.aprobarCliente.emit(evento.usuario);
             return;
         }

@@ -1,6 +1,13 @@
 <ion-content [fullscreen]="true" [scrollY]="true">
-    <app-login-form
-        (loginSubmit)="handleLogin($event)"
-        (loginAnonimo)="irAIngresoAnonimo()"
-    ></app-login-form>
+    <div class="layout-superpuesto fondo-texturizado">
+        <!-- <div class="inferior"> -->
+            <app-header-logo class="inferior sin-labio"></app-header-logo>
+        <!-- </div> -->
+        <div class="superior hoja hoja-angosta">
+            <app-login-form
+                (loginSubmit)="handleLogin($event)"
+                (loginAnonimo)="irAIngresoAnonimo()"
+            ></app-login-form>
+        </div>
+    </div>
 </ion-content>

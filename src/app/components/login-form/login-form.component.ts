@@ -1,19 +1,7 @@
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonIcon, IonInput, IonInputPasswordToggle } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
-import { addIcons } from 'ionicons';
-import { 
-  restaurantOutline, 
-  mailOutline, 
-  lockClosedOutline, 
-  shieldCheckmarkOutline, 
-  peopleOutline, 
-  wineOutline, 
-  fastFoodOutline, 
-  personOutline 
-} from 'ionicons/icons';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { ModalService } from '../../services/modal.service';
 
@@ -36,19 +24,6 @@ export class LoginFormComponent {
   loginSubmit = output<LoginInterface>();
   loginAnonimo = output<void>();
 
-  constructor() {
-    addIcons({
-      'restaurant-outline': restaurantOutline,
-      'mail-outline': mailOutline,
-      'lock-closed-outline': lockClosedOutline,
-      'shield-checkmark-outline': shieldCheckmarkOutline,
-      'people-outline': peopleOutline,
-      'wine-outline': wineOutline,
-      'fast-food-outline': fastFoodOutline,
-      'person-outline': personOutline,
-    });
-  }
-
   formulario = new FormGroup({
     email: new FormControl('', { validators: [Validators.required, Validators.email] }),
     password: new FormControl('', { validators: [Validators.required, Validators.minLength(8)] }),
@@ -61,18 +36,38 @@ export class LoginFormComponent {
    * Son datos de prueba: no deberían quedar en una versión de producción.
    */
   usuariosValidos = [
-    { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', icono: 'shield-checkmark-outline' },
-    // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', icono: 'shield-checkmark-outline' },
-    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', icono: 'shield-checkmark-outline' },
-    { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', icono: 'people-outline' },
-    { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', icono: 'restaurant-outline' },
-    { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', icono: 'fast-food-outline' },
-    { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', icono: 'person-outline' },
+    { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', clave: 'duenio', icono: 'shield-checkmark-outline' },
+    // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', clave: 'supervisor', icono: 'shield-checkmark-outline' },
+    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', clave: 'cantinero', icono: 'wine-outline' },
+    { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', clave: 'metre', icono: 'people-outline' },
+    { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', clave: 'mozo', icono: 'restaurant-outline' },
+    { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', clave: 'cocinero', icono: 'fast-food-outline' },
+    { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', clave: 'cliente', icono: 'person-outline' },
   ];
 
-  /** Completa el formulario con un perfil de prueba, listo para enviar. */
+  /**
+   * Panel de accesos rápidos: abierto o cerrado.
+   *
+   * El enunciado pide que los botones de ingreso rápido NO sean fijos. Por eso
+   * viven dentro de un panel que se despliega al tocar "Acceso rápido": en
+   * reposo la pantalla muestra sólo el formulario, y los perfiles aparecen
+   * cuando se los pide.
+   */
+  accesosAbiertos = signal(false);
+
+  alternarAccesos() {
+    this.accesosAbiertos.update((abierto) => !abierto);
+  }
+
+  /**
+   * Completa el formulario con un perfil de prueba y cierra el panel.
+   *
+   * Se cierra a propósito: una vez elegido el perfil, lo que importa es ver el
+   * formulario ya cargado y el botón de ingresar.
+   */
   cargarCredenciales(correo: string, clave: string) {
     this.formulario.setValue({ email: correo, password: clave });
+    this.accesosAbiertos.set(false);
   }
 
   /**
@@ -98,8 +93,7 @@ export class LoginFormComponent {
       // Ionic solo pinta el error si el control esta "tocado".
       this.formulario.markAllAsTouched();
 
-      await Haptics.notification({ type: NotificationType.Error });
-
+      // El modal vibra solo al detectar un título de error.
       this.modal.setOpen(
         'Datos inválidos',
         'Revise el correo y la contraseña antes de continuar.'

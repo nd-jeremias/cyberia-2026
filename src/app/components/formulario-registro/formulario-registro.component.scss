@@ -1,62 +1,161 @@
+/**
+ * Formulario de registro (cliente, empleado y alta desde el metre).
+ *
+ * Los campos, las etiquetas, los mensajes y los botones salen del kit de
+ * `global.scss`. El título y el logotipo ya no están acá: los muestra la banda
+ * naranja de `app-header`, así que el formulario arranca directamente por el
+ * primer campo.
+ */
+
 :host {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     width: 100%;
-    min-height: 100vh;
-    padding: 0.75rem;
-    box-sizing: border-box;
-    flex-direction: column;
-    background-color: var(--bg-dark);
 }
 
 .pantalla-registro {
-    padding: 2rem;
-    padding-top: 0;
     display: flex;
     flex-direction: column;
+    gap: 1.25rem;
     width: 100%;
-    max-width: 32rem;
-    border-radius: 1rem;
-    box-sizing: border-box;
-    gap: 2rem;
 }
 
-img {
-    margin-top: 2.2rem;
+.formulario-cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
 }
 
-.divisor {
+/* ---------------------------------------------------------------------------
+   Campo de DNI con lector de código QR
+   ---------------------------------------------------------------------------
+   El botón del lector va dentro de la caja del campo, como acción propia de
+   ese campo, con un área de toque de 2.5rem.
+   --------------------------------------------------------------------------- */
+
+.caja-input-accion {
+    display: flex;
+    width: 100%;
+}
+
+.caja-dni {
+    flex: 1;
+}
+
+.btn-escanear {
     display: flex;
     align-items: center;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 1rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    width: 100%; /* Asegura que el divisor use todo el ancho disponible */
-    margin: 16px 0; /* Espaciado opcional arriba y abajo del divisor */
+    justify-content: center;
+    flex-shrink: 0;
 
-    &::before,
-    &::after {
-        content: "";
-        flex: 1;
-        border-bottom: 1px solid #4a77ab;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-left: 0.5rem;
+    padding: 0;
+
+    background: rgba(226, 87, 28, 0.12);
+    border: 0.0938rem solid rgba(226, 87, 28, 0.35);
+    border-radius: var(--radio-chico);
+
+    color: var(--naranja-hondo);
+    font-size: 1.375rem;
+    cursor: pointer;
+
+    transition: background 0.18s ease, transform 0.14s ease;
+
+    &:hover {
+        background: rgba(226, 87, 28, 0.2);
     }
 
-    span {
-        padding: 0 12px; /* Un poco más de espacio al lado de la letra "o" */
+    &:active {
+        transform: scale(0.92);
+    }
+
+    ion-icon {
+        font-size: 1.375rem;
     }
 }
+
+/* ---------------------------------------------------------------------------
+   Grupo de CUIL (prefijo - documento - dígito verificador)
+   --------------------------------------------------------------------------- */
+
+.fila-cuil {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .caja-input {
+        padding: 0 0.625rem;
+    }
+
+    .guion-cuil {
+        flex-shrink: 0;
+        font-size: var(--texto-subtitulo);
+        font-weight: 800;
+        color: var(--tinta-tenue);
+    }
+
+    ion-input {
+        text-align: center;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Bloque de foto
+   --------------------------------------------------------------------------- */
 
 .img-preview {
-    --background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.5);
+    border: var(--borde-hoja);
+    border-radius: var(--radio);
+
+    /* El aviso de "falta la foto" toma el mismo estilo que el resto de los
+       errores del formulario, en vez de quedar como un texto suelto. */
+    > span {
+        display: block;
+        padding: 0.375rem 0.625rem;
+
+        font-size: var(--texto-epigrafe);
+        font-weight: 600;
+        color: var(--peligro-tinta);
+
+        background: var(--peligro-velo);
+        border-left: 0.1875rem solid var(--peligro);
+        border-radius: 0.375rem;
+    }
 }
 
+/* ---------------------------------------------------------------------------
+   Pie del formulario
+   --------------------------------------------------------------------------- */
 
-.btn-escanear{
-    background: transparent;
-    color: var(--text-light);
-    font-size: 42px;
+.enlaces-secundarios {
+    margin-top: 0.25rem;
+}
+
+.estaRegistrado {
+    font-size: var(--texto-apoyo);
+    font-weight: 600;
+    color: var(--tinta-media);
+}
+
+/* Las dos alternativas comparten fila: apiladas dejaban un bloque muerto. */
+.fila-alternativas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+
+    .btn-secundario {
+        min-height: 3.375rem;
+        padding: 0 0.625rem;
+        font-size: var(--texto-apoyo);
+    }
 }

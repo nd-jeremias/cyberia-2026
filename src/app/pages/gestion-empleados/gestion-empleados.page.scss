@@ -1,0 +1,9 @@
+ion-content {
+    --background: var(--naranja);
+    --padding-bottom: 0;
+}
+:host ::ng-deep {
+    .layout-superpuesto { min-height: 100vh; }
+    .inferior { height: auto; padding-bottom: 0; }
+    .superior { padding-top: 1.5rem; }
+}

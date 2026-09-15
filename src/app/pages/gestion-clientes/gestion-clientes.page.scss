@@ -1,0 +1,30 @@
+/* La estructura la aportan `app-header` y `.hoja`; el aviso, la hoja compartida. */
+@use "../_compartido/pantalla-en-preparacion.scss";
+
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.estado-vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2.5rem 1rem;
+    text-align: center;
+    color: var(--tinta-suave);
+
+    ion-icon {
+        font-size: 3rem;
+        opacity: 0.6;
+    }
+
+    p {
+        margin: 0;
+        font-size: var(--texto-cuerpo);
+    }
+}

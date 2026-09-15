@@ -1,37 +1,43 @@
+/**
+ * Listado de clientes pendientes de aprobación (punto 6 del enunciado).
+ *
+ * Con la tarjeta de usuario en formato horizontal, en una pantalla de celular
+ * entran tres o cuatro solicitudes completas sin cortar ninguna por la mitad,
+ * que es justo lo que pide el enunciado sobre la creación de listados.
+ */
+
 :host {
-  display: block;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
 }
 
 .listado-clientes {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex: 1;
+
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 2rem;
+    box-sizing: border-box;
 }
 
+/* Sin solicitudes pendientes, el recuadro se lleva el alto sobrante. */
+.listado-clientes > .estado-vacio {
+    flex: 1;
+}
+
+/* El aspecto lo aporta `.titulo-seccion` de global.scss. */
 .titulo-listado {
-  margin: 0;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--ion-text-color, #ffffff);
-}
-
-.listado-vacio {
-  margin: 0;
-  padding: 20px;
-  text-align: center;
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.85);
-  background-color: var(--ion-card-background, #254d7d);
-  border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+    flex-shrink: 0;
 }
 
 .lista {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
-

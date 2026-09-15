@@ -1,0 +1,16 @@
+{
+    "descripcion": "Punto 22: pedido ya recibido de un cliente que pagó y espera que el mozo confirme el cobro. `npm run datos:prueba:pago` lo carga. Usa el estado 'Recibido', que requiere sql/migracion-recepcion-pedido.sql.",
+    "pedidos": [
+        {
+            "cliente": "cliente@restaurante.com",
+            "mesa": 1,
+            "estado": "Recibido",
+            "estadoCliente": "pagando",
+            "detalles": [
+                { "producto": "Milanesa con Papas Fritas", "cantidad": 2 },
+                { "producto": "Fernet con Coca XL", "cantidad": 1 },
+                { "producto": "Agua Mineral Villavicencio", "cantidad": 2 }
+            ]
+        }
+    ]
+}

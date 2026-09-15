@@ -1,27 +1,42 @@
-<ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title>Pedidos</ion-title>
-    </ion-toolbar>
-</ion-header>
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos'">
+    <!-- Punto 14: trae los pedidos que llegaron mientras la pantalla estaba abierta. -->
+    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+        <ion-icon name="refresh-outline"></ion-icon>
+        Actualizar
+    </button>
+</app-header>
 
 <ion-content [fullscreen]="true">
+  <div class="hoja pantalla-pedidos">
     <section class="grupo">
-        <h2 class="titulo-grupo">Esperando confirmación</h2>
+        <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
 
         @if (pendientes().length === 0) {
-            <p class="vacio">No hay pedidos esperando confirmación.</p>
+            <div class="estado-vacio">
+                <ion-icon name="receipt-outline"></ion-icon>
+                <p>No hay pedidos esperando confirmación.</p>
+            </div>
         } @else {
             @for (pedido of pendientes(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
-                        <h3>Mesa N° {{ pedido.numeroMesa }}</h3>
+                        <span class="ficha-mesa">
+                            <span class="ficha-mesa-rotulo">Mesa</span>
+                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                        </span>
                         <ion-badge color="warning">{{ pedido.estado }}</ion-badge>
                     </div>
 
-                    <p class="dato">{{ fechaFormateada(pedido) }}</p>
-                    <p class="dato">
-                        Tiempo estimado: {{ tiempoEstimado(pedido) }} minutos
-                    </p>
+                    <div class="datos-pedido">
+                        <span class="chip">
+                            <ion-icon name="time-outline"></ion-icon>
+                            {{ fechaFormateada(pedido) }}
+                        </span>
+                        <span class="chip">
+                            <ion-icon name="restaurant-outline"></ion-icon>
+                            {{ tiempoEstimado(pedido) }} minutos estimados
+                        </span>
+                    </div>
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
@@ -32,7 +47,10 @@
                         }
                     </ul>
 
-                    <p class="total">Total: {{ totalFormateado(pedido) }}</p>
+                    <p class="total">
+                        <span class="total-rotulo">Total</span>
+                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                    </p>
 
                     <div class="acciones">
                         <ion-button
@@ -64,19 +82,30 @@
     </section>
 
     <section class="grupo">
-        <h2 class="titulo-grupo">Listos para entregar</h2>
+        <h2 class="titulo-grupo titulo-seccion">Listos para entregar</h2>
 
         @if (listos().length === 0) {
-            <p class="vacio">Todavía no hay pedidos listos.</p>
+            <div class="estado-vacio">
+                <ion-icon name="time-outline"></ion-icon>
+                <p>Todavía no hay pedidos listos.</p>
+            </div>
         } @else {
             @for (pedido of listos(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
-                        <h3>Mesa N° {{ pedido.numeroMesa }}</h3>
+                        <span class="ficha-mesa">
+                            <span class="ficha-mesa-rotulo">Mesa</span>
+                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                        </span>
                         <ion-badge color="success">{{ pedido.estado }}</ion-badge>
                     </div>
 
-                    <p class="dato">{{ fechaFormateada(pedido) }}</p>
+                    <div class="datos-pedido">
+                        <span class="chip">
+                            <ion-icon name="time-outline"></ion-icon>
+                            {{ fechaFormateada(pedido) }}
+                        </span>
+                    </div>
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
@@ -87,7 +116,10 @@
                         }
                     </ul>
 
-                    <p class="total">Total: {{ totalFormateado(pedido) }}</p>
+                    <p class="total">
+                        <span class="total-rotulo">Total</span>
+                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                    </p>
 
                     <ion-button
                         expand="block"
@@ -101,4 +133,53 @@
             }
         }
     </section>
+
+    <!-- Punto 22: el cliente ya pagó y espera que el mozo confirme el cobro. -->
+    <section class="grupo">
+        <h2 class="titulo-grupo titulo-seccion">Pagos por confirmar</h2>
+
+        @if (pagos().length === 0) {
+            <div class="estado-vacio">
+                <ion-icon name="cash-outline"></ion-icon>
+                <p>No hay pagos esperando confirmación.</p>
+            </div>
+        } @else {
+            @for (pedido of pagos(); track pedido.id) {
+                <article class="tarjeta-pedido">
+                    <div class="encabezado">
+                        <span class="ficha-mesa">
+                            <span class="ficha-mesa-rotulo">Mesa</span>
+                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                        </span>
+                        <ion-badge color="tertiary">Pagó, falta confirmar</ion-badge>
+                    </div>
+
+                    <ul class="detalles">
+                        @for (item of pedido.detalles; track item.id) {
+                            <li>
+                                <span class="cantidad">{{ item.cantidad }}×</span>
+                                {{ item.nombreProducto }}
+                            </li>
+                        }
+                    </ul>
+
+                    <p class="total">
+                        <span class="total-rotulo">Total</span>
+                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                    </p>
+
+                    <ion-button
+                        expand="block"
+                        color="success"
+                        [disabled]="cargando()"
+                        (click)="onConfirmarPago(pedido)"
+                    >
+                        <ion-icon slot="start" name="cash-outline"></ion-icon>
+                        Confirmar pago y liberar mesa
+                    </ion-button>
+                </article>
+            }
+        }
+    </section>
+  </div>
 </ion-content>

@@ -1,0 +1,22 @@
+// El fondo naranja de ion-content asoma detrás de la banda naranja al rebotar
+// el scroll, lo que da continuidad visual sin un corte brusco.
+ion-content {
+    --background: var(--naranja);
+    --padding-bottom: 0;
+}
+
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+:host ::ng-deep {
+    .layout-superpuesto {
+        min-height: 100vh;
+    }
+
+    .inferior {
+        height: auto;
+        padding-bottom: 50px;
+    }
+
+    .superior {
+        padding-top: 1.5rem;
+    }
+}
