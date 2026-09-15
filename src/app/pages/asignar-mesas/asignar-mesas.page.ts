@@ -99,7 +99,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
 
     async onSeleccionCliente(evento: {
         accion: string;
-        usuario: ClientePendienteInterface;
+        usuario: ClienteInterface;
     }) {
         if (evento.accion === 'quitar') {
             await this.quitarDeLista(evento.usuario);
@@ -110,7 +110,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
     }
 
     /** Saca al cliente de la lista de espera sin asignarle mesa (punto 9). */
-    private async quitarDeLista(cliente: ClientePendienteInterface) {
+    private async quitarDeLista(cliente: ClienteInterface) {
         try {
             await this.salonService.quitarDeListaEspera(cliente.id);
 
