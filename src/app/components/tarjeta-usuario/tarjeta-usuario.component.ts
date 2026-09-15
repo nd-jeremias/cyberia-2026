@@ -1,6 +1,7 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { IonBadge, IonButton, IonIcon } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
+import { Router } from '@angular/router';
 
 /**
  * Botón configurable de la tarjeta.
@@ -67,6 +68,8 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
 })
 export class TarjetaUsuarioComponent {
     usuario = input.required<ClienteInterface>();
+    router = inject(Router);
+    rutaActual = signal<string>('')
 
     /**
      * Modo de la tarjeta para usar conjuntos de acciones predefinidos:
@@ -127,6 +130,17 @@ export class TarjetaUsuarioComponent {
                 return 'warning';
         }
     });
+
+    ngOnInit(){
+        this.obtenerRutaActual()
+    }
+
+    obtenerRutaActual() {
+        // Retorna un string tipo '/home' o '/perfil/usuario'
+        const urlActual = this.router.url;
+        console.log(urlActual)
+        this.rutaActual.set(urlActual)
+    }
 
     onAccion(accion: string) {
         this.accionSeleccionada.emit({ accion, usuario: this.usuario() });

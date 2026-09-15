@@ -16,17 +16,16 @@
 }
 
 .tarjeta-usuario {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-        "foto datos"
-        "acciones acciones";
+    display: flex;
+    flex-direction: column;
+    // grid-template-columns: auto 1fr;
+    // grid-template-areas:
+    //     "foto datos"
+    //     "acciones acciones";
     gap: 0.875rem 1rem;
-    height: 16rem;
-
     padding: 1rem;
     box-sizing: border-box;
-
+    min-height: 32rem;
     background: var(--hoja-alta);
     border: var(--borde-hoja);
     border-radius: var(--radio-grande);
@@ -40,20 +39,13 @@
     }
 }
 
-/* --- Foto ----------------------------------------------------------------- */
-
+/* ----- Foto ----- */
 .contenedor-foto {
-    grid-area: foto;
-    display: flex;
-    align-self: center;
-    width: 9rem;
-    height: 9rem;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
     overflow: hidden;
-
-    border-radius: var(--radio);
-    border: 0.125rem solid var(--hoja-borde-fuerte);
-    background: var(--hoja-alta);
-    box-shadow: var(--sombra-apoyada);
+    background-color: #12294a;
 }
 
 .foto-usuario {
@@ -69,13 +61,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: rgba(255, 255, 255, 0.55);
+}
 
-    color: var(--tinta-suave);
-    opacity: 0.7;
-
-    ion-icon {
-        font-size: 2.75rem;
-    }
+.foto-ausente ion-icon {
+    font-size: 4rem;
 }
 
 /* --- Datos ---------------------------------------------------------------- */

@@ -2,6 +2,7 @@
 
 <ion-content [fullscreen]="true">
     <app-formulario-registro
+        [modo]="'modificar_empleado'"
         [usuarioExistente]="empleadoExistente()"
         [usuarioRol]="'dueño'"
         (registroSubmit)="handleRegistro($event)"

@@ -16,10 +16,11 @@
         <ion-badge [color]="colorEstado()">{{ usuario().estado }}</ion-badge>
         } @if (mostrarContacto()) {
         <p class="dato">DNI: {{ usuario().dni }}</p>
-        <!-- <p class="dato"> {{ usuario().correo }}</p> -->
+        <p class="dato">{{ usuario().correo_electronico }}</p>
+        @if(rutaActual() == '/gestion-clientes/clientes-pendientes'){
         <p class="dato fecha">Solicitud hecha el:</p>
         <p class="dato fecha">{{ fechaFormateada() }}</p>
-        }
+        }}
     </div>
 
     @if (accionesVisibles().length > 0) {

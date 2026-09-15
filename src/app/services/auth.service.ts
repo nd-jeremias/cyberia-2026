@@ -266,10 +266,10 @@ export class AuthService {
                 return data.user;
             }
             return null;
-        } catch (error) {
+        } catch (error) { 
             const mensaje = error instanceof Error ? error.message : 'No se pudo crear el usuario.';
             this.modal.setOpen('Error', mensaje);
-            return null;
+            throw new Error(mensaje);
         } finally {
             // signUp() deja la sesión abierta, pero un registro nuevo queda en
             // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:
