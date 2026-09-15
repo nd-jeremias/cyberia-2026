@@ -125,7 +125,7 @@ export class FormularioRegistroComponent {
     // DATOS
     // ============================================================
 
-    tiposEmpleado = ['dueño', 'supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
+    tiposEmpleado = ['supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
     fotosUrlsExistentes: string[] = [];
 
     // ============================================================
@@ -232,8 +232,8 @@ export class FormularioRegistroComponent {
                     dni: usuario.dni ?? '',
                     cuil: 'cuil' in usuario && usuario.cuil ? usuario.cuil : '',
                     correo: usuario.correo_electronico ?? '',
-                    perfil: 'perfil' in usuario && usuario.cuil ? usuario.cuil : '',
-                    tipoEmpleado: 'tipoEmpleado' in usuario && usuario.cuil ? usuario.cuil : '',
+                    perfil: 'perfil' in usuario && usuario.perfil ? usuario.perfil : '',
+                    tipoEmpleado: 'tipoEmpleado' in usuario && usuario.tipoEmpleado ? usuario.tipoEmpleado : '',
 
                     /**
                      * NO colocamos empleado.fotoUrl acá.

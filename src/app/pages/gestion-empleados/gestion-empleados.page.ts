@@ -22,7 +22,7 @@ import { ModalService } from '../../services/modal.service';
     styleUrls: ['./gestion-empleados.page.scss'],
     imports: [IonContent, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaEmpleadoComponent],
 })
-export class GestionEmpleadosPage implements OnInit {
+export class GestionEmpleadosPage {
     empleadosService = inject(EmpleadosService);
     private alertCtrl = inject(AlertController);
     private spinner = inject(SpinnerService);
@@ -31,13 +31,13 @@ export class GestionEmpleadosPage implements OnInit {
 
     listaEmpleados = signal<EmpleadoInterface[]>([]);
 
-    async ngOnInit(): Promise<void> {
+    async ionViewWillEnter(): Promise<void> {
         this.spinner.show();
         try {
             const data = await this.empleadosService.getEmpleados();
             this.listaEmpleados.set(data);
         } catch (error) {
-            const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los productos.';
+            const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los empleados.';
             this.modal.setOpen('Error', mensaje);
         } finally {
             this.spinner.hide();
@@ -60,8 +60,8 @@ export class GestionEmpleadosPage implements OnInit {
 
     async onEliminar(empleado: EmpleadoInterface) {
         const alerta = await this.alertCtrl.create({
-            header: 'Eliminar producto',
-            message: `¿Seguro que querés eliminar "${empleado.nombres}" ${empleado.apellidos}?`,
+            header: 'Eliminar empleado',
+            message: `¿Seguro que querés eliminar a ${empleado.nombres}, ${empleado.apellidos}?`,
             buttons: [
                 { text: 'Cancelar', role: 'cancel' },
                 { text: 'Eliminar', role: 'destructive', handler: () => this.confirmarEliminar(empleado) },

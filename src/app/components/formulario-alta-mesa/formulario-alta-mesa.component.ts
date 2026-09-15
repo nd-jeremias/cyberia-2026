@@ -36,7 +36,8 @@ export class FormularioAltaMesaComponent {
     mesaSubmit = output<MesaAltaInterface>();
 
     /** Espeja el ENUM `tipo_mesa` de la base: otro valor sería rechazado. */
-    tiposMesa: TipoMesa[] = ['estándar', 'VIP', 'movilidad reducida'];
+    tiposMesa: TipoMesa[] = ['Estándar', 'VIP', 'Movilidad reducida'];
+    disponibilidad: string[] = ['Disponible', 'Ocupada', 'Reservada'];
 
     /**
      * Fotos elegidas en el componente de subida. También se copian al control
@@ -60,6 +61,7 @@ export class FormularioAltaMesaComponent {
                     numeroMesa: mesa.numeroMesa,
                     cantidadLugares: mesa.cantidadLugares,
                     tipo: mesa.tipo,
+                    disponibilidad: mesa.disponibilidad,
                     fotos: [],
                 });
 
@@ -84,6 +86,7 @@ export class FormularioAltaMesaComponent {
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],
         }),
+        disponibilidad: new FormControl<string>('Disponible'),
         fotos: new FormControl<File[]>([], { validators: [this.fileService.minLengthArray(1)] }),
         qr: new FormControl<File | null>(null),
     });
@@ -133,11 +136,12 @@ export class FormularioAltaMesaComponent {
         }
 
         const valores = this.formulario.getRawValue();
-
+        
         const datosMesa = {
             numeroMesa: valores.numeroMesa,
             cantidadLugares: valores.cantidadLugares,
             tipo: valores.tipo,
+            disponibilidad: valores.disponibilidad
         };
 
         const data = JSON.stringify(datosMesa);
@@ -154,6 +158,7 @@ export class FormularioAltaMesaComponent {
             tipo: valores.tipo as TipoMesa,
             fotos: this.fotos[0],
             qrFile: this.formulario.value.qr!,
+            disponibilidad: valores.disponibilidad as string
         };
 
         // No se limpia el formulario al emitir: si el guardado falla, la página

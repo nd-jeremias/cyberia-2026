@@ -67,6 +67,24 @@
                 }
             </div>
 
+            <!-- Disponibilidad en Edicion -->
+            @if(mesaExistente()){
+            <div class="grupo-input">
+                <label class="input-label">Disponibilidad</label>
+                <div class="caja-input">
+                    <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
+                    <ion-select formControlName="disponibilidad" labelPlacement="floating" placeholder="Seleccionar">
+                        @for (d of disponibilidad; track d) {
+                        <ion-select-option [value]="d">{{ d }}</ion-select-option>
+                        }
+                    </ion-select>
+                </div>
+                @if (hayError("tipo", "required")) {
+                <span class="mensaje-error">Seleccione el tipo de mesa a cargar</span>
+                }
+            </div>
+            }
+
             <div class="img-preview">
                 <app-subida-imagenes
                     [label]="'Foto de la mesa'"
@@ -86,7 +104,9 @@
             </div>
 
             <div class="enlaces-secundarios">
-                <ion-button expand="block" type="submit" class="btn-principal">{{ mesaExistente() ? 'Editar mesa' : 'Agregar mesa' }} </ion-button>
+                <ion-button expand="block" type="submit" class="btn-principal"
+                    >{{ mesaExistente() ? "Editar mesa" : "Agregar mesa" }}
+                </ion-button>
             </div>
         </form>
     </div>
