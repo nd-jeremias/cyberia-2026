@@ -41,10 +41,20 @@ export class FormularioUsuarioAnonimoComponent {
         if (this.formulario.invalid) {
             this.formulario.markAllAsTouched();
 
-            this.modal.setOpen(
-                'Datos incompletos',
-                'Ingrese su nombre y tome una foto para continuar.'
-            );
+            let mensaje: string = '';
+
+            switch (this.formulario.invalid) {
+                case this.formulario.get('nombres')?.invalid:
+                    mensaje = 'Ingrese su nombre para continuar.';
+                    break;
+                case this.formulario.get('foto')?.invalid:
+                    mensaje = 'Tome una foto para poder ingresar al local.';
+                    break;
+                default:
+                    mensaje = 'Ingrese su nombre y tome una foto para continuar.';
+                    break;
+            }
+            this.modal.setOpen('Datos incompletos', mensaje);
 
             return;
         }
@@ -54,10 +64,7 @@ export class FormularioUsuarioAnonimoComponent {
         const [foto] = this.foto;
 
         if (!foto) {
-            this.modal.setOpen(
-                'Falta la foto',
-                'Tome una foto para poder ingresar al local.'
-            );
+            this.modal.setOpen('Falta la foto', 'Tome una foto para poder ingresar al local.');
 
             return;
         }

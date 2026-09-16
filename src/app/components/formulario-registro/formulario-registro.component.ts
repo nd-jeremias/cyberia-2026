@@ -382,7 +382,6 @@ export class FormularioRegistroComponent {
         if (!word || word.length === 0) {
             return '';
         }
-
         return word[0].toUpperCase() + word.slice(1);
     }
 
@@ -431,6 +430,62 @@ export class FormularioRegistroComponent {
     // VALIDACIÓN
     // ============================================================
 
+    mensajesModales() {
+        let mensaje: string = '';
+
+        const campos = [
+            'nombres',
+            'apellidos',
+            'dni',
+            'cuil',
+            'correo',
+            'tipoEmpleado',
+            'perfil',
+            'foto',
+            'password',
+            'confirmPassword',
+        ];
+
+        const campoInvalido = campos.find((campo) => this.formulario.get(campo)?.invalid);
+
+        switch (campoInvalido) {
+            case 'nombres':
+                mensaje = 'Ingrese su nombre para continuar.';
+                break;
+            case 'apellidos':
+                mensaje = 'Ingrese su apellido para continuar.';
+                break;
+            case 'dni':
+                mensaje = 'Ingrese un DNI válido para continuar.';
+                break;
+            case 'cuil':
+                mensaje = 'Ingrese un CUIL válido para continuar.';
+                break;
+            case 'correo':
+                mensaje = 'Ingrese un correo electrónico válido.';
+                break;
+            case 'tipoEmpleado':
+                mensaje = 'Seleccione un tipo de empleado.';
+                break;
+            case 'perfil':
+                mensaje = 'Seleccione un perfil para continuar.';
+                break;
+            case 'foto':
+                mensaje = 'Tome una foto para poder ingresar al local.';
+                break;
+            case 'password':
+                mensaje = 'Ingrese una contraseña para continuar.';
+                break;
+            case 'confirmPassword':
+                mensaje = 'Las contraseñas no coinciden.';
+                break;
+            default:
+                mensaje = 'Complete los datos requeridos para continuar.';
+                break;
+        }
+        this.modal.setOpen('Datos incompletos', mensaje);
+    }
+
     validateForm(form: FormGroup): boolean {
         // --------------------------------------------------------
         // CUIL
@@ -453,8 +508,7 @@ export class FormularioRegistroComponent {
         // --------------------------------------------------------
 
         if (!form.valid) {
-            this.modal.setOpen('Datos inválidos', 'Revise los datos ingresados');
-
+            this.mensajesModales();
             return true;
         }
 
