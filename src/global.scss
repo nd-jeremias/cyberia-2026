@@ -878,7 +878,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
 .layout-superpuesto {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    min-height: 100vh;
 
     .inferior,
     .superior,
@@ -887,7 +887,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
         position: relative;
     }
 
-    // 1. Capa base del Header
+    // 1. Capa base del Header (máx 20% de pantalla, 30% en modo usuario con avatar)
     .inferior {
         z-index: 1;
         flex-shrink: 0;
@@ -895,10 +895,17 @@ body.barcode-scanner-active .barcode-scanner-ui {
         /* TRUCO: Le agregas exactamente el mismo espacio que le vas a quitar con el margen negativo */
         padding-bottom: 50px;
         height: auto;
+        /* Base del 20%: si el contenido es pequeño mide 20vh, 
+       pero si supera ese espacio crece hacia abajo sin cortarse */
+        min-height: 20vh;
+
+        &:has(.banda-usuario) {
+            max-height: 30vh;
+        }
         /* 1. Ruta de tu patrón | 2. Color vainilla de fondo */
     }
 
-    // 2. Capa Central
+    // 2. Capa Central (se expande para ocupar el resto)
     .superior {
         z-index: 2;
         background-color: var(--hoja);
@@ -910,7 +917,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
         padding-bottom: 50px;
     }
 
-    // 3. Capa base del Footer
+    // 3. Capa base del Footer (máx 15% de pantalla)
     .inferior-final {
         z-index: 3;
         margin-top: -40px;
@@ -919,7 +926,8 @@ body.barcode-scanner-active .barcode-scanner-ui {
         /* Opcional: Si el footer también sufre el mismo problema abajo, dale padding-top */
         padding-top: 40px;
         padding-bottom: 100px;
-        height: 10vh;
+        height: auto;
+        max-height: 15vh;
         border-radius: 40px 40px 0 0;
     }
 }

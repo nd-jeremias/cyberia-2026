@@ -1,12 +1,13 @@
-<app-header [defaultHref]="'/mi-pedido'" [tituloHeader]="'Estado del pedido'">
-    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
-        <ion-icon name="refresh-outline"></ion-icon>
-        Actualizar
-    </button>
-</app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja pantalla-estado">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/mi-pedido'" [tituloHeader]="'Estado del pedido'">
+            <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+                <ion-icon name="refresh-outline"></ion-icon>
+                Actualizar
+            </button>
+        </app-header>
+
+        <div class="superior hoja pantalla-estado">
         @if (cargando()) {
         <div class="estado-vacio">
             <ion-icon name="time-outline"></ion-icon>
@@ -75,5 +76,6 @@
         </button>
         }
         }
+        </div>
     </div>
 </ion-content>

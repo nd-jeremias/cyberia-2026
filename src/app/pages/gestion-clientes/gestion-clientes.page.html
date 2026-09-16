@@ -1,28 +1,29 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Clientes'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja">
-        
-        <app-boton-accion
-            [textoBtn]="'Clientes pendientes de aprobación'"
-            [ruta]="'/gestion-clientes/clientes-pendientes'"
-        ></app-boton-accion>
-        <h2>Clientes activos:</h2>
-        @if (clientes().length === 0) {
-            <div class="estado-vacio">
-                <ion-icon name="people-outline"></ion-icon>
-                <p>No hay clientes activos en este momento.</p>
-            </div>
-        } @else {
-            <div class="lista">
-                @for (cliente of clientes(); track cliente.id) {
-                    <app-tarjeta-usuario
-                        [usuario]="cliente"
-                        modo="gestion"
-                        (accionSeleccionada)="onAccion($event)"
-                    ></app-tarjeta-usuario>
-                }
-            </div>
-        }
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Clientes'"></app-header>
+
+        <div class="superior hoja">
+            <app-boton-accion
+                [textoBtn]="'Clientes pendientes de aprobación'"
+                [ruta]="'/gestion-clientes/clientes-pendientes'"
+            ></app-boton-accion>
+            <h2>Clientes activos:</h2>
+            @if (clientes().length === 0) {
+                <div class="estado-vacio">
+                    <ion-icon name="people-outline"></ion-icon>
+                    <p>No hay clientes activos en este momento.</p>
+                </div>
+            } @else {
+                <div class="lista">
+                    @for (cliente of clientes(); track cliente.id) {
+                        <app-tarjeta-usuario
+                            [usuario]="cliente"
+                            modo="gestion"
+                            (accionSeleccionada)="onAccion($event)"
+                        ></app-tarjeta-usuario>
+                    }
+                </div>
+            }
+        </div>
     </div>
 </ion-content>

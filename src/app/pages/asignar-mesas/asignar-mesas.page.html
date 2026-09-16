@@ -1,7 +1,8 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Asignar mesas'"></app-header>
-
 <ion-content [fullscreen]="true">
-  <div class="hoja">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Asignar mesas'"></app-header>
+
+        <div class="superior hoja">
     <!-- Estado del salón de un vistazo, antes de entrar al procedimiento. -->
     <div class="resumen">
         <div class="ficha-resumen">
@@ -122,5 +123,6 @@
             </div>
         }
     </section>
-  </div>
+        </div>
+    </div>
 </ion-content>

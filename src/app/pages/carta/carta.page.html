@@ -1,7 +1,8 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja pantalla-carta">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"></app-header>
+
+        <div class="superior hoja pantalla-carta">
         @if (corrigiendo()) {
         <!-- Punto 13: se entró desde un pedido rechazado, con lo pedido ya cargado. -->
         <p class="aviso-correccion">
@@ -50,6 +51,7 @@
             (quitarCarrito)="quitar($event)"
         ></app-tarjeta-listado-producto>
         }
+        </div>
     </div>
 </ion-content>
 

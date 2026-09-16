@@ -1,13 +1,14 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos'">
-    <!-- Punto 14: trae los pedidos que llegaron mientras la pantalla estaba abierta. -->
-    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
-        <ion-icon name="refresh-outline"></ion-icon>
-        Actualizar
-    </button>
-</app-header>
-
 <ion-content [fullscreen]="true">
-  <div class="hoja pantalla-pedidos">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos'">
+            <!-- Punto 14: trae los pedidos que llegaron mientras la pantalla estaba abierta. -->
+            <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+                <ion-icon name="refresh-outline"></ion-icon>
+                Actualizar
+            </button>
+        </app-header>
+
+        <div class="superior hoja pantalla-pedidos">
     <section class="grupo">
         <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
 
@@ -181,5 +182,6 @@
             }
         }
     </section>
-  </div>
+        </div>
+    </div>
 </ion-content>

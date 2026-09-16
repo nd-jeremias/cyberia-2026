@@ -1,26 +1,28 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Mesas'">
-    <a accion class="btn-banda" routerLink="/gestion-mesas/alta">
-        <ion-icon name="add-circle-outline"></ion-icon>
-        Agregar
-    </a>
-</app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja">
-        <div class="lista">
-            @if(mesasCargadas().length > 0) { @for(mesa of mesasCargadas(); track mesa.id) {
-            <app-tarjeta-mesa
-                [mesa]="mesa"
-                (editarMesa)="onEditar($event)"
-                (eliminarMesa)="onEliminar($event)"
-                (verQrMesa)="onVerQr($event)"
-            ></app-tarjeta-mesa>
-            } } @else {
-            <div class="estado-vacio">
-                <ion-icon name="grid-outline"></ion-icon>
-                <p>Todavía no hay mesas cargadas.</p>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Mesas'">
+            <a accion class="btn-banda" routerLink="/gestion-mesas/alta">
+                <ion-icon name="add-circle-outline"></ion-icon>
+                Agregar
+            </a>
+        </app-header>
+
+        <div class="superior hoja">
+            <div class="lista">
+                @if(mesasCargadas().length > 0) { @for(mesa of mesasCargadas(); track mesa.id) {
+                <app-tarjeta-mesa
+                    [mesa]="mesa"
+                    (editarMesa)="onEditar($event)"
+                    (eliminarMesa)="onEliminar($event)"
+                    (verQrMesa)="onVerQr($event)"
+                ></app-tarjeta-mesa>
+                } } @else {
+                <div class="estado-vacio">
+                    <ion-icon name="grid-outline"></ion-icon>
+                    <p>Todavía no hay mesas cargadas.</p>
+                </div>
+                }
             </div>
-            }
         </div>
     </div>
 </ion-content>
