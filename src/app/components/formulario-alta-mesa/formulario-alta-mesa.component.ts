@@ -1,12 +1,12 @@
 import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
 import { MesaAltaInterface, MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
 import { QrService } from '../../services/qr.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Campos que el usuario ve marcados en rojo; la foto se avisa aparte. */
 const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
@@ -22,7 +22,7 @@ const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
     selector: 'app-formulario-alta-mesa',
     templateUrl: './formulario-alta-mesa.component.html',
     styleUrls: ['./formulario-alta-mesa.component.scss'],
-    imports: [IonIcon, IonInput, IonSelect, IonSelectOption, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
+    imports: [FaIconComponent, IonIcon, IonInput, IonSelect, IonSelectOption, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
