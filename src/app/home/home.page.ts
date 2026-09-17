@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { MesaService } from '../services/mesa.service';
 import { PedidoService } from '../services/pedido.service';
@@ -60,11 +60,7 @@ const ROLES_SALON = ['dueño', 'supervisor', 'metre', 'mozo'];
 const ROLES_SECTOR = ['cocinero', 'cantinero'];
 
 // Un pedido "en curso" es el que ya se confirmó y todavía no se entregó.
-const PEDIDOS_EN_CURSO: EstadoPedido[] = [
-    'Confirmado',
-    'En Preparación',
-    'Listo para Entregar',
-];
+const PEDIDOS_EN_CURSO: EstadoPedido[] = ['Confirmado', 'En Preparación', 'Listo para Entregar'];
 
 /**
  * Pantalla de inicio.
@@ -80,7 +76,7 @@ const PEDIDOS_EN_CURSO: EstadoPedido[] = [
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
-    imports: [FaIconComponent, IonContent, IonIcon, RouterLink, HeaderComponent],
+    imports: [FaIconComponent, IonContent, RouterLink, HeaderComponent],
 })
 export class HomePage {
     authService = inject(AuthService);
@@ -95,9 +91,7 @@ export class HomePage {
     });
 
     /** Tramo del circuito en el que está el cliente. */
-    estadoCliente = computed<EstadoEnResto>(
-        () => this.salonService.situacion()?.estado ?? 'libre'
-    );
+    estadoCliente = computed<EstadoEnResto>(() => this.salonService.situacion()?.estado ?? 'libre');
 
     /**
      * Accesos de la pantalla.
@@ -111,9 +105,7 @@ export class HomePage {
 
         if (!perfil) return [];
 
-        return this.esCliente()
-            ? BOTONES_CLIENTE_POR_ESTADO[this.estadoCliente()]
-            : BOTONES_POR_ROL[perfil];
+        return this.esCliente() ? BOTONES_CLIENTE_POR_ESTADO[this.estadoCliente()] : BOTONES_POR_ROL[perfil];
     });
 
     /** Cartel de situación del cliente, con la mesa si ya la tiene. */
@@ -121,9 +113,7 @@ export class HomePage {
         if (!this.esCliente()) return null;
 
         const mesaId = this.salonService.situacion()?.mesaId ?? null;
-        const mesa = mesaId
-            ? this.mesaService.mesas().find((m) => m.id === mesaId) ?? null
-            : null;
+        const mesa = mesaId ? this.mesaService.mesas().find((m) => m.id === mesaId) ?? null : null;
 
         return {
             ...SITUACION_CLIENTE[this.estadoCliente()],
