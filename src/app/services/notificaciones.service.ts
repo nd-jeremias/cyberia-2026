@@ -13,6 +13,25 @@ const CLAVE_TOKEN = 'token-push';
 // canal declarado, por eso se crea uno propio al inicializar.
 const CANAL_AVISOS = 'avisos-cyberia';
 
+/**
+ * Notificaciones push.
+ *
+ * El servicio tiene dos vidas distintas, y confundirlas era la causa de que el
+ * `token_push` no se renovara:
+ *
+ *   - El REGISTRO DEL DISPOSITIVO (permiso, canal, listeners y el token que
+ *     entrega Firebase) dura lo que dura la aplicación abierta. El token es del
+ *     teléfono, no de la persona: no cambia porque alguien cierre sesión.
+ *   - El VÍNCULO TOKEN↔USUARIO (la columna `usuarios.token_push`) dura lo que
+ *     dura la sesión: se escribe al entrar y se borra al salir.
+ *
+ * Antes `cerrarSesion()` desarmaba también lo primero (`removeAllListeners()` y
+ * `unregister()`) sin bajar la bandera `inicializado`, y `inicializar()` sólo
+ * corría una vez, en el arranque. Resultado: después del primer logout no
+ * volvía a llegar ningún evento `registration` en toda la vida del proceso, el
+ * token local quedaba borrado y el usuario siguiente se quedaba con
+ * `token_push` en NULL hasta cerrar y reabrir la aplicación por completo.
+ */
 @Service()
 export class NotificacionesService {
     private platform = inject(Platform);
@@ -22,6 +41,16 @@ export class NotificacionesService {
 
     /** Evita registrar los listeners dos veces si se inicializa de nuevo. */
     private inicializado = false;
+
+    /**
+     * Inicialización en curso.
+     *
+     * `inicializar()` se llama desde el arranque y otra vez al iniciar sesión;
+     * sin esto, dos llamadas simultáneas pasarían las dos por el `if` inicial
+     * (la bandera se levanta recién después del `await` del permiso) y se
+     * duplicarían los listeners.
+     */
+    private inicializacion: Promise<void> | null = null;
 
     token = signal<string | null>(null);
     permisoConcedido = signal<boolean>(false);
@@ -35,39 +64,62 @@ export class NotificacionesService {
         return this.platform.is('capacitor');
     }
 
+    constructor() {
+        this.sincronizarAlCambiarSesion();
+    }
+
     async inicializar(): Promise<void> {
-        // Una sola vez: repetirlo duplicaría los listeners y cada aviso se
-        // mostraría dos veces.
         if (!this.esNativo || this.inicializado) return;
 
+        // Si ya hay una inicialización en vuelo, se espera a esa.
+        this.inicializacion ??= this.inicializarUnaVez();
+
+        try {
+            await this.inicializacion;
+        } finally {
+            this.inicializacion = null;
+        }
+    }
+
+    private async inicializarUnaVez(): Promise<void> {
         const permiso = await this.pedirPermiso();
 
         if (!permiso) return;
 
+        // Se levanta ANTES de registrar los listeners: a partir de acá el
+        // servicio queda armado y nadie más tiene que volver a armarlo.
         this.inicializado = true;
 
         await this.crearCanal();
 
         this.escucharEventos();
-        this.sincronizarAlCambiarSesion();
 
         await PushNotifications.register();
     }
 
     /**
-     * Vuelve a guardar el token cada vez que se abre o se restaura una sesión.
+     * Mantiene `usuarios.token_push` al día durante toda la sesión.
      *
      * El token puede llegar antes de que Supabase termine de leer la sesión
      * guardada en el dispositivo: en ese caso `sincronizarToken` no encuentra
-     * usuario y no guarda nada, y antes no se volvía a intentar. Escuchar los
-     * cambios de sesión cubre ese caso y también el ingreso anónimo y el de los
-     * botones rápidos, que no pasan por la pantalla de ingreso.
+     * usuario y no guarda nada. Escuchar los cambios de sesión cubre ese caso y
+     * también el ingreso anónimo y el de los botones rápidos, que no pasan por
+     * la pantalla de ingreso.
+     *
+     * Se suscribe en el constructor y no dentro de `inicializar()`: la
+     * suscripción no depende del permiso de notificaciones ni de estar en un
+     * dispositivo, y si el permiso se concede más tarde el token igual queda
+     * asociado al usuario que esté en sesión.
      */
     private sincronizarAlCambiarSesion(): void {
-        supabase.auth.onAuthStateChange((_evento, sesion) => {
+        supabase.auth.onAuthStateChange((evento, sesion) => {
+            if (!sesion) return;
+
             // Supabase advierte que llamar a otros métodos suyos dentro de este
             // callback puede trabar el cliente: se difiere al siguiente ciclo.
-            if (sesion) setTimeout(() => void this.sincronizarToken(), 0);
+            if (evento === 'SIGNED_IN' || evento === 'INITIAL_SESSION' || evento === 'TOKEN_REFRESHED') {
+                setTimeout(() => void this.sincronizarToken(), 0);
+            }
         });
     }
 
@@ -185,6 +237,58 @@ export class NotificacionesService {
         }
     }
 
+    // --- Ciclo de sesión ------------------------------------------------------
+
+    /**
+     * Deja el dispositivo listo y asociado al usuario que acaba de entrar.
+     *
+     * Se llama desde TODAS las puertas de entrada (ingreso con credenciales,
+     * ingreso anónimo y accesos rápidos). Es idempotente: si el servicio ya
+     * estaba armado sólo vuelve a pedirle el token a Firebase, lo que dispara de
+     * nuevo el evento `registration` y, con él, la escritura en la base.
+     */
+    async alIniciarSesion(): Promise<void> {
+        const yaEstabaArmado = this.inicializado;
+
+        await this.inicializar();
+
+        // Si el servicio ya venía armado —caso típico: segundo ingreso sin
+        // cerrar la aplicación—, `inicializar()` no hizo nada y hay que volver
+        // a pedirle el token a Firebase. Eso emite `registration` de nuevo y,
+        // con él, la escritura en la base. En el primer ingreso no hace falta:
+        // `inicializar()` ya llamó a `register()`.
+        if (yaEstabaArmado && this.esNativo) {
+            try {
+                await PushNotifications.register();
+            } catch (error) {
+                console.error('No se pudo volver a registrar el dispositivo', error);
+            }
+        }
+
+        await this.sincronizarToken();
+    }
+
+    /**
+     * Desvincula el dispositivo del usuario que se va.
+     *
+     * Sólo se corta el VÍNCULO: se pone `token_push` en NULL y se vacía la
+     * bandeja. Los listeners y el token del dispositivo se conservan a
+     * propósito, porque son del teléfono y no de la persona; tirarlos abajo era
+     * justamente lo que dejaba sin avisos al usuario siguiente.
+     *
+     * Debe llamarse ANTES de cerrar la sesión de Supabase: sin sesión ya no se
+     * puede escribir la fila del usuario que se está yendo.
+     */
+    async cerrarSesion(): Promise<void> {
+        await this.olvidarTokenEnBase();
+
+        this.notificaciones.set([]);
+
+        if (this.esNativo) {
+            await PushNotifications.removeAllDeliveredNotifications();
+        }
+    }
+
     // Guarda el token en la fila del usuario logueado. Se llama al recibir el
     // token y tambien despues del login, porque el orden entre ambos no esta
     // garantizado: el registro puede resolverse antes de que exista sesion.
@@ -219,22 +323,6 @@ export class NotificacionesService {
         this.token.set(value);
 
         return value;
-    }
-
-    async cerrarSesion(): Promise<void> {
-        // Se borra el token de la base ANTES de limpiarlo localmente, para que
-        // el proximo usuario del dispositivo no reciba avisos ajenos.
-        await this.olvidarTokenEnBase();
-
-        this.notificaciones.set([]);
-        this.token.set(null);
-
-        await Preferences.remove({ key: CLAVE_TOKEN });
-
-        if (this.esNativo) {
-            await PushNotifications.removeAllListeners();
-            await PushNotifications.unregister();
-        }
     }
 
     private async olvidarTokenEnBase(): Promise<void> {

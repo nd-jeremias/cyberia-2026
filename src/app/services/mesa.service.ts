@@ -1,6 +1,7 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { DisponibilidadMesa, MesaInterface, TipoMesa } from '../interfaces/mesa.interface';
 import { ModalService } from './modal.service';
+import { NotificacionesService } from './notificaciones.service';
 import { supabase } from './supabase.service';
 
 /**
@@ -30,6 +31,7 @@ const SELECT_MESA = 'id, numero_mesa, cantidad_lugares, tipo, disponibilidad, ' 
 @Service()
 export class MesaService {
     private modal = inject(ModalService);
+    private notificaciones = inject(NotificacionesService);
 
     /** Todas las mesas del salón. */
     mesas = signal<MesaInterface[]>([]);
@@ -150,6 +152,23 @@ export class MesaService {
             }
 
             await this.listar();
+
+            // Punto 10: el cliente tiene que enterarse de qué mesa le tocó sin
+            // quedarse mirando la pantalla. No hay disparador en la base para
+            // esto (sql/notificaciones.sql sólo cubre usuarios y pedidos), así
+            // que el aviso sale desde acá.
+            //
+            // No se espera y se atrapa el rechazo aparte: la mesa ya quedó
+            // asignada, y `enviarAvisoAUsuario` lanza si la Edge Function falla.
+            // Sin el catch, ese fallo quedaría como un rechazo sin capturar.
+            this.notificaciones
+                .enviarAvisoAUsuario(
+                    clienteId,
+                    'Mesa asignada',
+                    `Te tocó la mesa N° ${mesa.numeroMesa}. Escaneá su código QR para ver la carta.`,
+                    'mesa-asignada'
+                )
+                .catch((error) => console.error('No se pudo avisar al cliente de su mesa:', error));
 
             this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
 

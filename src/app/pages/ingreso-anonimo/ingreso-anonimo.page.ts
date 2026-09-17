@@ -5,6 +5,7 @@ import { FormularioUsuarioAnonimoComponent } from '../../components/formulario-u
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
+import { NotificacionesService } from '../../services/notificaciones.service';
 import { SpinnerService } from '../../services/spinner.service';
 import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 
@@ -25,12 +26,18 @@ export class IngresoAnonimoPage {
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
     private authService = inject(AuthService);
+    private notificaciones = inject(NotificacionesService);
 
     async onIngresoAnonimo(cliente: AnonimoAltaInterface) {
         this.spinner.show();
 
         try {
             await this.authService.ingresarComoAnonimo(cliente);
+
+            // Igual que el ingreso con credenciales: el invitado también recibe
+            // avisos (mesa asignada, estado del pedido), así que su dispositivo
+            // tiene que quedar asociado a la sesión recién abierta.
+            await this.notificaciones.alIniciarSesion();
 
             this.modal.setOpen('Bienvenido', `${cliente.nombres}, ya podés escanear el código QR de ingreso.`);
 
