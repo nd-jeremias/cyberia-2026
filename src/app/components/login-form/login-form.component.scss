@@ -162,13 +162,19 @@
 }
 
 /* Fondo opaco: el panel se apoya sobre el formulario, así que no puede dejar
-   ver lo que hay debajo. */
+   ver lo que hay debajo.
+
+   Con ocho fichas el panel mide cuatro filas: en un teléfono de pantalla baja
+   eso puede pasarse del borde superior, así que se le pone techo y se deja
+   desplazar por dentro. */
 .grilla-perfiles {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.625rem;
 
     padding: 0.75rem;
+    max-height: 60vh;
+    overflow-y: auto;
 
     background: var(--hoja-alta);
     border: 0.125rem solid var(--naranja);
@@ -208,14 +214,17 @@
         transform: scale(0.96);
     }
 
+    /* El medallón acompaña al ancho disponible en vez de quedarse fijo: era
+       parte del problema del texto recortado (ver `.rol`). El mínimo sigue
+       entrando cómodo en el área táctil. */
     .icono-perfil-wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
 
-        width: 2.375rem;
-        height: 2.375rem;
+        width: clamp(1.875rem, 7.5vw, 2.375rem);
+        height: clamp(1.875rem, 7.5vw, 2.375rem);
         border-radius: 50%;
 
         /* Respaldo para navegadores sin color-mix(): el medallón queda neutro
@@ -223,21 +232,58 @@
         background: var(--velo-tinta);
         background: color-mix(in srgb, var(--color-perfil) 16%, transparent);
 
-        font-size: 1.3125rem;
+        font-size: clamp(1rem, 4.5vw, 1.3125rem);
         color: var(--color-perfil);
     }
 
-    /* Nunca parte una palabra al medio: el enunciado no admite texto cortado
-       y "Cantinero" es justo el que no entraba. */
+    /**
+     * Nombre del rol.
+     *
+     * POR QUÉ SE CORTABA EN ALGUNOS DISPOSITIVOS Y EN OTROS NO:
+     *
+     * La ficha repartía su ancho así: medallón fijo de 2.375rem + 0.5rem de
+     * separación + bordes y relleno (~1.3rem). En una columna de una grilla de
+     * dos, en un teléfono de 360 px, al nombre le quedaban unos 80 px. Los
+     * nombres largos —"Supervisor", "Cantinero"— miden cerca de 100 px en
+     * negrita a 1rem, así que no entraban.
+     *
+     * Y como la regla anterior prohibía cualquier corte de línea
+     * (`word-break: keep-all` + `overflow-wrap: normal`), la palabra no podía
+     * pasar a la línea siguiente: se desbordaba de la caja. Un <button> recorta
+     * lo que se sale de su caja, así que el sobrante no se veía asomar: sen-
+     * cillamente desaparecía. De ahí que el texto figurara "cortado".
+     *
+     * Dependía del dispositivo porque las tres variables que definen si entra o
+     * no cambian de teléfono en teléfono: el ancho de pantalla (320 / 360 / 412
+     * px), el tamaño de fuente del sistema —Android lo aplica al WebView, y con
+     * "Grande" el texto crece sin que crezca la columna— y qué tipografía llegó
+     * a cargar (Montserrat es más ancha que la Roboto de respaldo).
+     *
+     * LA CORRECCIÓN: que el nombre entre, en vez de prohibirle romperse.
+     * El cuerpo acompaña al ancho real de la pantalla, y si aun así no entrara
+     * (pantalla angosta + fuente del sistema agrandada), la palabra pasa a la
+     * línea siguiente. Bajar de línea no es cortar: sigue leyéndose entera.
+     */
     .rol {
         min-width: 0;
-        font-size: var(--texto-apoyo);
+        font-size: clamp(0.8125rem, 3vw, var(--texto-apoyo));
         font-weight: 800;
-        line-height: 1.15;
+        line-height: 1.2;
         color: var(--tinta);
-        overflow-wrap: normal;
-        word-break: keep-all;
         hyphens: none;
+        overflow-wrap: break-word;
+    }
+}
+
+/* Teléfonos angostos: la ficha se apila y el nombre pasa a disponer de todo el
+   ancho de la columna en vez de compartirlo con el medallón. */
+@media (max-width: 22.5rem) {
+    .card-perfil {
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.25rem;
+        padding: 0.5rem 0.375rem;
+        text-align: center;
     }
 }
 
@@ -261,6 +307,9 @@
 }
 .perfil-cliente {
     --color-perfil: var(--perfil-cliente);
+}
+.perfil-rechazado {
+    --color-perfil: var(--perfil-rechazado);
 }
 
 /* Teléfonos de pantalla baja: se recorta lo que no es control para que el

@@ -5,6 +5,15 @@ import { RouterLink } from '@angular/router';
 import { LoginInterface } from '../../interfaces/auth.interface';
 import { ModalService } from '../../services/modal.service';
 
+/** Ficha de ingreso rápido. `clave` es la que elige el color en el SCSS. */
+interface PerfilRapido {
+  email: string;
+  pass: string;
+  rol: string;
+  clave: string;
+  icono: string;
+}
+
 /**
  * Formulario de ingreso.
  *
@@ -34,15 +43,26 @@ export class LoginFormComponent {
    *
    * El enunciado los exige para agilizar la demostración con varios perfiles.
    * Son datos de prueba: no deberían quedar en una versión de producción.
+   *
+   * Los ocho perfiles del enunciado, en el orden en que se demuestran: primero
+   * quienes administran, después el salón, después la cocina y al final los dos
+   * clientes. Son ocho a propósito, para que la grilla de dos columnas cierre en
+   * cuatro filas parejas y no quede un hueco en la última.
+   *
+   * El último NO es un rol: es una cuenta en estado 'Rechazado'. Sirve para
+   * demostrar el punto 7 sin tener que rechazar a alguien en el momento: al
+   * intentar entrar, `AuthService` cierra la sesión recién abierta y la pantalla
+   * muestra el modal con el motivo (y la vibración de error que lo acompaña).
    */
-  usuariosValidos = [
+  usuariosValidos: PerfilRapido[] = [
     { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', clave: 'duenio', icono: 'shield-checkmark-outline' },
-    // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', clave: 'supervisor', icono: 'shield-checkmark-outline' },
-    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', clave: 'cantinero', icono: 'wine-outline' },
+    { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', clave: 'supervisor', icono: 'ribbon-outline' },
     { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', clave: 'metre', icono: 'people-outline' },
     { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', clave: 'mozo', icono: 'restaurant-outline' },
     { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', clave: 'cocinero', icono: 'fast-food-outline' },
+    { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', clave: 'cantinero', icono: 'wine-outline' },
     { email: 'cliente@restaurante.com', pass: '12345678', rol: 'Cliente', clave: 'cliente', icono: 'person-outline' },
+    { email: 'rechazado@restaurante.com', pass: '12345678', rol: 'Rechazado', clave: 'rechazado', icono: 'close-circle-outline' },
   ];
 
   /**
