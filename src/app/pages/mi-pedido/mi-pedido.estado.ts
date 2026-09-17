@@ -11,7 +11,7 @@ import { EstadoPedido } from '../../interfaces/pedido.interface';
 /** Qué decirle al cliente según en qué punto está su pedido. */
 export const LEYENDA_PEDIDO: Record<EstadoPedido, string> = {
     'Pendiente de Confirmación': 'Enviaste tu pedido. El mozo lo está revisando.',
-    Rechazado: 'El mozo pidió cambios en tu pedido. Consultalo con él para corregirlo.',
+    Rechazado: 'El mozo pidió cambios en tu pedido. Corregilo y volvé a enviarlo.',
     Confirmado: 'El mozo confirmó tu pedido y ya pasó a cocina y barra.',
     'En Preparación': 'Tu pedido se está preparando.',
     'Listo para Entregar': 'Tu pedido está listo. El mozo te lo lleva enseguida.',
@@ -27,10 +27,11 @@ export const LEYENDA_PEDIDO: Record<EstadoPedido, string> = {
 export const LEYENDA_PAGANDO = 'Pediste la cuenta. Esperá a que el mozo confirme el pago.';
 
 /**
- * Estados desde los que el cliente ya puede entrar a los juegos: el punto 14
- * los habilita recién cuando el mozo confirma el pedido.
+ * Estados de un pedido que el mozo ya confirmó: la comanda pasó a cocina y
+ * barra (punto 14) y de ahí en adelante. Deciden dos cosas a la vez: desde acá
+ * se habilitan los juegos, y desde acá ya no se puede mandar otro pedido.
  */
-const ESTADOS_CON_JUEGOS: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>([
+const ESTADOS_CONFIRMADOS: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>([
     'Confirmado',
     'En Preparación',
     'Listo para Entregar',
@@ -43,7 +44,7 @@ const ESTADOS_CON_JUEGOS: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>([
  * aclara el enunciado), y recién con el pedido confirmado.
  */
 export function puedeAccederAJuegos(estado: EstadoPedido | null, perfil: PerfilUsuario | null): boolean {
-    return perfil === 'cliente registrado' && estado !== null && ESTADOS_CON_JUEGOS.has(estado);
+    return perfil === 'cliente registrado' && estado !== null && ESTADOS_CONFIRMADOS.has(estado);
 }
 
 /** Punto 19: el cliente confirma la recepción recién cuando el mozo marcó la entrega. */
@@ -57,4 +58,16 @@ export function puedeConfirmarRecepcion(estado: EstadoPedido | null): boolean {
  */
 export function puedeUsarServiciosDeMesa(estado: EstadoPedido | null, estadoCliente: EstadoEnResto | null): boolean {
     return estado === 'Recibido' && estadoCliente !== 'pagando';
+}
+
+/**
+ * Si el cliente puede mandar un pedido nuevo.
+ *
+ * Una vez que el mozo confirmó alguno, no: la comanda ya bajó a cocina y barra
+ * y la cuenta de la visita quedó armada. Mientras el pedido espera revisión o
+ * fue rechazado, todavía se puede pedir (el rechazado se corrige y se reenvía,
+ * que no es "otro" pedido).
+ */
+export function puedeEnviarOtroPedido(estados: readonly EstadoPedido[]): boolean {
+    return !estados.some((estado) => ESTADOS_CONFIRMADOS.has(estado));
 }

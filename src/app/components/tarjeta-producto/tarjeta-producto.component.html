@@ -80,10 +80,36 @@
                 Eliminar
             </ion-button>
         </div>
+        } @else if (cantidad() > 0) {
+        <!-- Punto 12: el cliente elige los productos con sus cantidades. -->
+        <div class="selector-cantidad">
+            <button
+                type="button"
+                class="paso"
+                [attr.aria-label]="'Quitar una unidad de ' + producto().nombre"
+                (click)="onQuitarCarrito()"
+            >
+                <ion-icon name="remove-outline"></ion-icon>
+            </button>
+
+            <span class="cantidad-elegida" aria-live="polite">
+                {{ cantidad() }}
+                <span class="cantidad-rotulo">en el pedido</span>
+            </span>
+
+            <button
+                type="button"
+                class="paso"
+                [attr.aria-label]="'Agregar una unidad de ' + producto().nombre"
+                (click)="onAgregarCarrito()"
+            >
+                <ion-icon name="add-outline"></ion-icon>
+            </button>
+        </div>
         } @else {
         <ion-button expand="block" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
             <ion-icon name="cart-outline" slot="start"></ion-icon>
-            Agregar al carrito
+            Agregar al pedido
         </ion-button>
         }
     </div>

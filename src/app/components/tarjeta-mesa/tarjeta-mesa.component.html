@@ -22,8 +22,16 @@
     </div>
 
     <div class="contenido">
-        <h3 class="numero">NÚMERO: {{ mesa().numeroMesa }}</h3>
-
+        <div class="header">
+            <h3 class="numero">NÚMERO: {{ mesa().numeroMesa }}</h3>
+            <span
+                [class.color-disponible]="mesa().disponibilidad === 'Disponible'"
+                [class.color-reservada]="mesa().disponibilidad === 'Reservada'"
+                [class.color-pcupada]="mesa().disponibilidad === 'Ocupada'"
+                class="disponibilidad"
+                >{{ mesa().disponibilidad }}</span
+            >
+        </div>
         <div class="detalles">
             <span class="detalle">
                 <ion-icon name="time-outline"></ion-icon>
@@ -31,6 +39,13 @@
             </span>
             <span class="lugares">Lugares: {{ mesa().cantidadLugares }}</span>
         </div>
+
+        <!-- El QR va primero y a lo ancho: es lo que hay que imprimir y pegar
+             en la mesa, así que es la acción que más se busca acá. -->
+        <ion-button expand="block" fill="outline" class="boton-qr" (click)="onVerQr()">
+            <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+            Ver código QR
+        </ion-button>
 
         <div class="acciones-gestion">
             <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">

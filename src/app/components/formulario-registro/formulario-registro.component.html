@@ -65,7 +65,7 @@
             </div>
 
             <!-- CUIL (Solo si es Dueño) -->
-            @if (usuarioRol() === 'dueño') {
+            @if (usuarioRol() === 'dueño') { @if(modo() === 'modificar_empleado'){
             <div class="grupo-input">
                 <label class="input-label">CUIL</label>
 
@@ -137,7 +137,7 @@
                 <span class="mensaje-error">Seleccione el tipo de empleado a registrar.</span>
                 }
             </div>
-            }
+            } }
 
             <div class="img-preview">
                 <app-subida-imagenes
@@ -177,7 +177,7 @@
                 }
             </div>
 
-            @if (!empleadoExistente()) {
+            @if (!usuarioExistente()) {
             <!-- Contraseña -->
             <div class="grupo-input">
                 <label class="input-label">Contraseña</label>

@@ -103,6 +103,27 @@
     padding: 1rem;
 }
 
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .disponibilidad {
+        font-size: var(--texto-apoyo);
+        font-weight: 700;
+    }
+
+    .color-disponible {
+        color: var(--exito-tinta);
+    }
+    .color-reservada {
+        color: var(--peligro-tinta)
+    }
+    .color-pcupada {
+        color: var(--dato-tinta)
+    }
+}
+
 .numero {
     margin: 0;
     font-size: var(--texto-subtitulo);

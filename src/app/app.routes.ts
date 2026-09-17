@@ -46,6 +46,53 @@ export const routes: Routes = [
             import('./pages/escanear-ingreso/escanear-ingreso.page').then((m) => m.EscanearIngresoPage),
         canActivate: [authGuard],
     },
+    // Puntos 10 y 11: el cliente escanea el QR de su mesa y se sienta.
+    {
+        path: 'escanear-mesa',
+        loadComponent: () => import('./pages/escanear-mesa/escanear-mesa.page').then((m) => m.EscanearMesaPage),
+        canActivate: [authGuard],
+    },
+    // ---------------------------------------------------------------
+    // Circuito del cliente sentado. Todas son armazones todavía: existen
+    // para que los accesos del inicio lleven a algún lado y se pueda
+    // recorrer el flujo completo mientras se completan una por una.
+    // ---------------------------------------------------------------
+    {
+        path: 'carta',
+        loadComponent: () => import('./pages/carta/carta.page').then((m) => m.CartaPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'consulta-mozo',
+        loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then((m) => m.ConsultaMozoPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'estado-pedido',
+        loadComponent: () => import('./pages/estado-pedido/estado-pedido.page').then((m) => m.EstadoPedidoPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'juegos',
+        loadComponent: () => import('./pages/juegos/juegos.page').then((m) => m.JuegosPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'encuestas',
+        loadComponent: () => import('./pages/encuestas/encuestas.page').then((m) => m.EncuestasPage),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'pedir-cuenta',
+        loadComponent: () => import('./pages/pedir-cuenta/pedir-cuenta.page').then((m) => m.PedirCuentaPage),
+        canActivate: [authGuard],
+    },
+    // El QR de una mesa, para imprimirlo y pegarlo sobre ella.
+    {
+        path: 'qr-mesa',
+        loadComponent: () => import('./pages/qr-mesa/qr-mesa.page').then((m) => m.QrMesaPage),
+        canActivate: [authGuard],
+    },
     // El QR de ingreso, para imprimirlo y pegarlo en la puerta.
     {
         path: 'qr-local',
@@ -75,9 +122,15 @@ export const routes: Routes = [
             import('./pages/gestion-clientes/gestion-clientes.page').then((m) => m.GestionClientesPage),
     },
     {
+        path: 'gestion-clientes/modificar',
+        loadComponent: () => import('./pages/gestion-clientes/modificar/modificar.page').then((m) => m.ModificarPage),
+    },
+    {
         path: 'gestion-clientes/clientes-pendientes',
         loadComponent: () =>
-            import('./pages/gestion-clientes/clientes-pendientes/clientes-pendientes.page').then((m) => m.ClientesPendientesPage),
+            import('./pages/gestion-clientes/clientes-pendientes/clientes-pendientes.page').then(
+                (m) => m.ClientesPendientesPage
+            ),
         canActivate: [authGuard],
     },
     {

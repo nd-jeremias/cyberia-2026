@@ -6,7 +6,7 @@
  * antes de llegar a la base.
  */
 
-export type TipoMesa = 'estándar' | 'VIP' | 'movilidad reducida';
+export type TipoMesa = 'Estándar' | 'VIP' | 'Movilidad reducida';
 
 /** Datos que se cargan al dar de alta una mesa (punto 4). */
 export interface MesaAltaInterface {
@@ -15,10 +15,11 @@ export interface MesaAltaInterface {
     tipo: TipoMesa;
     fotos: File;
     qrFile: File; // o url, corregir cuando sea necesario
+    disponibilidad: string
 }
 
 // Refleja el ENUM disponibilidad_mesa de sql/mesas.sql.
-export type DisponibilidadMesa = 'disponible' | 'Reservada' | 'ocupada';
+export type DisponibilidadMesa = 'Disponible' | 'Reservada' | 'Ocupada';
 
 /**
  * Mesa completa tal como vive en la base.

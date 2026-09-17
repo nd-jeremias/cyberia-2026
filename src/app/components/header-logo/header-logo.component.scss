@@ -44,6 +44,26 @@
     }
 }
 
+/* Cuando el host lleva .inferior, global.scss le aplica padding-bottom:50px
+   y background-color sólido. Si les damos al host otro gradiente, éste
+   arranca independiente del de .banda-ingreso y se nota la diferencia.
+   Solución: host transparente + padding movido adentro de .banda-ingreso
+   para que un único gradiente continuo cubra toda la zona. */
+:host(.inferior) {
+    background: transparent !important;
+    padding-bottom: 0 !important;
+}
+
+:host(.inferior) .banda-ingreso {
+    padding-bottom: 50px; /* espacio de solapamiento ahora dentro del degradado */
+}
+
+/* Cuando vive dentro de .layout-superpuesto, la transición la hace el
+   .superior con margin-top negativo: el labio propio sobra. */
+:host(.sin-labio) .labio-hoja {
+    display: none;
+}
+
 /* Comienzo del papel, con las esquinas superiores redondeadas. */
 .labio-hoja {
     position: relative;

@@ -34,6 +34,7 @@ export class AltaEmpleadoPage {
             const id = this.empleadoId();
             if (id) this.cargarEmpleado(id);
         });
+        
     }
 
     private async cargarEmpleado(id: string) {

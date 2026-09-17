@@ -1,18 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ClientePendienteInterface } from '../../interfaces/cliente.interface';
+import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { TarjetaUsuarioComponent } from './tarjeta-usuario.component';
 
 function usuarioDePrueba(
-    parcial: Partial<ClientePendienteInterface> = {}
-): ClientePendienteInterface {
+    parcial: Partial<ClienteInterface> = {}
+): ClienteInterface {
     return {
         id: 'cliente-1',
         nombres: 'Juan',
         apellidos: 'Gómez',
         dni: '12345678',
         correo_electronico: 'juan@ejemplo.com',
-        foto_url: 'https://ejemplo/foto.jpg',
+        // `foto_url` pasó a ser una lista: la interfaz ClienteInterface admite
+        // varias fotos por usuario.
+        foto_url: ['https://ejemplo/foto.jpg'],
         estado: 'Pendiente',
         fecha_registro: '2026-08-31T15:30:00.000Z',
         ...parcial,

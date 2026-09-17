@@ -1,6 +1,7 @@
 import { Component, computed, input, output, signal } from '@angular/core';
 import { IonBadge, IonButton, IonIcon } from '@ionic/angular';
 import { Producto, TipoProducto } from '../../interfaces/producto.interface';
+import { formatearImporte } from '../../utils/importe';
 
 const ETIQUETAS_TIPO: Record<TipoProducto, string> = {
     Comida: 'Comida',
@@ -27,7 +28,17 @@ export class TarjetaProductoComponent {
     // 'gestion': cocinero/cantinero administran la carta -> editar/eliminar.
     modo = input<'pedido' | 'gestion'>('pedido');
 
+    /**
+     * Unidades ya elegidas de este producto. En cero la tarjeta ofrece
+     * agregarlo; con una o más, muestra el selector de cantidad.
+     *
+     * Llega desde afuera en vez de guardarse acá: el carrito es uno solo para
+     * toda la aplicación, y la tarjeta sólo lo refleja.
+     */
+    cantidad = input<number>(0);
+
     agregarCarrito = output<Producto>();
+    quitarCarrito = output<Producto>();
     editar = output<Producto>();
     eliminar = output<Producto>();
 
@@ -44,14 +55,7 @@ export class TarjetaProductoComponent {
         return fotos.length === 0 || fotos.every((_, i) => errores.has(i));
     });
 
-    precioFormateado = computed(() =>
-        this.producto().precio.toLocaleString('es-AR', {
-            style: 'currency',
-            currency: 'ARS',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        })
-    );
+    precioFormateado = computed(() => formatearImporte(this.producto().precio));
 
     private inicioToqueX = 0;
 
@@ -90,6 +94,10 @@ export class TarjetaProductoComponent {
         } else if (deltaX < -umbral) {
             this.fotoSiguiente();
         }
+    }
+
+    onQuitarCarrito() {
+        this.quitarCarrito.emit(this.producto());
     }
 
     onAgregarCarrito() {

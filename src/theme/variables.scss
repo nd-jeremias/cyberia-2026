@@ -74,6 +74,9 @@
     --perfil-cocinero: #c0392b;
     --perfil-cantinero: #a8347a;
     --perfil-cliente: #2372a8;
+    /* No es un rol: es la cuenta de prueba en estado 'Rechazado' del acceso
+       rápido. Va en el rojo de peligro para que se lea distinta de las demás. */
+    --perfil-rechazado: #8e2018;
 
     /* --- Forma ------------------------------------------------------------
        Radios generosos: es lo que separa una carta de una planilla de cálculo.
@@ -101,7 +104,7 @@
     /* --- Patrón de cubiertos ----------------------------------------------
        El PNG de la pantalla de presentación. Es blanco sobre transparente: va
        tal cual sobre la banda naranja, e invertido por CSS sobre el crema. */
-    --patron: url("../assets/patron_splash_blanco.png");
+    --patron: url("../assets/patron_full_blanco.png");
 
     /* --- Tipografía --------------------------------------------------------
        Escala grande a propósito: la aplicación se usa de pie y a un brazo de

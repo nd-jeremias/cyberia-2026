@@ -310,3 +310,63 @@ ion-button.boton-agregar {
     --border-radius: var(--radio);
     --color: var(--tinta);
 }
+
+/* ── Selector de cantidad (punto 12) ────────────────────────────────────
+   Reemplaza al botón de agregar en cuanto el producto entra al pedido. Los
+   dos ocupan el mismo alto para que la tarjeta no salte al cambiar. */
+
+.selector-cantidad {
+    display: grid;
+    grid-template-columns: 3rem 1fr 3rem;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin-top: 0.75rem;
+    padding: 0.25rem;
+
+    background: var(--hoja-honda);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-chico);
+}
+
+.selector-cantidad .paso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 2.5rem;
+    padding: 0;
+
+    background: var(--naranja);
+    color: var(--sobre-naranja);
+    border: none;
+    border-radius: var(--radio-chico);
+
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.selector-cantidad .paso:active {
+    background: var(--naranja-hondo);
+}
+
+.cantidad-elegida {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+
+    font-size: 1.375rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--tinta);
+}
+
+.cantidad-rotulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+}

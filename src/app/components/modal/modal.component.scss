@@ -8,13 +8,33 @@
  */
 
 ion-modal.modal-personalizado {
-    --width: 88%;
-    --max-width: 25rem;
+    --width: 90%;
+    --max-width: 27rem;
     --height: auto;
     --border-radius: var(--radio-hoja);
     --backdrop-opacity: 0.45;
     --box-shadow: var(--sombra-elevada);
     --background: var(--hoja-alta);
+}
+
+/**
+ * Alto automático.
+ *
+ * Ionic posiciona el contenido del modal en absoluto, así que sin esto el
+ * alto no lo define lo que hay adentro: quedaba una ventana chica con el
+ * texto cortado y el botón encima. Estas dos reglas son la receta de la
+ * documentación para modales que se miden por su contenido.
+ */
+ion-modal.modal-personalizado::part(content) {
+    position: relative;
+    display: block;
+    contain: content;
+}
+
+ion-modal.modal-personalizado .ion-page {
+    position: relative;
+    display: block;
+    contain: content;
 }
 
 ion-modal.modal-personalizado ion-header ion-toolbar {
@@ -33,13 +53,12 @@ ion-modal.modal-personalizado ion-title {
 }
 
 .contenido {
-    --background: var(--hoja-alta);
-    --padding-start: 1.5rem;
-    --padding-end: 1.5rem;
-    --padding-top: 1.5rem;
-    --padding-bottom: 1rem;
+    background: var(--hoja-alta);
+    padding: 1.5rem 1.5rem 1rem;
 
-    min-height: 6rem;
+    min-height: 10rem;
+    display: flex;
+    align-items: center;
 
     p {
         margin: 0;

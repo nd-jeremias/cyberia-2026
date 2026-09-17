@@ -1,6 +1,7 @@
 import { Service, computed, inject, signal } from '@angular/core';
 import { DisponibilidadMesa, MesaInterface, TipoMesa } from '../interfaces/mesa.interface';
 import { ModalService } from './modal.service';
+import { NotificacionesService } from './notificaciones.service';
 import { SupabaseService } from './supabase.service';
 
 /**
@@ -31,6 +32,7 @@ const SELECT_MESA = 'id, numero_mesa, cantidad_lugares, tipo, disponibilidad, ' 
 export class MesaService {
     private modal = inject(ModalService);
     private supabase = inject(SupabaseService);
+    private notificaciones = inject(NotificacionesService);
 
     /** Todas las mesas del salón. */
     mesas = signal<MesaInterface[]>([]);
@@ -38,9 +40,9 @@ export class MesaService {
     /** Bloquea los botones mientras hay una operación en curso. */
     cargando = signal<boolean>(false);
 
-    disponibles = computed(() => this.mesas().filter((m) => m.disponibilidad === 'disponible'));
+    disponibles = computed(() => this.mesas().filter((m) => m.disponibilidad === 'Disponible'));
 
-    ocupadas = computed(() => this.mesas().filter((m) => m.disponibilidad === 'ocupada'));
+    ocupadas = computed(() => this.mesas().filter((m) => m.disponibilidad === 'Ocupada'));
 
     /** Traduce una fila de la base al modelo que usan las pantallas. */
     private mapear(fila: FilaMesa): MesaInterface {
@@ -124,7 +126,7 @@ export class MesaService {
         // Verificación 2: la mesa no puede estar tomada por otro cliente.
         const ocupadaPorOtro = mesa.clienteId !== null && mesa.clienteId !== clienteId;
 
-        if (ocupadaPorOtro || mesa.disponibilidad === 'ocupada') {
+        if (ocupadaPorOtro || mesa.disponibilidad === 'Ocupada') {
             this.modal.setOpen('Mesa ocupada', `La mesa N° ${mesa.numeroMesa} ya está asignada a otro cliente.`);
 
             return false;
@@ -137,9 +139,9 @@ export class MesaService {
             // misma mesa a la vez: el segundo update no afecta ninguna fila.
             const { data, error } = await this.supabase
                 .from('mesas')
-                .update({ cliente_id: clienteId, disponibilidad: 'ocupada' })
+                .update({ cliente_id: clienteId, disponibilidad: 'Ocupada' })
                 .eq('id', mesaId)
-                .eq('disponibilidad', 'disponible')
+                .eq('disponibilidad', 'Disponible')
                 .select('id');
 
             if (error) throw error;
@@ -151,6 +153,23 @@ export class MesaService {
             }
 
             await this.listar();
+
+            // Punto 10: el cliente tiene que enterarse de qué mesa le tocó sin
+            // quedarse mirando la pantalla. No hay disparador en la base para
+            // esto (sql/notificaciones.sql sólo cubre usuarios y pedidos), así
+            // que el aviso sale desde acá.
+            //
+            // No se espera y se atrapa el rechazo aparte: la mesa ya quedó
+            // asignada, y `enviarAvisoAUsuario` lanza si la Edge Function falla.
+            // Sin el catch, ese fallo quedaría como un rechazo sin capturar.
+            this.notificaciones
+                .enviarAvisoAUsuario(
+                    clienteId,
+                    'Mesa asignada',
+                    `Te tocó la mesa N° ${mesa.numeroMesa}. Escaneá su código QR para ver la carta.`,
+                    'mesa-asignada'
+                )
+                .catch((error) => console.error('No se pudo avisar al cliente de su mesa:', error));
 
             this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
 
@@ -170,7 +189,7 @@ export class MesaService {
             const { error } = await this.supabase
                 .from('mesas')
                 .update({
-                    disponibilidad: 'disponible',
+                    disponibilidad: 'Disponible',
                     cliente_id: null,
                 })
                 .eq('id', mesaId);

@@ -1,10 +1,12 @@
 <app-header [defaultHref]="'/gestion-empleados'" [tituloHeader]="titulo()"></app-header>
-
 <ion-content [fullscreen]="true">
-    <app-formulario-registro
-        [empleadoExistente]="empleadoExistente()"
-        [usuarioRol]="'dueño'"
-        (registroSubmit)="handleRegistro($event)"
-        [direccionCamara]="'frontal'"
-    ></app-formulario-registro>
+    <div class="hoja hoja-angosta">
+        <app-formulario-registro
+            [modo]="'modificar_empleado'"
+            [usuarioExistente]="empleadoExistente()"
+            [usuarioRol]="'dueño'"
+            (registroSubmit)="handleRegistro($event)"
+            [direccionCamara]="'frontal'"
+        ></app-formulario-registro>
+    </div>
 </ion-content>

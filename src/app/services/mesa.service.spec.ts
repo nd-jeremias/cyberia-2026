@@ -16,8 +16,8 @@ function mesaDePrueba(parcial: Partial<MesaInterface> = {}): MesaInterface {
         id: 'mesa-1',
         numeroMesa: 1,
         cantidadLugares: 4,
-        tipo: 'estándar',
-        disponibilidad: 'disponible',
+        tipo: 'Estándar',
+        disponibilidad: 'Disponible',
         clienteId: null,
         qrUrl: 'https://ejemplo/qr.png',
         fotoUrl: 'https://ejemplo/mesa.png',
@@ -48,8 +48,8 @@ describe('MesaService', () => {
     describe('filtros', () => {
         it('separa las mesas disponibles de las ocupadas', () => {
             servicio.mesas.set([
-                mesaDePrueba({ id: 'a', disponibilidad: 'disponible' }),
-                mesaDePrueba({ id: 'b', disponibilidad: 'ocupada' }),
+                mesaDePrueba({ id: 'a', disponibilidad: 'Disponible' }),
+                mesaDePrueba({ id: 'b', disponibilidad: 'Ocupada' }),
                 mesaDePrueba({ id: 'c', disponibilidad: 'Reservada' }),
             ]);
 
@@ -150,7 +150,7 @@ describe('MesaService', () => {
 
         it('rechaza si la mesa figura como ocupada', async () => {
             servicio.mesas.set([
-                mesaDePrueba({ id: 'mesa-1', disponibilidad: 'ocupada' }),
+                mesaDePrueba({ id: 'mesa-1', disponibilidad: 'Ocupada' }),
             ]);
 
             expect(await servicio.asignarCliente('mesa-1', 'cliente-1')).toBe(
@@ -182,7 +182,7 @@ describe('MesaService', () => {
             // El update marca la mesa como ocupada; el filtro por
             // disponibilidad va en los .eq() encadenados.
             expect(update).toHaveBeenCalledWith(
-                expect.objectContaining({ disponibilidad: 'ocupada' })
+                expect.objectContaining({ disponibilidad: 'Ocupada' })
             );
         });
 
@@ -213,7 +213,7 @@ describe('MesaService', () => {
 
             expect(update).toHaveBeenCalledWith({
                 cliente_id: 'anon-1',
-                disponibilidad: 'ocupada',
+                disponibilidad: 'Ocupada',
             });
         });
     });
@@ -235,7 +235,7 @@ describe('MesaService', () => {
 
             expect(ok).toBe(true);
             expect(update).toHaveBeenCalledWith({
-                disponibilidad: 'disponible',
+                disponibilidad: 'Disponible',
                 cliente_id: null,
             });
         });

@@ -2,20 +2,27 @@
 
 <ion-content [fullscreen]="true">
     <div class="hoja">
-        <!-- <div class="aviso-preparacion">
-            <span class="medallon"><ion-icon name="person-circle-outline"></ion-icon></span>
-            <span class="sello-preparacion">En preparación</span>
-            <h2>Aprobación de clientes</h2>
-            <p>Acá se van a revisar las solicitudes de registro para aceptarlas o rechazarlas.</p>
-        </div> -->
+        
         <app-boton-accion
             [textoBtn]="'Clientes pendientes de aprobación'"
             [ruta]="'/gestion-clientes/clientes-pendientes'"
         ></app-boton-accion>
-
-        <!-- <app-boton-accion
-            [textoBtn]="'Clientes registrados'"
-            [ruta]="'/gestion-clientes/clientes-registrados'"
-        ></app-boton-accion> -->
+        <h2>Clientes activos:</h2>
+        @if (clientes().length === 0) {
+            <div class="estado-vacio">
+                <ion-icon name="people-outline"></ion-icon>
+                <p>No hay clientes activos en este momento.</p>
+            </div>
+        } @else {
+            <div class="lista">
+                @for (cliente of clientes(); track cliente.id) {
+                    <app-tarjeta-usuario
+                        [usuario]="cliente"
+                        modo="gestion"
+                        (accionSeleccionada)="onAccion($event)"
+                    ></app-tarjeta-usuario>
+                }
+            </div>
+        }
     </div>
 </ion-content>

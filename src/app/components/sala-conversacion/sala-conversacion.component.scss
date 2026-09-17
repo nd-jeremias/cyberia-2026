@@ -1,0 +1,191 @@
+/**
+ * Ocupa el alto que deja la cabecera: la página es una columna (ion-page) y
+ * este componente se estira para llenarla. `min-height: 0` es lo que deja que
+ * la lista se desplace por dentro en lugar de empujar la caja fuera de pantalla.
+ */
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+
+    background: var(--hoja);
+}
+
+/* --- Mensajes ------------------------------------------------------------- */
+
+.mensajes {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.burbuja {
+    align-self: flex-start;
+    max-width: 80%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    padding: 0.625rem 0.875rem 0.5rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio) var(--radio) var(--radio) 0.25rem;
+    box-shadow: var(--sombra-apoyada);
+    color: var(--tinta);
+}
+
+.burbuja.propia {
+    align-self: flex-end;
+
+    background: var(--grad-naranja);
+    border-color: transparent;
+    border-radius: var(--radio) var(--radio) 0.25rem var(--radio);
+    color: var(--sobre-naranja);
+
+    .firma {
+        color: var(--sobre-naranja-tenue);
+    }
+}
+
+.cuerpo {
+    margin: 0;
+    font-size: var(--texto-apoyo);
+    line-height: 1.4;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.firma {
+    align-self: flex-end;
+
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--tinta-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- Sin mensajes --------------------------------------------------------- */
+
+.vacio {
+    margin: auto 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+
+    text-align: center;
+    font-weight: 600;
+    color: var(--tinta-media);
+
+    ion-icon {
+        font-size: 2.75rem;
+        color: var(--naranja);
+        opacity: 0.55;
+    }
+
+    p {
+        margin: 0;
+        max-width: 22rem;
+    }
+}
+
+.sugerencias {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.sugerencia {
+    padding: 0.5rem 0.875rem;
+
+    font-family: var(--fuente);
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    color: var(--naranja-hondo);
+
+    background: var(--hoja-alta);
+    border: 0.125rem solid var(--hoja-borde-fuerte);
+    border-radius: 999px;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+/* --- Caja de texto -------------------------------------------------------- */
+
+.caja {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.625rem 0.75rem calc(0.625rem + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border-top: var(--borde-hoja);
+    box-shadow: var(--sombra-hoja);
+}
+
+.campo {
+    flex: 1;
+    min-width: 0;
+    min-height: 3rem;
+    padding: 0 1rem;
+    box-sizing: border-box;
+
+    font-family: var(--fuente);
+    font-size: var(--texto-apoyo);
+    color: var(--tinta);
+
+    background: var(--grad-campo);
+    border: 0.125rem solid var(--hoja-borde);
+    border-radius: 999px;
+    outline: none;
+
+    &:focus {
+        border-color: var(--naranja);
+    }
+}
+
+.enviar {
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3rem;
+    height: 3rem;
+
+    font-size: 1.25rem;
+    color: var(--sobre-naranja);
+
+    background: var(--grad-naranja);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--sombra-naranja);
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.45;
+        box-shadow: none;
+        cursor: default;
+    }
+}

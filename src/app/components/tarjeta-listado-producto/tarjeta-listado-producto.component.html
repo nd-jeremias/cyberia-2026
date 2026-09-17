@@ -13,7 +13,9 @@
           class="item-lista"
           [producto]="producto"
           [modo]="modo()"
+          [cantidad]="cantidadDe(producto.id)"
           (agregarCarrito)="onAgregarCarrito($event)"
+          (quitarCarrito)="onQuitarCarrito($event)"
           (editar)="onEditar($event)"
           (eliminar)="onEliminar($event)"
         ></app-tarjeta-producto>

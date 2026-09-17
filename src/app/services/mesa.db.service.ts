@@ -47,7 +47,7 @@ export class MesaDbService {
                 numero_mesa: mesa.numeroMesa,
                 cantidad_lugares: mesa.cantidadLugares,
                 tipo: mesa.tipo,
-                disponibilidad: 'disponible',
+                disponibilidad: 'Disponible',
                 qr_url: publicQrUrl,
                 foto_url: urlPublica,
             });
@@ -109,11 +109,13 @@ export class MesaDbService {
             const cantidadLugares = mesa.cantidadLugares;
             const tipo = mesa.tipo;
             const fotoUrl = mesa.fotos;
+            const disponibilidad = mesa.disponibilidad
 
             const mesaNueva: any = {
                 numero_mesa: numeroMesa,
                 cantidad_lugares: cantidadLugares,
                 tipo,
+                disponibilidad
             };
 
             if (fotoUrl instanceof File) {

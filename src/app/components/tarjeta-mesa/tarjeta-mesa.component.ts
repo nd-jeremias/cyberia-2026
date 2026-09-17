@@ -12,6 +12,7 @@ export class TarjetaMesaComponent {
     mesa = input.required<MesaInterface>();
     editarMesa = output<MesaInterface>();
     eliminarMesa = output<MesaInterface>();
+    verQrMesa = output<MesaInterface>();
 
     onEditar() {
         this.editarMesa.emit(this.mesa());
@@ -19,5 +20,9 @@ export class TarjetaMesaComponent {
 
     onEliminar() {
         this.eliminarMesa.emit(this.mesa());
+    }
+
+    onVerQr() {
+        this.verQrMesa.emit(this.mesa());
     }
 }
