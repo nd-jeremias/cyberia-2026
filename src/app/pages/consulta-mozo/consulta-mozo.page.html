@@ -5,12 +5,12 @@
         <div class="superior hoja">
             @if (cargando()) {
             <div class="estado-vacio">
-                <ion-icon name="time-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'clock']"></fa-icon>
                 <p>Abriendo la conversación…</p>
             </div>
             } @else if (sinMesa()) {
             <div class="estado-vacio">
-                <ion-icon name="lock-closed-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'lock']"></fa-icon>
                 <p>Para consultar al mozo primero necesitás una mesa asignada.</p>
             </div>
             } @else {

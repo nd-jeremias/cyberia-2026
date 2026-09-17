@@ -7,11 +7,10 @@
  */
 
 .pantalla-qr {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
     align-items: center;
-    justify-content: center;
 
     min-height: 100%;
 }

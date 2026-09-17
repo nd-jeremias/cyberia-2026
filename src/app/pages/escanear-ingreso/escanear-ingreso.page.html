@@ -1,11 +1,16 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
-        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Ingreso al local'"></app-header>
+        <app-header
+            class="inferior sin-labio"
+            [defaultHref]="'/inicio'"
+            [tituloHeader]="'Ingreso al local'"
+        ></app-header>
 
         <div class="superior hoja pantalla-ingreso">
             <div class="tarjeta-estado">
                 <span class="medallon">
-                    <ion-icon [name]="puedeAnotarse() ? 'qr-code-outline' : 'time-outline'"></ion-icon>
+                    @let icono = puedeAnotarse() ? 'user-slash' : 'clock';
+                    <fa-icon [icon]="['fas', icono]"></fa-icon>
                 </span>
 
                 @if (cargando()) {
@@ -16,15 +21,19 @@
             </div>
 
             @if (puedeAnotarse() && !cargando()) {
+
+            <div class="tarjeta-estado ayuda">
+                <span class="medallon"><fa-icon [icon]="['fas', 'circle-question']"></fa-icon></span>
+                <p>
+                    El código está en la puerta del local. Al escanearlo quedás anotado en la lista de espera y el metre
+                    te asigna una mesa.
+                </p>
+            </div>
+
             <button type="button" class="btn-principal" (click)="escanear()">
-                <ion-icon name="scan-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'qrcode']"></fa-icon>
                 Escanear código de ingreso
             </button>
-
-            <p class="ayuda">
-                El código está en la puerta del local. Al escanearlo quedás anotado en la lista de espera
-                y el metre te asigna una mesa.
-            </p>
             }
         </div>
     </div>

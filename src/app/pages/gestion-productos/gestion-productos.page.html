@@ -2,7 +2,7 @@
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="titulo()">
             <button accion type="button" class="btn-banda" (click)="irACrear()">
-                <ion-icon name="add-circle-outline"></ion-icon>
+                <fa-icon [icon]="['far', 'circle-plus']"></fa-icon>
                 {{ textoBotonCrear() }}
             </button>
         </app-header>

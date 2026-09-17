@@ -2,7 +2,7 @@
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Mesas'">
             <a accion class="btn-banda" routerLink="/gestion-mesas/alta">
-                <ion-icon name="add-circle-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'plus']"></fa-icon>
                 Agregar
             </a>
         </app-header>
@@ -18,7 +18,7 @@
                 ></app-tarjeta-mesa>
                 } } @else {
                 <div class="estado-vacio">
-                    <ion-icon name="grid-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'ban']"></fa-icon>
                     <p>Todavía no hay mesas cargadas.</p>
                 </div>
                 }

@@ -18,7 +18,8 @@
 
             @if (imagenQr()) {
             <button type="button" class="btn-principal" (click)="guardar()">
-                <ion-icon [name]="esNativo ? 'share-outline' : 'download-outline'"></ion-icon>
+                @let icono = esNativo ? 'share' : 'download';
+                <fa-icon [icon]="['fas', icono]"></fa-icon>
                 {{ esNativo ? 'Compartir imagen' : 'Descargar imagen' }}
             </button>
             }

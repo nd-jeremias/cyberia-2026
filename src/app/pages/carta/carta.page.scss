@@ -11,13 +11,13 @@
 
 /* El alto del pie: el contenido reserva este espacio para que la última
    tarjeta no quede tapada. */
-:host {
-    --alto-pie: 7.5rem;
-}
+// :host {
+//     --alto-pie: 7.5rem;
+// }
 
-ion-content {
-    --padding-bottom: calc(var(--alto-pie) + env(safe-area-inset-bottom, 0px));
-}
+// ion-content {
+//     --padding-bottom: calc(var(--alto-pie) + env(safe-area-inset-bottom, 0px));
+// }
 
 .pantalla-carta {
     display: flex;

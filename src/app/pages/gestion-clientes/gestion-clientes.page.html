@@ -10,7 +10,7 @@
             <h2>Clientes activos:</h2>
             @if (clientes().length === 0) {
                 <div class="estado-vacio">
-                    <ion-icon name="people-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'users-slash']"></fa-icon>
                     <p>No hay clientes activos en este momento.</p>
                 </div>
             } @else {

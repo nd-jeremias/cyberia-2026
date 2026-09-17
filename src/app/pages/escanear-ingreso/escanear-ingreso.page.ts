@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { EstadoEnResto } from '../../interfaces/auth.interface';
 import { AuthService } from '../../services/auth.service';
@@ -8,6 +8,7 @@ import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
 import { SalonService } from '../../services/salon.service';
 import { SpinnerService } from '../../services/spinner.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Qué decirle al cliente según dónde esté parado en el circuito. */
 const LEYENDA_ESTADO: Record<EstadoEnResto, string> = {
@@ -29,7 +30,7 @@ const LEYENDA_ESTADO: Record<EstadoEnResto, string> = {
     selector: 'app-escanear-ingreso',
     templateUrl: './escanear-ingreso.page.html',
     styleUrls: ['./escanear-ingreso.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [IonContent, FaIconComponent, HeaderComponent],
 })
 export class EscanearIngresoPage {
     private authService = inject(AuthService);

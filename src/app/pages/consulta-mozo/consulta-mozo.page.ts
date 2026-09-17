@@ -10,6 +10,7 @@ import { ModalService } from '../../services/modal.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
 import { SalonService } from '../../services/salon.service';
 import { formatearFechaHora } from '../../utils/fecha';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 const ROLES_CLIENTE = ['cliente registrado', 'cliente anónimo'];
 
@@ -36,7 +37,7 @@ const SUGERENCIAS = ['¿Cuánto falta para mi pedido?', 'Necesito cubiertos', 'T
 @Component({
     selector: 'app-consulta-mozo',
     templateUrl: './consulta-mozo.page.html',
-    imports: [IonContent, IonIcon, HeaderComponent, SalaConversacionComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent, SalaConversacionComponent],
 })
 export class ConsultaMozoPage {
     private authService = inject(AuthService);

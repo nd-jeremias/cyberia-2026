@@ -193,7 +193,7 @@ p {
     border-radius: var(--radio-grande);
 
     fa-icon {
-        font-size: 2.75rem;
+        font-size: 6rem;
         color: var(--naranja);
         opacity: 0.55;
     }
@@ -486,7 +486,7 @@ p {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-
+    margin: 1rem 0;
     width: 100%;
     min-height: 3.75rem;
     padding: 0 1.25rem;
@@ -513,6 +513,9 @@ p {
     color: var(--sobre-naranja);
     box-shadow: var(--sombra-naranja);
 
+    fa-icon{
+        font-size: 2rem;
+    }
     &:active {
         box-shadow: 0 0.1875rem 0.5rem rgba(192, 67, 15, 0.3);
     }

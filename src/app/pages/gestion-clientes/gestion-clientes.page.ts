@@ -10,6 +10,7 @@ import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjet
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { Router } from '@angular/router';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Gestión de clientes para dueño y supervisor (puntos 6, 7 y 8).
@@ -20,7 +21,7 @@ import { Router } from '@angular/router';
     styleUrls: ['./gestion-clientes.page.scss'],
     imports: [
         IonContent,
-        IonIcon,
+        FaIconComponent,
         CommonModule,
         FormsModule,
         HeaderComponent,
@@ -33,7 +34,7 @@ export class GestionClientesPage {
     private alertCtrl = inject(AlertController);
     private spinner = inject(SpinnerService);
     private modal = inject(ModalService);
-    private router = inject(Router)
+    private router = inject(Router);
 
     clientes = signal<ClienteInterface[]>([]);
 

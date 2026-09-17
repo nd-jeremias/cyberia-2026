@@ -277,7 +277,8 @@ export class NotificacionesService {
             const tokens = usuarios?.map((u) => u.token_push).filter((t) => !!t) || [];
 
             if (tokens.length === 0) {
-                console.log('No hay usuarios activos con esos perfiles listos para recibir avisos.');
+                // console.log('No hay usuarios activos con esos perfiles listos para recibir avisos.');
+                console.log('No se encontraron los tokens para enviar las notificaciones.')
                 return;
             }
 

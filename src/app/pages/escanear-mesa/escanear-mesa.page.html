@@ -5,7 +5,7 @@
         <div class="superior hoja pantalla-mesa">
             <div class="tarjeta-estado">
                 <span class="medallon">
-                    <ion-icon name="qr-code-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'user-slash']"></fa-icon>
                 </span>
 
                 @if (numeroMesa(); as numero) {
@@ -20,12 +20,12 @@
                 }
             </div>
 
-            @if (numeroMesa() !== null) {
+            <!-- @if (numeroMesa() !== null) { -->
             <button type="button" class="btn-principal" (click)="escanear()">
-                <ion-icon name="scan-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'qrcode']"></fa-icon>
                 Escanear código de mi mesa
             </button>
-            }
+            <!-- } -->
         </div>
     </div>
 </ion-content>

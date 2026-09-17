@@ -46,10 +46,10 @@
 
 .ayuda {
     margin: 0;
-    padding: 0 0.5rem;
-
-    font-size: var(--texto-epigrafe);
+    margin-top: 1rem;
+    background-color: var(--hoja-honda);
+    font-size: var(--texto-apoyo);
     line-height: 1.45;
-    color: var(--tinta-tenue);
+    color: var(--tinta-media);
     text-align: center;
 }
