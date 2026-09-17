@@ -8,7 +8,7 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton, IonIcon } from '@ionic/angular';
+import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton } from '@ionic/angular';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
@@ -17,6 +17,7 @@ import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.comp
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Validador para comprobar que las contraseñas coincidan.
@@ -47,8 +48,8 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     selector: 'app-formulario-registro',
     templateUrl: './formulario-registro.component.html',
     styleUrls: ['./formulario-registro.component.scss'],
-    imports: [
-        IonIcon,
+    imports: [  
+        FaIconComponent,
         IonButton,
         IonSelect,
         IonSelectOption,

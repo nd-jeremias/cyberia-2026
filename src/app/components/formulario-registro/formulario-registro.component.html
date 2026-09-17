@@ -5,7 +5,7 @@
             <div class="grupo-input">
                 <label class="input-label">Nombre/s</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'user-pen']"></fa-icon>
                     <ion-input formControlName="nombres" type="text" placeholder="Juan"></ion-input>
                 </div>
                 @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
@@ -17,7 +17,7 @@
             <div class="grupo-input">
                 <label class="input-label">Apellido/s</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'user-pen']"></fa-icon>
                     <ion-input formControlName="apellidos" type="text" placeholder="Gómez"></ion-input>
                 </div>
                 @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
@@ -30,7 +30,7 @@
                 <label class="input-label">DNI</label>
                 <div class="caja-input-accion">
                     <div class="caja-input caja-dni">
-                        <ion-icon name="card-outline" class="icono-campo"></ion-icon>
+                        <fa-icon [icon]="['fas', 'address-card']"></fa-icon>
                         <ion-input
                             formControlName="dni"
                             type="text"
@@ -38,7 +38,7 @@
                             placeholder="12345678"
                         ></ion-input>
                         <button type="button" class="btn-escanear" (click)="scanearDNI()">
-                            <ion-icon name="qr-code-outline"></ion-icon>
+                            <fa-icon [icon]="['fas', 'qrcode']"></fa-icon>
                         </button>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
 
                     <!-- Central (Muestra el computed que se alimenta del DNI - Deshabilitado) -->
                     <div class="caja-input" style="flex: 3; opacity: 0.8">
-                        <ion-icon name="briefcase-outline" class="icono-campo"></ion-icon>
+                        <fa-icon [icon]="['fas', 'address-card']"></fa-icon>
                         <ion-input type="text" [disabled]="true" [value]="cuilCentral()" placeholder="DNI"></ion-input>
                     </div>
 
@@ -104,7 +104,7 @@
             <div class="grupo-input">
                 <label class="input-label">Tipo de Empleado</label>
                 <div class="caja-input">
-                    <ion-icon name="people-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'address-book']"></fa-icon>
                     <!-- Escribe en tipoEmpleado: es lo que se valida y lo que el registro
                          guarda como perfil. -->
                     <ion-select formControlName="tipoEmpleado" placeholder="Seleccionar" interface="popover">
@@ -141,7 +141,7 @@
             <div class="grupo-input">
                 <label class="input-label">Correo electrónico</label>
                 <div class="caja-input">
-                    <ion-icon name="mail-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'envelope']"></fa-icon>
                     <ion-input formControlName="correo" type="email" placeholder="juangomez@gmail.com"></ion-input>
                 </div>
                 @if (formulario.get("correo")?.errors?.["required"] && formulario.get("correo")?.touched) {
@@ -156,7 +156,7 @@
             <div class="grupo-input">
                 <label class="input-label">Contraseña</label>
                 <div class="caja-input">
-                    <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'lock']"></fa-icon>
                     <ion-input formControlName="password" placeholder="********" type="password"
                         ><ion-input-password-toggle
                             show-icon="eye-off"
@@ -179,7 +179,7 @@
             <div class="grupo-input">
                 <label class="input-label">Repetir Contraseña</label>
                 <div class="caja-input">
-                    <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'lock']"></fa-icon>
                     <ion-input formControlName="confirmPassword"  placeholder="********" type="password"
                         ><ion-input-password-toggle
                             show-icon="eye-off"

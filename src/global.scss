@@ -404,12 +404,21 @@ p {
         --background: transparent;
         font-weight: 600;
     }
+    
+    ion-textarea {
+        min-height: 75px; // Esto es para que se muestre todo el placeholder
+    }
 
     ion-input::part(label),
     ion-select::part(label) {
         color: var(--tinta-suave);
         font-weight: 600;
         opacity: 1;
+    }
+
+    fa-icon{
+        color: var(--tinta-media);
+        font-size: 20px;
     }
 }
 

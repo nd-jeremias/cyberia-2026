@@ -35,7 +35,7 @@
                 <!-- Sólo donde el enunciado permite elegir de la galería. -->
                 @if (permitirGaleria()) {
                 <ion-button class="galeria-button" fill="clear" size="small" (click)="abrirGaleria(idx)">
-                    <ion-icon name="image-outline" slot="start"></ion-icon>
+                    <fa-icon [icon]="['fas', 'image']"></fa-icon>
                     Elegir de galería
                 </ion-button>
                 }
@@ -59,7 +59,7 @@
                         fill="clear"
                         (click)="subirImagen(idx, modoCamara(), direccionCamara())"
                     >
-                        <ion-icon name="create-outline" slot="start"></ion-icon>
+                        <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
                         Cambiar
                     </ion-button>
 

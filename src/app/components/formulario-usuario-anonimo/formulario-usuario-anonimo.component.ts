@@ -1,11 +1,12 @@
 import { Component, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonIcon, IonInput } from '@ionic/angular';
+import { IonInput } from '@ionic/angular';
 import { AnonimoAltaInterface } from '../../interfaces/cliente.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
 import { RouterLink } from '@angular/router';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Alta de cliente anónimo (punto 9 del enunciado).
@@ -18,7 +19,7 @@ import { RouterLink } from '@angular/router';
     selector: 'app-formulario-usuario-anonimo',
     templateUrl: './formulario-usuario-anonimo.component.html',
     styleUrls: ['./formulario-usuario-anonimo.component.scss'],
-    imports: [IonIcon, IonInput, ReactiveFormsModule, SubidaImagenesComponent, RouterLink],
+    imports: [FaIconComponent, IonInput, ReactiveFormsModule, SubidaImagenesComponent, RouterLink],
 })
 export class FormularioUsuarioAnonimoComponent {
     private modal = inject(ModalService);

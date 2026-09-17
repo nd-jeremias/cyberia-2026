@@ -2,7 +2,7 @@
     <div class="container">
         @if (!mesa().fotoUrl) {
         <div class="container-placeholder">
-            <ion-icon name="image-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'image']"></fa-icon>
             <span>Sin imagen disponible</span>
         </div>
         } @else {
@@ -10,7 +10,7 @@
             <div class="container-slide">
                 @if (!mesa().fotoUrl) {
                 <div class="container-placeholder">
-                    <ion-icon name="image-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'image']"></fa-icon>
                     <span>Sin imagen disponible</span>
                 </div>
                 } @else {
@@ -34,7 +34,7 @@
         </div>
         <div class="detalles">
             <span class="detalle">
-                <ion-icon name="time-outline"></ion-icon>
+                <fa-icon [icon]="['far', 'clock']"></fa-icon>
                 {{ mesa().tipo }}
             </span>
             <span class="lugares">Lugares: {{ mesa().cantidadLugares }}</span>
@@ -43,17 +43,17 @@
         <!-- El QR va primero y a lo ancho: es lo que hay que imprimir y pegar
              en la mesa, así que es la acción que más se busca acá. -->
         <ion-button expand="block" fill="outline" class="boton-qr" (click)="onVerQr()">
-            <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+            <fa-icon [icon]="['fas', 'qrcode']"></fa-icon>
             Ver código QR
         </ion-button>
 
         <div class="acciones-gestion">
             <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
-                <ion-icon name="create-outline" slot="start"></ion-icon>
+                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
                 Editar
             </ion-button>
             <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
-                <ion-icon name="trash-outline" slot="start"></ion-icon>
+                <fa-icon [icon]="['fas', 'trash-can']"></fa-icon>
                 Eliminar
             </ion-button>
         </div>

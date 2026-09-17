@@ -5,7 +5,7 @@
             <div class="grupo-input">
                 <label class="input-label">Nombres</label>
                 <div class="caja-input">
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'user-pen']"></fa-icon>
                     <ion-input formControlName="nombres" type="text" placeholder="Juan"></ion-input>
                 </div>
                 @if (formulario.get("nombres")?.errors?.["required"] && formulario.get("nombres")?.touched) {
@@ -28,7 +28,6 @@
             </div>
 
             <button type="submit" class="btn-principal">
-                <ion-icon name="enter-outline"></ion-icon>
                 Ingresar al local
             </button>
 

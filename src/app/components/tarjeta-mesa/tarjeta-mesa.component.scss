@@ -80,7 +80,7 @@
     color: var(--tinta-suave);
     background: var(--grad-campo);
 
-    ion-icon {
+    fa-icon {
         font-size: 2.75rem;
         opacity: 0.7;
     }
@@ -163,7 +163,7 @@
     color: var(--tinta-media);
     white-space: nowrap;
 
-    ion-icon {
+    fa-icon {
         font-size: 1rem;
         color: var(--naranja);
     }
@@ -199,6 +199,13 @@ ion-button.boton-agregar {
         min-height: 3rem;
         font-size: var(--texto-apoyo);
         font-weight: 800;
+    }
+}
+
+ion-button {
+    fa-icon{
+        margin: 0.3rem;
+        font-size: 1.4rem;
     }
 }
 
