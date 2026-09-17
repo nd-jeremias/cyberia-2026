@@ -192,7 +192,7 @@ p {
     border: 0.125rem dashed var(--hoja-borde);
     border-radius: var(--radio-grande);
 
-    ion-icon {
+    fa-icon {
         font-size: 2.75rem;
         color: var(--naranja);
         opacity: 0.55;
@@ -244,7 +244,7 @@ p {
     color: var(--tinta-media);
     white-space: nowrap;
 
-    ion-icon {
+    fa-icon {
         font-size: 1.0625rem;
         color: var(--naranja);
     }
@@ -589,7 +589,7 @@ ion-button.btn-secundario {
 
     transition: transform 0.14s ease, background 0.18s ease;
 
-    ion-icon {
+    fa-icon {
         font-size: 1.3125rem;
     }
 
