@@ -328,8 +328,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | 02/09/2026 | Completado |                                                              |
-| Envío de correos, notificaciones push y vibración ante errores                               |   17/09/2026    | 17/09/2026 | Completado | La app ya puede **enviar** push, no sólo recibirlos          |
-| Corrección: el `token_push` no se renovaba al volver a ingresar                              |   17/09/2026    | 17/09/2026 | Completado | Ver `notificaciones.service.spec.ts`                         |
+| Envío de correos, notificaciones push y vibración ante errores                               |   17/09/2026    | 17/09/2026 | Completado | Credenciales de EmailJS en `environment.ts`                  |
+| Aviso push al asignar mesa (punto 10)                                                        |   17/09/2026    | 17/09/2026 | Completado | No hay disparador en la base: sale desde `MesaService`        |
+| Corrección: el `token_push` no se renovaba al volver a ingresar                              |   17/09/2026    | 17/09/2026 | Completado | Ver `notificaciones.token.spec.ts`                            |
 | Accesos rápidos: se agregan supervisor y una cuenta rechazada                                |   17/09/2026    | 17/09/2026 | Completado | Requiere correr `sql/usuarios-acceso-rapido.sql`             |
 | Corrección: el texto se recortaba en los botones de acceso rápido                            |   17/09/2026    | 17/09/2026 | Completado | Se notaba sólo en pantallas angostas o con fuente agrandada  |
 | **Puntos del TP a realizar:**                                                                |
