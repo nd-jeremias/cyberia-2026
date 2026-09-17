@@ -9,6 +9,7 @@ import { BOTONES_CLIENTE_POR_ESTADO, BOTONES_POR_ROL } from './home-botones.conf
 import { SalonService } from '../services/salon.service';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import { HeaderComponent } from '../components/header/header.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Una ficha del mapa: el número de mesa y si está en verde o en naranja. */
 interface FichaMapa {
@@ -79,7 +80,7 @@ const PEDIDOS_EN_CURSO: EstadoPedido[] = [
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
-    imports: [IonContent, IonIcon, RouterLink, HeaderComponent],
+    imports: [FaIconComponent, IonContent, IonIcon, RouterLink, HeaderComponent],
 })
 export class HomePage {
     authService = inject(AuthService);

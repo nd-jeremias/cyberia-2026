@@ -73,7 +73,7 @@
     <div class="pie-acciones">
         <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
         <button type="button" class="btn-principal pie-boton" [disabled]="!hayPedido()" (click)="irAlResumen()">
-            <fa-icon [icon]="['fas', 'receip']"></fa-icon>
+            <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
             {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
         </button>
     </div>

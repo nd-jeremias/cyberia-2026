@@ -921,7 +921,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
     .superior {
         z-index: 2;
         background-color: var(--hoja);
-        margin-top: -40px; /* Sube 40px y tapa exactamente el padding-bottom del header */
+        margin-top: -50px; /* Sube 40px y tapa exactamente el padding-bottom del header */
         border-radius: 40px;
         overflow: hidden;
         flex-grow: 1;

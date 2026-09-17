@@ -37,6 +37,7 @@ const SUGERENCIAS = ['¿Cuánto falta para mi pedido?', 'Necesito cubiertos', 'T
 @Component({
     selector: 'app-consulta-mozo',
     templateUrl: './consulta-mozo.page.html',
+    styleUrls: ['./consulta-mozo.page.scss'],
     imports: [FaIconComponent, IonContent, HeaderComponent, SalaConversacionComponent],
 })
 export class ConsultaMozoPage {
