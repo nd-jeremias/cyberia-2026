@@ -84,7 +84,14 @@ vi.mock('@capacitor/preferences', () => ({
 
 vi.mock('./supabase.service', () => ({ supabase: dobles.supabase }));
 
-describe('NotificacionesService', () => {
+/**
+ * Ciclo de vida del token push y envío de avisos.
+ *
+ * Va aparte de `notificaciones.service.spec.ts` porque acá se reemplazan los
+ * plugins nativos y Supabase por dobles, y esos reemplazos valen para todo el
+ * archivo: el otro spec necesita el servicio tal cual corre en el navegador.
+ */
+describe('NotificacionesService: token y envíos', () => {
     let servicio: NotificacionesService;
 
     /** Simula el token que entrega Firebase tras registrarse. */
