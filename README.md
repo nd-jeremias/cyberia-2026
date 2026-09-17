@@ -94,6 +94,20 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
     ionic serve
     ```
 
+### Datos de prueba en Supabase
+
+Los scripts de la carpeta `sql/` se corren desde el **SQL Editor** de Supabase, en este orden:
+
+| Script                         | Para qué sirve                                                                  |
+| :----------------------------- | :------------------------------------------------------------------------------ |
+| `usuarios.sql`                 | Crea la tabla `usuarios`, los tipos ENUM y las cuentas `@test.com`.              |
+| `usuarios-acceso-rapido.sql`   | Crea las cuentas `@restaurante.com` que usan los botones de **acceso rápido**.   |
+| `mesas.sql` / `productos.sql`  | Salón y carta.                                                                   |
+| `pedidos.sql`                  | Circuito del pedido.                                                             |
+| `notificaciones.sql`           | Disparadores que mandan las notificaciones push (necesita `pg_net`).             |
+
+> ⚠️ Sin `usuarios-acceso-rapido.sql` los botones de acceso rápido cargan credenciales que no existen y el ingreso falla: esas cuentas usan `@restaurante.com` con la contraseña `12345678`, que **no** son las que siembra `usuarios.sql` (`@test.com` con `Password123!`).
+
 ---
 
 ## 🌿 Guía Rápida de Git
@@ -314,6 +328,10 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
 | Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | 02/09/2026 | Completado |                                                              |
+| Envío de correos, notificaciones push y vibración ante errores                               |   17/09/2026    | 17/09/2026 | Completado | La app ya puede **enviar** push, no sólo recibirlos          |
+| Corrección: el `token_push` no se renovaba al volver a ingresar                              |   17/09/2026    | 17/09/2026 | Completado | Ver `notificaciones.service.spec.ts`                         |
+| Accesos rápidos: se agregan supervisor y una cuenta rechazada                                |   17/09/2026    | 17/09/2026 | Completado | Requiere correr `sql/usuarios-acceso-rapido.sql`             |
+| Corrección: el texto se recortaba en los botones de acceso rápido                            |   17/09/2026    | 17/09/2026 | Completado | Se notaba sólo en pantallas angostas o con fuente agrandada  |
 | **Puntos del TP a realizar:**                                                                |
 | 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
 | 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |
