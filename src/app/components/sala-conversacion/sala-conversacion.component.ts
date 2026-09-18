@@ -4,7 +4,7 @@ import { MensajeInterface } from '../../interfaces/conversacion.interface';
 import { formatearFechaHora } from '../../utils/fecha';
 
 /** Largo máximo de un mensaje: una consulta, no una carta. */
-export const LARGO_MAXIMO_MENSAJE = 500;
+export const LARGO_MAXIMO_MENSAJE = 200;
 
 /**
  * Conversación estilo WhatsApp (punto 11).

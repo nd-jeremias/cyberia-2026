@@ -14,6 +14,7 @@
                     <ion-icon name="restaurant-outline" class="icono-campo"></ion-icon>
                     <ion-input
                         formControlName="nombre"
+                        maxlength="35"
                         type="text"
                         placeholder="Milanesa con papas fritas"
                     ></ion-input>
@@ -29,6 +30,7 @@
                     <ion-icon name="list-outline" class="icono-campo"></ion-icon>
                     <ion-textarea
                         formControlName="descripcion"
+                        maxlength="200"
                         placeholder="Milanesa de nalga rebozada acompañada de papas fritas."
                         [autoGrow]="true"
                         [rows]="2"

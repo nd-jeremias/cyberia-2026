@@ -135,13 +135,13 @@ export class FormularioRegistroComponent {
     formulario = new FormGroup(
         {
             nombres: new FormControl('', {
-                validators: [Validators.required],
+                validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
             }),
             apellidos: new FormControl('', {
-                validators: [Validators.required],
+                validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
             }),
             dni: new FormControl('', {
-                validators: [Validators.required, Validators.pattern(/^\d{7,8}$/)],
+                validators: [Validators.required, Validators.pattern(/^\d{7,8}$/), Validators.minLength(7), Validators.maxLength(8)],
             }),
             cuil: new FormControl(''),
             correo: new FormControl('', {
@@ -168,7 +168,7 @@ export class FormularioRegistroComponent {
              * En edición son opcionales.
              */
             password: new FormControl('', {
-                validators: [Validators.required, Validators.minLength(8)],
+                validators: [Validators.required, Validators.minLength(8), Validators.maxLength(25)],
             }),
 
             confirmPassword: new FormControl('', {

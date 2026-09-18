@@ -78,10 +78,10 @@ export class FormularioAltaMesaComponent {
         // Los mínimos replican los CHECK (> 0) que ya impone la tabla `mesas`.
         // Validar acá evita un viaje a la base para recibir un rechazo.
         numeroMesa: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(100)],
         }),
         cantidadLugares: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(20)],
         }),
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],

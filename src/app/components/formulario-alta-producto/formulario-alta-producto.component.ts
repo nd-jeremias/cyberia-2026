@@ -57,16 +57,16 @@ export class FormularioAltaProductoComponent {
 
     formulario = new FormGroup({
         nombre: new FormControl('', {
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
         }),
         descripcion: new FormControl('', {
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.minLength(3), Validators.maxLength(200)],
         }),
         tiempoElaboracionMinutos: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(240)],
         }),
         precio: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(0.01)],
+            validators: [Validators.required, Validators.min(50), Validators.max(200000)],
         }),
     });
 

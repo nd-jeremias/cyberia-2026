@@ -10,6 +10,7 @@
                         formControlName="nombres"
                         type="text"
                         label="Nombres"
+                        maxlength="20"
                         labelPlacement="floating"
                         placeholder="Juan"
                     ></ion-input>
@@ -28,6 +29,7 @@
                         formControlName="apellidos"
                         type="text"
                         label="Apellidos"
+                        maxlength="20"
                         labelPlacement="floating"
                         placeholder="Gómez"
                     ></ion-input>
@@ -48,6 +50,7 @@
                             type="text"
                             inputmode="numeric"
                             label="DNI"
+                            maxlength="8"
                             labelPlacement="floating"
                             placeholder="12345678"
                         ></ion-input>
@@ -167,6 +170,7 @@
                         type="email"
                         label="Correo electrónico"
                         labelPlacement="floating"
+                        maxlength="20"
                         placeholder="juangomez@gmail.com"
                     ></ion-input>
                 </div>
@@ -183,7 +187,7 @@
                 <label class="input-label">Contraseña</label>
                 <div class="caja-input">
                     <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
-                    <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password"
+                    <ion-input formControlName="password" label="Contraseña" labelPlacement="floating" type="password" maxlength="20"
                         ><ion-input-password-toggle
                             show-icon="eye-off"
                             hide-icon="eye"
@@ -210,6 +214,7 @@
                         formControlName="confirmPassword"
                         label="Confirmar contraseña"
                         labelPlacement="floating"
+                        maxlength="20"
                         type="password"
                         ><ion-input-password-toggle
                             show-icon="eye-off"
