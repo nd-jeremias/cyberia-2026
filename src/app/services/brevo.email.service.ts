@@ -21,14 +21,14 @@ export class BrevoEmailService {
         const body = {
             correo: correo,
             templateId: this.TEMPLATE_RESPUESTA,
-            asunto: estado
-                ? '¡Tu registro en Cyberia fue aprobado! 🎉'
-                : 'Actualización sobre tu solicitud de registro - Cyberia',
             params: {
                 nombre: nombre,
                 titulo: estado ? '¡Registro aprobado!' : 'Solicitud de registro',
+                asunto: estado
+                    ? '¡Tu registro en Cyberia fue aprobado! 🎉'
+                    : 'Actualización sobre tu solicitud de registro',
                 estado: estado ? 'Aprobado' : 'Rechazado',
-                // colorEstado: estado ? '#2ec4b6' : '#c1272d',
+                colorEstado: estado ? '#2ec4b6' : '#c1272d',
                 mensaje: estado
                     ? 'Tu solicitud de registro fue revisada y aprobada. Ya podés utilizar Cyberia.'
                     : 'Tu solicitud de registro fue revisada, pero no pudo ser aprobada en esta oportunidad.',
@@ -58,9 +58,9 @@ export class BrevoEmailService {
         const body = {
             correo: email,
             templateId: this.TEMPLATE_SOLICITUD,
-            asunto: 'Recibimos tu solicitud de registro - Cyberia ⏳',
             params: {
                 nombre: nombre,
+                asunto: 'Recibimos tu solicitud de registro ⏳',
             },
         };
 
