@@ -35,7 +35,7 @@ const BOTONES_GESTION: BotonHome[] = [
 const BOTONES_PEDIDOS: BotonHome[] = [
     {
         texto: 'Pedidos',
-        icono: 'list-outline',
+        icono: 'receipt',
         ruta: '/pedidos',
     },
 ];
