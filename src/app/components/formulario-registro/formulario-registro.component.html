@@ -18,16 +18,15 @@
                 <label class="input-label">Apellido/s</label>
                 <div class="caja-input">
                     <fa-icon [icon]="['fas', 'user-pen']"></fa-icon>
-                    <ion-input formControlName="apellidos" type="text" placeholder="Gómez"></ion-input>
-                    <ion-icon name="person-outline" class="icono-campo"></ion-icon>
-                    <ion-input
+                    <ion-input formControlName="apellidos" type="text" placeholder="Gómez" maxlength="20"></ion-input>
+                    <!-- <ion-input
                         formControlName="apellidos"
                         type="text"
                         label="Apellidos"
-                        maxlength="20"
+                        
                         labelPlacement="floating"
                         placeholder="Gómez"
-                    ></ion-input>
+                    ></ion-input> -->
                 </div>
                 @if (formulario.get("apellidos")?.errors?.["required"] && formulario.get("apellidos")?.touched) {
                 <span class="mensaje-error">Debe ingresar su/s apellido/s</span>

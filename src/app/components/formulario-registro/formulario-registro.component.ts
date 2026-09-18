@@ -19,6 +19,7 @@ import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
+
 /**
  * Validador para comprobar que las contraseñas coincidan.
  *
@@ -48,7 +49,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     selector: 'app-formulario-registro',
     templateUrl: './formulario-registro.component.html',
     styleUrls: ['./formulario-registro.component.scss'],
-    imports: [  
+    imports: [   
         FaIconComponent,
         IonButton,
         IonSelect,
