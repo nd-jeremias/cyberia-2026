@@ -10,6 +10,7 @@ import { SalonService } from '../services/salon.service';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import { HeaderComponent } from '../components/header/header.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FooterComponent } from '../components/footer/footer.component';
 
 /** Una ficha del mapa: el número de mesa y si está en verde o en naranja. */
 interface FichaMapa {
@@ -76,7 +77,7 @@ const PEDIDOS_EN_CURSO: EstadoPedido[] = ['Confirmado', 'En Preparación', 'List
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
-    imports: [FaIconComponent, IonContent, RouterLink, HeaderComponent],
+    imports: [FaIconComponent, IonContent, RouterLink, HeaderComponent, FooterComponent],
 })
 export class HomePage {
     authService = inject(AuthService);

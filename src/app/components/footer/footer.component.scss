@@ -1,0 +1,34 @@
+/* Cierra el papel abajo: sin él, con un rol de pocos accesos la pantalla
+   terminaba en un corte seco de textura. */
+.pie-marca {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin-top: auto;
+    padding-top: 1rem;
+
+    p {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--sobre-naranja-tenue);
+        text-align: center;
+    }
+}
+
+.linea-marca {
+    width: 3rem;
+    height: 0.1875rem;
+    border-radius: 999px;
+    background: var(--naranja);
+    opacity: 0.5;
+}
+
+// Esto cambia el tamaño del footer si no tiene contenido
+// .inferior-final{
+//     padding: 40px;
+// }
