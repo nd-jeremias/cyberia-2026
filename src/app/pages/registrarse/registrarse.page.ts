@@ -5,9 +5,9 @@ import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 import { AuthService } from '../../services/auth.service';
-import { EmailService } from '../../services/email.service';
 import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 import { NotificacionesService } from '../../services/notificaciones.service';
+import { BrevoEmailService } from '../../services/brevo.email.service';
 
 @Component({
     selector: 'app-registrarse',
@@ -20,7 +20,7 @@ export class RegistrarsePage {
     private spinner = inject(SpinnerService);
     private modal = inject(ModalService);
     authService = inject(AuthService);
-    emailService = inject(EmailService);
+    emailService = inject(BrevoEmailService);
     notificaciones = inject(NotificacionesService);
 
     async handleRegistro(formData: FormData) {
