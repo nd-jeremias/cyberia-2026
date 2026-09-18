@@ -11,6 +11,7 @@ import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { Router } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 /**
  * Gestión de clientes para dueño y supervisor (puntos 6, 7 y 8).
@@ -27,6 +28,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
         HeaderComponent,
         BotonAccionComponent,
         TarjetaUsuarioComponent,
+        FooterComponent
     ],
 })
 export class GestionClientesPage {
