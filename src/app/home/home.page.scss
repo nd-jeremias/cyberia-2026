@@ -231,35 +231,6 @@
     }
 }
 
-/* Cierra el papel abajo: sin él, con un rol de pocos accesos la pantalla
-   terminaba en un corte seco de textura. */
-.pie-marca {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-
-    margin-top: auto;
-    padding-top: 1rem;
-
-    p {
-        margin: 0;
-        font-size: var(--texto-apoyo);
-        font-weight: 700;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
-        color: var(--tinta-tenue);
-        text-align: center;
-    }
-}
-
-.linea-marca {
-    width: 3rem;
-    height: 0.1875rem;
-    border-radius: 999px;
-    background: var(--naranja);
-    opacity: 0.5;
-}
 
 /* --- Situación del cliente en el local ------------------------------------
    El cliente no tiene cifras ni mapa del salón: lo que necesita saber es en
@@ -272,7 +243,7 @@
     flex-direction: column;
     gap: 0.5rem;
 
-    margin-top: 0.875rem;
+    margin: 0.5rem  0 1.2rem 0 ;
     padding: 1.125rem 1rem;
     box-sizing: border-box;
 
