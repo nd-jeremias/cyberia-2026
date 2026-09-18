@@ -3,11 +3,11 @@
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
             <a accion class="btn-banda" routerLink="/gestion-empleados/alta"> Agregar </a>
         </app-header>
-        
+
         <div class="superior hoja">
             <section class="listado-clientes">
                 @if (listaEmpleados().length === 0) {
-                <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
+                <p class="listado-vacio">No hay empleados cargados para mostrar.</p>
                 } @else {
                 <div class="lista">
                     @for (empleado of listaEmpleados(); track empleado.id) {
@@ -23,4 +23,3 @@
         </div>
     </div>
 </ion-content>
-
