@@ -9,8 +9,8 @@
             <div class="grupo-input">
                 <label class="input-label">Correo electrónico</label>
                 <div class="caja-input">
-                    <ion-icon name="mail-outline" class="icono-campo"></ion-icon>
-                    <ion-input formControlName="email" type="email" placeholder="nombre@restaurante.com" maxlength="35"> </ion-input>
+                    <fa-icon [icon]="['fas', 'envelope']"></fa-icon>
+                    <ion-input formControlName="email" type="email" placeholder="nombre@restaurante.com"> </ion-input>
                 </div>
                 @if (hayError('email', 'required')) {
                 <span class="mensaje-error">Ingrese su correo electrónico.</span>
@@ -23,8 +23,8 @@
             <div class="grupo-input">
                 <label class="input-label">Contraseña</label>
                 <div class="caja-input">
-                    <ion-icon name="lock-closed-outline" class="icono-campo"></ion-icon>
-                    <ion-input formControlName="password" type="password" placeholder="••••••••" maxlength="20">
+                    <fa-icon [icon]="['fas', 'lock']"></fa-icon>
+                    <ion-input formControlName="password" type="password" placeholder="••••••••">
                         <ion-input-password-toggle slot="end" color="medium"></ion-input-password-toggle>
                     </ion-input>
                 </div>
@@ -62,9 +62,9 @@
             [attr.aria-expanded]="accesosAbiertos()"
             aria-controls="panel-accesos"
         >
-            <ion-icon class="accesos-rayo" name="flash-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'bolt']"></fa-icon>
             <span class="accesos-texto">Acceso rápido</span>
-            <ion-icon class="accesos-flecha" name="chevron-down-outline"></ion-icon>
+            <fa-icon class="accesos-flecha" [icon]="['fas', 'caret-down']"></fa-icon>
         </button>
 
         <div class="accesos-panel" id="panel-accesos" [attr.inert]="accesosAbiertos() ? null : ''">
@@ -76,7 +76,7 @@
                     (click)="cargarCredenciales(perfil.email, perfil.pass)"
                 >
                     <span class="icono-perfil-wrapper">
-                        <ion-icon [name]="perfil.icono"></ion-icon>
+                        <fa-icon class="accesos-flecha" [icon]="['fas', perfil.icono]"></fa-icon>
                     </span>
                     <span class="rol">{{ perfil.rol }}</span>
                 </button>

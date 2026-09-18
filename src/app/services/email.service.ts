@@ -17,12 +17,14 @@ export class EmailService {
     // Identificadores de la cuenta de EmailJS. La clave pública está pensada
     // para usarse desde el navegador, pero conviene moverla a environment.ts
     // para no tener que tocar el código al cambiar de cuenta.
-    private serviceId = 'service_ek7jpdd';
-    private templateId = 'template_8fl84ys';
-    private publicKey = 'RLbRJhW8Gk9IN-Z3Z';
+    private SERVICE_ID = 'service_1tirmyd';
+    private PUBLIC_KEY = 'sWUFtRMdq0142btAN';
+    private TEMPLATE_SOLICITUD = 'template_6x6quqj';
+    private TEMPLATE_RESPUESTA = 'template_rkl1hpe';
+    // private templateId = 'template_8fl84ys';
 
     constructor() {
-        emailjs.init(this.publicKey);
+        emailjs.init(this.PUBLIC_KEY);
     }
 
     /**
@@ -31,12 +33,21 @@ export class EmailService {
      * Se envía apenas el cliente termina el formulario, para que sepa que su
      * solicitud entró y que todavía no puede ingresar.
      */
-    async enviarAvisoRegistroPendiente(email: string, nombre: string) {
-        return emailjs.send(this.serviceId, this.templateId, {
-            email: email,
-            to_name: nombre,
-            message: 'Gracias por registrarte. Tu cuenta está pendiente de aprobación por el dueño o supervisor.',
-        });
+    async enviarAvisoRegistroPendiente(email: string, nombre: string): Promise<void> {
+        const templateParams = {
+            nombre: nombre,
+            to_email: email,
+        };
+
+        try {
+            await emailjs.send(this.SERVICE_ID, this.TEMPLATE_SOLICITUD, templateParams, {
+                publicKey: this.PUBLIC_KEY,
+            });
+            console.log(`Email de confirmacion de solicitud enviado correctamente a ${email}`);
+        } catch (error) {
+            console.error('Error al enviar el email:', error);
+            throw error;
+        }
     }
 
     /**
@@ -45,16 +56,28 @@ export class EmailService {
      * El enunciado pide que los correos de aprobación y rechazo se distingan
      * entre sí, no sólo del correo por defecto.
      */
-    async enviarResolucionCuenta(email: string, nombre: string, aprobado: boolean) {
-        const mensaje = aprobado
-            ? '¡Tu cuenta ha sido aprobada con éxito! Ya podés ingresar a la aplicación.'
-            : 'Lamentamos informarte que tu solicitud de registro no fue aprobada.';
+    async enviarEmailConfirmacion(correo: string, nombre: string, estado: boolean): Promise<void> {
+        const templateParams = {
+            nombre: nombre,
+            titulo: estado ? '¡Registro aprobado!' : 'Solicitud de registro',
+            estado: estado ? 'Aprobado' : 'Rechazado',
+            mensaje: estado
+                ? 'Tu solicitud de registro fue revisada y aprobada. Ya podés utilizar Cyberia.'
+                : 'Tu solicitud de registro fue revisada, pero no pudo ser aprobada en esta oportunidad.',
+            mensajeFinal: estado
+                ? 'Ya podés ingresar a Cyberia desde la aplicación utilizando el correo y contraseña registrados.'
+                : 'Si considerás que se trata de un error, podés comunicarte con nuestro equipo para obtener más información.',
+            to_email: correo,
+        };
 
-        const templateId = aprobado ? 'template_8fl84ys' : 'template_t44g5mr';
-        return emailjs.send(this.serviceId, templateId, {
-            email: email,
-            to_name: nombre,
-            message: mensaje,
-        });
+        try {
+            await emailjs.send(this.SERVICE_ID, this.TEMPLATE_RESPUESTA, templateParams, {
+                publicKey: this.PUBLIC_KEY,
+            });
+            console.log(`Email de ${estado} enviado correctamente a ${correo}`);
+        } catch (error) {
+            console.error('Error al enviar el email:', error);
+            throw error;
+        }
     }
 }

@@ -1,18 +1,10 @@
 import { Component, computed, effect, inject, input, output } from '@angular/core';
-import {
-    FormControl,
-    FormGroup,
-    ReactiveFormsModule,
-    Validators,
-} from '@angular/forms';
-import { IonButton, IonIcon, IonInput, IonTextarea } from '@ionic/angular';
-import {
-    Producto,
-    ProductoAltaInterface,
-    TipoProducto,
-} from '../../interfaces/producto.interface';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { IonButton, IonInput, IonTextarea } from '@ionic/angular';
+import { Producto, ProductoAltaInterface, TipoProducto } from '../../interfaces/producto.interface';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { ModalService } from '../../services/modal.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 // La tabla `productos` tiene un CHECK que exige exactamente tres fotos. Se
 // valida acá también para no llegar a la base con un alta que va a rebotar.
@@ -29,7 +21,7 @@ const CANTIDAD_FOTOS_REQUERIDA = 3;
     selector: 'app-formulario-alta-producto',
     templateUrl: './formulario-alta-producto.component.html',
     styleUrls: ['./formulario-alta-producto.component.scss'],
-    imports: [IonIcon, IonInput, IonTextarea, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
+    imports: [FaIconComponent, IonInput, IonTextarea, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaProductoComponent {
     private modal = inject(ModalService);

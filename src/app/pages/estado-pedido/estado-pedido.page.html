@@ -1,79 +1,78 @@
-<app-header [defaultHref]="'/mi-pedido'" [tituloHeader]="'Estado del pedido'">
-    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
-        <ion-icon name="refresh-outline"></ion-icon>
-        Actualizar
-    </button>
-</app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja pantalla-estado">
-        @if (cargando()) {
-        <div class="estado-vacio">
-            <ion-icon name="time-outline"></ion-icon>
-            <p>Consultando tu pedido…</p>
-        </div>
-        } @else {
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/mi-pedido'" [tituloHeader]="'Estado del pedido'">
+            <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+                <fa-icon [icon]="['fas', 'rotate']"></fa-icon>
+                Actualizar
+            </button>
+        </app-header>
 
-        @for (pedido of pedidos(); track pedido.id) {
-        <article class="tarjeta-pedido">
-            <div class="encabezado">
-                <span class="ficha-mesa">
-                    <span class="ficha-mesa-rotulo">Mesa</span>
-                    <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
-                </span>
-                <span class="estado">{{ pedido.estado }}</span>
+        <div class="superior hoja pantalla-estado">
+            @if (cargando()) {
+            <div class="estado-vacio">
+                <fa-icon [icon]="['fas', 'clock']"></fa-icon>
+                <p>Consultando tu pedido…</p>
             </div>
-
-            <p class="leyenda">{{ leyendaDe(pedido) }}</p>
-
-            @if (enPreparacion(pedido)) {
-            <!-- Avance general: cuántos ítems ya salieron de cocina y barra. -->
-            <div class="avance">
-                <div class="avance-rotulo">
-                    <span>{{ listosDe(pedido) }} de {{ pedido.detalles.length }} listos</span>
-                    <span class="avance-tiempo">
-                        <ion-icon name="restaurant-outline"></ion-icon>
-                        {{ tiempoEstimado(pedido) }} min estimados
+            } @else { @for (pedido of pedidos(); track pedido.id) {
+            <article class="tarjeta-pedido">
+                <div class="encabezado">
+                    <span class="ficha-mesa">
+                        <span class="ficha-mesa-rotulo">Mesa</span>
+                        <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
                     </span>
+                    <span class="estado">{{ pedido.estado }}</span>
                 </div>
 
-                <div
-                    class="avance-barra"
-                    role="progressbar"
-                    [attr.aria-valuenow]="porcentajeDe(pedido)"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    [attr.aria-label]="'Pedido ' + porcentajeDe(pedido) + '% listo'"
-                >
-                    <span class="avance-relleno" [style.width.%]="porcentajeDe(pedido)"></span>
+                <p class="leyenda">{{ leyendaDe(pedido) }}</p>
+
+                @if (enPreparacion(pedido)) {
+                <!-- Avance general: cuántos ítems ya salieron de cocina y barra. -->
+                <div class="avance">
+                    <div class="avance-rotulo">
+                        <span>{{ listosDe(pedido) }} de {{ pedido.detalles.length }} listos</span>
+                        <span class="avance-tiempo">
+                            <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                            {{ tiempoEstimado(pedido) }} min estimados
+                        </span>
+                    </div>
+
+                    <div
+                        class="avance-barra"
+                        role="progressbar"
+                        [attr.aria-valuenow]="porcentajeDe(pedido)"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        [attr.aria-label]="'Pedido ' + porcentajeDe(pedido) + '% listo'"
+                    >
+                        <span class="avance-relleno" [style.width.%]="porcentajeDe(pedido)"></span>
+                    </div>
                 </div>
+                }
+
+                <ul class="items-estado">
+                    @for (item of pedido.detalles; track item.id) {
+                    <li class="item" [class]="claseItem(item)">
+                        <span class="cantidad">{{ item.cantidad }}×</span>
+                        <span class="item-nombre">{{ item.nombreProducto }}</span>
+
+                        @if (enPreparacion(pedido)) {
+                        <span class="item-estado">{{ item.estadoProducto }}</span>
+                        }
+                    </li>
+                    }
+                </ul>
+            </article>
+            } @empty {
+            <div class="estado-vacio">
+                <fa-icon [icon]="['fas', 'rectangle-xmark']"></fa-icon>
+                <p>Todavía no enviaste ningún pedido.</p>
             </div>
             }
-
-            <ul class="items-estado">
-                @for (item of pedido.detalles; track item.id) {
-                <li class="item" [class]="claseItem(item)">
-                    <span class="cantidad">{{ item.cantidad }}×</span>
-                    <span class="item-nombre">{{ item.nombreProducto }}</span>
-
-                    @if (enPreparacion(pedido)) {
-                    <span class="item-estado">{{ item.estadoProducto }}</span>
-                    }
-                </li>
-                }
-            </ul>
-        </article>
-        } @empty {
-        <div class="estado-vacio">
-            <ion-icon name="receipt-outline"></ion-icon>
-            <p>Todavía no enviaste ningún pedido.</p>
+            <button type="button" class="btn-principal" (click)="irAMiPedido()">
+                <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
+                Ir a mi pedido
+            </button>
+            }
         </div>
-
-        <button type="button" class="btn-principal" (click)="irAMiPedido()">
-            <ion-icon name="receipt-outline"></ion-icon>
-            Ir a mi pedido
-        </button>
-        }
-        }
     </div>
 </ion-content>

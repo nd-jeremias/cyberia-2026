@@ -8,6 +8,7 @@ import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
 import { SalonService } from '../../services/salon.service';
 import { SpinnerService } from '../../services/spinner.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * El cliente escanea el QR de su mesa y se sienta (puntos 10 y 11).
@@ -22,7 +23,7 @@ import { SpinnerService } from '../../services/spinner.service';
     selector: 'app-escanear-mesa',
     templateUrl: './escanear-mesa.page.html',
     styleUrls: ['./escanear-mesa.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent],
 })
 export class EscanearMesaPage {
     private authService = inject(AuthService);

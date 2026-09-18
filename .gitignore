@@ -74,4 +74,7 @@ android/.gradle/
 android/app/build/
 android/build/
 
+#supabase
+supabase/.temp
+
 notas.md

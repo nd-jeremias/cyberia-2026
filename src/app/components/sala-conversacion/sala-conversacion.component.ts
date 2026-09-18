@@ -2,6 +2,7 @@ import { Component, ElementRef, computed, effect, input, output, signal, viewChi
 import { IonIcon } from '@ionic/angular';
 import { MensajeInterface } from '../../interfaces/conversacion.interface';
 import { formatearFechaHora } from '../../utils/fecha';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Largo máximo de un mensaje: una consulta, no una carta. */
 export const LARGO_MAXIMO_MENSAJE = 200;
@@ -26,7 +27,7 @@ export const LARGO_MAXIMO_MENSAJE = 200;
     selector: 'app-sala-conversacion',
     templateUrl: './sala-conversacion.component.html',
     styleUrls: ['./sala-conversacion.component.scss'],
-    imports: [IonIcon],
+    imports: [FaIconComponent],
 })
 export class SalaConversacionComponent {
     mensajes = input<MensajeInterface[]>([]);
@@ -77,8 +78,7 @@ export class SalaConversacionComponent {
     }
 
     firma(mensaje: MensajeInterface): string {
-        const autor =
-            mensaje.autorId === this.clienteId() ? `Mesa ${this.numeroMesa() ?? '?'}` : mensaje.nombreAutor;
+        const autor = mensaje.autorId === this.clienteId() ? `Mesa ${this.numeroMesa() ?? '?'}` : mensaje.nombreAutor;
 
         return `${autor} · ${formatearFechaHora(mensaje.fecha)}`;
     }

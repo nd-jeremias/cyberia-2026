@@ -1,10 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
+import { IonBadge, IonButton, IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { ModalService } from '../../services/modal.service';
 import { formatearImporte } from '../../utils/importe';
 import { PedidoService } from '../../services/pedido.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Pantalla del mozo: confirmar, rechazar, entregar y cobrar pedidos.
@@ -18,7 +19,7 @@ import { PedidoService } from '../../services/pedido.service';
     selector: 'app-pedidos',
     templateUrl: './pedidos.page.html',
     styleUrls: ['./pedidos.page.scss'],
-    imports: [IonContent, IonButton, IonBadge, IonIcon, HeaderComponent],
+    imports: [IonContent, FaIconComponent, IonContent, IonButton, IonBadge, HeaderComponent],
 })
 export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);

@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ItemNuevoPedido, PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
@@ -17,6 +17,7 @@ import {
     puedeEnviarOtroPedido,
     puedeUsarServiciosDeMesa,
 } from './mi-pedido.estado';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Secciones del cliente que se desarrollan en otra rama (eze-dev), con las
@@ -61,7 +62,7 @@ export type SeccionCliente = keyof typeof SECCIONES;
     // La tarjeta se ve igual que la del mozo y el pie igual que el de la carta:
     // se reutilizan esos estilos en vez de copiarlos.
     styleUrls: ['../pedidos/pedidos.page.scss', '../carta/carta.page.scss', './mi-pedido.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent],
 })
 export class MiPedidoPage {
     private authService = inject(AuthService);

@@ -93,7 +93,7 @@ export class ClientesPendientesPage implements OnInit {
             const nombreEmail = `${cliente.apellidos}, ${cliente.nombres}`;
             const estadoEmail = estado == 'Activo' ? true : false;
 
-            this.emailService.enviarResolucionCuenta(cliente.correo_electronico, nombreEmail, estadoEmail);
+            this.emailService.enviarEmailConfirmacion(cliente.correo_electronico, nombreEmail, estadoEmail);
 
             this.modal.setOpen(
                 estado === 'Activo' ? 'Cliente aprobado' : 'Cliente rechazado',

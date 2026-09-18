@@ -89,8 +89,8 @@
     font-weight: 600;
     color: var(--tinta-media);
 
-    ion-icon {
-        font-size: 2.75rem;
+    fa-icon {
+        font-size: 5rem;
         color: var(--naranja);
         opacity: 0.55;
     }
@@ -130,7 +130,7 @@
 
 .caja {
     flex-shrink: 0;
-
+    
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -174,7 +174,7 @@
     width: 3rem;
     height: 3rem;
 
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     color: var(--sobre-naranja);
 
     background: var(--grad-naranja);

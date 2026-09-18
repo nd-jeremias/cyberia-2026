@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
+import { IonBadge, IonButton, IonContent } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
@@ -7,6 +7,7 @@ import { SalonService } from '../../services/salon.service';
 import { ModalService } from '../../services/modal.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Pantalla del metre: asignar una mesa a un cliente (punto 10).
@@ -23,7 +24,7 @@ import { HeaderComponent } from '../../components/header/header.component';
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
-    imports: [IonContent, IonButton, IonBadge, IonIcon, TarjetaUsuarioComponent, HeaderComponent],
+    imports: [IonContent, IonButton, IonBadge, FaIconComponent, TarjetaUsuarioComponent, HeaderComponent],
 })
 export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);

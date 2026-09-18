@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { TarjetaListadoProductoComponent } from '../../components/tarjeta-listado-producto/tarjeta-listado-producto.component';
 import { Producto, TipoProducto } from '../../interfaces/producto.interface';
@@ -12,12 +12,13 @@ import { PedidoService } from '../../services/pedido.service';
 import { ProductosService } from '../../services/productos.service';
 import { formatearImporte } from '../../utils/importe';
 import { puedeEnviarOtroPedido } from '../mi-pedido/mi-pedido.estado';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Las tres solapas de la carta, en el orden en que se come. */
 const SOLAPAS: { tipo: TipoProducto; etiqueta: string; icono: string }[] = [
-    { tipo: 'Comida', etiqueta: 'Comidas', icono: 'restaurant-outline' },
-    { tipo: 'Bebida', etiqueta: 'Bebidas', icono: 'wine-outline' },
-    { tipo: 'Postre', etiqueta: 'Postres', icono: 'ice-cream-outline' },
+    { tipo: 'Comida', etiqueta: 'Platos', icono: 'bowl-rice' },
+    { tipo: 'Bebida', etiqueta: 'Bebidas', icono: 'wine-bottle' },
+    { tipo: 'Postre', etiqueta: 'Postres', icono: 'ice-cream' },
 ];
 
 /**
@@ -42,7 +43,7 @@ const SOLAPAS: { tipo: TipoProducto; etiqueta: string; icono: string }[] = [
     selector: 'app-carta',
     templateUrl: './carta.page.html',
     styleUrls: ['./carta.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent, TarjetaListadoProductoComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent, TarjetaListadoProductoComponent],
 })
 export class CartaPage {
     private productosService = inject(ProductosService);
@@ -70,9 +71,7 @@ export class CartaPage {
     /** Todos los pedidos de la visita que todavía no se pagaron. */
     private pedidosActivos = signal<PedidoInterface[]>([]);
 
-    pedidoACorregir = computed(() =>
-        this.pedidoEnCurso()?.estado === 'Rechazado' ? this.pedidoEnCurso() : null
-    );
+    pedidoACorregir = computed(() => (this.pedidoEnCurso()?.estado === 'Rechazado' ? this.pedidoEnCurso() : null));
 
     corrigiendo = computed(() => this.pedidoACorregir() !== null);
 
@@ -85,13 +84,9 @@ export class CartaPage {
         () => this.corrigiendo() || puedeEnviarOtroPedido(this.pedidosActivos().map((p) => p.estado))
     );
 
-    productosVisibles = computed(() =>
-        this.productos().filter((p) => p.tipo === this.solapaActiva())
-    );
+    productosVisibles = computed(() => this.productos().filter((p) => p.tipo === this.solapaActiva()));
 
-    tituloListado = computed(
-        () => this.solapas.find((s) => s.tipo === this.solapaActiva())?.etiqueta ?? 'Carta'
-    );
+    tituloListado = computed(() => this.solapas.find((s) => s.tipo === this.solapaActiva())?.etiqueta ?? 'Carta');
 
     /** Unidades por producto, para que cada tarjeta muestre su contador. */
     cantidades = computed<Record<string, number>>(() => {
@@ -105,9 +100,7 @@ export class CartaPage {
     });
 
     /** Unidades totales del pedido, para el pie. */
-    unidades = computed(() =>
-        this.carrito.carrito().reduce((suma, item) => suma + item.cantidad, 0)
-    );
+    unidades = computed(() => this.carrito.carrito().reduce((suma, item) => suma + item.cantidad, 0));
 
     hayPedido = computed(() => this.unidades() > 0);
 
@@ -218,5 +211,4 @@ export class CartaPage {
     irAlResumen() {
         this.router.navigate(['/mi-pedido']);
     }
-
 }

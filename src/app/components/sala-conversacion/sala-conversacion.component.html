@@ -6,7 +6,7 @@
     </div>
     } @empty {
     <div class="vacio">
-        <ion-icon name="chatbubbles-outline"></ion-icon>
+        <fa-icon [icon]="['fas', 'comments']"></fa-icon>
         <p>{{ textoVacio() }}</p>
 
         @if (sugerencias().length > 0) {
@@ -35,6 +35,6 @@
     />
 
     <button type="submit" class="enviar" aria-label="Enviar mensaje" [disabled]="!puedeEnviar()">
-        <ion-icon name="send"></ion-icon>
+        <fa-icon [icon]="['fas', 'paper-plane']"></fa-icon>
     </button>
 </form>

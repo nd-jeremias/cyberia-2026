@@ -8,7 +8,7 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton, IonIcon } from '@ionic/angular';
+import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton } from '@ionic/angular';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
 import { ModalService } from '../../services/modal.service';
@@ -17,6 +17,7 @@ import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.comp
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Validador para comprobar que las contraseñas coincidan.
@@ -47,8 +48,8 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     selector: 'app-formulario-registro',
     templateUrl: './formulario-registro.component.html',
     styleUrls: ['./formulario-registro.component.scss'],
-    imports: [
-        IonIcon,
+    imports: [  
+        FaIconComponent,
         IonButton,
         IonSelect,
         IonSelectOption,
@@ -382,7 +383,6 @@ export class FormularioRegistroComponent {
         if (!word || word.length === 0) {
             return '';
         }
-
         return word[0].toUpperCase() + word.slice(1);
     }
 
@@ -431,6 +431,62 @@ export class FormularioRegistroComponent {
     // VALIDACIÓN
     // ============================================================
 
+    mensajesModales() {
+        let mensaje: string = '';
+
+        const campos = [
+            'nombres',
+            'apellidos',
+            'dni',
+            'cuil',
+            'correo',
+            'tipoEmpleado',
+            'perfil',
+            'foto',
+            'password',
+            'confirmPassword',
+        ];
+
+        const campoInvalido = campos.find((campo) => this.formulario.get(campo)?.invalid);
+
+        switch (campoInvalido) {
+            case 'nombres':
+                mensaje = 'Ingrese su nombre para continuar.';
+                break;
+            case 'apellidos':
+                mensaje = 'Ingrese su apellido para continuar.';
+                break;
+            case 'dni':
+                mensaje = 'Ingrese un DNI válido para continuar.';
+                break;
+            case 'cuil':
+                mensaje = 'Ingrese un CUIL válido para continuar.';
+                break;
+            case 'correo':
+                mensaje = 'Ingrese un correo electrónico válido.';
+                break;
+            case 'tipoEmpleado':
+                mensaje = 'Seleccione un tipo de empleado.';
+                break;
+            case 'perfil':
+                mensaje = 'Seleccione un perfil para continuar.';
+                break;
+            case 'foto':
+                mensaje = 'Tome una foto para poder ingresar al local.';
+                break;
+            case 'password':
+                mensaje = 'Ingrese una contraseña para continuar.';
+                break;
+            case 'confirmPassword':
+                mensaje = 'Las contraseñas no coinciden.';
+                break;
+            default:
+                mensaje = 'Complete los datos requeridos para continuar.';
+                break;
+        }
+        this.modal.setOpen('Datos incompletos', mensaje);
+    }
+
     validateForm(form: FormGroup): boolean {
         // --------------------------------------------------------
         // CUIL
@@ -453,8 +509,7 @@ export class FormularioRegistroComponent {
         // --------------------------------------------------------
 
         if (!form.valid) {
-            this.modal.setOpen('Datos inválidos', 'Revise los datos ingresados');
-
+            this.mensajesModales();
             return true;
         }
 
