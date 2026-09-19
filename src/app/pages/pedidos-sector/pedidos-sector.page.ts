@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { DetallePedidoInterface, EstadoItem, PedidoInterface } from '../../interfaces/pedido.interface';
 import { TipoProducto } from '../../interfaces/producto.interface';
 import { formatearFechaHora } from '../../utils/fecha';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 export interface GrupoMesaSector {
   numeroMesa: number;
@@ -22,7 +23,7 @@ export interface GrupoMesaSector {
   standalone: true,
   templateUrl: './pedidos-sector.page.html',
   styleUrls: ['./pedidos-sector.page.scss'],
-  imports: [IonContent, IonIcon, IonButton, IonBadge, CommonModule, HeaderComponent]
+  imports: [IonContent, IonButton, IonBadge, CommonModule, HeaderComponent, FaIconComponent]
 })
 export class PedidosSectorPage implements OnInit {
   private pedidoService = inject(PedidoService);
