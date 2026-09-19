@@ -193,7 +193,7 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
         // ...BOTONES_PEDIDOS,
         {
             texto: 'Pedidos de cocina', // <-- Mejor nombre
-            icono: 'list-outline',
+            icono: 'list-check',
             ruta: '/pedidos-sector',    // <-- Ruta a la nueva página
         },
     ],
@@ -207,7 +207,7 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
         //...BOTONES_PEDIDOS,
         {
             texto: 'Pedidos de barra',
-            icono: 'list-outline',
+            icono: 'list-check',
             ruta: '/pedidos-sector', // <-- Ruta reutilizada
         },
     ],
