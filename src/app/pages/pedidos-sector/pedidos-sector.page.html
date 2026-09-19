@@ -1,0 +1,91 @@
+<app-header [defaultHref]="'/inicio'" [tituloHeader]="tituloSector()">
+  <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+    <ion-icon name="refresh-outline"></ion-icon>
+    Actualizar
+  </button>
+</app-header>
+
+<ion-content [fullscreen]="true">
+  <div class="hoja pantalla-sector">
+    @if (mesasAgrupadas().length === 0) {
+      <div class="estado-vacio">
+        <ion-icon name="restaurant-outline"></ion-icon>
+        <p>No hay pedidos pendientes de elaboración en el sector.</p>
+      </div>
+    } @else {
+      <div class="grilla-mesas">
+        @for (grupo of mesasAgrupadas(); track grupo.numeroMesa) {
+          <section class="bloque-mesa">
+            <div class="cabecera-mesa">
+              <span class="ficha-mesa">
+                <span class="ficha-mesa-rotulo">Mesa</span>
+                <span class="ficha-mesa-numero">{{ grupo.numeroMesa }}</span>
+              </span>
+              <span class="pedidos-cant-chip">
+                {{ grupo.pedidos.length }} {{ grupo.pedidos.length === 1 ? 'comanda' : 'comandas' }}
+              </span>
+            </div>
+
+            <div class="lista-pedidos-mesa">
+              @for (comanda of grupo.pedidos; track comanda.pedidoOriginal.id) {
+                <article class="tarjeta-pedido">
+                  <!-- Barra de estado de comanda: Fecha y Estado -->
+                  <div class="barra-comanda">
+                    <span class="chip-fecha">
+                      <ion-icon name="time-outline"></ion-icon>
+                      {{ comanda.fecha }}
+                    </span>
+                    <span class="badge-comanda">
+                      {{ comanda.pedidoOriginal.estado }}
+                    </span>
+                  </div>
+
+                  <div class="divisor"><span>Ítems a elaborar</span></div>
+
+                  <ul class="detalles-sector">
+                    @for (item of comanda.itemsSector; track item.id) {
+                      <li class="item-tarjeta" [class.item-listo]="item.estadoProducto === 'Listo'">
+                        <!-- Fila superior: Cantidad + Nombre completo sin cortar -->
+                        <div class="item-cabecera">
+                          <span class="cantidad">{{ item.cantidad }}</span>
+                          <span class="nombre">{{ item.nombreProducto }}</span>
+                        </div>
+
+                        <!-- Fila inferior: Estado actual + Botón de avance -->
+                        <div class="item-barra-accion">
+                          <span class="badge-estado" [attr.data-estado]="item.estadoProducto">
+                            {{ item.estadoProducto }}
+                          </span>
+
+                          @if (item.estadoProducto === 'Pendiente') {
+                            <button 
+                              type="button" 
+                              class="btn-accion btn-preparar" 
+                              (click)="cambiarEstadoItem(item, 'En Preparación', comanda.pedidoOriginal.id)"
+                            >
+                              <ion-icon name="flame-outline"></ion-icon>
+                              Preparar
+                            </button>
+                          } @else if (item.estadoProducto === 'En Preparación') {
+                            <button 
+                              type="button" 
+                              class="btn-accion btn-terminar" 
+                              (click)="cambiarEstadoItem(item, 'Listo', comanda.pedidoOriginal.id)"
+                            >
+                              <ion-icon name="checkmark-circle"></ion-icon>
+                              Terminar
+                            </button>
+                          }
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                </article>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    }
+  </div>
+</ion-content>

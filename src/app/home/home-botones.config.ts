@@ -190,7 +190,12 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
             icono: 'utensils',
             ruta: '/gestion-productos',
         },
-        ...BOTONES_PEDIDOS,
+        // ...BOTONES_PEDIDOS,
+        {
+            texto: 'Pedidos de cocina', // <-- Mejor nombre
+            icono: 'list-outline',
+            ruta: '/pedidos-sector',    // <-- Ruta a la nueva página
+        },
     ],
 
     cantinero: [
