@@ -90,20 +90,16 @@ export class ClientesPendientesPage implements OnInit {
 
             // Se quita del listado: ya no esta pendiente.
             this.clientes.update((actuales) => actuales.filter((c) => c.id !== cliente.id));
-
             const nombreEmail = `${cliente.apellidos}, ${cliente.nombres}`;
             const estadoEmail = estado == 'Activo' ? true : false;
 
             this.emailService.enviarEmailConfirmacion(cliente.correo_electronico, nombreEmail, estadoEmail);
 
             this.modal.setOpen(
-                aprobado ? 'Cliente aprobado' : 'Cliente rechazado',
-                `${nombreEmail} fue ${aprobado ? 'aprobado' : 'rechazado'}. ${
-                    correoEnviado
-                        ? 'Se le envió un correo con la novedad.'
-                        : 'No se pudo enviar el correo de aviso: avisale por otro medio.'
-                }`,
-                'info'
+                estado === 'Activo' ? 'Cliente aprobado' : 'Cliente rechazado',
+                `${nombreEmail} fue ${
+                    estado === 'Activo' ? 'aprobado' : 'rechazado'
+                }. Se le enviará un correo con la novedad.`
             );
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el estado del cliente.';

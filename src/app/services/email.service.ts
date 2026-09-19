@@ -40,8 +40,8 @@ export class EmailService {
         };
 
         try {
-            await emailjs.send(this.SERVICE_ID, this.TEMPLATE_SOLICITUD, templateParams, {
-                publicKey: this.PUBLIC_KEY,
+            await emailjs.send(this.config.serviceId, this.config.plantillaSolicitud, templateParams, {
+                publicKey: this.config.publicKey,
             });
             console.log(`Email de confirmacion de solicitud enviado correctamente a ${email}`);
         } catch (error) {
@@ -72,8 +72,8 @@ export class EmailService {
         };
 
         try {
-            await emailjs.send(this.SERVICE_ID, this.TEMPLATE_RESPUESTA, templateParams, {
-                publicKey: this.PUBLIC_KEY,
+            await emailjs.send(this.config.serviceId, this.config.plantillaRespuesta, templateParams, {
+                publicKey: this.config.publicKey,
             });
             console.log(`Email de ${estado} enviado correctamente a ${correo}`);
         } catch (error) {
