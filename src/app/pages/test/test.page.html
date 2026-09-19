@@ -1,12 +1,14 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pruebas'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja">
-        <div class="aviso-preparacion">
-            <span class="medallon"><ion-icon name="information-circle-outline"></ion-icon></span>
-            <span class="sello-preparacion">Uso interno</span>
-            <h2>Pantalla de pruebas</h2>
-            <p>Espacio reservado para probar componentes durante el desarrollo.</p>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Pruebas'"></app-header>
+
+        <div class="superior hoja">
+            <div class="aviso-preparacion">
+                <span class="medallon"><ion-icon name="information-circle-outline"></ion-icon></span>
+                <span class="sello-preparacion">Uso interno</span>
+                <h2>Pantalla de pruebas</h2>
+                <p>Espacio reservado para probar componentes durante el desarrollo.</p>
+            </div>
         </div>
     </div>
 </ion-content>

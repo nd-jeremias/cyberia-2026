@@ -1,12 +1,13 @@
 import { Component, computed, input, OnInit, output } from '@angular/core';
 import { MesaInterface } from '../../interfaces/mesa.interface';
-import { IonIcon, IonButton } from '@ionic/angular';
+import { IonButton } from '@ionic/angular';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
     selector: 'app-tarjeta-mesa',
     templateUrl: './tarjeta-mesa.component.html',
     styleUrls: ['./tarjeta-mesa.component.scss'],
-    imports: [IonButton, IonIcon],
+    imports: [IonButton, FaIconComponent],
 })
 export class TarjetaMesaComponent implements OnInit {
     mesa = input.required<MesaInterface>();

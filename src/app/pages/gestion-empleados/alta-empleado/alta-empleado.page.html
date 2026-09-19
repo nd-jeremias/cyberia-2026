@@ -1,12 +1,15 @@
-<app-header [defaultHref]="'/gestion-empleados'" [tituloHeader]="titulo()"></app-header>
 <ion-content [fullscreen]="true">
-    <div class="hoja hoja-angosta">
-        <app-formulario-registro
-            [modo]="'modificar_empleado'"
-            [usuarioExistente]="empleadoExistente()"
-            [usuarioRol]="'dueño'"
-            (registroSubmit)="handleRegistro($event)"
-            [direccionCamara]="'frontal'"
-        ></app-formulario-registro>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/gestion-empleados'" [tituloHeader]="titulo()"></app-header>
+
+        <div class="superior hoja hoja-angosta">
+            <app-formulario-registro
+                [modo]="'modificar_empleado'"
+                [usuarioExistente]="empleadoExistente()"
+                [usuarioRol]="'dueño'"
+                (registroSubmit)="handleRegistro($event)"
+                [direccionCamara]="'frontal'"
+            ></app-formulario-registro>
+        </div>
     </div>
 </ion-content>

@@ -1,12 +1,12 @@
 import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
+import { IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { MesaAltaInterface, MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
 import { QrService } from '../../services/qr.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Campos que el usuario ve marcados en rojo; la foto se avisa aparte. */
 const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
@@ -22,7 +22,7 @@ const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
     selector: 'app-formulario-alta-mesa',
     templateUrl: './formulario-alta-mesa.component.html',
     styleUrls: ['./formulario-alta-mesa.component.scss'],
-    imports: [IonIcon, IonInput, IonSelect, IonSelectOption, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
+    imports: [FaIconComponent, IonInput, IonSelect, IonSelectOption, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
@@ -78,10 +78,10 @@ export class FormularioAltaMesaComponent {
         // Los mínimos replican los CHECK (> 0) que ya impone la tabla `mesas`.
         // Validar acá evita un viaje a la base para recibir un rechazo.
         numeroMesa: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(100)],
         }),
         cantidadLugares: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(20)],
         }),
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],

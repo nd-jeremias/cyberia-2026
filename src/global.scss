@@ -55,8 +55,12 @@ ion-router-outlet {
     background: transparent;
 }
 
+// ion-content {
+//     --background: var(--hoja);
+//     --padding-bottom: 0;
+// }
 ion-content {
-    --background: var(--hoja);
+    --background: var(--naranja);
     --padding-bottom: 0;
 }
 
@@ -188,8 +192,8 @@ p {
     border: 0.125rem dashed var(--hoja-borde);
     border-radius: var(--radio-grande);
 
-    ion-icon {
-        font-size: 2.75rem;
+    fa-icon {
+        font-size: 6rem;
         color: var(--naranja);
         opacity: 0.55;
     }
@@ -240,7 +244,7 @@ p {
     color: var(--tinta-media);
     white-space: nowrap;
 
-    ion-icon {
+    fa-icon {
         font-size: 1.0625rem;
         color: var(--naranja);
     }
@@ -378,9 +382,7 @@ p {
     border: 0.0938rem solid var(--hoja-borde);
     border-radius: var(--radio);
 
-    transition:
-        border-color 0.18s ease,
-        box-shadow 0.18s ease;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
 
     &:focus-within {
         border-color: var(--naranja);
@@ -402,12 +404,21 @@ p {
         --background: transparent;
         font-weight: 600;
     }
+    
+    ion-textarea {
+        min-height: 75px; // Esto es para que se muestre todo el placeholder
+    }
 
     ion-input::part(label),
     ion-select::part(label) {
         color: var(--tinta-suave);
         font-weight: 600;
         opacity: 1;
+    }
+
+    fa-icon{
+        color: var(--tinta-media);
+        font-size: 20px;
     }
 }
 
@@ -475,7 +486,7 @@ p {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-
+    margin: 1rem 0;
     width: 100%;
     min-height: 3.75rem;
     padding: 0 1.25rem;
@@ -489,10 +500,7 @@ p {
     letter-spacing: var(--traqueo);
     cursor: pointer;
 
-    transition:
-        transform 0.14s ease,
-        box-shadow 0.18s ease,
-        background 0.18s ease;
+    transition: transform 0.14s ease, box-shadow 0.18s ease, background 0.18s ease;
 
     &:active {
         transform: translateY(0.0625rem) scale(0.99);
@@ -505,6 +513,9 @@ p {
     color: var(--sobre-naranja);
     box-shadow: var(--sombra-naranja);
 
+    fa-icon{
+        font-size: 2rem;
+    }
     &:active {
         box-shadow: 0 0.1875rem 0.5rem rgba(192, 67, 15, 0.3);
     }
@@ -579,11 +590,9 @@ ion-button.btn-secundario {
     text-decoration: none;
     cursor: pointer;
 
-    transition:
-        transform 0.14s ease,
-        background 0.18s ease;
+    transition: transform 0.14s ease, background 0.18s ease;
 
-    ion-icon {
+    fa-icon {
         font-size: 1.3125rem;
     }
 
@@ -850,7 +859,6 @@ body.barcode-scanner-active .barcode-scanner-ui {
     visibility: visible;
 }
 
-
 .fondo-texturizado {
     position: relative; /* Obligatorio para que el patrón se alinee aquí */
     background-color: #f7efe3; /* Tu fondo vainilla */
@@ -882,7 +890,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
 .layout-superpuesto {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
+    min-height: 100vh;
 
     .inferior,
     .superior,
@@ -891,29 +899,37 @@ body.barcode-scanner-active .barcode-scanner-ui {
         position: relative;
     }
 
-    // 1. Capa base del Header
+    // 1. Capa base del Header (máx 20% de pantalla, 30% en modo usuario con avatar)
     .inferior {
         z-index: 1;
         flex-shrink: 0;
         background-color: var(--naranja);
         /* TRUCO: Le agregas exactamente el mismo espacio que le vas a quitar con el margen negativo */
         padding-bottom: 50px;
-        height: 25vh;
+        height: auto;
+        /* Base del 20%: si el contenido es pequeño mide 20vh, 
+       pero si supera ese espacio crece hacia abajo sin cortarse */
+        min-height: 20vh;
+
+        &:has(.banda-usuario) {
+            max-height: 30vh;
+        }
         /* 1. Ruta de tu patrón | 2. Color vainilla de fondo */
     }
 
-    // 2. Capa Central
+    // 2. Capa Central (se expande para ocupar el resto)
     .superior {
         z-index: 2;
         background-color: var(--hoja);
-        margin-top: -40px; /* Sube 40px y tapa exactamente el padding-bottom del header */
+        margin-top: -50px; /* Sube 40px y tapa exactamente el padding-bottom del header */
         border-radius: 40px;
         overflow: hidden;
         flex-grow: 1;
+        padding-top: 1.5rem;
         padding-bottom: 50px;
     }
 
-    // 3. Capa base del Footer
+    // 3. Capa base del Footer (máx 15% de pantalla)
     .inferior-final {
         z-index: 3;
         margin-top: -40px;
@@ -922,7 +938,8 @@ body.barcode-scanner-active .barcode-scanner-ui {
         /* Opcional: Si el footer también sufre el mismo problema abajo, dale padding-top */
         padding-top: 40px;
         padding-bottom: 100px;
-        height: 10vh;
+        height: auto;
+        max-height: 15vh;
         border-radius: 40px 40px 0 0;
     }
 }

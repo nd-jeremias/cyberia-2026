@@ -1,25 +1,25 @@
 <section class="listado-productos">
-  <h2 class="titulo-listado titulo-seccion">{{ tituloListado() }}</h2>
+    <h2 class="titulo-listado titulo-seccion">{{ tituloListado() }}</h2>
 
-  @if (productos().length === 0) {
+    @if (productos().length === 0) {
     <div class="estado-vacio">
-      <ion-icon name="restaurant-outline"></ion-icon>
-      <p>Todavía no hay productos cargados en esta sección.</p>
+        <fa-icon [icon]="['fas', 'utensils']"></fa-icon>
+        <p>Todavía no hay productos cargados en esta sección.</p>
     </div>
-  } @else {
+    } @else {
     <div class="lista">
-      @for (producto of productos(); track producto.id) {
+        @for (producto of productos(); track producto.id) {
         <app-tarjeta-producto
-          class="item-lista"
-          [producto]="producto"
-          [modo]="modo()"
-          [cantidad]="cantidadDe(producto.id)"
-          (agregarCarrito)="onAgregarCarrito($event)"
-          (quitarCarrito)="onQuitarCarrito($event)"
-          (editar)="onEditar($event)"
-          (eliminar)="onEliminar($event)"
+            class="item-lista"
+            [producto]="producto"
+            [modo]="modo()"
+            [cantidad]="cantidadDe(producto.id)"
+            (agregarCarrito)="onAgregarCarrito($event)"
+            (quitarCarrito)="onQuitarCarrito($event)"
+            (editar)="onEditar($event)"
+            (eliminar)="onEliminar($event)"
         ></app-tarjeta-producto>
-      }
+        }
     </div>
-  }
+    }
 </section>

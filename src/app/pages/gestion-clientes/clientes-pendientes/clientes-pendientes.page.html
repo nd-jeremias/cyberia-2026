@@ -1,9 +1,13 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Clientes pendientes'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <app-listado-clientes-pendientes
-        [clientes]="clientes()"
-        (aprobarCliente)="onAprobar($event)"
-        (rechazarCliente)="onRechazar($event)"
-    ></app-listado-clientes-pendientes>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Clientes pendientes'"></app-header>
+
+        <div class="superior hoja">
+            <app-listado-clientes-pendientes
+                [clientes]="clientes()"
+                (aprobarCliente)="onAprobar($event)"
+                (rechazarCliente)="onRechazar($event)"
+            ></app-listado-clientes-pendientes>
+        </div>
+    </div>
 </ion-content>

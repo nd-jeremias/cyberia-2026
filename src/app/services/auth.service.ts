@@ -30,6 +30,9 @@ export class AuthService {
     galeriaService = inject(GaleriaService);
     modal = inject(ModalService);
 
+    //Este delay corrige fallo de desfase de reloj (clock skew) entre los servidores internos de Supabase
+    delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
             this.session.set(session);
@@ -101,9 +104,9 @@ export class AuthService {
     setLocalUser(user: LocalUserInterface) {
         localStorage.setItem('user', JSON.stringify(user));
     }
-
+    
     async login({ email, password }: LoginInterface): Promise<void> {
-        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+        // const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
         const response: AuthResponse = await supabase.auth.signInWithPassword({
             email,
@@ -116,7 +119,7 @@ export class AuthService {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
 
-        await delay(1500);
+        await this.delay(300); 
 
         // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
         // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
@@ -235,7 +238,7 @@ export class AuthService {
             const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
 
             const { data, error: authError } = await supabase.auth.signUp({
-                email: correo,
+                email: correolimpio,
                 password,
                 options: {
                     // Metadatos que van directamente al usuario de Auth (Opcional)
@@ -245,6 +248,8 @@ export class AuthService {
 
             if (authError) throw authError;
 
+            await this.delay(300); 
+            
             if (data.user) {
                 const { error: dbError } = await supabase.from('usuarios').insert({
                     id: data.user.id,

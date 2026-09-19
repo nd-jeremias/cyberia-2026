@@ -10,6 +10,7 @@ import { TarjetaMesaComponent } from '../../components/tarjeta-mesa/tarjeta-mesa
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { MesaDbService } from '../../services/mesa.db.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Administración de mesas del salón (punto 4).
@@ -21,7 +22,15 @@ import { MesaDbService } from '../../services/mesa.db.service';
     selector: 'app-gestion-mesas',
     templateUrl: './gestion-mesas.page.html',
     styleUrls: ['./gestion-mesas.page.scss'],
-    imports: [IonContent, IonIcon, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaMesaComponent],
+    imports: [
+        IonContent,
+        FaIconComponent,
+        CommonModule,
+        FormsModule,
+        RouterLink,
+        HeaderComponent,
+        TarjetaMesaComponent,
+    ],
 })
 export class GestionMesasPage {
     mesaService = inject(MesaService);
@@ -34,7 +43,7 @@ export class GestionMesasPage {
     mesasCargadas = signal<MesaInterface[]>([]);
 
     async ionViewWillEnter() {
-        this.cargarMesas()
+        this.cargarMesas();
     }
 
     async cargarMesas() {

@@ -42,6 +42,12 @@
     flex: 1;
 }
 
+.estado-vacio{
+    fa-icon{
+        font-size: 6rem;
+    }
+}
+
 /* El aspecto del título viene de `.titulo-seccion` (global.scss): riel de neón
    a la izquierda y texto en blanco alto. */
 .titulo-listado {

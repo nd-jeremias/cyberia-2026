@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 import { ProductosService } from '../../services/productos.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 // El mismo listado sirve para cocinero (platos) y cantinero (bebidas):
 // el tipo a mostrar/crear sale del perfil logueado, no de la URL.
@@ -27,7 +28,7 @@ const TIPO_POR_PERFIL: Partial<Record<PerfilUsuario, TipoProducto>> = {
     selector: 'app-gestion-productos',
     templateUrl: './gestion-productos.page.html',
     styleUrls: ['./gestion-productos.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent, TarjetaListadoProductoComponent],
+    imports: [IonContent, FaIconComponent, HeaderComponent, TarjetaListadoProductoComponent],
 })
 export class GestionProductosPage {
     private authService = inject(AuthService);

@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { DetallePedidoInterface, EstadoItem, PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { LEYENDA_PAGANDO, LEYENDA_PEDIDO } from '../mi-pedido/mi-pedido.estado';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Cómo se ve cada ítem según en qué punto de la cocina o la barra está. */
 const CLASE_ITEM: Record<EstadoItem, string> = {
@@ -31,7 +32,7 @@ const CLASE_ITEM: Record<EstadoItem, string> = {
     templateUrl: './estado-pedido.page.html',
     // La tarjeta se ve igual que la del mozo y que la de "Mi pedido".
     styleUrls: ['../pedidos/pedidos.page.scss', '../mi-pedido/mi-pedido.page.scss', './estado-pedido.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent],
 })
 export class EstadoPedidoPage {
     private authService = inject(AuthService);
