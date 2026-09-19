@@ -27,19 +27,17 @@
                         </span>
                     </div>
 
-                <div class="lista-pedidos-mesa">
-                    @for (comanda of grupo.pedidos; track comanda.pedidoOriginal.id) {
-                    <article class="tarjeta-pedido">
-                        <!-- Barra de estado de comanda: Fecha y Estado -->
-                        <div class="barra-comanda">
-                            <span class="chip-fecha">
-                                <fa-icon [icon]="['far', 'clock']"></fa-icon>
-                                {{ comanda.fecha }}
-                            </span>
-                            <span class="badge-comanda">
-                                {{ comanda.pedidoOriginal.estado }}
-                            </span>
-                        </div>
+                    <div class="lista-pedidos-mesa">
+                        @for (comanda of grupo.pedidos; track comanda.pedidoOriginal.id) {
+                        <article class="tarjeta-pedido">
+                            <!-- Barra de estado de comanda: Fecha y Estado -->
+                            <div class="barra-comanda">
+                                <span class="chip-fecha">
+                                    <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                                    {{ comanda.fecha }}
+                                </span>
+                                <span class="badge-comanda"> {{ comanda.pedidoOriginal.estado }} </span>
+                            </div>
 
                             <div class="divisor"><span>Ítems a elaborar</span></div>
 
