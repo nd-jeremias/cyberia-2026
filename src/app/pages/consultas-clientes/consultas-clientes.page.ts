@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ChatInterface } from '../../interfaces/conversacion.interface';
 import { ConversacionService } from '../../services/conversacion.service';
 import { ModalService } from '../../services/modal.service';
 import { formatearFechaHora } from '../../utils/fecha';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Consultas de los clientes (punto 11), del lado del mozo.
@@ -21,7 +22,7 @@ import { formatearFechaHora } from '../../utils/fecha';
     selector: 'app-consultas-clientes',
     templateUrl: './consultas-clientes.page.html',
     styleUrls: ['./consultas-clientes.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent],
 })
 export class ConsultasClientesPage {
     private conversacion = inject(ConversacionService);

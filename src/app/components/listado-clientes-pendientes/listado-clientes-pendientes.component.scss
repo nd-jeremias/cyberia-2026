@@ -29,6 +29,11 @@
 /* Sin solicitudes pendientes, el recuadro se lleva el alto sobrante. */
 .listado-clientes > .estado-vacio {
     flex: 1;
+
+    fa-icon{
+        color: var(--exito);
+        font-size: 6rem;
+    }
 }
 
 /* El aspecto lo aporta `.titulo-seccion` de global.scss. */

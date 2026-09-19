@@ -1,23 +1,23 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos'">
-    <!-- Punto 14: trae los pedidos que llegaron mientras la pantalla estaba abierta. -->
-    <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
-        <ion-icon name="refresh-outline"></ion-icon>
-        Actualizar
-    </button>
-</app-header>
-
 <ion-content [fullscreen]="true">
-  <div class="hoja pantalla-pedidos">
-    <section class="grupo">
-        <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Pedidos'">
+            <!-- Punto 14: trae los pedidos que llegaron mientras la pantalla estaba abierta. -->
+            <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
+                <fa-icon [icon]="['fas', 'rotate']"></fa-icon>
+                Actualizar
+            </button>
+        </app-header>
 
-        @if (pendientes().length === 0) {
-            <div class="estado-vacio">
-                <ion-icon name="receipt-outline"></ion-icon>
-                <p>No hay pedidos esperando confirmación.</p>
-            </div>
-        } @else {
-            @for (pedido of pendientes(); track pedido.id) {
+        <div class="superior hoja pantalla-pedidos">
+            <section class="grupo">
+                <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
+
+                @if (pendientes().length === 0) {
+                <div class="estado-vacio">
+                    <fa-icon [icon]="['fas', 'hourglass-half']"></fa-icon>
+                    <p>No hay pedidos esperando confirmación.</p>
+                </div>
+                } @else { @for (pedido of pendientes(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
                         <span class="ficha-mesa">
@@ -29,21 +29,21 @@
 
                     <div class="datos-pedido">
                         <span class="chip">
-                            <ion-icon name="time-outline"></ion-icon>
+                            <fa-icon [icon]="['fas', 'calendar']"></fa-icon>
                             {{ fechaFormateada(pedido) }}
                         </span>
                         <span class="chip">
-                            <ion-icon name="restaurant-outline"></ion-icon>
+                            <fa-icon [icon]="['far', 'clock']"></fa-icon>
                             {{ tiempoEstimado(pedido) }} minutos estimados
                         </span>
                     </div>
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
-                            <li>
-                                <span class="cantidad">{{ item.cantidad }}×</span>
-                                {{ item.nombreProducto }}
-                            </li>
+                        <li>
+                            <span class="cantidad">{{ item.cantidad }}×</span>
+                            {{ item.nombreProducto }}
+                        </li>
                         }
                     </ul>
 
@@ -59,38 +59,28 @@
                             [disabled]="cargando()"
                             (click)="onConfirmar(pedido)"
                         >
-                            <ion-icon
-                                slot="start"
-                                name="checkmark-circle"
-                            ></ion-icon>
+                            <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                             Confirmar
                         </ion-button>
 
-                        <ion-button
-                            expand="block"
-                            color="danger"
-                            [disabled]="cargando()"
-                            (click)="onRechazar(pedido)"
-                        >
-                            <ion-icon slot="start" name="close-circle"></ion-icon>
+                        <ion-button expand="block" color="danger" [disabled]="cargando()" (click)="onRechazar(pedido)">
+                            <fa-icon [icon]="['fas', 'circle-xmark']"></fa-icon>
                             Rechazar
                         </ion-button>
                     </div>
                 </article>
-            }
-        }
-    </section>
+                } }
+            </section>
 
-    <section class="grupo">
-        <h2 class="titulo-grupo titulo-seccion">Listos para entregar</h2>
+            <section class="grupo">
+                <h2 class="titulo-grupo titulo-seccion">Listos para entregar</h2>
 
-        @if (listos().length === 0) {
-            <div class="estado-vacio">
-                <ion-icon name="time-outline"></ion-icon>
-                <p>Todavía no hay pedidos listos.</p>
-            </div>
-        } @else {
-            @for (pedido of listos(); track pedido.id) {
+                @if (listos().length === 0) {
+                <div class="estado-vacio">
+                    <fa-icon [icon]="['fas', 'hourglass-half']"></fa-icon>
+                    <p>Todavía no hay pedidos listos.</p>
+                </div>
+                } @else { @for (pedido of listos(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
                         <span class="ficha-mesa">
@@ -102,17 +92,17 @@
 
                     <div class="datos-pedido">
                         <span class="chip">
-                            <ion-icon name="time-outline"></ion-icon>
+                            <fa-icon [icon]="['fas', 'calendar']"></fa-icon>
                             {{ fechaFormateada(pedido) }}
                         </span>
                     </div>
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
-                            <li>
-                                <span class="cantidad">{{ item.cantidad }}×</span>
-                                {{ item.nombreProducto }}
-                            </li>
+                        <li>
+                            <span class="cantidad">{{ item.cantidad }}×</span>
+                            {{ item.nombreProducto }}
+                        </li>
                         }
                     </ul>
 
@@ -121,30 +111,24 @@
                         <span class="total-importe">{{ totalFormateado(pedido) }}</span>
                     </p>
 
-                    <ion-button
-                        expand="block"
-                        [disabled]="cargando()"
-                        (click)="onEntregar(pedido)"
-                    >
-                        <ion-icon slot="start" name="restaurant"></ion-icon>
+                    <ion-button expand="block" [disabled]="cargando()" (click)="onEntregar(pedido)">
+                        <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                         Marcar como entregado
                     </ion-button>
                 </article>
-            }
-        }
-    </section>
+                } }
+            </section>
 
-    <!-- Punto 22: el cliente ya pagó y espera que el mozo confirme el cobro. -->
-    <section class="grupo">
-        <h2 class="titulo-grupo titulo-seccion">Pagos por confirmar</h2>
+            <!-- Punto 22: el cliente ya pagó y espera que el mozo confirme el cobro. -->
+            <section class="grupo">
+                <h2 class="titulo-grupo titulo-seccion">Pagos por confirmar</h2>
 
-        @if (pagos().length === 0) {
-            <div class="estado-vacio">
-                <ion-icon name="cash-outline"></ion-icon>
-                <p>No hay pagos esperando confirmación.</p>
-            </div>
-        } @else {
-            @for (pedido of pagos(); track pedido.id) {
+                @if (pagos().length === 0) {
+                <div class="estado-vacio">
+                    <fa-icon [icon]="['fas', 'cash-register']"></fa-icon>
+                    <p>No hay pagos esperando confirmación.</p>
+                </div>
+                } @else { @for (pedido of pagos(); track pedido.id) {
                 <article class="tarjeta-pedido">
                     <div class="encabezado">
                         <span class="ficha-mesa">
@@ -156,10 +140,10 @@
 
                     <ul class="detalles">
                         @for (item of pedido.detalles; track item.id) {
-                            <li>
-                                <span class="cantidad">{{ item.cantidad }}×</span>
-                                {{ item.nombreProducto }}
-                            </li>
+                        <li>
+                            <span class="cantidad">{{ item.cantidad }}×</span>
+                            {{ item.nombreProducto }}
+                        </li>
                         }
                     </ul>
 
@@ -174,12 +158,12 @@
                         [disabled]="cargando()"
                         (click)="onConfirmarPago(pedido)"
                     >
-                        <ion-icon slot="start" name="cash-outline"></ion-icon>
+                        <fa-icon [icon]="['fas', 'hand-holding-dollar']"></fa-icon>
                         Confirmar pago y liberar mesa
                     </ion-button>
                 </article>
-            }
-        }
-    </section>
-  </div>
+                } }
+            </section>
+        </div>
+    </div>
 </ion-content>

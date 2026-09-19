@@ -1,25 +1,28 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'QR de ingreso'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja pantalla-qr">
-        <div class="tarjeta-qr">
-            @if (imagenQr(); as imagen) {
-            <img [src]="imagen" alt="Código QR de ingreso al local" class="imagen-qr" />
-            } @else {
-            <p class="leyenda">Generando el código…</p>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'QR de ingreso'"></app-header>
+
+        <div class="superior hoja pantalla-qr">
+            <div class="tarjeta-qr">
+                @if (imagenQr(); as imagen) {
+                <img [src]="imagen" alt="Código QR de ingreso al local" class="imagen-qr" />
+                } @else {
+                <p class="leyenda">Generando el código…</p>
+                }
+            </div>
+
+            <p class="ayuda">
+                Imprimilo y pegalo en la puerta del local. Al escanearlo, el cliente queda anotado en la
+                lista de espera del metre.
+            </p>
+
+            @if (imagenQr()) {
+            <button type="button" class="btn-principal" (click)="guardar()">
+                @let icono = esNativo ? 'share' : 'download';
+                <fa-icon [icon]="['fas', icono]"></fa-icon>
+                {{ esNativo ? 'Compartir imagen' : 'Descargar imagen' }}
+            </button>
             }
         </div>
-
-        <p class="ayuda">
-            Imprimilo y pegalo en la puerta del local. Al escanearlo, el cliente queda anotado en la
-            lista de espera del metre.
-        </p>
-
-        @if (imagenQr()) {
-        <button type="button" class="btn-principal" (click)="guardar()">
-            <ion-icon [name]="esNativo ? 'share-outline' : 'download-outline'"></ion-icon>
-            {{ esNativo ? 'Compartir imagen' : 'Descargar imagen' }}
-        </button>
-        }
     </div>
 </ion-content>

@@ -1,55 +1,59 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja pantalla-carta">
-        @if (corrigiendo()) {
-        <!-- Punto 13: se entró desde un pedido rechazado, con lo pedido ya cargado. -->
-        <p class="aviso-correccion">
-            <ion-icon name="create-outline"></ion-icon>
-            El mozo pidió cambios. Ajustá lo que haga falta y volvé a enviarlo.
-        </p>
-        }
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header
+            class="inferior sin-labio"
+            [defaultHref]="'/inicio'"
+            [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"
+        ></app-header>
 
-        @if (!puedePedir()) {
-        <!-- Con un pedido confirmado, la carta queda para mirar: ya no se agrega nada. -->
-        <p class="aviso-correccion">
-            <ion-icon name="lock-closed-outline"></ion-icon>
-            Tu pedido ya fue confirmado. Podés ver la carta, pero no agregar productos.
-        </p>
-        }
-
-        <!-- Comidas, bebidas y postres: el filtro es de pantalla, la carta ya está cargada. -->
-        <nav class="solapas" aria-label="Secciones de la carta">
-            @for (solapa of solapas; track solapa.tipo) {
-            <button
-                type="button"
-                class="solapa"
-                [class.solapa-activa]="solapaActiva() === solapa.tipo"
-                [attr.aria-pressed]="solapaActiva() === solapa.tipo"
-                (click)="cambiarSolapa(solapa.tipo)"
-            >
-                <ion-icon [name]="solapa.icono"></ion-icon>
-                <span class="solapa-etiqueta">{{ solapa.etiqueta }}</span>
-                <span class="solapa-cuenta">{{ cuentaDe(solapa.tipo) }}</span>
-            </button>
+        <div class="superior hoja pantalla-carta">
+            @if (corrigiendo()) {
+            <!-- Punto 13: se entró desde un pedido rechazado, con lo pedido ya cargado. -->
+            <p class="aviso-correccion">
+                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
+                El mozo pidió cambios. Ajustá lo que haga falta y volvé a enviarlo.
+            </p>
+            } @if (!puedePedir()) {
+            <!-- Con un pedido confirmado, la carta queda para mirar: ya no se agrega nada. -->
+            <p class="aviso-correccion">
+                <fa-icon [icon]="['fas', 'lock']"></fa-icon>
+                Tu pedido ya fue confirmado. Podés ver la carta, pero no agregar productos.
+            </p>
             }
-        </nav>
 
-        @if (cargando()) {
-        <div class="estado-vacio">
-            <ion-icon name="restaurant-outline"></ion-icon>
-            <p>Cargando la carta…</p>
+            <!-- Comidas, bebidas y postres: el filtro es de pantalla, la carta ya está cargada. -->
+            <nav class="solapas" aria-label="Secciones de la carta">
+                @for (solapa of solapas; track solapa.tipo) {
+                <button
+                    type="button"
+                    class="solapa"
+                    [class.solapa-activa]="solapaActiva() === solapa.tipo"
+                    [attr.aria-pressed]="solapaActiva() === solapa.tipo"
+                    (click)="cambiarSolapa(solapa.tipo)"
+                >
+                    <fa-icon [icon]="['fas', solapa.icono]"></fa-icon>
+                    <span class="solapa-etiqueta">{{ solapa.etiqueta }}</span>
+                    <span class="solapa-cuenta">{{ cuentaDe(solapa.tipo) }}</span>
+                </button>
+                }
+            </nav>
+
+            @if (cargando()) {
+            <div class="estado-vacio">
+                <fa-icon [icon]="['fas', 'utensils']"></fa-icon>
+                <p>Cargando la carta…</p>
+            </div>
+            } @else {
+            <app-tarjeta-listado-producto
+                [productos]="productosVisibles()"
+                [tituloListado]="tituloListado()"
+                [cantidades]="cantidades()"
+                modo="pedido"
+                (agregarCarrito)="agregar($event)"
+                (quitarCarrito)="quitar($event)"
+            ></app-tarjeta-listado-producto>
+            }
         </div>
-        } @else {
-        <app-tarjeta-listado-producto
-            [productos]="productosVisibles()"
-            [tituloListado]="tituloListado()"
-            [cantidades]="cantidades()"
-            modo="pedido"
-            (agregarCarrito)="agregar($event)"
-            (quitarCarrito)="quitar($event)"
-        ></app-tarjeta-listado-producto>
-        }
     </div>
 </ion-content>
 
@@ -60,8 +64,8 @@
 <footer class="pie-pedido">
     <div class="pie-importe">
         <span class="pie-rotulo">
-            @if (hayPedido()) { {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} ·
-            {{ carrito.tiempoEstimado() }} min } @else { Tu pedido está vacío }
+            @if (hayPedido()) { {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} · {{
+            carrito.tiempoEstimado() }} min } @else { Tu pedido está vacío }
         </span>
         <span class="pie-total">{{ totalFormateado() }}</span>
     </div>
@@ -69,7 +73,7 @@
     <div class="pie-acciones">
         <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
         <button type="button" class="btn-principal pie-boton" [disabled]="!hayPedido()" (click)="irAlResumen()">
-            <ion-icon name="receipt-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
             {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
         </button>
     </div>

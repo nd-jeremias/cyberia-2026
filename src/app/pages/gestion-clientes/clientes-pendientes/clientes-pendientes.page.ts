@@ -92,16 +92,9 @@ export class ClientesPendientesPage implements OnInit {
             this.clientes.update((actuales) => actuales.filter((c) => c.id !== cliente.id));
 
             const nombreEmail = `${cliente.apellidos}, ${cliente.nombres}`;
-            const aprobado = estado === 'Activo';
+            const estadoEmail = estado == 'Activo' ? true : false;
 
-            // Se espera el correo para poder decir si salió. Antes se lanzaba
-            // sin esperar y el modal prometía un correo que podía no haberse
-            // enviado nunca; encima, al fallar dejaba un rechazo sin capturar.
-            const correoEnviado = await this.emailService.enviarResolucionCuenta(
-                cliente.correo_electronico,
-                nombreEmail,
-                aprobado
-            );
+            this.emailService.enviarEmailConfirmacion(cliente.correo_electronico, nombreEmail, estadoEmail);
 
             this.modal.setOpen(
                 aprobado ? 'Cliente aprobado' : 'Cliente rechazado',

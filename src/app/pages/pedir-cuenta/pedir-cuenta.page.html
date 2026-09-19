@@ -1,11 +1,13 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Pedir la cuenta'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja">
-        <div class="estado-vacio">
-            <ion-icon name="construct-outline"></ion-icon>
-            <p>Esta pantalla todavía no está hecha.</p>
-            <p>Punto 21: propina por QR y detalle de la cuenta.</p>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Pedir la cuenta'"></app-header>
+
+        <div class="superior hoja">
+            <div class="estado-vacio">
+                <ion-icon name="construct-outline"></ion-icon>
+                <p>Esta pantalla todavía no está hecha.</p>
+                <p>Punto 21: propina por QR y detalle de la cuenta.</p>
+            </div>
         </div>
     </div>
 </ion-content>

@@ -10,22 +10,22 @@ export interface BotonHome {
 const BOTONES_GESTION: BotonHome[] = [
     {
         texto: 'Gestión de empleados',
-        icono: 'people-outline',
+        icono: 'users-viewfinder',
         ruta: '/gestion-empleados',
     },
     {
         texto: 'Gestión de mesas',
-        icono: 'grid-outline',
+        icono: 'border-all',
         ruta: '/gestion-mesas',
     },
     {
         texto: 'Gestión de clientes',
-        icono: 'person-circle-outline',
+        icono: 'circle-user',
         ruta: '/gestion-clientes',
     },
     {
         texto: 'QR de ingreso al local',
-        icono: 'qr-code-outline',
+        icono: 'qrcode',
         ruta: '/qr-local',
     },
 ];
@@ -35,7 +35,7 @@ const BOTONES_GESTION: BotonHome[] = [
 const BOTONES_PEDIDOS: BotonHome[] = [
     {
         texto: 'Pedidos',
-        icono: 'list-outline',
+        icono: 'receipt',
         ruta: '/pedidos',
     },
 ];
@@ -63,12 +63,12 @@ export const BOTONES_CLIENTE_POR_ESTADO: Record<EstadoEnResto, BotonHome[]> = {
     libre: [
         {
             texto: 'Escanear QR de ingreso',
-            icono: 'qr-code-outline',
+            icono: 'qrcode',
             ruta: '/escanear-ingreso',
         },
         {
             texto: 'Ver encuestas',
-            icono: 'stats-chart-outline',
+            icono: 'chart-simple',
             ruta: '/encuestas',
         },
     ],
@@ -78,7 +78,7 @@ export const BOTONES_CLIENTE_POR_ESTADO: Record<EstadoEnResto, BotonHome[]> = {
     esperando_mesa: [
         {
             texto: 'Ver encuestas',
-            icono: 'stats-chart-outline',
+            icono: 'chart-simple',
             ruta: '/encuestas',
         },
     ],
@@ -87,12 +87,12 @@ export const BOTONES_CLIENTE_POR_ESTADO: Record<EstadoEnResto, BotonHome[]> = {
     mesa_asignada: [
         {
             texto: 'Escanear QR de mi mesa',
-            icono: 'qr-code-outline',
+            icono: 'qrcode',
             ruta: '/escanear-mesa',
         },
         {
             texto: 'Consulta al mozo',
-            icono: 'chatbubbles-outline',
+            icono: 'comments',
             ruta: '/consulta-mozo',
         },
     ],
@@ -101,32 +101,32 @@ export const BOTONES_CLIENTE_POR_ESTADO: Record<EstadoEnResto, BotonHome[]> = {
     sentado: [
         {
             texto: 'Carta',
-            icono: 'restaurant-outline',
+            icono: 'receipt',
             ruta: '/carta',
         },
         {
             texto: 'Consulta al mozo',
-            icono: 'chatbubbles-outline',
+            icono: 'comments',
             ruta: '/consulta-mozo',
         },
         {
             texto: 'Estado del pedido',
-            icono: 'receipt-outline',
+            icono: 'hourglass-half',
             ruta: '/estado-pedido',
         },
         {
             texto: 'Juegos',
-            icono: 'game-controller-outline',
+            icono: 'gamepad',
             ruta: '/juegos',
         },
         {
             texto: 'Encuestas',
-            icono: 'stats-chart-outline',
+            icono: 'chart-simple',
             ruta: '/encuestas',
         },
         {
             texto: 'Pedir la cuenta',
-            icono: 'cash-outline',
+            icono: 'cash-register',
             ruta: '/pedir-cuenta',
         },
     ],
@@ -136,17 +136,17 @@ export const BOTONES_CLIENTE_POR_ESTADO: Record<EstadoEnResto, BotonHome[]> = {
     pagando: [
         {
             texto: 'Estado del pedido',
-            icono: 'receipt-outline',
+            icono: 'hourglass-half',
             ruta: '/estado-pedido',
         },
         {
             texto: 'Juegos',
-            icono: 'game-controller-outline',
+            icono: 'gamepad',
             ruta: '/juegos',
         },
         {
             texto: 'Encuestas',
-            icono: 'stats-chart-outline',
+            icono: 'chart-simple',
             ruta: '/encuestas',
         },
     ],
@@ -161,12 +161,12 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
     metre: [
         {
             texto: 'Asignar mesas',
-            icono: 'easel-outline',
+            icono: 'person-chalkboard',
             ruta: '/asignar-mesas',
         },
         {
             texto: 'Registrar cliente',
-            icono: 'person-add-outline',
+            icono: 'user-plus',
             ruta: '/metre-registrar-cliente',
         },
     ],
@@ -174,12 +174,12 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
     mozo: [
         {
             texto: 'Consultas de clientes',
-            icono: 'chatbubbles-outline',
+            icono: 'comment-dots',
             ruta: '/consultas-clientes',
         },
         {
             texto: 'Pedidos de clientes',
-            icono: 'receipt-outline',
+            icono: 'receipt',
             ruta: '/pedidos-clientes',
         },
     ],
@@ -187,7 +187,7 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
     cocinero: [
         {
             texto: 'Gestión de platos',
-            icono: 'restaurant-outline',
+            icono: 'utensils',
             ruta: '/gestion-productos',
         },
         ...BOTONES_PEDIDOS,
@@ -196,7 +196,7 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
     cantinero: [
         {
             texto: 'Gestión de bebidas',
-            icono: 'wine-outline',
+            icono: 'wine-bottle',
             ruta: '/gestion-productos',
         },
         ...BOTONES_PEDIDOS,

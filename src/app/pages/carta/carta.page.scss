@@ -11,13 +11,13 @@
 
 /* El alto del pie: el contenido reserva este espacio para que la última
    tarjeta no quede tapada. */
-:host {
-    --alto-pie: 7.5rem;
-}
+// :host {
+//     --alto-pie: 7.5rem;
+// }
 
-ion-content {
-    --padding-bottom: calc(var(--alto-pie) + env(safe-area-inset-bottom, 0px));
-}
+// ion-content {
+//     --padding-bottom: calc(var(--alto-pie) + env(safe-area-inset-bottom, 0px));
+// }
 
 .pantalla-carta {
     display: flex;
@@ -44,7 +44,7 @@ ion-content {
     color: var(--alerta-tinta);
 }
 
-.aviso-correccion ion-icon {
+.aviso-correccion fa-icon {
     flex-shrink: 0;
     font-size: 1.25rem;
 }
@@ -55,6 +55,7 @@ ion-content {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
+    margin: 1rem 0;
 }
 
 .solapa {
@@ -74,7 +75,7 @@ ion-content {
     cursor: pointer;
 }
 
-.solapa ion-icon {
+.solapa fa-icon {
     font-size: 1.375rem;
 }
 

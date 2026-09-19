@@ -33,13 +33,21 @@ export class EmailService {
      * Se envía apenas el cliente termina el formulario, para que sepa que su
      * solicitud entró y que todavía no puede ingresar.
      */
-    async enviarAvisoRegistroPendiente(email: string, nombre: string): Promise<boolean> {
-        return this.enviar(
-            this.config.plantillaPendiente,
-            email,
-            nombre,
-            'Gracias por registrarte. Tu cuenta está pendiente de aprobación por el dueño o supervisor.'
-        );
+    async enviarAvisoRegistroPendiente(email: string, nombre: string): Promise<void> {
+        const templateParams = {
+            nombre: nombre,
+            to_email: email,
+        };
+
+        try {
+            await emailjs.send(this.SERVICE_ID, this.TEMPLATE_SOLICITUD, templateParams, {
+                publicKey: this.PUBLIC_KEY,
+            });
+            console.log(`Email de confirmacion de solicitud enviado correctamente a ${email}`);
+        } catch (error) {
+            console.error('Error al enviar el email:', error);
+            throw error;
+        }
     }
 
     /**
@@ -49,42 +57,28 @@ export class EmailService {
      * entre sí, no sólo del correo por defecto: por eso cada uno usa su propia
      * plantilla.
      */
-    async enviarResolucionCuenta(email: string, nombre: string, aprobado: boolean): Promise<boolean> {
-        const mensaje = aprobado
-            ? '¡Tu cuenta ha sido aprobada con éxito! Ya podés ingresar a la aplicación.'
-            : 'Lamentamos informarte que tu solicitud de registro no fue aprobada.';
-
-        const plantilla = aprobado ? this.config.plantillaAprobado : this.config.plantillaRechazado;
-
-        return this.enviar(plantilla, email, nombre, mensaje);
-    }
-
-    /**
-     * Única salida hacia EmailJS.
-     *
-     * Descarta de entrada los destinatarios vacíos: el cliente anónimo no tiene
-     * correo (`correo_electronico` es NULL en la base), y sin esta guarda la
-     * llamada saldría igual para terminar fallando del otro lado.
-     */
-    private async enviar(plantilla: string, email: string, nombre: string, mensaje: string): Promise<boolean> {
-        if (!email?.trim()) {
-            console.warn('No se envía el correo: el destinatario no tiene dirección cargada.');
-
-            return false;
-        }
+    async enviarEmailConfirmacion(correo: string, nombre: string, estado: boolean): Promise<void> {
+        const templateParams = {
+            nombre: nombre,
+            titulo: estado ? '¡Registro aprobado!' : 'Solicitud de registro',
+            estado: estado ? 'Aprobado' : 'Rechazado',
+            mensaje: estado
+                ? 'Tu solicitud de registro fue revisada y aprobada. Ya podés utilizar Cyberia.'
+                : 'Tu solicitud de registro fue revisada, pero no pudo ser aprobada en esta oportunidad.',
+            mensajeFinal: estado
+                ? 'Ya podés ingresar a Cyberia desde la aplicación utilizando el correo y contraseña registrados.'
+                : 'Si considerás que se trata de un error, podés comunicarte con nuestro equipo para obtener más información.',
+            to_email: correo,
+        };
 
         try {
-            await emailjs.send(this.config.serviceId, plantilla, {
-                email: email.trim(),
-                to_name: nombre,
-                message: mensaje,
+            await emailjs.send(this.SERVICE_ID, this.TEMPLATE_RESPUESTA, templateParams, {
+                publicKey: this.PUBLIC_KEY,
             });
-
-            return true;
+            console.log(`Email de ${estado} enviado correctamente a ${correo}`);
         } catch (error) {
-            console.error('No se pudo enviar el correo automático:', error);
-
-            return false;
+            console.error('Error al enviar el email:', error);
+            throw error;
         }
     }
 }

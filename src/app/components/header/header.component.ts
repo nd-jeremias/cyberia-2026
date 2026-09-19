@@ -6,8 +6,7 @@ import { NotificacionesService } from '../../services/notificaciones.service';
 import { BotonAtrasComponent } from '../boton-atras/boton-atras.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { remixLogoutCircleLine } from '@ng-icons/remixicon';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Cabecera de la aplicación.
@@ -31,8 +30,8 @@ import { remixLogoutCircleLine } from '@ng-icons/remixicon';
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
-    providers: [provideIcons({ remixLogoutCircleLine })],
-    imports: [BotonAtrasComponent, NgIcon],
+    providers: [],
+    imports: [BotonAtrasComponent, FaIconComponent],
 })
 export class HeaderComponent {
     private authService = inject(AuthService);
