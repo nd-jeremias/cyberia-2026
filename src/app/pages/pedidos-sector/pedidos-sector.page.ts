@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonContent, IonIcon, IonButton, IonBadge } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoService } from '../../services/pedido.service';
 import { AuthService } from '../../services/auth.service';
@@ -23,7 +23,7 @@ export interface GrupoMesaSector {
   standalone: true,
   templateUrl: './pedidos-sector.page.html',
   styleUrls: ['./pedidos-sector.page.scss'],
-  imports: [IonContent, IonButton, IonBadge, CommonModule, HeaderComponent, FaIconComponent]
+  imports: [IonContent, CommonModule, HeaderComponent, FaIconComponent]
 })
 export class PedidosSectorPage implements OnInit {
   private pedidoService = inject(PedidoService);
