@@ -8,6 +8,7 @@ import { DetallePedidoInterface, EstadoItem, PedidoInterface } from '../../inter
 import { TipoProducto } from '../../interfaces/producto.interface';
 import { formatearFechaHora } from '../../utils/fecha';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 export interface GrupoMesaSector {
   numeroMesa: number;
@@ -28,6 +29,7 @@ export interface GrupoMesaSector {
 export class PedidosSectorPage implements OnInit {
   private pedidoService = inject(PedidoService);
   private authService = inject(AuthService);
+  private notificaciones = inject(NotificacionesService);
 
   cargando = this.pedidoService.cargando;
   perfil = computed(() => this.authService.perfil());
@@ -93,8 +95,29 @@ export class PedidosSectorPage implements OnInit {
       if (pedido && pedido.estado === 'Confirmado' && nuevoEstado === 'En Preparación') {
         await (this.pedidoService as any).cambiarEstado(pedidoId, 'En Preparación');
       }
+
+      // 1. Notificar al cliente que su producto cambió de estado
+        if (pedido?.clienteId) {
+            void this.notificaciones.enviarAvisoAUsuario(
+                pedido.clienteId,
+                'Actualización de tu pedido',
+                `${item.nombreProducto} está ${nuevoEstado.toLowerCase()}.`,
+                'pedido-estado'
+            );
+        }
+
       // Verificar si con este cambio se terminó todo el pedido
       await this.pedidoService.actualizarEstadoGeneralSiListo(pedidoId);
+
+      const pedidoActualizado = this.pedidoService.pedidos().find(p => p.id === pedidoId);
+        if (pedidoActualizado?.estado === 'Listo para Entregar') {
+            void this.notificaciones.enviarAvisos(
+                ['mozo'],
+                `Pedido listo - Mesa ${pedidoActualizado.numeroMesa}`,
+                'El pedido está completo y listo para ser entregado.',
+                'pedido-estado'
+            );
+        }
     }
   }
 }
