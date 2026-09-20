@@ -1,0 +1,84 @@
+.panel-estado {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    margin-top: 0.875rem;
+    padding: 0.875rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+}
+
+.cifras {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+.ficha-cifra {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    color: var(--sobre-naranja);
+    font-size: 1.3rem;
+    height: 150px;
+    padding: 0.5rem 0.375rem;
+    box-sizing: border-box;
+    background: var(--velo-tinta);
+    border-radius: var(--radio-chico);
+    text-align: center;
+}
+
+.valor {
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.rotulo {
+    font-size: var(--texto-epigrafe);
+    line-height: 1.2;
+}
+
+.fondo-verde {
+    background-color: var(--perfil-mozo);
+}
+
+.fondo-azul {
+    background-color: var(--perfil-cliente);
+}
+
+.fondo-naranja {
+    background-color: var(--perfil-duenio);
+}
+
+/* Componente de advertencia circular */
+.alerta-badge {
+    position: absolute;
+    top: -6px; /* Lo eleva ligeramente por encima del borde superior */
+    right: -6px; /* Lo desplaza ligeramente hacia afuera del borde derecho */
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+
+    background-color: red; /* Rojo de alerta */
+    color: #fff; /* Ícono en blanco */
+    font-size: 1.8rem; /* Tamaño compacto para el ícono */
+    border: solid 2px black;
+    // box-shadow: 0 2px 6px rgba(231, 76, 60, 0.4);
+
+    pointer-events: none; /* Evita que interfiera con los clics de la tarjeta */
+    z-index: 5; /* Garantiza que flote por encima del contenido */
+}
+
