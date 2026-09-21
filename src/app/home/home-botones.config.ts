@@ -190,7 +190,12 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
             icono: 'utensils',
             ruta: '/gestion-productos',
         },
-        ...BOTONES_PEDIDOS,
+        // ...BOTONES_PEDIDOS,
+        {
+            texto: 'Pedidos de cocina', // <-- Mejor nombre
+            icono: 'list-check',
+            ruta: '/pedidos-sector',    // <-- Ruta a la nueva página
+        },
     ],
 
     cantinero: [
@@ -199,7 +204,12 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
             icono: 'wine-bottle',
             ruta: '/gestion-productos',
         },
-        ...BOTONES_PEDIDOS,
+        //...BOTONES_PEDIDOS,
+        {
+            texto: 'Pedidos de barra',
+            icono: 'list-check',
+            ruta: '/pedidos-sector', // <-- Ruta reutilizada
+        },
     ],
 
     // Los accesos de los dos perfiles de cliente no salen de acá, sino de

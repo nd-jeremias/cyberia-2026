@@ -1,4 +1,5 @@
 import { EstadoEnResto } from './auth.interface';
+import { TipoProducto } from './producto.interface';
 
 /**
  * Contratos de pedidos.
@@ -33,6 +34,7 @@ export interface DetallePedidoInterface {
     precioTotalParcial: number;
     estadoProducto: EstadoItem;
     tiempoElaboracionMinutos: number;
+    tipoProducto?: TipoProducto;
 }
 
 export interface PedidoInterface {

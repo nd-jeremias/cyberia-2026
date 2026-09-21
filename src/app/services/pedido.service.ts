@@ -80,7 +80,7 @@ const SELECT_PEDIDO =
     'usuarios ( estado_en_resto ), ' +
     'pedido_detalles ( id, pedido_id, producto_id, cantidad, precio_unitario, ' +
     'precio_total_parcial, estado_producto, ' +
-    'productos ( nombre, tiempo_elaboracion_minutos ) )';
+    'productos ( nombre, tiempo_elaboracion_minutos, tipo ) )';
 
 /** El pedido ya está en la mesa: entregado por el mozo o, además, recibido. */
 const ESTADOS_EN_LA_MESA: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>(['Entregado', 'Recibido']);
@@ -148,6 +148,7 @@ export class PedidoService {
             estadoProducto: d.estado_producto,
             tiempoElaboracionMinutos:
                 d.productos?.tiempo_elaboracion_minutos ?? 0,
+            tipoProducto: (d.productos as any)?.tipo,
         }));
 
         return {
@@ -593,6 +594,20 @@ export class PedidoService {
             return false;
         } finally {
             this.cargando.set(false);
+        }
+    }
+
+    /**
+     * Punto 16
+     * Agregar un método para verificar si un pedido pasa a "Listo para Entregar":
+     * Cuando todos los ítems de un pedido pasan a estado 'Listo', el pedido completo debe actualizarse a 'Listo para Entregar' para que el mozo lo vea en su lista de entrega.
+     */
+    async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<void> {
+        const pedido = this.pedidos().find(p => p.id === pedidoId);
+        if (!pedido) return;
+        const todosListos = pedido.detalles.every(d => d.estadoProducto === 'Listo');
+        if (todosListos) {
+            await this.cambiarEstado(pedidoId, 'Listo para Entregar');
         }
     }
 

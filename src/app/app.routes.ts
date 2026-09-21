@@ -196,4 +196,9 @@ export const routes: Routes = [
                 (m) => m.MetreRegistrarClientePage
             ),
     },
+    //punto 16
+    {
+        path: 'pedidos-sector',
+        loadComponent: () => import('./pages/pedidos-sector/pedidos-sector.page').then((m) => m.PedidosSectorPage),
+    },
 ];

@@ -6,6 +6,7 @@ import { ModalService } from '../../services/modal.service';
 import { formatearImporte } from '../../utils/importe';
 import { PedidoService } from '../../services/pedido.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Pantalla del mozo: confirmar, rechazar, entregar y cobrar pedidos.
@@ -24,6 +25,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);
     private modal = inject(ModalService);
+    private notificaciones = inject(NotificacionesService);
 
     pedidos = this.pedidoService.pedidos;
     pendientes = this.pedidoService.pendientesDeConfirmacion;
@@ -60,6 +62,22 @@ export class PedidosPage implements OnInit {
 
     async onConfirmar(pedido: PedidoInterface) {
         await this.pedidoService.confirmar(pedido.id);
+        // Verificamos qué sectores tienen productos en este pedido
+        const tieneComida = pedido.detalles.some(d => d.tipoProducto !== 'Bebida');
+        const tieneBebida = pedido.detalles.some(d => d.tipoProducto === 'Bebida');
+        
+        const sectores: string[] = [];
+        if (tieneComida) sectores.push('cocinero');
+        if (tieneBebida) sectores.push('cantinero');
+
+        if (sectores.length > 0) {
+            void this.notificaciones.enviarAvisos(
+                sectores,
+                `Nuevo pedido - Mesa ${pedido.numeroMesa}`,
+                'Hay nuevos productos pendientes de elaboración.',
+                'pedido-nuevo'
+            );
+        }
         await this.recargar();
     }
 
