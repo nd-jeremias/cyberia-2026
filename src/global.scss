@@ -890,7 +890,9 @@ body.barcode-scanner-active .barcode-scanner-ui {
 .layout-superpuesto {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    /* dvh y no vh: en Android, 100vh incluye la franja que tapan las barras
+       del sistema, y la página terminaba más alta que lo que se ve. */
+    min-height: 100dvh;
 
     .inferior,
     .superior,
@@ -899,7 +901,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
         position: relative;
     }
 
-    // 1. Capa base del Header (máx 20% de pantalla, 30% en modo usuario con avatar)
+    // 1. Capa base del Header (mínimo 20% de pantalla; crece lo que necesite)
     .inferior {
         z-index: 1;
         flex-shrink: 0;
@@ -911,9 +913,9 @@ body.barcode-scanner-active .barcode-scanner-ui {
        pero si supera ese espacio crece hacia abajo sin cortarse */
         min-height: 20vh;
 
-        &:has(.banda-usuario) {
-            max-height: 30vh;
-        }
+        /* Sin alto máximo, ni siquiera en el inicio (modo usuario): con la foto,
+           el nombre y el perfil, 30vh no alcanzaba en pantallas bajas o con la
+           letra del sistema agrandada, y la hoja de abajo tapaba la foto. */
         /* 1. Ruta de tu patrón | 2. Color vainilla de fondo */
     }
 

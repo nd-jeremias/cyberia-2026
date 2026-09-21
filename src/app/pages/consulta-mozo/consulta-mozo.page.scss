@@ -1,8 +1,27 @@
+/**
+ * El chat ocupa todo el alto que deja la banda naranja, como WhatsApp: los
+ * mensajes se desplazan por dentro y la caja de texto queda fija abajo.
+ *
+ * `.superior` viene de global.scss como bloque, así que sin esto la
+ * conversación medía lo que medía su contenido y debajo quedaba papel vacío.
+ */
 
-.hoja {
+.superior {
+    display: flex;
+    flex-direction: column;
+
+    /* Deja que la lista de mensajes se desplace por dentro en lugar de estirar
+       la hoja hacia abajo. */
+    min-height: 0;
+
+    /* La conversación trae su propio margen; el de la hoja dejaba a la caja de
+       texto despegada de los bordes. */
     padding: 0 !important;
 }
 
-.superior {
-    padding: 0 !important;
+/* El aviso de "abriendo la conversación" o "sin mesa" queda centrado en la
+   hoja en lugar de pegado arriba. */
+.superior > .estado-vacio {
+    flex: 1;
+    margin: 1rem;
 }

@@ -1,1 +1,24 @@
 /* La estructura y estilos de .layout-superpuesto se gestionan globalmente en global.scss */
+
+/**
+ * El ingreso tiene que entrar entero en la pantalla, sin desplazarse: es la
+ * primera pantalla de la aplicación y no hay nada más abajo que buscar.
+ *
+ * Los valores generales del layout están pensados para pantallas con listados,
+ * que sí se desplazan; acá se recortan los tres espacios que sobran.
+ */
+
+.layout-superpuesto {
+    /* La banda del logotipo ocupa lo que mide el logo. El 20 % de alto que pide
+       el layout general le sobra, y era lo que empujaba el formulario fuera de
+       la pantalla en los teléfonos con la letra del sistema agrandada. */
+    .inferior {
+        min-height: 0;
+    }
+
+    /* El papel llega hasta abajo de todo: el espacio libre lo reparte el propio
+       formulario (los accesos rápidos van anclados al pie). */
+    .superior {
+        padding-bottom: 1rem;
+    }
+}
