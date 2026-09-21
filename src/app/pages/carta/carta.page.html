@@ -54,27 +54,27 @@
             ></app-tarjeta-listado-producto>
             }
         </div>
-    </div>
-</ion-content>
 
-<!--
+        <!--
   Pie fijo con el importe acumulado. El enunciado pide que el total esté
   visible en todo momento y con buen tamaño, así que vive fuera del scroll.
 -->
-<footer class="pie-pedido">
-    <div class="pie-importe">
-        <span class="pie-rotulo">
-            @if (hayPedido()) { {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} · {{
-            carrito.tiempoEstimado() }} min } @else { Tu pedido está vacío }
-        </span>
-        <span class="pie-total">{{ totalFormateado() }}</span>
-    </div>
+        <footer class="inferior-final pie-pedido  fondo-texturizado">
+            <div class="pie-importe">
+                <span class="pie-rotulo">
+                    @if (hayPedido()) { {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} · {{
+                    carrito.tiempoEstimado() }} min } @else { Tu pedido está vacío }
+                </span>
+                <span class="pie-total">{{ totalFormateado() }}</span>
+            </div>
 
-    <div class="pie-acciones">
-        <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
-        <button type="button" class="btn-principal pie-boton" [disabled]="!hayPedido()" (click)="irAlResumen()">
-            <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
-            {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
-        </button>
+            <div class="pie-acciones">
+                <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
+                <button type="button" class="btn-banda pie-boton" [disabled]="!hayPedido()" (click)="irAlResumen()">
+                    <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
+                    {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
+                </button>
+            </div>
+        </footer>
     </div>
-</footer>
+</ion-content>

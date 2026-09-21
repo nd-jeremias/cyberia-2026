@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { IonBadge, IonButton, IonIcon } from '@ionic/angular';
+import { IonBadge, IonButton } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { Router } from '@angular/router';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Botón configurable de la tarjeta.
@@ -23,13 +24,13 @@ export const ACCIONES_APROBACION: AccionTarjetaUsuario[] = [
     {
         id: 'aceptar',
         etiqueta: 'Aceptar',
-        icono: 'checkmark-circle',
+        icono: 'circle-check',
         color: 'success',
     },
     {
         id: 'rechazar',
         etiqueta: 'Rechazar',
-        icono: 'close-circle',
+        icono: 'circle-xmark',
         color: 'danger',
     },
 ];
@@ -38,14 +39,14 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
     {
         id: 'modificar',
         etiqueta: 'Modificar',
-        icono: 'create-outline',
+        icono: 'pen-to-square',
         color: 'primary',
         fill: 'outline',
     },
     {
         id: 'eliminar',
         etiqueta: 'Eliminar',
-        icono: 'trash-outline',
+        icono: 'trash-can',
         color: 'danger',
         fill: 'solid',
     },
@@ -64,12 +65,12 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
     selector: 'app-tarjeta-usuario',
     templateUrl: './tarjeta-usuario.component.html',
     styleUrls: ['./tarjeta-usuario.component.scss'],
-    imports: [IonBadge, IonButton, IonIcon],
+    imports: [IonBadge, IonButton, FaIconComponent],
 })
 export class TarjetaUsuarioComponent {
     usuario = input.required<ClienteInterface>();
     router = inject(Router);
-    rutaActual = signal<string>('')
+    rutaActual = signal<string>('');
 
     /**
      * Modo de la tarjeta para usar conjuntos de acciones predefinidos:
@@ -131,15 +132,15 @@ export class TarjetaUsuarioComponent {
         }
     });
 
-    ngOnInit(){
-        this.obtenerRutaActual()
+    ngOnInit() {
+        this.obtenerRutaActual();
     }
 
     obtenerRutaActual() {
         // Retorna un string tipo '/home' o '/perfil/usuario'
         const urlActual = this.router.url;
-        console.log(urlActual)
-        this.rutaActual.set(urlActual)
+        console.log(urlActual);
+        this.rutaActual.set(urlActual);
     }
 
     onAccion(accion: string) {

@@ -116,27 +116,29 @@
 
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
-
+    // gap: 0.625rem;
     padding: 0.875rem 1rem calc(0.875rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
-
-    background: var(--hoja-alta);
+    color: var(--sobre-naranja);
+    // background: var(--hoja-alta);
+    background: var(--grad-banda);
     border-top: var(--borde-hoja);
     box-shadow: var(--sombra-hoja);
+    max-height: 15vh;
 }
 
 .pie-importe {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 0.75rem;
+    // gap: 0.75rem;
+    margin: 0.4rem;
 }
 
 .pie-rotulo {
-    font-size: 0.8125rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--tinta-suave);
+    
 }
 
 /* El total, grande: es lo que el enunciado pide tener siempre a la vista. */
@@ -145,17 +147,19 @@
     font-weight: 800;
     font-variant-numeric: tabular-nums;
     line-height: 1;
-    color: var(--tinta);
+    
 }
 
 .pie-acciones {
     display: flex;
-    gap: 0.5rem;
+    // gap: 0.5rem;
+    margin: 0.8rem 0;
 }
 
 .pie-boton {
     flex: 1;
     margin: 0;
+    font-size: var(--texto-subtitulo);
 }
 
 .pie-boton:disabled {
@@ -168,4 +172,9 @@
     background: var(--dato-velo);
     border-color: var(--dato);
     color: var(--dato-tinta);
+}
+
+
+.superior{
+    padding-bottom: calc(15vh + 1.2rem + env(safe-area-inset-bottom, 0px)) !important;
 }

@@ -4,6 +4,7 @@ import { SplashComponent } from './components/splash/splash.component';
 import { NotificacionesService } from './services/notificaciones.service';
 import { ModalComponent } from './components/modal/modal.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
+import { AudioService } from './services/audio.service';
 
 @Component({
     selector: 'app-root',
@@ -13,8 +14,10 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 export class AppComponent implements OnInit {
     private modalCtrl = inject(ModalController);
     private notificaciones = inject(NotificacionesService);
+    private sound = inject(AudioService)
 
     ngOnInit() {
+        this.sound.reproducir("intro4")
         // 1. DISPARAMOS EL MODAL ANIMADO INMEDIATAMENTE
         this.showAnimatedSplash();
 

@@ -4,7 +4,7 @@
         <img class="foto-usuario" [src]="usuario().foto_url" [alt]="'Foto de ' + nombreCompleto()" />
         } @else {
         <div class="foto-ausente">
-            <ion-icon name="person"></ion-icon>
+            <fa-icon [icon]="['fas', 'user-xmark']"></fa-icon>
         </div>
         }
     </div>
@@ -33,7 +33,7 @@
             (click)="onAccion(accion.id)"
         >
             @if (accion.icono) {
-            <ion-icon slot="start" [name]="accion.icono"></ion-icon>
+            <fa-icon [icon]="['fas', accion.icono]"></fa-icon>
             }
             {{ accion.etiqueta }}
         </ion-button>
