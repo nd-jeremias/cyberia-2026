@@ -301,7 +301,9 @@
     background: var(--exito-velo);
     border-radius: var(--radio-chico);
 
-    font-size: var(--texto-titulo);
+    /* Atado al ancho de la pantalla: con la letra del sistema agrandada,
+       "Tu mesa es la N° 1" se cortaba. */
+    font-size: clamp(1.0625rem, 5vw, var(--texto-titulo));
     color: var(--exito-tinta);
 
     fa-icon {

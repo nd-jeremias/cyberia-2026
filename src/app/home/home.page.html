@@ -43,7 +43,8 @@
                 @if (situacion.numeroMesa !== null) {
                 <p class="situacion-mesa">
                     <fa-icon [icon]="['fas', 'utensils']"></fa-icon>
-                    Tu mesa es la <strong>N° {{ situacion.numeroMesa }}</strong>
+                    <!-- En un solo span: si no, el flex del párrafo separa el texto y el número en dos columnas. -->
+                    <span>Tu mesa es la <strong>N° {{ situacion.numeroMesa }}</strong></span>
                 </p>
                 }
             </section>

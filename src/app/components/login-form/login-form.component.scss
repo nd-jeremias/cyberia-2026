@@ -231,7 +231,11 @@
        y "Cantinero" es justo el que no entraba. */
     .rol {
         min-width: 0;
-        font-size: var(--texto-apoyo);
+
+        /* Tamaño atado al ancho de la pantalla y no sólo a la letra del
+           sistema: así "Cantinero" entra al lado del icono en cualquier
+           teléfono, sin partirse ni salirse de la ficha. */
+        font-size: clamp(0.8125rem, 3.6vw, var(--texto-apoyo));
         font-weight: 800;
         line-height: 1.15;
         color: var(--tinta);
