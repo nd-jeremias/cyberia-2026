@@ -40,12 +40,14 @@
             <div class="grupo-input">
                 <label class="input-label">Tipo de mesa</label>
                 <div class="caja-input">
+                    <div class="select-trigger" (click)="seleccionarTipoMesa()">{{ tipoSeleccionado() }}</div>
+                    <!--
                     <fa-icon [icon]="['fas', 'wheelchair']"></fa-icon>
-                    <ion-select formControlName="tipo" placeholder="Seleccionar">
+                    <ion-select formControlName="tipo" placeholder="Seleccionar" interface="popover">
                         @for (tipo of tiposMesa; track tipo) {
                         <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
                         }
-                    </ion-select>
+                    </ion-select> -->
                 </div>
                 @if (hayError("tipo", "required")) {
                 <span class="mensaje-error">Seleccione el tipo de mesa a cargar</span>
