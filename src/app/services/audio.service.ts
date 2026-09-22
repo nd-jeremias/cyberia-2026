@@ -84,7 +84,7 @@ export class AudioService {
         }
 
         // =========================
-        // WEB
+        // WEB - Hay que corregir la ruta si se quiere reproducir el audio
         // =========================
         const sonidoWeb = this.sonidos.find((s) => s.id === id);
         if (!sonidoWeb) {
