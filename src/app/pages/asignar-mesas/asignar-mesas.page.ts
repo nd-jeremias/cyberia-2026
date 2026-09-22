@@ -8,6 +8,7 @@ import { ModalService } from '../../services/modal.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Pantalla del metre: asignar una mesa a un cliente (punto 10).
@@ -30,6 +31,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
+    private notificaciones = inject(NotificacionesService)
 
     clientes = signal<ClienteInterface[]>([]);
     clienteElegido = signal<ClienteInterface | null>(null);
@@ -159,6 +161,8 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         // por alguien que sigue figurando en la lista, así que se avisa.
         try {
             await this.salonService.asignarMesa(cliente.id, mesa.id);
+            await this.notificaciones.enviarAvisoAUsuario(cliente.id, "Mesa asignada.", `Se le asigno la mesa N° ${mesa.numeroMesa}, ya puede tomar asiento.`, 'mesa-asignada')
+            
         } catch (error) {
             const mensaje =
                 error instanceof Error

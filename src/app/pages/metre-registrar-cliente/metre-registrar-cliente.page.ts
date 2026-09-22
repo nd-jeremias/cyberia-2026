@@ -6,9 +6,9 @@ import { Router } from '@angular/router';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { AuthService } from '../../services/auth.service';
-import { EmailService } from '../../services/email.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { BrevoEmailService } from '../../services/brevo.email.service';
 
 @Component({
     selector: 'app-metre-registrar-cliente',
@@ -25,7 +25,7 @@ export class MetreRegistrarClientePage implements OnInit {
     private spinner = inject(SpinnerService);
     private modal = inject(ModalService);
     authService = inject(AuthService);
-    emailService = inject(EmailService);
+    emailService = inject(BrevoEmailService);
 
     async handleRegistro(formData: FormData) {
         this.spinner.show();

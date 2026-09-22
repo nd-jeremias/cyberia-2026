@@ -82,6 +82,7 @@ export class PedidosPage implements OnInit {
     }
 
     async onRechazar(pedido: PedidoInterface) {
+        await this.notificaciones.enviarAvisoAUsuario(pedido.clienteId,"Pedido rechazado.", "Su pedido ha sido rechazado, realize cambios y vuelva a pedir. ", 'pedido-estado')
         await this.pedidoService.rechazar(pedido.id);
         await this.recargar();
     }

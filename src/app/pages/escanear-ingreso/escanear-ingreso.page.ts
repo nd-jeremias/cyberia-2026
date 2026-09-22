@@ -9,6 +9,7 @@ import { QrService } from '../../services/qr.service';
 import { SalonService } from '../../services/salon.service';
 import { SpinnerService } from '../../services/spinner.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /** Qué decirle al cliente según dónde esté parado en el circuito. */
 const LEYENDA_ESTADO: Record<EstadoEnResto, string> = {
@@ -39,6 +40,7 @@ export class EscanearIngresoPage {
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
     private router = inject(Router);
+    private notificaciones = inject(NotificacionesService)
 
     situacion = this.salonService.situacion;
 
@@ -112,6 +114,8 @@ export class EscanearIngresoPage {
                     ? 'Te anotamos en la lista de espera. Aguardá a que el metre te asigne una mesa.'
                     : LEYENDA_ESTADO[this.estado()]
             );
+
+            await this.notificaciones.enviarAvisos(['metre'], 'Cliente en lista de espera', 'Un cliente acaba de acceder mediante QR y esta a la espera de una mesa.', 'cliente-en-espera')
         } catch (error) {
             this.avisarError(error, 'No se pudo completar el ingreso al local.');
         } finally {

@@ -1,4 +1,3 @@
-import { EmailService } from './../../../services/email.service';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../../components/header/header.component';
@@ -8,6 +7,7 @@ import { ModalService } from '../../../services/modal.service';
 import { SpinnerService } from '../../../services/spinner.service';
 import { supabase } from '../../../services/supabase.service';
 import { ClientesService } from '../../../services/clientes.service';
+import { BrevoEmailService } from '../../../services/brevo.email.service';
 
 /**
  * Aprobación de clientes registrados (puntos 6, 7 y 8 del enunciado).
@@ -25,7 +25,7 @@ import { ClientesService } from '../../../services/clientes.service';
 export class ClientesPendientesPage implements OnInit {
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
-    emailService = inject(EmailService);
+    emailService = inject(BrevoEmailService);
     clientesService = inject(ClientesService);
 
     clientes = signal<ClienteInterface[]>([]);

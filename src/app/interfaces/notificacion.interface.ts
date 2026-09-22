@@ -9,6 +9,7 @@
 /** Avisos que contempla el enunciado. */
 export type TipoNotificacion =
     | 'cliente-pendiente'
+    | 'cliente-en-espera'
     | 'mesa-asignada'
     | 'consulta-mozo'
     | 'pedido-nuevo'

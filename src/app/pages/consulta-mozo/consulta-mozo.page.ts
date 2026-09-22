@@ -190,7 +190,6 @@ export class ConsultaMozoPage {
             }
 
             const mensaje = await this.conversacion.enviar(chat.id, usuarioId, cuerpo);
-
             this.agregar(mensaje);
             void this.avisar(chat, mensaje);
         } catch (error) {

@@ -18,6 +18,7 @@ import {
     puedeUsarServiciosDeMesa,
 } from './mi-pedido.estado';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Secciones del cliente que se desarrollan en otra rama (eze-dev), con las
@@ -70,6 +71,7 @@ export class MiPedidoPage {
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
     private router = inject(Router);
+    private notificaciones = inject(NotificacionesService)
 
     carrito = inject(ChartService);
 
@@ -148,9 +150,11 @@ export class MiPedidoPage {
             cantidad: item.cantidad,
             precioUnitario: item.precioUnitario,
         }));
+        
+        await this.notificaciones.enviarAvisos(['mozo'], "Pedido realizado.", "Nuevo pedido para verificar. ", 'pedido-nuevo')
 
         const aCorregir = this.pedidoRechazado();
-
+        
         if (aCorregir) {
             const reenviado = await this.pedidoService.reenviar(aCorregir.id, items);
 
