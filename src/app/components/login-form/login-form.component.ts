@@ -8,11 +8,11 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Ficha de ingreso rápido. `clave` es la que elige el color en el SCSS. */
 interface PerfilRapido {
-  email: string;
-  pass: string;
-  rol: string;
-  clave: string;
-  icono: string;
+    email: string;
+    pass: string;
+    rol: string;
+    clave: string;
+    icono: string;
 }
 
 /**
@@ -47,14 +47,8 @@ export class LoginFormComponent {
      */
     usuariosValidos = [
         { email: 'duenio@restaurante.com', pass: '12345678', rol: 'Dueño', clave: 'duenio', icono: 'user-tie' },
-        // { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', clave: 'supervisor', icono: 'user-shield' },
-        {
-            email: 'cantinero@restaurante.com',
-            pass: '12345678',
-            rol: 'Cantinero',
-            clave: 'cantinero',
-            icono: 'martini-glass',
-        },
+        { email: 'supervisor@restaurante.com', pass: '12345678', rol: 'Supervisor', clave: 'supervisor', icono: 'user-shield' },
+        { email: 'cantinero@restaurante.com', pass: '12345678', rol: 'Cantinero', clave: 'cantinero', icono: 'martini-glass',},
         { email: 'metre@restaurante.com', pass: '12345678', rol: 'Maître', clave: 'metre', icono: 'person-chalkboard' },
         { email: 'mozo@restaurante.com', pass: '12345678', rol: 'Mozo', clave: 'mozo', icono: 'clipboard-user' },
         { email: 'cocinero@restaurante.com', pass: '12345678', rol: 'Cocinero', clave: 'cocinero', icono: 'utensils' },
