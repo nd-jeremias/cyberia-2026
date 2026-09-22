@@ -31,7 +31,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
-    private notificaciones = inject(NotificacionesService)
+    private notificaciones = inject(NotificacionesService);
 
     clientes = signal<ClienteInterface[]>([]);
     clienteElegido = signal<ClienteInterface | null>(null);
@@ -58,7 +58,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         {
             id: 'elegir',
             etiqueta: 'Seleccionar',
-            icono: 'hand-right',
+            icono: 'person-chalkboard',
             color: 'primary',
         },
         // Punto 9: el metre tiene que poder sacar a alguien de la lista, por
@@ -66,7 +66,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         {
             id: 'quitar',
             etiqueta: 'Quitar',
-            icono: 'person-remove',
+            icono: 'person-circle-xmark',
             color: 'danger',
         },
     ];
@@ -100,10 +100,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         }
     }
 
-    async onSeleccionCliente(evento: {
-        accion: string;
-        usuario: ClienteInterface;
-    }) {
+    async onSeleccionCliente(evento: { accion: string; usuario: ClienteInterface }) {
         if (evento.accion === 'quitar') {
             await this.quitarDeLista(evento.usuario);
             return;
@@ -124,10 +121,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
 
             await this.cargarClientes();
         } catch (error) {
-            const mensaje =
-                error instanceof Error
-                    ? error.message
-                    : 'No se pudo quitar al cliente de la lista.';
+            const mensaje = error instanceof Error ? error.message : 'No se pudo quitar al cliente de la lista.';
 
             this.modal.setOpen('Error', mensaje);
         }
@@ -161,8 +155,12 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         // por alguien que sigue figurando en la lista, así que se avisa.
         try {
             await this.salonService.asignarMesa(cliente.id, mesa.id);
-            await this.notificaciones.enviarAvisoAUsuario(cliente.id, "Mesa asignada.", `Se le asigno la mesa N° ${mesa.numeroMesa}, ya puede tomar asiento.`, 'mesa-asignada')
-            
+            await this.notificaciones.enviarAvisoAUsuario(
+                cliente.id,
+                'Mesa asignada.',
+                `Se le asigno la mesa N° ${mesa.numeroMesa}, ya puede tomar asiento.`,
+                'mesa-asignada'
+            );
         } catch (error) {
             const mensaje =
                 error instanceof Error
