@@ -404,7 +404,11 @@ p {
         --background: transparent;
         font-weight: 600;
     }
-    
+
+    .select-trigger {
+        width: 100%;
+    }
+
     ion-textarea {
         min-height: 75px; // Esto es para que se muestre todo el placeholder
     }
@@ -416,7 +420,7 @@ p {
         opacity: 1;
     }
 
-    fa-icon{
+    fa-icon {
         color: var(--tinta-media);
         font-size: 20px;
     }
@@ -513,7 +517,7 @@ p {
     color: var(--sobre-naranja);
     box-shadow: var(--sombra-naranja);
 
-    fa-icon{
+    fa-icon {
         font-size: 2rem;
     }
     &:active {
