@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
     private sound = inject(AudioService)
 
     ngOnInit() {
-        this.sound.reproducir("intro4")
+        this.sound.reproducir("intro")
         // 1. DISPARAMOS EL MODAL ANIMADO INMEDIATAMENTE
         this.showAnimatedSplash();
 

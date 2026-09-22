@@ -6,45 +6,53 @@ import { Platform } from '@ionic/angular';
 export class AudioService {
     // Lista de sonidos disponibles en tu app
     private sonidos = [
-        { id: 'click', asset: 'assets/sounds/click.mp3' },
-        { id: 'intro', asset: 'assets/sounds/intro_sound.mp3' },
-        { id: 'intro2', asset: 'assets/sounds/intro_sound_2.mp3' },
-        { id: 'intro3', asset: 'assets/sounds/intro_sound_3.mp3' },
-        { id: 'intro4', asset: 'assets/sounds/intro_sound_4.mp3' },
+        { id: 'intro', asset: 'sounds/intro_sound.mp3' },
+        { id: 'success', asset: 'sounds/success.mp3' },
     ];
-
     private audioInicializado = false;
-    private platform = inject(Platform)
+
+    private inicializacionAudio: Promise<void>;
+
+    private platform = inject(Platform);
 
     constructor() {
-        // Inicializamos los sonidos tan pronto como la plataforma esté lista
-        this.platform.ready().then(() => {
-            this.inicializarSonidos();
-        });
+        this.inicializacionAudio = this.inicializarSonidos();
     }
 
     /**
      * Precarga todos los sonidos en la memoria del dispositivo móvil
      */
-    private async inicializarSonidos() {
-        // Solo usamos NativeAudio si estamos en un dispositivo móvil real (iOS/Android)
+    private async inicializarSonidos(): Promise<void> {
+        await this.platform.ready();
+
+        // Solo usamos NativeAudio en dispositivo
         if (this.platform.is('hybrid')) {
             try {
                 for (const sonido of this.sonidos) {
+                    console.log(`🔊 Precargando: ${sonido.id} -> ${sonido.asset}`);
+
                     await NativeAudio.preload({
                         assetId: sonido.id,
                         assetPath: sonido.asset,
                         audioChannelNum: 1,
                         isUrl: false,
                     });
+
+                    console.log(`✅ Precargado: ${sonido.id}`);
                 }
+
                 this.audioInicializado = true;
-                console.log('Todos los sonidos nativos precargados con éxito.');
+
+                console.log('🔊 Todos los sonidos nativos precargados con éxito.');
             } catch (error) {
-                console.error('Error precargando sonidos nativos:', error);
+                console.error('❌ Error precargando sonidos nativos:', error);
+
+                this.audioInicializado = false;
             }
         } else {
-            console.log('Ejecutándose en entorno Web. Se usará Audio HTML5 de respaldo.');
+            console.log('🌐 Ejecutándose en entorno Web. Se usará Audio HTML5 de respaldo.');
+
+            this.audioInicializado = true;
         }
     }
 
@@ -53,25 +61,43 @@ export class AudioService {
      * @param id Identificador del sonido (ej: 'click' o 'exito')
      */
     async reproducir(id: string) {
-        // 1. Comportamiento en Dispositivo Móvil (Nativo)
+        console.log('🔊 reproducir() llamado:', id);
+
         if (this.platform.is('hybrid')) {
-            if (this.audioInicializado) {
-                try {
-                    await NativeAudio.play({ assetId: id });
-                } catch (error) {
-                    console.error(`Error al reproducir el sonido nativo ${id}:`, error);
-                }
+            // Esperamos a que todos los sonidos estén precargados
+            await this.inicializacionAudio;
+            console.log('🎵 audioInicializado:', this.audioInicializado);
+            if (!this.audioInicializado) {
+                console.warn('⚠️ NativeAudio no pudo inicializarse');
+                return;
+            }
+            try {
+                console.log(`▶️ Reproduciendo NativeAudio: ${id}`);
+                await NativeAudio.play({
+                    assetId: id,
+                });
+                console.log(`✅ NativeAudio.play completado: ${id}`);
+            } catch (error) {
+                console.error(`❌ Error reproduciendo ${id}:`, error);
             }
             return;
         }
 
-        // 2. Respaldo para entorno Web/Navegador (Ideal para desarrollo en 'ionic serve')
+        // =========================
+        // WEB
+        // =========================
         const sonidoWeb = this.sonidos.find((s) => s.id === id);
-        if (sonidoWeb) {
-            const audio = new Audio(sonidoWeb.asset);
-            audio.play().catch((err) => console.log('Error de reproducción web (interacción requerida):', err));
-        } else {
-            console.warn(`El sonido con ID "${id}" no existe.`);
+        if (!sonidoWeb) {
+            console.warn(`⚠️ El sonido "${id}" no existe.`);
+            return;
+        }
+        const audio = new Audio(sonidoWeb.asset);
+        try {
+            await audio.play();
+
+            console.log(`✅ Sonido web reproducido: ${id}`);
+        } catch (error) {
+            console.error('❌ Error de reproducción web:', error);
         }
     }
 }
