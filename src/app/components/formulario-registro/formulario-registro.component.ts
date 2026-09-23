@@ -11,7 +11,7 @@ import {
 import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton } from '@ionic/angular';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
-import { ModalService } from '../../services/modal.service';
+import { ModalOption, ModalService } from '../../services/modal.service';
 import { RouterLink } from '@angular/router';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -93,6 +93,8 @@ export class FormularioRegistroComponent {
 
     usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
     modo = input<'modificar_empleado' | null>(null);
+
+    tipoSeleccionado = signal<string>('Seleccionar');
     /**
      * Si existe un empleado, estamos en modo edición.
      * Si es undefined, estamos en modo creación.
@@ -126,7 +128,7 @@ export class FormularioRegistroComponent {
     // DATOS
     // ============================================================
 
-    tiposEmpleado = ['supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
+    // tiposEmpleado = ['supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
     fotosUrlsExistentes: string[] = [];
 
     // ============================================================
@@ -198,18 +200,6 @@ export class FormularioRegistroComponent {
     // ============================================================
 
     constructor() {
-        // Registramos los íconos
-        // addIcons({
-        //     personAddOutline,
-        //     personOutline,
-        //     cardOutline,
-        //     qrCodeOutline,
-        //     briefcaseOutline,
-        //     peopleOutline,
-        //     mailOutline,
-        //     lockClosedOutline,
-        // });
-
         /**
          * Este effect se ejecuta cuando cambia:
          *
@@ -380,6 +370,21 @@ export class FormularioRegistroComponent {
         this.fotosUrlsExistentes = urls;
     }
 
+    async seleccionarTipoEmpleado() {
+        const opciones: ModalOption[] = [
+            { texto: 'Supervisor', icono: 'user-shield', value: 'supervisor' },
+            { texto: 'Metre', icono: 'person-chalkboard', value: 'metre' },
+            { texto: 'Mozo', icono: 'clipboard-user', value: 'mozo' },
+            { texto: 'Cocinero', icono: 'utensils', value: 'cocinero' },
+            { texto: 'Cantinero', icono: 'martini-glass', value: 'cantinero' },
+        ];
+
+        const seleccion = await this.modal.setOpenSelect('Tipo de Empleado', opciones);
+        if (seleccion) {
+            this.formulario.get('tipoEmpleado')?.setValue(seleccion);
+            this.tipoSeleccionado.set(seleccion);
+        }
+    }
     // ============================================================
     // UTILIDADES
     // ============================================================
