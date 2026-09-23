@@ -139,7 +139,6 @@ export class TarjetaUsuarioComponent {
     obtenerRutaActual() {
         // Retorna un string tipo '/home' o '/perfil/usuario'
         const urlActual = this.router.url;
-        console.log(urlActual);
         this.rutaActual.set(urlActual);
     }
 
