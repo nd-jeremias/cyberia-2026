@@ -5,8 +5,7 @@ import { GaleriaService } from './galeria.service';
 
 @Service()
 export class EmpleadosService {
-
-    galeriaService = inject(GaleriaService)
+    galeriaService = inject(GaleriaService);
 
     async getEmpleados(): Promise<EmpleadoInterface[]> {
         const { data, error } = await supabase
@@ -14,7 +13,8 @@ export class EmpleadosService {
             .select('*')
             .eq('estado', 'Activo')
             .filter('perfil', 'isdistinct', 'cliente registrado')
-            .filter('perfil', 'isdistinct', 'cliente anónimo');
+            .filter('perfil', 'isdistinct', 'cliente anónimo')
+            .order('fecha_registro', { ascending: false });
 
         if (error) throw error;
 

@@ -19,7 +19,6 @@ import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
-
 /**
  * Validador para comprobar que las contraseñas coincidan.
  *
@@ -49,7 +48,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     selector: 'app-formulario-registro',
     templateUrl: './formulario-registro.component.html',
     styleUrls: ['./formulario-registro.component.scss'],
-    imports: [   
+    imports: [
         FaIconComponent,
         IonButton,
         IonSelect,
@@ -143,7 +142,12 @@ export class FormularioRegistroComponent {
                 validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
             }),
             dni: new FormControl('', {
-                validators: [Validators.required, Validators.pattern(/^\d{7,8}$/), Validators.minLength(7), Validators.maxLength(8)],
+                validators: [
+                    Validators.required,
+                    Validators.pattern(/^\d{7,8}$/),
+                    Validators.minLength(7),
+                    Validators.maxLength(8),
+                ],
             }),
             cuil: new FormControl(''),
             correo: new FormControl('', {
@@ -384,7 +388,8 @@ export class FormularioRegistroComponent {
         if (!word || word.length === 0) {
             return '';
         }
-        return word[0].toUpperCase() + word.slice(1);
+        // Convertimos la primera letra a Mayúscula y el resto a minúsculas
+        return word[0].toUpperCase() + word.slice(1).toLowerCase();
     }
 
     /**
