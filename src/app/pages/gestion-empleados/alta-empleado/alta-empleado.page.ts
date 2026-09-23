@@ -48,7 +48,7 @@ export class AltaEmpleadoPage implements OnInit {
             this.empleadoExistente.set(empleado);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el empleado.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -81,7 +81,7 @@ export class AltaEmpleadoPage implements OnInit {
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro');
+            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro', 'error');
         } finally {
             this.spinner.hide();
         }

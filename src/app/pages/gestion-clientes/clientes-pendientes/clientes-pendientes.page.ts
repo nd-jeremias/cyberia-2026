@@ -60,7 +60,7 @@ export class ClientesPendientesPage implements OnInit {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el listado de clientes.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -104,7 +104,7 @@ export class ClientesPendientesPage implements OnInit {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el estado del cliente.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

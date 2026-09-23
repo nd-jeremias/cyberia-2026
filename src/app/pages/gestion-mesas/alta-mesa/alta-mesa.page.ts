@@ -46,7 +46,7 @@ export class AltaMesaPage implements OnInit {
             this.mesaExistente.set(mesa);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el mesa.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -68,7 +68,7 @@ export class AltaMesaPage implements OnInit {
             // error se perdía, así que parecía que la mesa se había guardado.
             const mensaje = error instanceof Error ? error.message : 'No se pudo guardar la mesa.';
 
-            this.modal.setOpen('Error', mensaje || 'No se pudo guardar la mesa.');
+            this.modal.setOpen('Error', mensaje || 'No se pudo guardar la mesa.', 'error');
 
             return;
         } finally {

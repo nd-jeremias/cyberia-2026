@@ -59,7 +59,7 @@ export class AltaProductoPage {
             this.productoExistente.set(producto);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el producto.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -82,7 +82,7 @@ export class AltaProductoPage {
             this.router.navigate(['/gestion-productos']);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo guardar el producto.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

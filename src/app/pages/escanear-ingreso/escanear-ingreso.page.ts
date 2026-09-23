@@ -126,6 +126,6 @@ export class EscanearIngresoPage {
     private avisarError(error: unknown, alternativa: string) {
         const mensaje = error instanceof Error ? error.message : alternativa;
 
-        this.modal.setOpen('Error', mensaje);
+        this.modal.setOpen('Error', mensaje, 'error');
     }
 }

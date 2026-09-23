@@ -52,7 +52,7 @@ export class GestionClientesPage {
             this.clientes.set(clientes);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -91,7 +91,7 @@ export class GestionClientesPage {
             this.modal.setOpen('Cliente eliminado', `Se dio de baja a ${cliente.nombres} ${cliente.apellidos}.`);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el cliente.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -111,7 +111,7 @@ export class GestionClientesPage {
             this.modal.setOpen('Cliente actualizado', 'Los datos del cliente se actualizaron correctamente.');
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el cliente.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

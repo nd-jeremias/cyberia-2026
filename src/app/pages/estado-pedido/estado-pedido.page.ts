@@ -63,7 +63,7 @@ export class EstadoPedidoPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo consultar tu pedido.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
         }

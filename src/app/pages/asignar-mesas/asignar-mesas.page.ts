@@ -96,7 +96,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 
@@ -123,7 +123,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo quitar al cliente de la lista.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 
@@ -167,7 +167,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
                     ? error.message
                     : 'La mesa quedó tomada pero no se pudo actualizar el estado del cliente.';
 
-            this.modal.setOpen('Revisar la asignación', mensaje);
+            this.modal.setOpen('Revisar la asignación', mensaje, 'error');
         }
 
         this.clienteElegido.set(null);

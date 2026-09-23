@@ -46,7 +46,7 @@ export class QrLocalPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo generar el código QR.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 
@@ -71,7 +71,7 @@ export class QrLocalPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo guardar el código QR.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 }

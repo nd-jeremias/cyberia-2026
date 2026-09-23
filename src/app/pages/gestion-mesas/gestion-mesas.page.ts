@@ -54,7 +54,7 @@ export class GestionMesasPage {
             this.mesasCargadas.set(mesas);
         } catch (error) {
             console.log(error);
-            this.modal.setOpen('Error', 'No se pudieron cargar las mesas. Por favor, intente nuevamente más tarde.');
+            this.modal.setOpen('Error', 'No se pudieron cargar las mesas. Por favor, intente nuevamente más tarde.', 'error');
         } finally {
             this.spinner.hide();
         }
@@ -77,7 +77,7 @@ export class GestionMesasPage {
             this.mesasCargadas.update((actuales) => actuales.filter((p) => p.id !== mesa.id));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el producto.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             await this.cargarMesas();
             this.spinner.hide();

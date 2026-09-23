@@ -45,7 +45,7 @@ export class IngresoAnonimoPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo ingresar como invitado.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

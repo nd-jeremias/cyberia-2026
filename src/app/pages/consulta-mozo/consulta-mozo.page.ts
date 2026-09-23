@@ -124,7 +124,7 @@ export class ConsultaMozoPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo abrir la conversación.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
         }
@@ -195,7 +195,7 @@ export class ConsultaMozoPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo enviar el mensaje.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.enviando.set(false);
         }

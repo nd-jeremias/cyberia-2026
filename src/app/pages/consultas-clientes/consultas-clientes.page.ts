@@ -54,7 +54,7 @@ export class ConsultasClientesPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron traer las consultas.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
         }

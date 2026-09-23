@@ -83,7 +83,7 @@ export class GestionProductosPage {
             this.productos.set(productos);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los productos.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -123,7 +123,7 @@ export class GestionProductosPage {
             this.productos.update((actuales) => actuales.filter((p) => p.id !== producto.id));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el producto.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

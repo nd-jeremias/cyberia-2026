@@ -47,7 +47,7 @@ export class MetreRegistrarClientePage implements OnInit {
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro');
+            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro', 'error');
         }
     }
 }

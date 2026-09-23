@@ -38,7 +38,7 @@ export class GestionEmpleadosPage {
             this.listaEmpleados.set(data);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los empleados.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -52,7 +52,7 @@ export class GestionEmpleadosPage {
             this.listaEmpleados.update((actuales) => actuales.filter((p) => p.id !== empleado.id));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el empleado.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
