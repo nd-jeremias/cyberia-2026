@@ -116,15 +116,13 @@
 
     display: flex;
     flex-direction: column;
-    // gap: 0.625rem;
-    padding: 0.875rem 1rem calc(0.875rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.875rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
     box-sizing: border-box;
     color: var(--sobre-naranja);
     // background: var(--hoja-alta);
     background: var(--grad-banda);
     border-top: var(--borde-hoja);
     box-shadow: var(--sombra-hoja);
-    max-height: 15vh;
 }
 
 .pie-importe {

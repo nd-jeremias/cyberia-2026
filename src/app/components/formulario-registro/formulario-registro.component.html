@@ -115,14 +115,15 @@
             <div class="grupo-input">
                 <label class="input-label">Tipo de Empleado</label>
                 <div class="caja-input">
-                    <fa-icon [icon]="['fas', 'address-book']"></fa-icon>
+                    <!-- <fa-icon [icon]="['fas', 'address-book']"></fa-icon> -->
                     <!-- Escribe en tipoEmpleado: es lo que se valida y lo que el registro
                          guarda como perfil. -->
-                    <ion-select formControlName="tipoEmpleado" placeholder="Seleccionar" interface="popover">
+                    <!-- <ion-select formControlName="tipoEmpleado" placeholder="Seleccionar" interface="popover">
                         @for (tipo of tiposEmpleado; track tipo) {
                         <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
                         }
-                    </ion-select>
+                    </ion-select> -->
+                    <div class="select-trigger" (click)="seleccionarTipoEmpleado()">{{ tipoSeleccionado() }}</div>
                 </div>
                 @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value === "") {
                 <span class="mensaje-error">Seleccione el tipo de empleado a registrar.</span>

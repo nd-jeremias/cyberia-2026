@@ -58,7 +58,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         {
             id: 'elegir',
             etiqueta: 'Seleccionar',
-            icono: 'person-chalkboard',
+            // icono: 'person-chalkboard',
             color: 'primary',
         },
         // Punto 9: el metre tiene que poder sacar a alguien de la lista, por
@@ -66,7 +66,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         {
             id: 'quitar',
             etiqueta: 'Quitar',
-            icono: 'person-circle-xmark',
+            // icono: 'person-circle-xmark',
             color: 'danger',
         },
     ];

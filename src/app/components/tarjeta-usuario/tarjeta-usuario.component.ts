@@ -108,7 +108,12 @@ export class TarjetaUsuarioComponent {
     }>();
 
     /** "Apellidos, Nombres": el orden con el que se buscan personas en listas. */
-    nombreCompleto = computed(() => `${this.usuario().apellidos}, ${this.usuario().nombres}`);
+    nombreCompleto = computed(() => {
+        if(this.usuario().apellidos){
+            return `${this.usuario().apellidos}, ${this.usuario().nombres}`
+        }
+        return this.usuario().nombres
+    });
 
     fechaFormateada = computed(() =>
         new Date(this.usuario().fecha_registro).toLocaleString('es-AR', {
@@ -139,7 +144,6 @@ export class TarjetaUsuarioComponent {
     obtenerRutaActual() {
         // Retorna un string tipo '/home' o '/perfil/usuario'
         const urlActual = this.router.url;
-        console.log(urlActual);
         this.rutaActual.set(urlActual);
     }
 
