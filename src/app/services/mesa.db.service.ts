@@ -11,8 +11,10 @@ export class MesaDbService {
 
     async verificarNumero(mesaNumero: number): Promise<boolean> {
         try {
-            const existe = await supabase.from('mesas').select('*').eq('numero_mesa', mesaNumero).single();
-            if (existe) return true;
+            const { data, error } = await supabase.from('mesas').select('*').eq('numero_mesa', mesaNumero);
+            if (error) throw new Error(error.message);
+
+            if (data.length > 0) return true;
 
             return false;
         } catch (error) {
