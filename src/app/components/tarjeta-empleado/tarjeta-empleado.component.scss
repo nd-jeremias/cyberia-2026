@@ -107,6 +107,9 @@ ion-badge {
     margin: 0.6rem 0;
 }
 
+fa-icon{
+    padding: 0 .6rem;
+}
 /* En pantallas muy angostas la foto se achica para que el nombre no quede
    apretado contra el borde. */
 @media (max-width: 22.5rem) {

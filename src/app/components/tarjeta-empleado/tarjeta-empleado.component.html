@@ -17,7 +17,9 @@
     </div>
 
     <div class="acciones-gestion">
-        <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()"> Editar </ion-button>
+        <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()"
+            ><fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon> Editar
+        </ion-button>
         <ion-button
             [disabled]="usuario().perfil == 'dueño'"
             expand="block"
@@ -25,6 +27,7 @@
             class="boton-eliminar"
             (click)="onEliminar()"
         >
+            <fa-icon [icon]="['fas', 'user-xmark']"></fa-icon>
             Eliminar
         </ion-button>
     </div>
