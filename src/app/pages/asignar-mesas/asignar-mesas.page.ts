@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { IonBadge, IonButton, IonContent } from '@ionic/angular';
+import { IonBadge, IonContent } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
@@ -25,7 +25,7 @@ import { NotificacionesService } from '../../services/notificaciones.service';
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
-    imports: [IonContent, IonButton, IonBadge, FaIconComponent, TarjetaUsuarioComponent, HeaderComponent],
+    imports: [IonContent, IonBadge, FaIconComponent, TarjetaUsuarioComponent, HeaderComponent],
 })
 export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);

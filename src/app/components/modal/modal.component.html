@@ -22,9 +22,9 @@
             <p>{{ modalService.mensajeModal() }}</p>
             }
         </div>
-        <ion-footer>
+        <ion-footer class="footer">
             <ion-buttons class="botonContainer">
-                <ion-button class="botonCerrar" (click)="modalService.setClose()">Cerrar</ion-button>
+                <button class="btn-primario" (click)="modalService.setClose()">Cerrar</button>
             </ion-buttons>
         </ion-footer>
     </ng-template>

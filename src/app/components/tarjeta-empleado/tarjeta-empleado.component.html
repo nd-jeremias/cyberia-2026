@@ -17,18 +17,17 @@
     </div>
 
     <div class="acciones-gestion">
-        <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()"
-            ><fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon> Editar
-        </ion-button>
-        <ion-button
+        <button type="button" class="btn btn-edit" (click)="onEditar()">
+            <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon> Modificar
+        </button>
+        <button
+            type="button"
             [disabled]="usuario().perfil == 'dueño'"
-            expand="block"
-            color="danger"
-            class="boton-eliminar"
+            class="btn btn-delete"
             (click)="onEliminar()"
         >
             <fa-icon [icon]="['fas', 'user-xmark']"></fa-icon>
             Eliminar
-        </ion-button>
+        </button>
     </div>
 </article>

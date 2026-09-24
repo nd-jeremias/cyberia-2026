@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { IonBadge, IonButton } from '@ionic/angular';
+import { IonBadge } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { Router } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -18,6 +18,7 @@ export interface AccionTarjetaUsuario {
     icono?: string;
     color?: string;
     fill?: 'clear' | 'outline' | 'solid' | 'default';
+    clase?: string;
 }
 
 export const ACCIONES_APROBACION: AccionTarjetaUsuario[] = [
@@ -26,12 +27,14 @@ export const ACCIONES_APROBACION: AccionTarjetaUsuario[] = [
         etiqueta: 'Aceptar',
         icono: 'circle-check',
         color: 'success',
+        clase: 'btn-exito',
     },
     {
         id: 'rechazar',
         etiqueta: 'Rechazar',
         icono: 'circle-xmark',
         color: 'danger',
+        clase: 'btn-delete',
     },
 ];
 
@@ -42,6 +45,7 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
         icono: 'pen-to-square',
         color: 'primary',
         fill: 'outline',
+        clase: 'btn-edit',
     },
     {
         id: 'eliminar',
@@ -49,6 +53,7 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
         icono: 'trash-can',
         color: 'danger',
         fill: 'solid',
+        clase: 'btn-delete',
     },
 ];
 
@@ -65,7 +70,7 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
     selector: 'app-tarjeta-usuario',
     templateUrl: './tarjeta-usuario.component.html',
     styleUrls: ['./tarjeta-usuario.component.scss'],
-    imports: [IonBadge, IonButton, FaIconComponent],
+    imports: [IonBadge, FaIconComponent],
 })
 export class TarjetaUsuarioComponent {
     usuario = input.required<ClienteInterface>();
@@ -145,6 +150,25 @@ export class TarjetaUsuarioComponent {
         // Retorna un string tipo '/home' o '/perfil/usuario'
         const urlActual = this.router.url;
         this.rutaActual.set(urlActual);
+    }
+
+    obtenerClaseBoton(accion: AccionTarjetaUsuario): string {
+        if (accion.clase) {
+            return accion.clase;
+        }
+        if (accion.id === 'modificar' || accion.id === 'editar') {
+            return 'btn-edit';
+        }
+        if (accion.id === 'eliminar' || accion.id === 'rechazar') {
+            return 'btn-delete';
+        }
+        if (accion.id === 'aceptar' || accion.id === 'aprobar') {
+            return 'btn-exito';
+        }
+        if (accion.fill === 'outline') {
+            return 'btn-secundario';
+        }
+        return 'btn-primario';
     }
 
     onAccion(accion: string) {

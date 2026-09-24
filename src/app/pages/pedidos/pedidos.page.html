@@ -53,20 +53,19 @@
                     </p>
 
                     <div class="acciones">
-                        <ion-button
-                            expand="block"
-                            color="success"
+                        <button
+                            class="btn-exito"
                             [disabled]="cargando()"
                             (click)="onConfirmar(pedido)"
                         >
                             <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                             Confirmar
-                        </ion-button>
+                        </button>
 
-                        <ion-button expand="block" color="danger" [disabled]="cargando()" (click)="onRechazar(pedido)">
+                        <button class="btn-delete" [disabled]="cargando()" (click)="onRechazar(pedido)">
                             <fa-icon [icon]="['fas', 'circle-xmark']"></fa-icon>
                             Rechazar
-                        </ion-button>
+                        </button>
                     </div>
                 </article>
                 } }
@@ -111,10 +110,10 @@
                         <span class="total-importe">{{ totalFormateado(pedido) }}</span>
                     </p>
 
-                    <ion-button expand="block" [disabled]="cargando()" (click)="onEntregar(pedido)">
+                    <button class="btn-primario" [disabled]="cargando()" (click)="onEntregar(pedido)">
                         <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                         Marcar como entregado
-                    </ion-button>
+                    </button>
                 </article>
                 } }
             </section>
@@ -152,15 +151,14 @@
                         <span class="total-importe">{{ totalFormateado(pedido) }}</span>
                     </p>
 
-                    <ion-button
-                        expand="block"
-                        color="success"
+                    <button
+                        class="btn btn-exito"
                         [disabled]="cargando()"
                         (click)="onConfirmarPago(pedido)"
                     >
                         <fa-icon [icon]="['fas', 'hand-holding-dollar']"></fa-icon>
                         Confirmar pago y liberar mesa
-                    </ion-button>
+                    </button>
                 </article>
                 } }
             </section>

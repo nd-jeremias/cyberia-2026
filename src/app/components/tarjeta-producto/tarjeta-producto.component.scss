@@ -280,7 +280,7 @@
 
 /* El aspecto lo aporta `.btn-principal` de global.scss; acá sólo el alto
    propio de la tarjeta, algo más bajo que el de un formulario. */
-ion-button.boton-agregar {
+.boton-agregar {
     margin-top: 0.75rem;
     min-height: 3.25rem;
 }
@@ -289,26 +289,6 @@ ion-button.boton-agregar {
     display: flex;
     gap: 0.625rem;
     margin-top: 0.75rem;
-
-    ion-button {
-        flex: 1 1 0;
-        margin: 0;
-        min-height: 3rem;
-        font-size: var(--texto-apoyo);
-        font-weight: 800;
-    }
-}
-
-.boton-editar {
-    --border-color: var(--hoja-borde-fuerte);
-    --border-width: 0.125rem;
-    --color: var(--tinta);
-    --background-hover: rgba(255, 255, 255, 0.09);
-}
-
-.boton-eliminar {
-    --border-radius: var(--radio);
-    --color: var(--tinta);
 }
 
 /* ── Selector de cantidad (punto 12) ────────────────────────────────────
@@ -368,12 +348,4 @@ ion-button.boton-agregar {
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--tinta-suave);
-}
-
-ion-button {
-    fa-icon{
-        margin: 0.3rem;
-        font-size: 1rem;
-    }
 }

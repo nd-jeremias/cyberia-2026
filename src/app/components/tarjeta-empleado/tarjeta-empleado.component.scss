@@ -85,6 +85,7 @@
 }
 
 /* ----- Acciones ----- */
+.acciones-gestion,
 .acciones {
     grid-area: acciones;
 
@@ -93,13 +94,6 @@
     padding-top: 0.75rem;
     border-top: 0.0625rem solid var(--hoja-borde);
     height: auto;
-
-    ion-button {
-        flex: 1 1 0;
-        margin: 0;
-        font-size: var(--texto-apoyo);
-        font-weight: 800;
-    }
 }
 
 ion-badge {

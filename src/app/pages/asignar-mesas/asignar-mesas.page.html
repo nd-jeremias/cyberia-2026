@@ -40,15 +40,14 @@
                     [mostrarContacto]="false"
                 ></app-tarjeta-usuario>
 
-                <ion-button
-                    expand="block"
-                    fill="outline"
-                    color="medium"
+                <button
+                    type="button"
+                    class="btn btn-secundario"
                     (click)="limpiarSeleccion()"
                 >
                     <fa-icon [icon]="['fas', 'rotate']"></fa-icon>
                     Elegir otro cliente
-                </ion-button>
+                </button>
             </div>
 
             @if (mesaYaAsignada(); as asignada) {
@@ -110,14 +109,15 @@
                             </span>
                         </div>
 
-                        <ion-button
-                            expand="block"
+                        <button
+                            type="button"
+                            class="btn btn-primario"
                             [disabled]="!clienteElegido() || cargando()"
                             (click)="onAsignar(mesa)"
                         >
                             <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                             Asignar esta mesa
-                        </ion-button>
+                        </button>
                     </article>
                 }
             </div>

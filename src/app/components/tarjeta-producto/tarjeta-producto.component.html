@@ -71,14 +71,14 @@
 
         @if (modo() === 'gestion') {
         <div class="acciones-gestion">
-            <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
+            <button type="button" class="btn btn-edit" (click)="onEditar()">
                 <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
-                Editar
-            </ion-button>
-            <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
+                Modificar
+            </button>
+            <button type="button" class="btn btn-delete" (click)="onEliminar()">
                 <fa-icon [icon]="['fas', 'trash-can']"></fa-icon>
                 Eliminar
-            </ion-button>
+            </button>
         </div>
         } @else if (cantidad() > 0) {
         <!-- Punto 12: el cliente elige los productos con sus cantidades. -->
@@ -107,10 +107,10 @@
             </button>
         </div>
         } @else {
-        <ion-button expand="block" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
+        <button type="button" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
             <fa-icon [icon]="['fas', 'cart-plus']"></fa-icon>
             Agregar al pedido
-        </ion-button>
+        </button>
         }
     </div>
 </article>

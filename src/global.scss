@@ -55,10 +55,6 @@ ion-router-outlet {
     background: transparent;
 }
 
-// ion-content {
-//     --background: var(--hoja);
-//     --padding-bottom: 0;
-// }
 ion-content {
     --background: var(--naranja);
     --padding-bottom: 0;
@@ -478,39 +474,63 @@ p {
 }
 
 /* === 6. Botones ===========================================================
-   Naranja lleno para la acción principal (una por pantalla) y contorno para la
-   alternativa. Cada uno se declara dos veces, para <button> nativo y para
-   <ion-button>: en el segundo el botón real vive en el shadow DOM y sólo
-   responde a las variables --background / --color.
+   Sistema unificado de botones de Cyberia Restó:
+   - .btn: Base compartida por todos los botones nativos (<button> y <a>).
+   - .btn-primario (alias .btn-principal): Acción principal (naranja lleno).
+   - .btn-secundario: Acción alternativa/secundaria (contorno sobre papel).
+   - .btn-edit: Acción de edición o modificación en tarjetas y paneles.
+   - .btn-delete: Acción destructiva o de eliminación en tarjetas y paneles.
+   - .btn-exito: Acción de aprobación o éxito en tarjetas y paneles.
+   - .btn-banda: Botón claro para contrastar sobre la banda naranja superior.
    ========================================================================= */
 
-.btn-principal,
-.btn-secundario {
+/* --- 6.1 Estilos base compartidos (.btn) ---------------------------------- */
+.btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    margin: 1rem 0;
-    width: 100%;
-    min-height: 3.75rem;
-    padding: 0 1.25rem;
     box-sizing: border-box;
-
+    border: none;
+    outline: none;
     border-radius: var(--radio);
     font-family: var(--fuente);
-    font-size: var(--texto-cuerpo);
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: var(--traqueo);
+    text-decoration: none;
     cursor: pointer;
-
-    transition: transform 0.14s ease, box-shadow 0.18s ease, background 0.18s ease;
+    user-select: none;
+    transition: transform 0.14s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease,
+        color 0.18s ease;
 
     &:active {
         transform: translateY(0.0625rem) scale(0.99);
     }
+
+    &:disabled,
+    &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+        transform: none;
+    }
 }
 
+/* --- 6.2 Botones de pantalla / formularios -------------------------------- */
+
+.btn-primario,
+.btn-principal,
+.btn-secundario {
+    @extend .btn;
+    width: 100%;
+    min-height: 3.75rem;
+    margin: 1rem 0;
+    padding: 0 1.25rem;
+    font-size: var(--texto-cuerpo);
+    text-transform: uppercase;
+    letter-spacing: var(--traqueo);
+}
+
+.btn-primario,
 .btn-principal {
     background: var(--grad-naranja);
     border: none;
@@ -520,6 +540,11 @@ p {
     fa-icon {
         font-size: 2rem;
     }
+
+    &:hover {
+        background: linear-gradient(135deg, #f79654 0%, #e8632a 55%, #cf4a13 100%);
+    }
+
     &:active {
         box-shadow: 0 0.1875rem 0.5rem rgba(192, 67, 15, 0.3);
     }
@@ -534,67 +559,96 @@ p {
         background: var(--velo-tinta);
         border-color: var(--naranja);
     }
+
+    &:active {
+        background: var(--velo-tinta-fuerte);
+    }
 }
 
-ion-button.btn-principal,
-ion-button.btn-secundario {
-    width: 100%;
-    min-height: 3.75rem;
+/* --- 6.3 Botones de acción en tarjetas y gestión (.btn-edit y .btn-delete) - */
+
+.btn-edit,
+.btn-delete,
+.btn-exito {
+    @extend .btn;
+    flex: 1 1 0;
     margin: 0;
-    font-size: var(--texto-cuerpo);
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--texto-apoyo);
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: var(--traqueo);
-    --border-radius: var(--radio);
+    letter-spacing: normal;
+    text-transform: none;
+    justify-content: space-evenly;
+
+    fa-icon {
+        font-size: 1.25rem;
+    }
 }
 
-ion-button.btn-principal {
-    --background: var(--grad-naranja);
-    --background-activated: var(--naranja-hondo);
-    --background-hover: var(--naranja-claro);
-    --background-focused: var(--naranja-hondo);
-    --color: var(--sobre-naranja);
-    --border-width: 0;
-    --box-shadow: var(--sombra-naranja);
+.btn-edit {
+    background: transparent;
+    border: 0.125rem solid var(--hoja-borde-fuerte);
+    color: var(--tinta);
+
+    &:hover {
+        background: var(--velo-tinta);
+        border-color: var(--naranja);
+        color: var(--tinta);
+    }
+
+    &:active {
+        background: var(--velo-tinta-fuerte);
+    }
 }
 
-ion-button.btn-secundario {
-    --background: transparent;
-    --background-activated: var(--velo-tinta-fuerte);
-    --background-hover: var(--velo-tinta);
-    --color: var(--tinta);
-    --border-width: 0.125rem;
-    --border-style: solid;
-    --border-color: var(--hoja-borde-fuerte);
-    --box-shadow: none;
+.btn-delete {
+    background: var(--peligro);
+    border: 0.125rem solid transparent;
+    color: #ffffff;
+    box-shadow: 0 0.25rem 0.625rem rgba(192, 57, 43, 0.25);
+
+    &:hover {
+        background: var(--peligro-tinta);
+    }
+
+    &:active {
+        box-shadow: 0 0.125rem 0.375rem rgba(192, 57, 43, 0.35);
+    }
 }
 
-/* Botón de acción dentro de la banda naranja: va claro sobre el naranja, al
-   revés que el resto, porque un botón naranja ahí desaparecería. */
+.btn-exito {
+    background: var(--exito);
+    border: 0.125rem solid transparent;
+    color: #ffffff;
+    box-shadow: 0 0.25rem 0.625rem rgba(27, 122, 75, 0.25);
+
+    &:hover {
+        background: var(--exito-tinta);
+    }
+
+    &:active {
+        box-shadow: 0 0.125rem 0.375rem rgba(27, 122, 75, 0.35);
+    }
+}
+
+/* --- 6.4 Botón de acción dentro de la banda naranja ----------------------- */
+
 .btn-banda {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4375rem;
-
+    @extend .btn;
     min-height: 3rem;
     padding: 0 1.125rem;
-    box-sizing: border-box;
-
     background: var(--sobre-naranja);
     border: none;
     border-radius: 999px;
     box-shadow: 0 0.25rem 0.625rem rgba(120, 45, 10, 0.24);
 
-    font-family: var(--fuente);
     font-size: var(--texto-apoyo);
     font-weight: 800;
     color: var(--naranja-hondo);
     white-space: nowrap;
-    text-decoration: none;
-    cursor: pointer;
-
-    transition: transform 0.14s ease, background 0.18s ease;
+    letter-spacing: normal;
+    text-transform: none;
 
     fa-icon {
         font-size: 1.3125rem;
@@ -610,66 +664,6 @@ ion-button.btn-secundario {
 }
 
 /* === 7. Componentes de Ionic ============================================== */
-
-ion-button {
-    --border-radius: var(--radio);
-    --box-shadow: var(--sombra-apoyada);
-
-    min-height: 3.25rem;
-    font-size: var(--texto-apoyo);
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: 0;
-}
-
-ion-button[fill="outline"] {
-    --border-width: 0.125rem;
-    --box-shadow: none;
-}
-
-ion-button[fill="clear"] {
-    --box-shadow: none;
-}
-
-ion-card {
-    margin: 0;
-    background: var(--grad-tarjeta);
-    border: var(--borde-hoja);
-    border-radius: var(--radio-grande);
-    box-shadow: var(--sombra-tarjeta);
-}
-
-ion-card-title {
-    font-size: var(--texto-subtitulo);
-    font-weight: 800;
-    color: var(--tinta);
-}
-
-ion-card-content {
-    color: var(--tinta-media);
-    font-size: var(--texto-apoyo);
-}
-
-ion-item {
-    --background: transparent;
-    --background-hover: var(--velo-tinta);
-    --color: var(--tinta);
-    --border-color: var(--hoja-borde);
-    --highlight-color-focused: var(--naranja);
-    --highlight-color-valid: var(--exito);
-    --highlight-color-invalid: var(--peligro);
-    --padding-start: 0.75rem;
-    --inner-padding-end: 0.75rem;
-    --min-height: 3.5rem;
-}
-
-ion-list {
-    background: transparent;
-}
-
-ion-label {
-    color: var(--tinta);
-}
 
 ion-input,
 ion-textarea,
@@ -695,30 +689,6 @@ ion-badge {
 }
 
 ion-spinner {
-    --color: var(--naranja);
-}
-
-ion-popover {
-    --background: var(--hoja-alta);
-    --color: var(--tinta);
-    --border-radius: var(--radio);
-    --box-shadow: var(--sombra-elevada);
-
-    ion-item {
-        font-size: var(--texto-cuerpo);
-        font-weight: 600;
-    }
-
-    ion-radio {
-        --color: var(--tinta-suave);
-        --color-checked: var(--naranja);
-    }
-}
-
-/* Ninguna pantalla usa ya `ion-header`: todas pasan por `app-header`. Si
-   quedara alguno suelto, al menos no rompe la paleta. */
-ion-header ion-toolbar {
-    --background: var(--grad-banda);
     --color: var(--sobre-naranja);
     --border-width: 0;
 }
