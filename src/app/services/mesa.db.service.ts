@@ -32,6 +32,8 @@ export class MesaDbService {
      * QR después y volver a actualizar la fila.
      */
     async altaMesa(mesa: MesaAltaInterface): Promise<void> {
+        let urlPublica: string | null = null;
+
         try {
             const existe = await this.verificarNumero(mesa.numeroMesa);
             if (existe) throw new Error('El numero de mesa ya existe');
@@ -60,7 +62,7 @@ export class MesaDbService {
             // Las siguientes 3 lineas suben 1 sola img:
             const extension = mesa.fotos.name.split('.').pop() || 'png';
             const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
-            const urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', false, nombrePersonalizado);
+            urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', false, nombrePersonalizado);
 
             if (!urlPublica) throw Error;
 
@@ -76,6 +78,17 @@ export class MesaDbService {
 
             if (error) throw error;
         } catch (error: any) {
+            if (urlPublica) {
+                const filePath = this.galeriaService.obtenerPathDesdeUrl(urlPublica, 'Fotos');
+                if (filePath) {
+                    const { error: storageError } = await supabase.storage.from('Fotos').remove([filePath]);
+
+                    if (storageError) {
+                        console.error('Error al borrar la foto del bucket:', storageError);
+                        throw new Error();
+                    }
+                }
+            }
             console.error('Error en el proceso de creacion de mesa:', error);
 
             // Extraemos el mensaje de texto del error
@@ -83,7 +96,7 @@ export class MesaDbService {
             const mensajeAmigable = error instanceof Error ? error.message : 'Ocurrió un error inesperado.';
 
             // 3. Propagamos el error de forma correcta (Sintaxis válida)
-            throw error;
+            throw new Error(mensajeAmigable);
         }
     }
 

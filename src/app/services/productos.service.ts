@@ -1,6 +1,7 @@
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Producto, ProductoAltaInterface, TipoProducto } from '../interfaces/producto.interface';
 import { supabase } from './supabase.service';
+import { GaleriaService } from './galeria.service';
 
 const BUCKET_FOTOS = 'Fotos';
 
@@ -32,6 +33,8 @@ function mapearProducto(fila: ProductoFila): Producto {
 // que necesitan la misma consulta filtrada por tipo.
 @Service()
 export class ProductosService {
+    galeriaService = inject(GaleriaService)
+
     async listarPorTipo(tipo: TipoProducto): Promise<Producto[]> {
         const { data, error } = await supabase
             .from('productos')
@@ -77,7 +80,22 @@ export class ProductosService {
         return mapearProducto(data);
     }
 
-    async eliminar(id: string): Promise<void> {
+    async eliminar(id: string, fotoUrl: string[]): Promise<void> {
+        if (fotoUrl) {
+            let urls_path:string[] = []
+            fotoUrl.forEach(element => {
+                urls_path.push(this.galeriaService.obtenerPathDesdeUrl(element, 'Fotos'))
+            });
+            
+            if (urls_path.length > 0) {
+                const { error: storageError } = await supabase.storage.from('Fotos').remove(urls_path); // Recibe un array de rutas
+
+                if (storageError) {
+                    console.error('Error al borrar la foto del bucket:', storageError);
+                    throw new Error();
+                }
+            }
+        }
         const { error } = await supabase.from('productos').delete().eq('id', id);
 
         if (error) throw error;

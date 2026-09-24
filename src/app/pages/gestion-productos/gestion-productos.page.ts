@@ -119,7 +119,7 @@ export class GestionProductosPage {
         this.spinner.show();
 
         try {
-            await this.productosService.eliminar(producto.id);
+            await this.productosService.eliminar(producto.id, producto.fotosUrls);
             this.productos.update((actuales) => actuales.filter((p) => p.id !== producto.id));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el producto.';
