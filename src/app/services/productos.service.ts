@@ -33,7 +33,7 @@ function mapearProducto(fila: ProductoFila): Producto {
 // que necesitan la misma consulta filtrada por tipo.
 @Service()
 export class ProductosService {
-    galeriaService = inject(GaleriaService)
+    galeriaService = inject(GaleriaService);
 
     async listarPorTipo(tipo: TipoProducto): Promise<Producto[]> {
         const { data, error } = await supabase
@@ -82,11 +82,11 @@ export class ProductosService {
 
     async eliminar(id: string, fotoUrl: string[]): Promise<void> {
         if (fotoUrl) {
-            let urls_path:string[] = []
-            fotoUrl.forEach(element => {
-                urls_path.push(this.galeriaService.obtenerPathDesdeUrl(element, 'Fotos'))
+            let urls_path: string[] = [];
+            fotoUrl.forEach((element) => {
+                urls_path.push(this.galeriaService.obtenerPathDesdeUrl(element, 'Fotos'));
             });
-            
+
             if (urls_path.length > 0) {
                 const { error: storageError } = await supabase.storage.from('Fotos').remove(urls_path); // Recibe un array de rutas
 
@@ -124,7 +124,20 @@ export class ProductosService {
     }
 
     async crear(datos: ProductoAltaInterface): Promise<void> {
-        const fotosUrls = await this.subirFotos(datos.fotos);
+        // const fotosUrls = await this.subirFotos(datos.fotos);
+        let fotosUrls: string[] = [];
+        const nombre = datos.nombre.replace(' ', '_').trim().toLocaleLowerCase()
+
+        for (const [index, element] of datos.fotos.entries()) {
+            const numeroFoto = index + 1;
+            const url = await this.galeriaService.subirImagenDb(
+                element,
+                'productos',
+                false,
+                `${nombre}-foto${numeroFoto}-${Date.now()}`
+            );
+            fotosUrls.push(url);
+        }
 
         const { error } = await supabase.from('productos').insert({
             nombre: datos.nombre,
