@@ -229,7 +229,8 @@ export class AuthService {
             const tipoEmpleado = form.get('tipoEmpleado') as string;
             const fotoArchivo = form.get('foto') as File;
 
-            publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
+            const nombre_foto = `usuario-${correo}-${Date.now()}.jpg`;
+            publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios', false, nombre_foto);
             if (!publicUrl) throw new Error('No se pudo cargar la imágen');
 
             // Normalizacion de datos
