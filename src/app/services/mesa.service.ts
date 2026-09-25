@@ -161,16 +161,14 @@ export class MesaService {
             // No se espera y se atrapa el rechazo aparte: la mesa ya quedó
             // asignada, y `enviarAvisoAUsuario` lanza si la Edge Function falla.
             // Sin el catch, ese fallo quedaría como un rechazo sin capturar.
-            this.notificaciones
-                .enviarAvisoAUsuario(
-                    clienteId,
-                    'Mesa asignada',
-                    `Te tocó la mesa N° ${mesa.numeroMesa}. Escaneá su código QR para ver la carta.`,
-                    'mesa-asignada'
-                )
-                .catch((error) => console.error('No se pudo avisar al cliente de su mesa:', error));
-
-            this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
+            // this.notificaciones
+            //     .enviarAvisoAUsuario(
+            //         clienteId,
+            //         'Mesa asignada',
+            //         `Te tocó la mesa N° ${mesa.numeroMesa}. Escaneá su código QR para ver la carta.`,
+            //         'mesa-asignada'
+            //     )
+            //     .catch((error) => console.error('No se pudo avisar al cliente de su mesa:', error));
 
             return true;
         } catch (error) {

@@ -161,6 +161,8 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
                 `Se le asigno la mesa N° ${mesa.numeroMesa}, ya puede tomar asiento.`,
                 'mesa-asignada'
             );
+            this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
+            
         } catch (error) {
             const mensaje =
                 error instanceof Error

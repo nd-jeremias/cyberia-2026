@@ -114,10 +114,10 @@ export class TarjetaUsuarioComponent {
 
     /** "Apellidos, Nombres": el orden con el que se buscan personas en listas. */
     nombreCompleto = computed(() => {
-        if(this.usuario().apellidos){
-            return `${this.usuario().apellidos}, ${this.usuario().nombres}`
+        if (this.usuario().apellidos) {
+            return `${this.usuario().apellidos}, ${this.usuario().nombres}`;
         }
-        return this.usuario().nombres
+        return this.usuario().nombres;
     });
 
     fechaFormateada = computed(() =>
