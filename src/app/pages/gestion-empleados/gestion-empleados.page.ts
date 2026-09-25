@@ -10,6 +10,7 @@ import { TarjetaEmpleadoComponent } from '../../components/tarjeta-empleado/tarj
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 /**
  * Alta y administración de empleados (punto 1).
@@ -29,6 +30,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
         RouterLink,
         HeaderComponent,
         TarjetaEmpleadoComponent,
+        FooterComponent,
     ],
 })
 export class GestionEmpleadosPage {
