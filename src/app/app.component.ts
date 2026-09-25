@@ -48,7 +48,7 @@ export class AppComponent implements OnInit {
         if (this.platform.is('hybrid')) {
             // Escuchamos el cambio de estado nativo mediante Capacitor
             await App.addListener('appStateChange', async ({ isActive }) => {
-                if (!isActive) {
+                if (!isActive && !this.sound.debeIgnorarAppState()) {
                     // Iniciamos una tarea de background segura para que Android no mate el proceso antes de tiempo
                     const taskId = await BackgroundTask.beforeExit(async () => {
                         // Lanzamos nuestro audio nativo precargado
