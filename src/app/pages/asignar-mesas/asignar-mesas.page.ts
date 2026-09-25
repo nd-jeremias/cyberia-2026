@@ -54,23 +54,6 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         return cliente ? this.mesaService.mesaDelCliente(cliente.id) : null;
     });
 
-    accionesTarjeta = [
-        {
-            id: 'elegir',
-            etiqueta: 'Seleccionar',
-            // icono: 'person-chalkboard',
-            color: 'primary',
-        },
-        // Punto 9: el metre tiene que poder sacar a alguien de la lista, por
-        // ejemplo si se fue sin esperar.
-        {
-            id: 'quitar',
-            etiqueta: 'Quitar',
-            // icono: 'person-circle-xmark',
-            color: 'danger',
-        },
-    ];
-
     ngOnInit() {
         this.cargarClientes();
         this.mesaService.listar();
@@ -162,7 +145,6 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
                 'mesa-asignada'
             );
             this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
-            
         } catch (error) {
             const mensaje =
                 error instanceof Error

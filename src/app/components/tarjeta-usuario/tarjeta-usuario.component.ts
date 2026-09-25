@@ -10,7 +10,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
  * Recibir las acciones como datos permite que la misma tarjeta sirva para
  * aprobar clientes en una pantalla y seleccionarlos en otra.
  */
-export type ModoTarjetaUsuario = 'aprobacion' | 'gestion' | 'personalizado';
+export type ModoTarjetaUsuario = 'aprobacion' | 'gestion' | 'personalizado' | 'seleccion';
 
 export interface AccionTarjetaUsuario {
     id: string;
@@ -57,6 +57,23 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
     },
 ];
 
+export const ACCIONES_SELECCION: AccionTarjetaUsuario[] = [
+    {
+        id: 'seleccionar',
+        etiqueta: 'Seleccionar',
+        icono: 'circle-check',
+        color: 'success',
+        clase: 'btn-exito',
+    },
+    {
+        id: 'quitar',
+        etiqueta: 'Quitar',
+        icono: 'trash-can',
+        color: 'danger',
+        clase: 'btn-delete',
+    },
+];
+
 /**
  * Tarjeta de usuario reutilizable.
  *
@@ -99,6 +116,9 @@ export class TarjetaUsuarioComponent {
         }
         if (this.modo() === 'gestion') {
             return ACCIONES_GESTION;
+        }
+        if (this.modo() === 'seleccion') {
+            return ACCIONES_SELECCION;
         }
         return [];
     });

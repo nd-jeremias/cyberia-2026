@@ -69,7 +69,7 @@
                 @for (cliente of clientes(); track cliente.id) {
                     <app-tarjeta-usuario
                         [usuario]="cliente"
-                        [acciones]="accionesTarjeta"
+                        [modo]="'seleccion'"
                         [mostrarContacto]="false"
                         (accionSeleccionada)="onSeleccionCliente($event)"
                     ></app-tarjeta-usuario>
