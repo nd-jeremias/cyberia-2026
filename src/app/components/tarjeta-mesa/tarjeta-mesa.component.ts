@@ -1,5 +1,5 @@
 import { Component, computed, input, OnInit, output } from '@angular/core';
-import { MesaInterface } from '../../interfaces/mesa.interface';
+import { MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
@@ -13,6 +13,13 @@ export class TarjetaMesaComponent implements OnInit {
     editarMesa = output<MesaInterface>();
     eliminarMesa = output<MesaInterface>();
     verQrMesa = output<MesaInterface>();
+
+    private iconoPorTipo = {
+        Estándar: 'user',
+        'Movilidad reducida': 'wheelchair',
+        VIP: 'star',
+    };
+    icono = computed(() => this.iconoPorTipo[this.mesa().tipo as TipoMesa]);
 
     constructor() {}
 

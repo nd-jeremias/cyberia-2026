@@ -123,7 +123,7 @@ export class FormularioAltaMesaComponent {
         // 1. Definimos las opciones con su texto, icono de FontAwesome y valor real
         const opciones: ModalOption[] = [
             { texto: 'Estándar', icono: 'users', value: 'Estándar' },
-            { texto: 'Movilidad reducida', icono: 'glass-martini-alt', value: 'Movilidad reducida' },
+            { texto: 'Movilidad reducida', icono: 'wheelchair', value: 'Movilidad reducida' },
             { texto: 'VIP', icono: 'star', value: 'VIP' },
         ];
 
