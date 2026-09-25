@@ -1,7 +1,9 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
-            <a accion class="btn-banda" routerLink="/gestion-empleados/alta"> Agregar </a>
+            <a accion class="btn-banda" routerLink="/gestion-empleados/alta"
+                ><fa-icon [icon]="['fas', 'circle-plus']"></fa-icon> Agregar
+            </a>
         </app-header>
 
         <div class="superior hoja">

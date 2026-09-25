@@ -18,6 +18,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { TitleCasePipe } from '@angular/common';
 
 /**
  * Validador para comprobar que las contraseñas coincidan.
@@ -50,9 +51,7 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     styleUrls: ['./formulario-registro.component.scss'],
     imports: [
         FaIconComponent,
-        IonButton,
-        IonSelect,
-        IonSelectOption,
+        TitleCasePipe,
         ReactiveFormsModule,
         RouterLink,
         IonInput,

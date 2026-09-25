@@ -9,6 +9,7 @@ import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { TarjetaEmpleadoComponent } from '../../components/tarjeta-empleado/tarjeta-empleado.component';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Alta y administración de empleados (punto 1).
@@ -20,7 +21,15 @@ import { ModalService } from '../../services/modal.service';
     selector: 'app-gestion-empleados',
     templateUrl: './gestion-empleados.page.html',
     styleUrls: ['./gestion-empleados.page.scss'],
-    imports: [IonContent, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaEmpleadoComponent],
+    imports: [
+        FaIconComponent,
+        IonContent,
+        CommonModule,
+        FormsModule,
+        RouterLink,
+        HeaderComponent,
+        TarjetaEmpleadoComponent,
+    ],
 })
 export class GestionEmpleadosPage {
     empleadosService = inject(EmpleadosService);
