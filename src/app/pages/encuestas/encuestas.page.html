@@ -3,11 +3,141 @@
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Encuestas'"></app-header>
 
         <div class="superior hoja">
-            <div class="estado-vacio">
-                <ion-icon name="construct-outline"></ion-icon>
-                <p>Esta pantalla todavía no está hecha.</p>
-                <p>Puntos 9 y 20: cargar la encuesta de la visita y ver los resultados en gráficos.</p>
+            <!-- Selector superior de vista si tiene permiso para responder -->
+            @if (puedeResponder()) {
+            <div class="selector-pestana">
+                <button type="button" class="btn-tab" [class.activo]="vista() === 'formulario'" (click)="cambiarVista('formulario')">
+                <ion-icon name="create-outline"></ion-icon>
+                Completar Encuesta
+                </button>
+                <button type="button" class="btn-tab" [class.activo]="vista() === 'graficos'" (click)="cambiarVista('graficos')">
+                <ion-icon name="stats-chart-outline"></ion-icon>
+                Ver Resultados
+                </button>
             </div>
+            }
+
+            <!-- VISTA 1: FORMULARIO (1 sola vez por estadía) -->
+            @if (vista() === 'formulario') {
+            <div class="contenedor-formulario">
+                <h2 class="titulo-seccion">¿Cómo fue tu experiencia?</h2>
+                
+                <form [formGroup]="form" (ngSubmit)="enviarEncuesta()">
+                
+                <!-- Calificación Comida (Rango/Estrellas) -->
+                <div class="campo-encuesta">
+                    <label class="etiqueta">Calidad de la comida: {{ form.get('calificacionComida')?.value }} ★</label>
+                    <ion-range [min]="1" [max]="5" [step]="1" [snaps]="true" [ticks]="true" color="primary" formControlName="calificacionComida">
+                    <ion-icon slot="start" name="star-outline"></ion-icon>
+                    <ion-icon slot="end" name="star"></ion-icon>
+                    </ion-range>
+                </div>
+
+                <!-- Atención del Mozo -->
+                <div class="campo-encuesta">
+                    <label class="etiqueta">Atención del mozo:</label>
+                    <div class="opciones-grilla">
+                    @for (opcion of ['Excelente', 'Buena', 'Regular', 'Mala']; track opcion) {
+                        <button 
+                        type="button" 
+                        class="btn-opcion" 
+                        [class.seleccionado]="form.get('atencionMozo')?.value === opcion"
+                        (click)="form.get('atencionMozo')?.setValue(opcion)"
+                        >
+                        {{ opcion }}
+                        </button>
+                    }
+                    </div>
+                </div>
+
+                <!-- Tiempo de espera -->
+                <div class="campo-encuesta">
+                    <label class="etiqueta">Tiempos de espera:</label>
+                    <div class="opciones-grilla">
+                    @for (tiempo of ['Rápido', 'Aceptable', 'Lento']; track tiempo) {
+                        <button 
+                        type="button" 
+                        class="btn-opcion" 
+                        [class.seleccionado]="form.get('tiempoEspera')?.value === tiempo"
+                        (click)="form.get('tiempoEspera')?.setValue(tiempo)"
+                        >
+                        {{ tiempo }}
+                        </button>
+                    }
+                    </div>
+                </div>
+
+                <!-- Recomienda lugar -->
+                <div class="campo-encuesta">
+                    <label class="etiqueta">¿Recomendarías Cyberia Restó?</label>
+                    <div class="opciones-grilla dos-col">
+                    <button 
+                        type="button" 
+                        class="btn-opcion" 
+                        [class.seleccionado]="form.get('recomiendaLugar')?.value === true"
+                        (click)="form.get('recomiendaLugar')?.setValue(true)"
+                    >
+                        Sí, seguro
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn-opcion" 
+                        [class.seleccionado]="form.get('recomiendaLugar')?.value === false"
+                        (click)="form.get('recomiendaLugar')?.setValue(false)"
+                    >
+                        No por ahora
+                    </button>
+                    </div>
+                </div>
+
+                <!-- Comentario libre -->
+                <div class="campo-encuesta">
+                    <label class="etiqueta">Comentarios adicionales:</label>
+                    <ion-textarea 
+                    formControlName="comentario" 
+                    placeholder="Contanos qué te pareció o qué podemos mejorar..."
+                    [rows]="3"
+                    class="caja-input"
+                    ></ion-textarea>
+                </div>
+
+                <button type="submit" class="btn-principal" [disabled]="form.invalid">
+                    Enviar Encuesta
+                </button>
+                </form>
+            </div>
+            }
+
+            <!-- VISTA 2: GRÁFICOS (Un gráfico por pantalla) -->
+            @if (vista() === 'graficos') {
+            <div class="contenedor-graficos">
+                
+                @if (yaRespondio()) {
+                <div class="cartel-info">
+                    <ion-icon name="checkmark-circle-outline"></ion-icon>
+                    <span>Ya completaste tu encuesta de esta visita. Mirá las estadísticas generales:</span>
+                </div>
+                }
+
+                <!-- Selector de Gráficos (1 gráfico por pantalla) -->
+                <nav class="selector-grafico">
+                <button type="button" class="btn-tipo" [class.activo]="graficoSeleccionado() === 'torta'" (click)="cambiarTipoGrafico('torta')">
+                    Torta
+                </button>
+                <button type="button" class="btn-tipo" [class.activo]="graficoSeleccionado() === 'barras'" (click)="cambiarTipoGrafico('barras')">
+                    Barras
+                </button>
+                <button type="button" class="btn-tipo" [class.activo]="graficoSeleccionado() === 'lineas'" (click)="cambiarTipoGrafico('lineas')">
+                    Lineal
+                </button>
+                </nav>
+
+                <!-- Canvas del gráfico visible sin cortar -->
+                <div class="area-grafico">
+                <canvas #canvasGrafico></canvas>
+                </div>
+            </div>
+            }
         </div>
     </div>
 </ion-content>
