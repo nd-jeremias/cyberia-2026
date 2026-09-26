@@ -4,7 +4,7 @@
 
         <div class="superior hoja">
             <!-- Selector superior de vista si tiene permiso para responder -->
-            @if (puedeResponder()) {
+            <!-- @if (puedeResponder()) { -->
             <div class="selector-pestana">
                 <button type="button" class="btn-tab" [class.activo]="vista() === 'formulario'" (click)="cambiarVista('formulario')">
                 <ion-icon name="create-outline"></ion-icon>
@@ -15,7 +15,7 @@
                 Ver Resultados
                 </button>
             </div>
-            }
+            <!-- } -->
 
             <!-- VISTA 1: FORMULARIO (1 sola vez por estadía) -->
             @if (vista() === 'formulario') {
@@ -26,11 +26,24 @@
                 
                 <!-- Calificación Comida (Rango/Estrellas) -->
                 <div class="campo-encuesta">
-                    <label class="etiqueta">Calidad de la comida: {{ form.get('calificacionComida')?.value }} ★</label>
-                    <ion-range [min]="1" [max]="5" [step]="1" [snaps]="true" [ticks]="true" color="primary" formControlName="calificacionComida">
-                    <ion-icon slot="start" name="star-outline"></ion-icon>
-                    <ion-icon slot="end" name="star"></ion-icon>
-                    </ion-range>
+                    <label class="etiqueta">Calidad de la comida:</label>
+  
+                    <div class="selector-estrellas" role="radiogroup" aria-label="Calificación de la comida">
+                        @for (estrella of [1, 2, 3, 4, 5]; track estrella) {
+                        <button 
+                            type="button" 
+                            class="btn-estrella"
+                            [class.activa]="form.get('calificacionComida')?.value! >= estrella"
+                            (click)="seleccionarEstrellas(estrella)"
+                            [attr.aria-label]="estrella + ' estrellas'"
+                        >
+                            <ion-icon [name]="form.get('calificacionComida')?.value! >= estrella ? 'star' : 'star-outline'"></ion-icon>
+                        </button>
+                        }
+                        <span class="valor-estrellas">
+                        {{ form.get('calificacionComida')?.value }} / 5
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Atención del Mozo -->

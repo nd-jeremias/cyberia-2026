@@ -10,6 +10,8 @@ import { ModalService } from '../../services/modal.service';
 import { SpinnerService } from '../../services/spinner.service';
 import { EncuestasService, EncuestaFila } from '../../services/encuestas.service';
 import { Chart, registerables } from 'chart.js';
+import { star, starOutline } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 Chart.register(...registerables);
 
@@ -61,6 +63,11 @@ export class EncuestasPage implements OnInit {
   async ngOnInit() {
     await this.verificarEstadoCliente();
     await this.cargarEncuestas();
+    addIcons({ star, 'star-outline': starOutline });
+  }
+
+  seleccionarEstrellas(valor: number) {
+    this.form.get('calificacionComida')?.setValue(valor);
   }
 
   async verificarEstadoCliente() {
