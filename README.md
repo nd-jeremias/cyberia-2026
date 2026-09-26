@@ -361,8 +361,9 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Servicio de registro                                      |   --/--/----    | 26/08/2026 | Completado |                                                                                   |
 | Servicio para manejo de "Carrito"                         |   27/08/2026    | 29/08/2026 | Completado |                                                                                   |
 | Páginas dueño/supervisor + componentes necesarios         |   02/09/2026    | 18/09/2026 | Completado | Demora en la página general. Se avanzo solamente en la creacion de una nueva mesa |
+| Servicio de audio                                         |   23/09/2026    | 23/09/2026 | Completado |                  Corregir disparo de audio al utilizar la camara                  |
 | **Puntos del TP a realizar:**                             |
-| 1.- Agregar un empleado                                   |   02/09/2026    | 02/09/2026 | Completado |                                                                                   |
+| 1.- Agregar un empleado                                   |   02/09/2026    | 02/09/2026 | Completado |                         Verificar el boton de "ir atras"                          |
 | 4.- Agregar una nueva mesa                                |   02/09/2026    | 04/09/2026 | Completado |                                                                                   |
 | 6.- Verificar ingreso del cliente registrado              |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
 | 7.- El dueño o supervisor rechaza a un cliente.           |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
@@ -417,7 +418,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 3.- Agregar una nueva bebida                                                                                       |   02/09/2026    | 02/09/2026 | Completado |                                                                                                                            |
 | 9.- Ingresar al local como un cliente anónimo                                                                      |   14/09/2026    | 14/09/2026 | Completado |                            ✅ Reevaluar la fecha conciderando relaciones con otros componentes                             |
 | 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos |   14/09/2026    | 14/09/2026 | Completado |                                                                                                                            |
-| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   14/09/2026    | 14/09/2026 | Completado |                         ✅ Falta revisar que el pedido sea enviado a los sectores correspondientes                         |
+| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   14/09/2026    | 14/09/2026 | Completado |            ✅ Falta revisar que el pedido sea enviado a los sectores correspondientes - Corregir padding-botom             |
 | 21.- El cliente solicita la cuenta al mozo.                                                                        |   30/09/2026    | --/--/---- | Pendiente  |                                                                                                                            |
 
 ---
