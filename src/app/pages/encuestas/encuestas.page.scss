@@ -154,6 +154,15 @@
 .area-grafico {
   position: relative;
   width: 100%;
-  height: 20rem; // Altura fija para que no se deforme ni corte
-  max-height: 55vh;
+  height: 380px !important; // Altura fija garantizada
+  min-height: 380px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 380px !important;
+  }
 }

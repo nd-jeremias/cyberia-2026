@@ -116,94 +116,136 @@ export class EncuestasPage implements OnInit {
     }
   }
 
-  renderizarGrafico() {
-    if (!this.canvasGrafico?.nativeElement) return;
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
+            renderizarGrafico() {
+        if (!this.canvasGrafico?.nativeElement) return;
+
+        // 1. Destruir la instancia previa si existe
+        if (this.chartInstance) {
+            this.chartInstance.destroy();
+            this.chartInstance = undefined;
+        }
+
+        const canvas = this.canvasGrafico.nativeElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Limpiar el mapa de píxeles del canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const tipo = this.graficoSeleccionado();
+        const data = this.encuestas();
+
+        if (tipo === 'torta') {
+            const conteo: Record<string, number> = { Excelente: 0, Buena: 0, Regular: 0, Mala: 0 };
+            data.forEach(e => {
+            const val = e.atencion_mozo?.trim();
+            if (conteo[val] !== undefined) conteo[val]++;
+            });
+
+            this.chartInstance = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(conteo),
+                datasets: [{
+                data: Object.values(conteo),
+                backgroundColor: ['#1b7a4b', '#2372a8', '#d98b14', '#c0392b']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                legend: { display: true, position: 'top' },
+                title: { display: true, text: 'Atención del Personal (Torta)', font: { size: 16 } }
+                }
+            }
+            });
+
+        } else if (tipo === 'barras') {
+            const conteo: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+            data.forEach(e => {
+            const nota = Number(e.calificacion_comida);
+            if (conteo[nota] !== undefined) conteo[nota]++;
+            });
+
+            this.chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['1 ★', '2 ★', '3 ★', '4 ★', '5 ★'],
+                datasets: [{
+                label: 'Votos',
+                data: [conteo[1], conteo[2], conteo[3], conteo[4], conteo[5]],
+                backgroundColor: '#e2571c',
+                borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Calidad de la Comida (Barras)', font: { size: 16 } }
+                },
+                scales: {
+                x: {
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                    stepSize: 1,
+                    precision: 0
+                    }
+                }
+                }
+            }
+            });
+
+        } else if (tipo === 'lineas') {
+            const conteo: Record<string, number> = { Rápido: 0, Aceptable: 0, Lento: 0 };
+            data.forEach(e => {
+            const demora = e.tiempo_espera?.trim();
+            if (conteo[demora] !== undefined) conteo[demora]++;
+            });
+
+            this.chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Rápido', 'Aceptable', 'Lento'],
+                datasets: [{
+                label: 'Demora percibida',
+                data: [conteo['Rápido'], conteo['Aceptable'], conteo['Lento']],
+                borderColor: '#c0430f',
+                backgroundColor: 'rgba(226, 87, 28, 0.25)',
+                fill: true,
+                tension: 0.35,
+                pointBackgroundColor: '#e2571c',
+                pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Tiempos de Espera (Lineal)', font: { size: 16 } }
+                },
+                scales: {
+                x: {
+                    grid: { display: false }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                    stepSize: 1,
+                    precision: 0
+                    }
+                }
+                }
+            }
+            });
+        }
     }
-
-    const ctx = this.canvasGrafico.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    const tipo = this.graficoSeleccionado();
-    const data = this.encuestas();
-
-    if (tipo === 'torta') {
-      // Gráfico de torta: Calificación de atención de los mozos
-      const conteo: Record<string, number> = { Excelente: 0, Buena: 0, Regular: 0, Mala: 0 };
-      data.forEach(e => { if (conteo[e.atencion_mozo] !== undefined) conteo[e.atencion_mozo]++; });
-
-      this.chartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: Object.keys(conteo),
-          datasets: [{
-            data: Object.values(conteo),
-            backgroundColor: ['#1b7a4b', '#2372a8', '#d98b14', '#c0392b']
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: { display: true, text: 'Atención del Personal (Torta)', font: { size: 16 } }
-          }
-        }
-      });
-    } else if (tipo === 'barras') {
-      // Gráfico de barras: Calificación de comida (1 a 5 estrellas)
-      const conteo: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-      data.forEach(e => { if (conteo[e.calificacion_comida] !== undefined) conteo[e.calificacion_comida]++; });
-
-      this.chartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['1 ★', '2 ★', '3 ★', '4 ★', '5 ★'],
-          datasets: [{
-            label: 'Cantidad de votos',
-            data: Object.values(conteo),
-            backgroundColor: '#e2571c'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: { display: true, text: 'Calidad de la Comida (Barras)', font: { size: 16 } }
-          },
-          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-        }
-      });
-    } else if (tipo === 'lineas') {
-      // Gráfico lineal: Percepción del tiempo de espera
-      const conteo: Record<string, number> = { Rápido: 0, Aceptable: 0, Lento: 0 };
-      data.forEach(e => { if (conteo[e.tiempo_espera] !== undefined) conteo[e.tiempo_espera]++; });
-
-      this.chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: Object.keys(conteo),
-          datasets: [{
-            label: 'Percepción de demora',
-            data: Object.values(conteo),
-            borderColor: '#c0430f',
-            backgroundColor: 'rgba(226, 87, 28, 0.2)',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: { display: true, text: 'Tiempos de Espera (Lineal)', font: { size: 16 } }
-          },
-          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
-        }
-      });
-    }
-  }
-
   async enviarEncuesta() {
     if (this.form.invalid) return;
 
