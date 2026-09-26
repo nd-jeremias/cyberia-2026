@@ -68,6 +68,17 @@
     font-weight: 700;
     color: var(--tinta);
   }
+  
+  .caja-input {
+    width: 100%;
+    
+    ion-select {
+      width: 100%;
+      font-size: var(--texto-apoyo);
+      font-weight: 600;
+      color: var(--tinta);
+    }
+  }
 }
 
 .opciones-grilla {

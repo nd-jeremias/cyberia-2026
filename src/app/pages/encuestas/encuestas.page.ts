@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { IonContent, IonIcon, IonButton, IonRange, IonTextarea } from '@ionic/angular';
+import { IonContent, IonIcon, IonButton, IonRange, IonTextarea, IonSelect, IonSelectOption } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { AuthService } from '../../services/auth.service';
 import { SalonService } from '../../services/salon.service';
@@ -26,6 +26,8 @@ Chart.register(...registerables);
     IonButton,
     IonRange,
     IonTextarea,
+    IonSelect,
+    IonSelectOption,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
