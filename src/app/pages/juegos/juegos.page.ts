@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
+import { AuthService } from '../../services/auth.service';
+import { PedidoService } from '../../services/pedido.service';
 
 /**
  * Juegos — PANTALLA PENDIENTE.
@@ -18,4 +21,20 @@ import { HeaderComponent } from '../../components/header/header.component';
     templateUrl: './juegos.page.html',
     imports: [IonContent, IonIcon, HeaderComponent],
 })
-export class JuegosPage {}
+export class JuegosPage {
+    auth = inject(AuthService);
+    pedidos = inject(PedidoService);
+
+    verJuegos = signal<boolean>(false);
+
+    async ngOnInit() {
+        const userId = this.auth.session()?.user.id;
+        if (!userId) return;
+
+        const pedidosActivos = await this.pedidos.pedidoActualDelCliente(userId);
+
+        if (pedidosActivos?.estado == 'Confirmado') {
+            this.verJuegos.set(true);
+        }
+    }
+}
