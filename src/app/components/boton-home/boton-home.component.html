@@ -1,0 +1,8 @@
+<button class="tarjeta-accion" [routerLink]="boton().ruta">
+    <span class="medallon">
+        <fa-icon [icon]="['fas', boton().icono]"></fa-icon>
+    </span>
+
+    <span class="titulo-accion">{{ boton().texto }}</span>
+    <fa-icon class="flecha-accion" [icon]="['fas', 'chevron-right']"></fa-icon>
+</button>
