@@ -29,17 +29,18 @@ export interface EncuestaFila {
 })
 export class EncuestasService {
   /** Verifica si el cliente ya completó una encuesta en su mesa actual */
-  async yaCompletoEncuesta(clienteId: string, mesaId: string): Promise<boolean> {
-    const { data, error } = await supabase
-      .from('encuestas')
-      .select('id')
-      .eq('cliente_id', clienteId)
-      .eq('mesa_id', mesaId)
-      .maybeSingle();
 
-    if (error) return false;
-    return !!data;
-  }
+  async yaCompletoEncuestaDeEstadia(clienteId: string, pedidoId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('encuestas')
+    .select('id')
+    .eq('cliente_id', clienteId)
+    .eq('pedido_id', pedidoId)
+    .maybeSingle();
+
+  if (error || !data) return false;
+  return true;
+}
 
   async guardarEncuesta(encuesta: EncuestaAlta): Promise<void> {
     const { error } = await supabase.from('encuestas').insert({

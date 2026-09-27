@@ -35,7 +35,7 @@ Chart.register(...registerables);
     HeaderComponent
   ]
 })
-export class EncuestasPage implements OnInit {
+export class EncuestasPage {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private salon = inject(SalonService);
@@ -63,7 +63,7 @@ export class EncuestasPage implements OnInit {
     comentario: ['']
   });
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
     await this.verificarEstadoCliente();
     await this.cargarEncuestas();
     addIcons({ star, 'star-outline': starOutline });
@@ -75,8 +75,13 @@ export class EncuestasPage implements OnInit {
 
   async verificarEstadoCliente() {
     const usuarioId = this.auth.session()?.user.id;
-    if (!usuarioId) return;
+    if (!usuarioId) {
+    this.puedeResponder.set(false);
+    this.vista.set('graficos');
+    return;
+  }
 
+  // 1. Obtener la situación de mesa del cliente
     const situacion = await this.salon.cargarSituacion(usuarioId);
     if (!situacion?.mesaId) {
       this.puedeResponder.set(false);
@@ -84,20 +89,27 @@ export class EncuestasPage implements OnInit {
       return;
     }
 
-    // 1. Verificamos si ya respondió en esta estadía
-    const respondio = await this.encuestasService.yaCompletoEncuesta(usuarioId, situacion.mesaId);
-    this.yaRespondio.set(respondio);
+    // 2. Buscar el pedido de la estadía actual
+    const pedidoActual = await this.pedidoService.pedidoActualDelCliente(usuarioId);
+    const estadosValidos = ['Recibido', 'Pagado'];
 
-    // 2. Verificar si el pedido fue recibido (Punto 19/20)
-    const pedidos = await this.pedidoService.pedidosActivosDelCliente(usuarioId);
-    const pedidoRecibido = pedidos.some(p => p.estado === 'Recibido' || p.estado === 'Pagado');
-
-    if (!respondio && pedidoRecibido) {
-      this.puedeResponder.set(true);
-      this.vista.set('formulario');
-    } else {
+    // Si no tiene pedido o no está en Recibido/Pagado, no puede responder
+    if (!pedidoActual || !estadosValidos.includes(pedidoActual.estado)) {
       this.puedeResponder.set(false);
       this.vista.set('graficos');
+      return;
+    }
+
+   // 3. Verificar si ya respondió la encuesta atada a este pedido puntual
+    const respondio = await this.encuestasService.yaCompletoEncuestaDeEstadia(usuarioId, pedidoActual.id);
+    this.yaRespondio.set(respondio);
+
+    if (respondio) {
+      this.puedeResponder.set(false);
+      this.vista.set('graficos');
+    } else {
+      this.puedeResponder.set(true);
+      this.vista.set('formulario');
     }
   }
 
@@ -266,9 +278,11 @@ export class EncuestasPage implements OnInit {
     this.spinner.show();
     try {
       const val = this.form.value;
+      const pedidoActual = await this.pedidoService.pedidoActualDelCliente(usuarioId);
       await this.encuestasService.guardarEncuesta({
         clienteId: usuarioId,
         mesaId: mesaId,
+        pedidoId: pedidoActual?.id,
         calificacionComida: Number(val.calificacionComida),
         atencionMozo: val.atencionMozo as any,
         tiempoEspera: val.tiempoEspera as any,
