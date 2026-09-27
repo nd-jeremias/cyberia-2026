@@ -43,7 +43,8 @@ ion-modal.modal-personalizado ion-header ion-toolbar {
     --background: var(--grad-banda);
     --color: var(--sobre-naranja);
     --border-width: 0;
-    height: auto;
+    height: 100%;
+    display: flex;
 }
 
 ion-modal.modal-personalizado ion-title {
@@ -57,7 +58,6 @@ ion-modal.modal-personalizado ion-toolbar::part(container) {
     // background-color: var(--naranja) !important; /* Ejemplo: cambiar el fondo */
     padding-inline-start: 1rem;
     padding-inline-end: 1rem;
-    min-height: 4rem; /* Ejemplo: forzar una altura distinta si colapsa */
     text-wrap: wrap;
 }
 
@@ -67,13 +67,29 @@ ion-modal.modal-personalizado ion-toolbar::part(container) {
     min-height: 10rem;
     display: flex;
     flex-direction: column;
-    align-items: start p {
+    align-items: start;
+    justify-content: center;
+    p {
         margin: 0;
-        font-size: var(--texto-cuerpo);
-        line-height: 1.55;
-        color: var(--tinta-media);
+        font-size: var(--texto-titulo);
+        line-height: 2;
+        color: var(--tinta);
         text-align: center;
     }
+}
+
+.contenido::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background-image: url("../../../assets/logo-3d-solo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 55%;
+    opacity: 0.12;
+
+    pointer-events: none;
 }
 
 .opcion-item {
@@ -90,7 +106,7 @@ ion-modal.modal-personalizado ion-toolbar::part(container) {
 
 ion-modal.modal-personalizado ion-footer {
     padding: 0.75rem 1.5rem 1.5rem;
-    background: var(--hoja-alta);
+    background: var(--hoja-honda);
 
     &::before {
         display: none;
@@ -104,18 +120,43 @@ ion-modal.modal-personalizado ion-footer {
 }
 
 .botonCerrar {
-    --background: var(--grad-naranja);
+    background: var(--grad-naranja);
     --background-activated: var(--naranja-hondo);
-    --background-hover: var(--naranja-claro);
-    --color: var(--sobre-naranja);
-    --border-radius: var(--radio);
-    --box-shadow: var(--sombra-naranja);
-    --padding-start: 2.5rem;
-    --padding-end: 2.5rem;
+
+    color: var(--sobre-naranja);
+    border-radius: var(--radio);
+    box-shadow: var(--sombra-naranja);
+    padding: 0 2.5rem;
 
     min-height: 3rem;
     font-size: var(--texto-cuerpo);
     font-weight: 800;
     text-transform: none;
     letter-spacing: 0;
+}
+
+.botonCerrar:hover {
+    background-color: var(--naranja-claro);
+}
+
+/* Apunta al contenedor interno que envuelve la estructura del ng-template */
+ion-modal::part(content) {
+    display: flex;
+    flex-direction: column;
+    height: auto; /* Permite que el modal crezca o encoja según su contenido */
+    max-height: 90vh; /* Opcional: evita que el modal tape el 100% de la pantalla */
+}
+
+/* El header y el footer mantienen rígidamente su altura */
+ion-header,
+ion-footer {
+    flex-shrink: 0; /* Evita que colapsen o se achiquen */
+    height: 5rem; /* Forzar una altura fija idéntica para ambos (ajustá el valor a tu gusto) */
+}
+
+/* El div intermedio maneja de manera flexible el espacio de su contenido */
+.contenido {
+    flex: 1 1 auto; /* Permite crecer y encogerse dinámicamente */
+    min-height: 15rem; /* Clave para que el scroll interno funcione si se pasa del max-height */
+    overflow-y: auto; /* Activa el scroll solo en este div si el texto es muy largo */
 }

@@ -100,9 +100,9 @@ export class HeaderComponent {
     saludo = computed(() => {
         const hora = new Date().getHours();
 
-        if (hora < 6) return 'Buenas madrugadas';
-        if (hora < 13) return 'Buen día';
-        if (hora < 20) return 'Buenas tardes';
+        if (hora < 6) return 'Buena día';
+        if (hora < 13) return 'Buenas tardes';
+        if (hora < 19) return 'Buenas noches';
 
         return 'Buenas noches';
     });
@@ -130,7 +130,7 @@ export class HeaderComponent {
             await this.authService.logout();
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cerrar sesión.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.router.navigate(['/ingresar']);
         }

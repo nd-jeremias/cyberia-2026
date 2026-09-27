@@ -34,10 +34,10 @@
         </div>
         <div class="detalles">
             <span class="detalle">
-                <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                <fa-icon [icon]="['fas', icono()]"></fa-icon>
                 {{ mesa().tipo }}
             </span>
-            <span class="lugares">Lugares: {{ mesa().cantidadLugares }}</span>
+            <span class="lugares"><fa-icon [icon]="['fas', 'chair']"></fa-icon>: {{ mesa().cantidadLugares }}</span>
         </div>
 
         <!-- El QR va primero y a lo ancho: es lo que hay que imprimir y pegar

@@ -9,6 +9,7 @@
     margin-top: auto;
 
     p {
+        position: relative;
         margin: 0;
         font-size: 1.6rem;
         font-weight: 700;
@@ -16,6 +17,7 @@
         text-transform: uppercase;
         color: var(--sobre-naranja-tenue);
         text-align: center;
+        top: -20px;
     }
 }
 
@@ -25,6 +27,7 @@
     border-radius: 999px;
     background: var(--naranja);
     opacity: 0.5;
+    
 }
 
 // Esto cambia el tamaño del footer si no tiene contenido

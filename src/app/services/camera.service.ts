@@ -1,6 +1,7 @@
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Camera, CameraDirection } from '@capacitor/camera';
 import { FotoInterface } from '../interfaces/foto.interface';
+import { AudioService } from './audio.service';
 
 /**
  * @deprecated Duplica a `FotoInterface`. Se conserva por compatibilidad;
@@ -23,6 +24,8 @@ export interface FotoCapturada {
  */
 @Service()
 export class CameraService {
+    sound = inject(AudioService);
+
     /**
      * Abre la cámara y devuelve la foto en los dos formatos que se necesitan.
      *
@@ -32,13 +35,10 @@ export class CameraService {
      * @throws Si el usuario cancela o deniega el permiso. Quien llama debe
      *         distinguir ambos casos: cancelar no es un error que avisar.
      */
-    async tomarFoto(
-        direccion: 'frontal' | 'trasera'
-    ): Promise<FotoInterface | null> {
-        const cameraDir =
-            direccion === 'frontal'
-                ? CameraDirection.Front
-                : CameraDirection.Rear;
+    async tomarFoto(direccion: 'frontal' | 'trasera'): Promise<FotoInterface | null> {
+        this.sound.setIgnorarAppState(true);
+
+        const cameraDir = direccion === 'frontal' ? CameraDirection.Front : CameraDirection.Rear;
 
         try {
             const photo = await Camera.takePhoto({
@@ -47,8 +47,7 @@ export class CameraService {
                 cameraDirection: cameraDir,
             });
 
-            if (!photo.webPath)
-                throw new Error('No se pudo obtener el path de la foto');
+            if (!photo.webPath) throw new Error('No se pudo obtener el path de la foto');
 
             // Convertimos el webPath en un Blob real de forma ultra eficiente
             const response = await fetch(photo.webPath);
@@ -61,6 +60,8 @@ export class CameraService {
         } catch (error) {
             console.error('Error al tomar foto en servicio:', error);
             throw error;
+        } finally {
+            this.sound.setIgnorarAppState(false);
         }
     }
 }

@@ -10,6 +10,7 @@ export class AudioService {
         { id: 'success', asset: 'sounds/success.mp3' },
     ];
     private audioInicializado = false;
+    private ignorarAppState = false;
 
     private inicializacionAudio: Promise<void>;
 
@@ -99,5 +100,13 @@ export class AudioService {
         } catch (error) {
             console.error('❌ Error de reproducción web:', error);
         }
+    }
+
+    setIgnorarAppState(valor: boolean) {
+        this.ignorarAppState = valor;
+    }
+
+    debeIgnorarAppState(): boolean {
+        return this.ignorarAppState;
     }
 }

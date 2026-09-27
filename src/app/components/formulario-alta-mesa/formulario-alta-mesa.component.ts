@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
+import { IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { MesaAltaInterface, MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
 import { ModalOption, ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
@@ -22,15 +22,7 @@ const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
     selector: 'app-formulario-alta-mesa',
     templateUrl: './formulario-alta-mesa.component.html',
     styleUrls: ['./formulario-alta-mesa.component.scss'],
-    imports: [
-        FaIconComponent,
-        IonInput,
-        IonSelect,
-        IonSelectOption,
-        IonButton,
-        ReactiveFormsModule,
-        SubidaImagenesComponent,
-    ],
+    imports: [FaIconComponent, IonInput, IonSelect, IonSelectOption, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
@@ -131,7 +123,7 @@ export class FormularioAltaMesaComponent {
         // 1. Definimos las opciones con su texto, icono de FontAwesome y valor real
         const opciones: ModalOption[] = [
             { texto: 'Estándar', icono: 'users', value: 'Estándar' },
-            { texto: 'Movilidad reducida', icono: 'glass-martini-alt', value: 'Movilidad reducida' },
+            { texto: 'Movilidad reducida', icono: 'wheelchair', value: 'Movilidad reducida' },
             { texto: 'VIP', icono: 'star', value: 'VIP' },
         ];
 

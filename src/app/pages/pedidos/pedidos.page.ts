@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonBadge, IonButton, IonContent } from '@ionic/angular';
+import { IonBadge, IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { ModalService } from '../../services/modal.service';
@@ -20,7 +20,7 @@ import { NotificacionesService } from '../../services/notificaciones.service';
     selector: 'app-pedidos',
     templateUrl: './pedidos.page.html',
     styleUrls: ['./pedidos.page.scss'],
-    imports: [IonContent, FaIconComponent, IonContent, IonButton, IonBadge, HeaderComponent],
+    imports: [IonContent, FaIconComponent, IonContent, IonBadge, HeaderComponent],
 })
 export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);
@@ -63,9 +63,9 @@ export class PedidosPage implements OnInit {
     async onConfirmar(pedido: PedidoInterface) {
         await this.pedidoService.confirmar(pedido.id);
         // Verificamos qué sectores tienen productos en este pedido
-        const tieneComida = pedido.detalles.some(d => d.tipoProducto !== 'Bebida');
-        const tieneBebida = pedido.detalles.some(d => d.tipoProducto === 'Bebida');
-        
+        const tieneComida = pedido.detalles.some((d) => d.tipoProducto !== 'Bebida');
+        const tieneBebida = pedido.detalles.some((d) => d.tipoProducto === 'Bebida');
+
         const sectores: string[] = [];
         if (tieneComida) sectores.push('cocinero');
         if (tieneBebida) sectores.push('cantinero');
@@ -82,7 +82,12 @@ export class PedidosPage implements OnInit {
     }
 
     async onRechazar(pedido: PedidoInterface) {
-        await this.notificaciones.enviarAvisoAUsuario(pedido.clienteId,"Pedido rechazado.", "Su pedido ha sido rechazado, realize cambios y vuelva a pedir. ", 'pedido-estado')
+        await this.notificaciones.enviarAvisoAUsuario(
+            pedido.clienteId,
+            'Pedido rechazado.',
+            'Su pedido ha sido rechazado, realize cambios y vuelva a pedir. ',
+            'pedido-estado'
+        );
         await this.pedidoService.rechazar(pedido.id);
         await this.recargar();
     }

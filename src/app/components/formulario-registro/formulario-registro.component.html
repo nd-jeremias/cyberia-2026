@@ -123,7 +123,9 @@
                         <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
                         }
                     </ion-select> -->
-                    <div class="select-trigger" (click)="seleccionarTipoEmpleado()">{{ tipoSeleccionado() }}</div>
+                    <div class="select-trigger" (click)="seleccionarTipoEmpleado()">
+                        {{ tipoSeleccionado() | titlecase }}
+                    </div>
                 </div>
                 @if (formulario.get("tipoEmpleado")?.touched && formulario.get("tipoEmpleado")?.value === "") {
                 <span class="mensaje-error">Seleccione el tipo de empleado a registrar.</span>
@@ -192,7 +194,7 @@
                 <label class="input-label">Repetir Contraseña</label>
                 <div class="caja-input">
                     <fa-icon [icon]="['fas', 'lock']"></fa-icon>
-                    <ion-input formControlName="confirmPassword"  placeholder="********" type="password"
+                    <ion-input formControlName="confirmPassword" placeholder="********" type="password"
                         ><ion-input-password-toggle
                             show-icon="eye-off"
                             hide-icon="eye"

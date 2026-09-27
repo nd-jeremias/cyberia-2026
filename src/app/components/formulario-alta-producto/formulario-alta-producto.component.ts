@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, input, output } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonInput, IonTextarea } from '@ionic/angular';
+import { IonInput, IonTextarea } from '@ionic/angular';
 import { Producto, ProductoAltaInterface, TipoProducto } from '../../interfaces/producto.interface';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { ModalService } from '../../services/modal.service';
@@ -21,7 +21,7 @@ const CANTIDAD_FOTOS_REQUERIDA = 3;
     selector: 'app-formulario-alta-producto',
     templateUrl: './formulario-alta-producto.component.html',
     styleUrls: ['./formulario-alta-producto.component.scss'],
-    imports: [FaIconComponent, IonInput, IonTextarea, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
+    imports: [FaIconComponent, IonInput, IonTextarea, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaProductoComponent {
     private modal = inject(ModalService);

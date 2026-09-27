@@ -866,7 +866,10 @@ body.barcode-scanner-active .barcode-scanner-ui {
     flex-direction: column;
     /* dvh y no vh: en Android, 100vh incluye la franja que tapan las barras
        del sistema, y la página terminaba más alta que lo que se ve. */
-    min-height: 100dvh;
+    // min-height: 100dvh;
+
+    height: 100%;
+    overflow: hidden;
 
     .inferior,
     .superior,
@@ -900,9 +903,15 @@ body.barcode-scanner-active .barcode-scanner-ui {
         margin-top: -50px; /* Sube 40px y tapa exactamente el padding-bottom del header */
         border-radius: 40px;
         overflow: hidden;
-        flex-grow: 1;
+        // flex-grow: 1;
         padding-top: 1.5rem;
         padding-bottom: 50px;
+
+        flex: 1;
+        min-height: 0;
+
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     // 3. Capa base del Footer (máx 15% de pantalla)
@@ -913,7 +922,8 @@ body.barcode-scanner-active .barcode-scanner-ui {
         background-color: var(--naranja);
         /* Opcional: Si el footer también sufre el mismo problema abajo, dale padding-top */
         padding-top: 40px;
-        padding-bottom: 100px;
+        // padding-bottom: 100px;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
         height: auto;
         max-height: 15vh;
         border-radius: 40px 40px 0 0;

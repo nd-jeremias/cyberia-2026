@@ -10,7 +10,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
  * Recibir las acciones como datos permite que la misma tarjeta sirva para
  * aprobar clientes en una pantalla y seleccionarlos en otra.
  */
-export type ModoTarjetaUsuario = 'aprobacion' | 'gestion' | 'personalizado';
+export type ModoTarjetaUsuario = 'aprobacion' | 'gestion' | 'personalizado' | 'seleccion';
 
 export interface AccionTarjetaUsuario {
     id: string;
@@ -53,6 +53,23 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
         icono: 'trash-can',
         color: 'danger',
         fill: 'solid',
+        clase: 'btn-delete',
+    },
+];
+
+export const ACCIONES_SELECCION: AccionTarjetaUsuario[] = [
+    {
+        id: 'seleccionar',
+        etiqueta: 'Seleccionar',
+        icono: 'circle-check',
+        color: 'success',
+        clase: 'btn-exito',
+    },
+    {
+        id: 'quitar',
+        etiqueta: 'Quitar',
+        icono: 'trash-can',
+        color: 'danger',
         clase: 'btn-delete',
     },
 ];
@@ -100,6 +117,9 @@ export class TarjetaUsuarioComponent {
         if (this.modo() === 'gestion') {
             return ACCIONES_GESTION;
         }
+        if (this.modo() === 'seleccion') {
+            return ACCIONES_SELECCION;
+        }
         return [];
     });
 
@@ -114,10 +134,10 @@ export class TarjetaUsuarioComponent {
 
     /** "Apellidos, Nombres": el orden con el que se buscan personas en listas. */
     nombreCompleto = computed(() => {
-        if(this.usuario().apellidos){
-            return `${this.usuario().apellidos}, ${this.usuario().nombres}`
+        if (this.usuario().apellidos) {
+            return `${this.usuario().apellidos}, ${this.usuario().nombres}`;
         }
-        return this.usuario().nombres
+        return this.usuario().nombres;
     });
 
     fechaFormateada = computed(() =>

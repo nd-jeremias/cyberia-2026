@@ -4,12 +4,14 @@
  * la lista se desplace por dentro en lugar de empujar la caja fuera de pantalla.
  */
 :host {
-    display: flex;
+    // display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 0;
+    // min-height: 0;
+    background: transparent;
 
-    background: var(--hoja);
+    display: block;
+    height: 100%;
 }
 
 /* --- Mensajes ------------------------------------------------------------- */
@@ -188,4 +190,10 @@
         box-shadow: none;
         cursor: default;
     }
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
