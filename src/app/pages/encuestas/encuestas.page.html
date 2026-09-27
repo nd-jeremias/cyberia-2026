@@ -4,7 +4,7 @@
 
         <div class="superior hoja">
             <!-- Selector superior de vista si tiene permiso para responder -->
-            <!-- @if (puedeResponder()) { -->
+            @if (puedeResponder()) {
             <div class="selector-pestana">
                 <button type="button" class="btn-tab" [class.activo]="vista() === 'formulario'" (click)="cambiarVista('formulario')">
                     <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
@@ -15,7 +15,7 @@
                     Ver Resultados
                 </button>
             </div>
-            <!-- } -->
+            }
 
             <!-- VISTA 1: FORMULARIO (1 sola vez por estadía) -->
             @if (vista() === 'formulario') {
