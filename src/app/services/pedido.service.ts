@@ -111,13 +111,9 @@ export class PedidoService {
     cargando = signal<boolean>(false);
 
     // El mozo necesita ver primero lo que espera su confirmacion (punto 12).
-    pendientesDeConfirmacion = computed(() =>
-        this.pedidos().filter((p) => p.estado === 'Pendiente de Confirmación')
-    );
+    pendientesDeConfirmacion = computed(() => this.pedidos().filter((p) => p.estado === 'Pendiente de Confirmación'));
 
-    listosParaEntregar = computed(() =>
-        this.pedidos().filter((p) => p.estado === 'Listo para Entregar')
-    );
+    listosParaEntregar = computed(() => this.pedidos().filter((p) => p.estado === 'Listo para Entregar'));
 
     /**
      * Punto 22: pedidos en la mesa cuyo cliente ya pagó y espera que el mozo
@@ -135,9 +131,7 @@ export class PedidoService {
      * perder precisión en dinero; por eso cada uno pasa por `Number`.
      */
     private mapear(fila: FilaPedido): PedidoInterface {
-        const detalles: DetallePedidoInterface[] = (
-            fila.pedido_detalles ?? []
-        ).map((d) => ({
+        const detalles: DetallePedidoInterface[] = (fila.pedido_detalles ?? []).map((d) => ({
             id: d.id,
             pedidoId: d.pedido_id,
             productoId: d.producto_id,
@@ -146,8 +140,7 @@ export class PedidoService {
             precioUnitario: Number(d.precio_unitario),
             precioTotalParcial: Number(d.precio_total_parcial),
             estadoProducto: d.estado_producto,
-            tiempoElaboracionMinutos:
-                d.productos?.tiempo_elaboracion_minutos ?? 0,
+            tiempoElaboracionMinutos: d.productos?.tiempo_elaboracion_minutos ?? 0,
             tipoProducto: (d.productos as any)?.tipo,
         }));
 
@@ -175,7 +168,7 @@ export class PedidoService {
     private avisarError(error: unknown, alternativa: string): void {
         const mensaje = error instanceof Error ? error.message : alternativa;
 
-        this.modal.setOpen('Error', mensaje);
+        this.modal.setOpen('Error', mensaje, 'error');
     }
 
     /**
@@ -185,10 +178,7 @@ export class PedidoService {
      * cocina los confirmados. Así no se traen pedidos que no se van a mostrar.
      */
     async listar(estados?: EstadoPedido[]): Promise<void> {
-        let consulta = supabase
-            .from('pedidos')
-            .select(SELECT_PEDIDO)
-            .order('fecha', { ascending: true });
+        let consulta = supabase.from('pedidos').select(SELECT_PEDIDO).order('fecha', { ascending: true });
 
         if (estados && estados.length > 0) {
             consulta = consulta.in('estado', estados);
@@ -207,11 +197,7 @@ export class PedidoService {
      */
     async listarSinPagar(): Promise<void> {
         await this.cargarLista(
-            supabase
-                .from('pedidos')
-                .select(SELECT_PEDIDO)
-                .neq('estado', 'Pagado')
-                .order('fecha', { ascending: true })
+            supabase.from('pedidos').select(SELECT_PEDIDO).neq('estado', 'Pagado').order('fecha', { ascending: true })
         );
     }
 
@@ -281,10 +267,7 @@ export class PedidoService {
     // Punto 12: el cliente arma el pedido y queda esperando al mozo.
     async crear(nuevo: NuevoPedidoInterface): Promise<string | null> {
         if (nuevo.items.length === 0) {
-            this.modal.setOpen(
-                'Pedido vacío',
-                'Debe elegir al menos un producto antes de confirmar.'
-            );
+            this.modal.setOpen('Pedido vacío', 'Debe elegir al menos un producto antes de confirmar.');
 
             return null;
         }
@@ -292,10 +275,7 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
-            const total = nuevo.items.reduce(
-                (suma, item) => suma + item.cantidad * item.precioUnitario,
-                0
-            );
+            const total = nuevo.items.reduce((suma, item) => suma + item.cantidad * item.precioUnitario, 0);
 
             const { data, error } = await supabase
                 .from('pedidos')
@@ -317,9 +297,7 @@ export class PedidoService {
                 precio_unitario: item.precioUnitario,
             }));
 
-            const { error: errorDetalles } = await supabase
-                .from('pedido_detalles')
-                .insert(detalles);
+            const { error: errorDetalles } = await supabase.from('pedido_detalles').insert(detalles);
 
             if (errorDetalles) throw errorDetalles;
 
@@ -353,23 +331,15 @@ export class PedidoService {
      *
      * @returns `true` si se guardó; `false` si falló (ya avisado al usuario).
      */
-    private async cambiarEstado(
-        pedidoId: string,
-        estado: EstadoPedido
-    ): Promise<boolean> {
+    private async cambiarEstado(pedidoId: string, estado: EstadoPedido): Promise<boolean> {
         this.cargando.set(true);
 
         try {
-            const { error } = await supabase
-                .from('pedidos')
-                .update({ estado })
-                .eq('id', pedidoId);
+            const { error } = await supabase.from('pedidos').update({ estado }).eq('id', pedidoId);
 
             if (error) throw error;
 
-            this.pedidos.update((actuales) =>
-                actuales.map((p) => (p.id === pedidoId ? { ...p, estado } : p))
-            );
+            this.pedidos.update((actuales) => actuales.map((p) => (p.id === pedidoId ? { ...p, estado } : p)));
 
             return true;
         } catch (error) {
@@ -407,10 +377,7 @@ export class PedidoService {
      */
     async reenviar(pedidoId: string, items: ItemNuevoPedido[]): Promise<boolean> {
         if (items.length === 0) {
-            this.modal.setOpen(
-                'Pedido vacío',
-                'Debe quedar al menos un producto para volver a enviarlo.'
-            );
+            this.modal.setOpen('Pedido vacío', 'Debe quedar al menos un producto para volver a enviarlo.');
 
             return false;
         }
@@ -418,28 +385,20 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
-            const total = items.reduce(
-                (suma, item) => suma + item.cantidad * item.precioUnitario,
-                0
-            );
+            const total = items.reduce((suma, item) => suma + item.cantidad * item.precioUnitario, 0);
 
-            const { error: errorBorrado } = await supabase
-                .from('pedido_detalles')
-                .delete()
-                .eq('pedido_id', pedidoId);
+            const { error: errorBorrado } = await supabase.from('pedido_detalles').delete().eq('pedido_id', pedidoId);
 
             if (errorBorrado) throw errorBorrado;
 
-            const { error: errorDetalles } = await supabase
-                .from('pedido_detalles')
-                .insert(
-                    items.map((item) => ({
-                        pedido_id: pedidoId,
-                        producto_id: item.productoId,
-                        cantidad: item.cantidad,
-                        precio_unitario: item.precioUnitario,
-                    }))
-                );
+            const { error: errorDetalles } = await supabase.from('pedido_detalles').insert(
+                items.map((item) => ({
+                    pedido_id: pedidoId,
+                    producto_id: item.productoId,
+                    cantidad: item.cantidad,
+                    precio_unitario: item.precioUnitario,
+                }))
+            );
 
             if (errorDetalles) throw errorDetalles;
 
@@ -515,9 +474,8 @@ export class PedidoService {
             return true;
         } catch (error) {
             if (codigoDeError(error) === VALOR_FUERA_DEL_ENUM) {
-                this.modal.setOpen(
-                    'Falta actualizar la base',
-                    'Para confirmar la recepción hay que correr sql/migracion-recepcion-pedido.sql en Supabase.'
+                console.log(
+                    'Falta actualizar la base. Para confirmar la recepción hay que correr sql/migracion-recepcion-pedido.sql en Supabase.'
                 );
             } else {
                 this.avisarError(error, 'No se pudo confirmar la recepción.');
@@ -603,9 +561,9 @@ export class PedidoService {
      * Cuando todos los ítems de un pedido pasan a estado 'Listo', el pedido completo debe actualizarse a 'Listo para Entregar' para que el mozo lo vea en su lista de entrega.
      */
     async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<void> {
-        const pedido = this.pedidos().find(p => p.id === pedidoId);
+        const pedido = this.pedidos().find((p) => p.id === pedidoId);
         if (!pedido) return;
-        const todosListos = pedido.detalles.every(d => d.estadoProducto === 'Listo');
+        const todosListos = pedido.detalles.every((d) => d.estadoProducto === 'Listo');
         if (todosListos) {
             await this.cambiarEstado(pedidoId, 'Listo para Entregar');
         }
@@ -617,10 +575,7 @@ export class PedidoService {
      * El estado va por ítem y no por pedido porque una mesa puede pedir comida
      * y bebida a la vez, y cada sector termina lo suyo por separado.
      */
-    async cambiarEstadoItem(
-        detalleId: string,
-        estado: EstadoItem
-    ): Promise<boolean> {
+    async cambiarEstadoItem(detalleId: string, estado: EstadoItem): Promise<boolean> {
         try {
             const { error } = await supabase
                 .from('pedido_detalles')
@@ -632,9 +587,7 @@ export class PedidoService {
             this.pedidos.update((actuales) =>
                 actuales.map((pedido) => ({
                     ...pedido,
-                    detalles: pedido.detalles.map((d) =>
-                        d.id === detalleId ? { ...d, estadoProducto: estado } : d
-                    ),
+                    detalles: pedido.detalles.map((d) => (d.id === detalleId ? { ...d, estadoProducto: estado } : d)),
                 }))
             );
 
@@ -653,10 +606,7 @@ export class PedidoService {
      * en paralelo. Sumarlos daría una espera muy por encima de la real.
      */
     tiempoEstimado(pedido: PedidoInterface): number {
-        return pedido.detalles.reduce(
-            (mayor, d) => Math.max(mayor, d.tiempoElaboracionMinutos),
-            0
-        );
+        return pedido.detalles.reduce((mayor, d) => Math.max(mayor, d.tiempoElaboracionMinutos), 0);
     }
 
     /**
@@ -668,8 +618,7 @@ export class PedidoService {
      */
     totalConDescuento(pedido: PedidoInterface): number {
         const descuento = pedido.precioTotalNeto * (pedido.descuentoJuego / 100);
-        const propina =
-            pedido.precioTotalNeto * (pedido.propinaPorcentaje / 100);
+        const propina = pedido.precioTotalNeto * (pedido.propinaPorcentaje / 100);
 
         return pedido.precioTotalNeto - descuento + propina;
     }
