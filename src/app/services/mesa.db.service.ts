@@ -56,7 +56,7 @@ export class MesaDbService {
                 archivoQr,
                 'qr',
                 true,
-                `${mesa.numeroMesa}-${mesaId}-qr.png`
+                `mesa_${mesa.numeroMesa}-${mesaId}-qr.png`
             );
 
             // Las siguientes 3 lineas suben 1 sola img:
