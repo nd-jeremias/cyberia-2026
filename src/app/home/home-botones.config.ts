@@ -1,4 +1,6 @@
 import { EstadoEnResto, PerfilUsuario } from '../interfaces/auth.interface';
+import { EstadoPedido } from '../interfaces/pedido.interface';
+import { puedeAccederAJuegos, puedeUsarServiciosDeMesa } from '../pages/mi-pedido/mi-pedido.estado';
 
 export interface BotonHome {
     texto: string;
@@ -46,111 +48,128 @@ const BOTONES_PEDIDOS: BotonHome[] = [
  *
  * Para los empleados el rol alcanza: un cocinero ve siempre lo mismo. El
  * cliente no: es la MISMA pantalla de inicio, pero lo que puede hacer cambia a
- * medida que avanza. Recién entrado sólo puede anotarse; con mesa asignada ya
- * no tiene sentido ofrecerle escanear otra vez el QR de la puerta.
+ * medida que avanza, y el enunciado dice en qué momento se habilita cada cosa:
  *
- * Por eso el cliente se resuelve por estado y no por perfil. `estado_en_resto`
- * lo cambian el propio cliente (al escanear) y el metre (al asignarle mesa),
- * así que los accesos se rearman solos cuando eso pasa.
+ *   - punto 9  : sin mesa sólo puede anotarse en la lista de espera y mirar
+ *                los resultados de las encuestas anteriores;
+ *   - punto 10 : con la mesa asignada, escanear el QR de esa mesa;
+ *   - punto 11 : con la mesa asignada se habilita la consulta al mozo, y
+ *                sentado ya ve la carta;
+ *   - punto 12 : recién con el pedido enviado puede seguir su estado;
+ *   - puntos 14 y 15: los juegos se habilitan con el pedido confirmado, y sólo
+ *                para el cliente registrado;
+ *   - punto 19 : con el pedido recibido se habilitan la encuesta y la cuenta.
  *
- * Los estados sin accesos todavía no tienen sus pantallas hechas: el inicio
- * muestra en qué situación está y qué sigue, en lugar de un botón que no
- * llevaría a ninguna parte.
+ * Mostrar antes un botón que después rebota sería peor que no mostrarlo: el
+ * cliente no sabría por qué no lo dejan entrar. Por eso los accesos se arman
+ * con el estado en el local Y el estado de sus pedidos.
  */
-export const BOTONES_CLIENTE_POR_ESTADO: Record<EstadoEnResto, BotonHome[]> = {
-    // Sin mesa: anotarse, y mirar los resultados de encuestas anteriores, que
-    // es lo único a lo que el enunciado le da acceso antes de entrar (punto 9).
-    libre: [
-        {
-            texto: 'Escanear QR de ingreso',
-            icono: 'qrcode',
-            ruta: '/escanear-ingreso',
-        },
-        {
-            texto: 'Ver encuestas',
-            icono: 'chart-simple',
-            ruta: '/encuestas',
-        },
-    ],
 
-    // En la sala de espera no hay nada que tocar: se espera al metre. El
-    // cartel del inicio explica qué está pasando.
-    esperando_mesa: [
-        {
-            texto: 'Ver encuestas',
-            icono: 'chart-simple',
-            ruta: '/encuestas',
-        },
-    ],
-
-    // Ya tiene mesa: lo que sigue es escanear el código que está sobre ella.
-    mesa_asignada: [
-        {
-            texto: 'Escanear QR de mi mesa',
-            icono: 'qrcode',
-            ruta: '/escanear-mesa',
-        },
-        {
-            texto: 'Consulta al mozo',
-            icono: 'comments',
-            ruta: '/consulta-mozo',
-        },
-    ],
-
-    // Sentado: el juego completo de accesos del boceto.
-    sentado: [
-        {
-            texto: 'Carta',
-            icono: 'receipt',
-            ruta: '/carta',
-        },
-        {
-            texto: 'Consulta al mozo',
-            icono: 'comments',
-            ruta: '/consulta-mozo',
-        },
-        {
-            texto: 'Estado del pedido',
-            icono: 'hourglass-half',
-            ruta: '/estado-pedido',
-        },
-        {
-            texto: 'Juegos',
-            icono: 'gamepad',
-            ruta: '/juegos',
-        },
-        {
-            texto: 'Encuestas',
-            icono: 'chart-simple',
-            ruta: '/encuestas',
-        },
-        {
-            texto: 'Pedir la cuenta',
-            icono: 'cash-register',
-            ruta: '/pedir-cuenta',
-        },
-    ],
-
-    // Esperando que el mozo confirme el pago: puede seguir su pedido y jugar,
-    // pero ya no tiene sentido volver a pedir la cuenta.
-    pagando: [
-        {
-            texto: 'Estado del pedido',
-            icono: 'hourglass-half',
-            ruta: '/estado-pedido',
-        },
-        {
-            texto: 'Juegos',
-            icono: 'gamepad',
-            ruta: '/juegos',
-        },
-        {
-            texto: 'Encuestas',
-            icono: 'chart-simple',
-            ruta: '/encuestas',
-        },
-    ],
+const BOTON_ESCANEAR_INGRESO: BotonHome = {
+    texto: 'Escanear QR de ingreso',
+    icono: 'qrcode',
+    ruta: '/escanear-ingreso',
 };
+
+const BOTON_ESCANEAR_MESA: BotonHome = {
+    texto: 'Escanear QR de mi mesa',
+    icono: 'qrcode',
+    ruta: '/escanear-mesa',
+};
+
+const BOTON_CONSULTA_MOZO: BotonHome = {
+    texto: 'Consulta al mozo',
+    icono: 'comments',
+    ruta: '/consulta-mozo',
+};
+
+const BOTON_CARTA: BotonHome = {
+    texto: 'Carta',
+    icono: 'receipt',
+    ruta: '/carta',
+};
+
+const BOTON_MI_PEDIDO: BotonHome = {
+    texto: 'Mi pedido',
+    icono: 'receipt',
+    ruta: '/mi-pedido',
+};
+
+const BOTON_ESTADO_PEDIDO: BotonHome = {
+    texto: 'Estado del pedido',
+    icono: 'hourglass-half',
+    ruta: '/estado-pedido',
+};
+
+const BOTON_JUEGOS: BotonHome = {
+    texto: 'Juegos',
+    icono: 'gamepad',
+    ruta: '/juegos',
+};
+
+/** Antes de la visita sólo se miran los resultados de encuestas anteriores. */
+const BOTON_VER_ENCUESTAS: BotonHome = {
+    texto: 'Ver encuestas',
+    icono: 'chart-simple',
+    ruta: '/encuestas',
+};
+
+/** Con el pedido recibido, la encuesta de esta visita (punto 20). */
+const BOTON_RESPONDER_ENCUESTA: BotonHome = {
+    texto: 'Responder la encuesta',
+    icono: 'chart-simple',
+    ruta: '/encuestas',
+};
+
+const BOTON_PEDIR_CUENTA: BotonHome = {
+    texto: 'Pedir la cuenta',
+    icono: 'cash-register',
+    ruta: '/pedir-cuenta',
+};
+
+/** Todo lo que hace falta para saber qué puede hacer el cliente ahora mismo. */
+export interface SituacionDelCliente {
+    estado: EstadoEnResto;
+    perfil: PerfilUsuario | null;
+    /** Estados de los pedidos de esta visita (los que no están pagados). */
+    estadosDePedidos: readonly EstadoPedido[];
+}
+
+export function botonesDelCliente({ estado, perfil, estadosDePedidos }: SituacionDelCliente): BotonHome[] {
+    // Punto 9: sin mesa, anotarse y ver las encuestas anteriores. En la lista
+    // de espera ya no hay nada que escanear: decide el metre.
+    if (estado === 'libre') return [BOTON_ESCANEAR_INGRESO, BOTON_VER_ENCUESTAS];
+    if (estado === 'esperando_mesa') return [BOTON_VER_ENCUESTAS];
+
+    // Punto 10: le asignaron mesa pero todavía no se sentó. Punto 11: la
+    // consulta al mozo se habilita al tener la mesa asignada.
+    if (estado === 'mesa_asignada') return [BOTON_ESCANEAR_MESA, BOTON_CONSULTA_MOZO];
+
+    const hayPedidoEnviado = estadosDePedidos.length > 0;
+    const puedeJugar = estadosDePedidos.some((estadoPedido) => puedeAccederAJuegos(estadoPedido, perfil));
+
+    // Punto 21: ya pidió la cuenta. Sigue su pedido y juega, pero no vuelve a
+    // pedirla ni a cargar nada más.
+    if (estado === 'pagando') {
+        return [
+            BOTON_ESTADO_PEDIDO,
+            ...(puedeJugar ? [BOTON_JUEGOS] : []),
+            BOTON_VER_ENCUESTAS,
+        ];
+    }
+
+    // Sentado en su mesa: acá se va habilitando el resto a medida que avanza
+    // el pedido.
+    const serviciosDeMesa = estadosDePedidos.some((estadoPedido) => puedeUsarServiciosDeMesa(estadoPedido, estado));
+
+    return [
+        BOTON_CARTA,
+        BOTON_CONSULTA_MOZO,
+        ...(hayPedidoEnviado ? [BOTON_MI_PEDIDO, BOTON_ESTADO_PEDIDO] : []),
+        ...(puedeJugar ? [BOTON_JUEGOS] : []),
+        ...(serviciosDeMesa ? [BOTON_RESPONDER_ENCUESTA, BOTON_PEDIR_CUENTA] : []),
+    ];
+}
 
 // Mapa único rol -> botones. Para agregar un botón nuevo alcanza con sumarlo
 // al array del rol correspondiente, no hace falta tocar el HTML del home.
