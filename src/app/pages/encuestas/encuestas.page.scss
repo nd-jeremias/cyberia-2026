@@ -68,7 +68,7 @@
     font-weight: 700;
     color: var(--tinta);
   }
-  
+
   .caja-input {
     width: 100%;
     
@@ -132,11 +132,6 @@
   color: var(--exito-tinta);
   font-size: var(--texto-epigrafe);
   font-weight: 600;
-
-  ion-icon {
-    font-size: 1.25rem;
-    flex-shrink: 0;
-  }
 }
 
 .selector-grafico {
@@ -194,19 +189,11 @@
     cursor: pointer;
     transition: transform 0.15s ease;
 
-    ion-icon {
-      font-size: 2.25rem;
-      color: var(--tinta-suave);
-      transition: color 0.2s ease, transform 0.15s ease;
-    }
-
+    
     &:active {
       transform: scale(0.85);
     }
 
-    &.activa ion-icon {
-      color: #e28a1c; // Dorado/naranja encendido
-    }
   }
 
   .valor-estrellas {
@@ -216,4 +203,22 @@
     color: var(--tinta);
     font-variant-numeric: tabular-nums;
   }
+}
+
+.btn-estrella {
+  fa-icon {
+    font-size: 2.1rem;
+    color: var(--tinta-suave);
+    transition: color 0.2s ease, transform 0.15s ease;
+  }
+
+  &.activa fa-icon {
+    color: #e28a1c; // Dorado/naranja encendido
+  }
+}
+
+.icono-campo {
+  font-size: 1.25rem;
+  color: var(--naranja);
+  margin-right: 0.5rem;
 }

@@ -12,6 +12,7 @@ import { EncuestasService, EncuestaFila } from '../../services/encuestas.service
 import { Chart, registerables } from 'chart.js';
 import { star, starOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 Chart.register(...registerables);
 
@@ -22,12 +23,12 @@ Chart.register(...registerables);
   standalone: true,
   imports: [
     IonContent,
-    IonIcon,
     IonButton,
     IonRange,
     IonTextarea,
     IonSelect,
     IonSelectOption,
+    FontAwesomeModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
