@@ -26,7 +26,7 @@
     <section class="factura-items">
         <div class="factura-items-header">
             <span>Producto</span>
-            <span class="alinear-derecha">Total</span>
+            <span class="alinear-derecha">Precio</span>
         </div>
 
         <ul class="factura-lista">
@@ -48,20 +48,25 @@
             <span class="factura-subtotal-rotulo">Subtotal</span>
             <span class="factura-subtotal-valor">$ {{ pedido()?.precioTotalNeto }}</span>
         </div>
+        
+        @let conDescuento = (pedido()?.precioTotalNeto ?? 0) * ((pedido()?.descuentoJuego ?? 0) / 100);
+        @let conPropina = (pedido()?.precioTotalNeto ?? 0) * ((pedido()?.propinaPorcentaje ?? 0) / 100);
 
         @if (pedido()?.descuentoJuego) {
         <div class="factura-subtotal-fila factura-descuento">
             <span class="factura-subtotal-rotulo"> Descuento juego ({{ pedido()?.descuentoJuego }}%) </span>
+            
             <span class="factura-subtotal-valor">
-                − $ {{ (pedido()?.precioTotalNeto ?? 0) * ((pedido()?.descuentoJuego ?? 0) / 100) | number : "1.2-2" }}
+                − $ {{ conDescuento | number : "1.2-2" }}
             </span>
         </div>
         } @if (pedido()?.propinaPorcentaje) {
         <div class="factura-subtotal-fila factura-propina">
             <span class="factura-subtotal-rotulo"> Propina ({{ pedido()?.propinaPorcentaje }}%) </span>
+            
             <span class="factura-subtotal-valor">
                 + $
-                {{ (pedido()?.precioTotalNeto ?? 0) * ((pedido()?.propinaPorcentaje ?? 0) / 100) | number : "1.2-2" }}
+                {{ conPropina | number : "1.2-2" }}
             </span>
         </div>
         }
@@ -72,7 +77,7 @@
 
     <p class="factura-total">
         <span class="factura-total-rotulo">TOTAL</span>
-        <span class="factura-total-importe">$ {{ pedido()?.precioTotalNeto }}</span>
+        <span class="factura-total-importe">$ {{ (pedido()?.precioTotalNeto ?? 0) - (conDescuento ?? 0) + (conPropina ?? 0) }} </span>
     </p>
 
     <!-- ── Pie ────────────────────────────────────────────────────────── -->
