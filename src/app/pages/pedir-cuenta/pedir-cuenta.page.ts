@@ -1,5 +1,7 @@
+import { TarjetaInformacionClienteComponent } from './../../components/tarjeta-informacion-cliente/tarjeta-informacion-cliente.component';
+import { RouterLink } from '@angular/router';
 import { Component, inject, signal } from '@angular/core';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent, IonIcon, IonRouterLink } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { BotonHomeComponent } from '../../components/boton-home/boton-home.component';
 import { BotonHomeInterface } from '../../interfaces/component.interface';
@@ -10,6 +12,7 @@ import { PedidoService } from '../../services/pedido.service';
 import { QrPropina } from '../../interfaces/qr.interface';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { TarjetaFacturaComponent } from '../../components/tarjeta-factura/tarjeta-factura.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Pedir la cuenta — PANTALLA PENDIENTE.
@@ -26,7 +29,16 @@ import { TarjetaFacturaComponent } from '../../components/tarjeta-factura/tarjet
     selector: 'app-pedir-cuenta',
     templateUrl: './pedir-cuenta.page.html',
     styleUrls: ['./pedir-cuenta.page.scss'],
-    imports: [IonContent, HeaderComponent, BotonHomeComponent, TarjetaFacturaComponent],
+    imports: [
+        TarjetaInformacionClienteComponent,
+        RouterLink,
+        FaIconComponent,
+        IonContent,
+        HeaderComponent,
+        BotonHomeComponent,
+        TarjetaFacturaComponent,
+        IonRouterLink,
+    ],
 })
 export class PedirCuentaPage {
     qrService = inject(QrService);
@@ -37,7 +49,12 @@ export class PedirCuentaPage {
     pedido = signal<PedidoInterface | null>(null);
     propinaAgregada = signal<boolean>(false);
 
-    boton: BotonHomeInterface = {
+    texto = `
+        Antes de continuar, debe seleccionar la propina que desea dejar. 
+        \nPara esto es necesario escanear el QR correspondiente.
+        \nSi no lo encuentra en la mesa, por favor pídaselo a su mozo. `;
+
+    botonPropina: BotonHomeInterface = {
         texto: 'Agregar propina',
         icono: 'circle-dollar-to-slot',
         accion: () => this.scanQrPropina(),

@@ -5,13 +5,19 @@
             [defaultHref]="'/inicio'"
             [tituloHeader]="'Pedir la cuenta'"
         ></app-header>
-
         <div class="superior hoja">
+            <button class="btn" (click)="propinaAgregada.set(true)">set flag</button>
+
             @if(propinaAgregada()){ @if(pedido()){
-            <app-tarjeta-factura [pedido]="pedido()"></app-tarjeta-factura>} @else {
+            <app-tarjeta-factura [pedido]="pedido()"></app-tarjeta-factura>
+            <button class="btn btn-primario" [routerLink]="'/pagar'">
+                <fa-icon [icon]="['fas', 'credit-card']"></fa-icon> Realizar pago
+            </button>
+            } @else {
             <p>No se pudo actualizar su pedido.</p>
             } } @else {
-            <app-boton-home [boton]="boton"></app-boton-home>
+            <app-tarjeta-informacion-cliente [texto]="texto"></app-tarjeta-informacion-cliente>
+            <app-boton-home [boton]="botonPropina"></app-boton-home>
             }
         </div>
     </div>
