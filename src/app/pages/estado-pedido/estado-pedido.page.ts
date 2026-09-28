@@ -100,7 +100,10 @@ export class EstadoPedidoPage {
         return this.pedidoService.tiempoEstimado(pedido);
     }
 
-    irAMiPedido() {
-        void this.router.navigate(['/mi-pedido']);
+    irAMiPedido(pedidoId: string) {
+        // Si se arma la otra pagina cambiar la ruta a "estado-pedido/pedido"
+        void this.router.navigate(['/mi-pedido'], {
+            queryParams: { pedidoId: pedidoId },
+        });
     }
 }

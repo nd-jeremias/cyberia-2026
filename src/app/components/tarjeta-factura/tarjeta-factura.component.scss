@@ -1,0 +1,312 @@
+/* =============================================================================
+   Tarjeta Factura — estética de ticket de restaurante
+   Usa las mismas variables del design-system de la app, sin romper el
+   patrón visual. La novedad es el tratamiento de "papel térmico": bordes
+   perforados, columnas alineadas y tipografía monoespaciada en los números.
+   ============================================================================= */
+
+/* ── Contenedor principal ──────────────────────────────────────────────────── */
+
+.factura {
+    display: flex;
+    flex-direction: column;
+
+    /* Mismo fondo elevado que usa el resto de las tarjetas */
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-tarjeta);
+
+    /* El ancho máximo replica el de un ticket real (~80 mm → ~20 rem) */
+    width: 100%;
+    max-width: 26rem;
+    margin: 0 auto;
+
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* ── Cabecera ──────────────────────────────────────────────────────────────── */
+
+.factura-cabecera {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 1rem;
+
+    /* Franja naranja de marca, igual que el header de la app */
+    // background: var(--grad-banda);
+}
+
+.factura-logo {
+    height: 5.5rem;
+    width: auto;
+    object-fit: contain;
+    /* El logo es oscuro; lo aclara para que contraste con el naranja */
+    // filter: brightness(0) invert(1);
+    opacity: 0.95;
+}
+
+.factura-nombre-local {
+    margin: 0.375rem 0 0;
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--naranja);
+}
+
+.factura-leyenda {
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    font-weight: 500;
+    color: var(--tinta-suave);
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* ── Separador perforado ───────────────────────────────────────────────────── */
+
+.factura-perforado {
+    position: relative;
+    height: 0;
+    margin: 0;
+    width: 95%;
+    align-self: center;
+    /* Línea de puntos que imita la perforación del ticket */
+    border-top: 0.125rem dashed var(--tinta-suave);
+
+    /* Semicírculos laterales recortados (aspecto de ticket troquelado) */
+    // &::before,
+    // &::after {
+    //     content: '';
+    //     position: absolute;
+    //     top: -0.75rem;
+    //     width: 1.5rem;
+    //     height: 1.5rem;
+    //     border-radius: 50%;
+    //     /* El mismo naranja de fondo de la página asoma detrás */
+    //     background: var(--naranja);
+    //     border: var(--borde-hoja);
+    // }
+
+    // &::before { left: -0.875rem; }
+    // &::after  { right: -0.875rem; }
+}
+
+.factura-perforado--grueso {
+    border-top-width: 0.1875rem;
+    border-color: var(--hoja-borde-fuerte);
+}
+
+/* ── Datos del pedido ──────────────────────────────────────────────────────── */
+
+.factura-datos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+}
+
+.factura-dato {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.factura-dato-rotulo {
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+}
+
+.factura-dato-valor {
+    font-size: var(--texto-apoyo);
+    font-weight: 700;
+    color: var(--tinta);
+    font-variant-numeric: tabular-nums;
+}
+
+.factura-mesa-num {
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    color: var(--naranja-hondo);
+    text-align: center;
+}
+
+/* ── Tabla de ítems ────────────────────────────────────────────────────────── */
+
+.factura-items {
+    padding: 0.75rem 1.25rem;
+}
+
+/* Cabecera de columnas */
+.factura-items-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 0 0.75rem;
+
+    padding-bottom: 0.375rem;
+    border-bottom: 0.0625rem solid var(--hoja-borde);
+
+    font-size: var(--texto-epigrafe);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--tinta-tenue);
+}
+
+/* Lista de ítems */
+.factura-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.factura-item {
+    display: grid;
+    /* col 1: nombre  col 2: cant  col 3: total */
+    grid-template-columns: 1fr auto auto;
+    grid-template-rows: auto auto;
+    column-gap: 0.75rem;
+    row-gap: 0;
+
+    padding: 0.5rem 0;
+    border-bottom: 0.0625rem solid rgba(58, 34, 20, 0.07);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.factura-item-nombre {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: var(--texto-apoyo);
+    font-weight: 600;
+    color: var(--tinta);
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.factura-item-cantidad {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.factura-item-total {
+    grid-column: 3;
+    grid-row: 1;
+    font-weight: 700;
+    color: var(--tinta);
+    font-variant-numeric: tabular-nums;
+}
+
+.factura-item-precio-unitario {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    font-size: var(--texto-epigrafe);
+    color: var(--tinta-tenue);
+    font-variant-numeric: tabular-nums;
+    padding-top: 0.125rem;
+}
+
+/* ── Subtotales ────────────────────────────────────────────────────────────── */
+
+.factura-subtotales {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding: 0.75rem 1.25rem;
+}
+
+.factura-subtotal-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.factura-subtotal-rotulo {
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: var(--tinta-suave);
+}
+
+.factura-subtotal-valor {
+    font-size: var(--texto-apoyo);
+    font-weight: 700;
+    color: var(--tinta);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.factura-descuento .factura-subtotal-valor {
+    color: var(--exito-tinta);
+}
+
+.factura-propina .factura-subtotal-valor {
+    color: var(--naranja-hondo);
+}
+
+/* ── Total ─────────────────────────────────────────────────────────────────── */
+
+.factura-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    margin: 0;
+    padding: 1rem 1.25rem;
+}
+
+.factura-total-rotulo {
+    font-size: var(--texto-apoyo);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+}
+
+.factura-total-importe {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--naranja-hondo);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Pie ───────────────────────────────────────────────────────────────────── */
+
+.factura-pie {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+    padding: 0.875rem 1.25rem 1.125rem;
+}
+
+.factura-pie-texto {
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: var(--tinta-tenue);
+    text-align: center;
+}
+
+/* ── Utilidades de alineado (para las columnas del ítem) ───────────────────── */
+
+.alinear-centro {
+    text-align: center;
+}
+.alinear-derecha {
+    text-align: right;
+}

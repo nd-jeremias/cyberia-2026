@@ -1,13 +1,18 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
-        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Pedir la cuenta'"></app-header>
+        <app-header
+            class="inferior sin-labio"
+            [defaultHref]="'/inicio'"
+            [tituloHeader]="'Pedir la cuenta'"
+        ></app-header>
 
         <div class="superior hoja">
-            <div class="estado-vacio">
-                <ion-icon name="construct-outline"></ion-icon>
-                <p>Esta pantalla todavía no está hecha.</p>
-                <p>Punto 21: propina por QR y detalle de la cuenta.</p>
-            </div>
+            @if(propinaAgregada()){ @if(pedido()){
+            <app-tarjeta-factura [pedido]="pedido()"></app-tarjeta-factura>} @else {
+            <p>No se pudo actualizar su pedido.</p>
+            } } @else {
+            <app-boton-home [boton]="boton"></app-boton-home>
+            }
         </div>
     </div>
 </ion-content>
