@@ -622,4 +622,15 @@ export class PedidoService {
 
         return pedido.precioTotalNeto - descuento + propina;
     }
+
+    async setPropina(pedidoId: string, propina: number): Promise<void> {
+        try {
+            const { error } = await supabase.from('pedidos').update({ propina_porcentaje: propina }).eq('id', pedidoId);
+
+            if (error) throw error;
+        } catch (error) {
+            console.log('No se pudo actualizar la propina del pedido.', error);
+            throw new Error('No se pudo actualizar la propina del pedido.');
+        }
+    }
 }
