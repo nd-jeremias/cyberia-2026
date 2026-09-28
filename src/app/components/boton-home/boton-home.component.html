@@ -1,4 +1,4 @@
-<button class="tarjeta-accion" [routerLink]="boton().ruta">
+<button class="tarjeta-accion" (click)="ejecutarAccion()">
     <span class="medallon">
         <fa-icon [icon]="['fas', boton().icono]"></fa-icon>
     </span>
