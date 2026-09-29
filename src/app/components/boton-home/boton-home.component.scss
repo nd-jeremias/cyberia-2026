@@ -1,0 +1,51 @@
+/* Medallón, nombre y flecha: el patrón de lista de cualquier aplicación de
+   gastronomía. El área de toque ocupa toda la fila. */
+.tarjeta-accion {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: transform 0.16s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+        border-color: var(--naranja);
+        box-shadow: var(--sombra-tarjeta);
+
+        .flecha-accion {
+            transform: translateX(0.1875rem);
+            color: var(--naranja);
+        }
+    }
+
+    &:active {
+        transform: scale(0.985);
+    }
+}
+
+.titulo-accion {
+    flex: 1;
+    min-width: 0;
+
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--tinta);
+}
+
+.flecha-accion {
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    color: var(--tinta-tenue);
+    transition: transform 0.18s ease, color 0.18s ease;
+}
