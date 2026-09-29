@@ -13,6 +13,8 @@ import { Chart, registerables } from 'chart.js';
 import { star, starOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { BotonHomeInterface } from '../../interfaces/component.interface';
+import { BotonHomeComponent } from '../../components/boton-home/boton-home.component';
 
 Chart.register(...registerables);
 
@@ -32,7 +34,8 @@ Chart.register(...registerables);
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    HeaderComponent
+    HeaderComponent,
+    BotonHomeComponent
   ]
 })
 export class EncuestasPage {
@@ -51,6 +54,20 @@ export class EncuestasPage {
   graficoSeleccionado = signal<'torta' | 'barras' | 'lineas'>('torta');
   yaRespondio = signal<boolean>(false);
   puedeResponder = signal<boolean>(false);
+
+  boton: BotonHomeInterface = {
+        texto: 'Completar Encuesta',
+        icono: 'pen-to-square',
+        ruta: '',
+        accion: () => this.cambiarVista('formulario')
+    };
+
+    botonResultados: BotonHomeInterface = {
+        texto: 'Ver Resultados',
+        icono: 'chart-simple',
+        ruta: '',
+        accion: () => this.cambiarVista('graficos')
+    };
 
   encuestas = signal<EncuestaFila[]>([]);
   cargando = signal<boolean>(true);
@@ -137,6 +154,8 @@ export class EncuestasPage {
       setTimeout(() => this.renderizarGrafico(), 100);
     }
   }
+
+  
 
             renderizarGrafico() {
         if (!this.canvasGrafico?.nativeElement) return;

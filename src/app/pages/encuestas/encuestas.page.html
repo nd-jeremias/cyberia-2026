@@ -5,25 +5,10 @@
         <div class="superior hoja hoja-angosta">
             <!-- Selector superior de vista si tiene permiso para responder -->
             @if (puedeResponder()){
-            <div class="selector-pestana">
-                <button 
-                    type="button" 
-                    class="btn-secundario" 
-                    [class.activo]="vista() === 'formulario'" 
-                    (click)="cambiarVista('formulario')"
-                >
-                    <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
-                    Completar Encuesta
-                </button>
-                <button 
-                    type="button"
-                    class="btn-secundario" 
-                    [class.activo]="vista() === 'graficos'"
-                    (click)="cambiarVista('graficos')"
-                >
-                    <fa-icon [icon]="['fas', 'chart-simple']"></fa-icon>
-                    Ver Resultados
-                </button>
+            <div class="contenedor-botones-home">
+                
+                <app-boton-home [boton]="boton"></app-boton-home>
+                <app-boton-home [boton]="botonResultados"></app-boton-home>
             </div>
             }
 
