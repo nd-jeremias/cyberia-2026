@@ -348,7 +348,7 @@ export class NotificacionesService {
     }
 
     // Método para notificar a varios perfiles (ej: ['dueño', 'supervisor', 'barman'])
-    async enviarAvisos(perfiles: string[], titulo: string, cuerpo: string, tipo: string) {
+    async enviarAvisos(perfiles: string[], titulo: string, cuerpo: string, tipo: TipoNotificacion) {
         try {
             // 1. Buscamos TODOS los usuarios que coincidan con CUALQUIERA de los perfiles.
             // Al usar .in() no hace falta un bucle "for", Supabase trae todos juntos.
@@ -393,7 +393,7 @@ export class NotificacionesService {
 
     // Igual que enviarAvisos, pero para UNA persona puntual y no para un perfil.
     // Lo usa el chat (punto 11): la respuesta del mozo le llega sólo al cliente de ese chat.
-    async enviarAvisoAUsuario(usuarioId: string, titulo: string, cuerpo: string, tipo: string) {
+    async enviarAvisoAUsuario(usuarioId: string, titulo: string, cuerpo: string, tipo: TipoNotificacion) {
         try {
             const { data: usuario, error: userError } = await supabase
                 .from('usuarios')

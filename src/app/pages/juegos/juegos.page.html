@@ -1,13 +1,22 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Juegos'"></app-header>
-
-        <div class="superior hoja">
-            <div class="estado-vacio">
-                <ion-icon name="construct-outline"></ion-icon>
-                <p>Esta pantalla todavía no está hecha.</p>
-                <p>Puntos 14 y 15: tres juegos con descuento del 10, 15 y 20 por ciento.</p>
+        @if(verJuegos()){
+            <div class="superior hoja">
+                <div class="estado-vacio">
+                    <ion-icon name="construct-outline"></ion-icon>
+                    <p>Esta pantalla todavía no está hecha.</p>
+                    <p>Puntos 14 y 15: tres juegos con descuento del 10, 15 y 20 por ciento.</p>
+                </div>
             </div>
-        </div>
+        } @else {
+            <div class="superior hoja">
+                <div class="estado-vacio">
+                    <ion-icon name="construct-outline"></ion-icon>
+                    <p>Todavia no puede acceder a los juegos. </p>
+                    <p>Haga su pedido y espere a que el mozo lo confirme. </p>
+                </div>
+            </div>
+        }
     </div>
 </ion-content>

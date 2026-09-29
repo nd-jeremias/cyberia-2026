@@ -368,6 +368,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 6.- Verificar ingreso del cliente registrado              |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
 | 7.- El dueño o supervisor rechaza a un cliente.           |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
 | 8.- El dueño o supervisor acepta a un cliente registrado. |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
+| 21.- El cliente solicita la cuenta al mozo.               |   30/09/2026    | --/--/---- | En Proceso  |                                                                                   |
 
 ---
 
@@ -418,8 +419,7 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 3.- Agregar una nueva bebida                                                                                       |   02/09/2026    | 02/09/2026 | Completado |                                                                                                                            |
 | 9.- Ingresar al local como un cliente anónimo                                                                      |   14/09/2026    | 14/09/2026 | Completado |                            ✅ Reevaluar la fecha conciderando relaciones con otros componentes                             |
 | 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos |   14/09/2026    | 14/09/2026 | Completado |                                                                                                                            |
-| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   14/09/2026    | 14/09/2026 | Completado |            ✅ Falta revisar que el pedido sea enviado a los sectores correspondientes - Corregir padding-botom             |
-| 21.- El cliente solicita la cuenta al mozo.                                                                        |   30/09/2026    | --/--/---- | Pendiente  |                                                                                                                            |
+| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   14/09/2026    | 14/09/2026 | Completado |                         ✅ Falta revisar que el pedido sea enviado a los sectores correspondientes                         |
 
 ---
 

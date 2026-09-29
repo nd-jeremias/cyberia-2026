@@ -26,7 +26,11 @@ import { NotificacionesService } from '../../services/notificaciones.service';
  * botón avisa en lugar de no hacer nada.
  */
 const SECCIONES = {
-    estado: { ruta: 'estado-pedido', titulo: 'Estado del pedido', aviso: 'El seguimiento del pedido todavía no está habilitado.' },
+    estado: {
+        ruta: 'estado-pedido',
+        titulo: 'Estado del pedido',
+        aviso: 'El seguimiento del pedido todavía no está habilitado.',
+    },
     juegos: { ruta: 'juegos', titulo: 'Juegos', aviso: 'La sección de juegos todavía no está habilitada.' },
     encuesta: { ruta: 'encuestas', titulo: 'Encuesta', aviso: 'La encuesta todavía no está habilitada.' },
     cuenta: { ruta: 'pedir-cuenta', titulo: 'Cuenta', aviso: 'El pedido de la cuenta todavía no está habilitado.' },
@@ -71,7 +75,7 @@ export class MiPedidoPage {
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
     private router = inject(Router);
-    private notificaciones = inject(NotificacionesService)
+    private notificaciones = inject(NotificacionesService);
 
     carrito = inject(ChartService);
 
@@ -150,11 +154,16 @@ export class MiPedidoPage {
             cantidad: item.cantidad,
             precioUnitario: item.precioUnitario,
         }));
-        
-        await this.notificaciones.enviarAvisos(['mozo'], "Pedido realizado.", "Nuevo pedido para verificar. ", 'pedido-nuevo')
+
+        await this.notificaciones.enviarAvisos(
+            ['mozo'],
+            'Pedido realizado.',
+            'Nuevo pedido para verificar. ',
+            'pedido-nuevo'
+        );
 
         const aCorregir = this.pedidoRechazado();
-        
+
         if (aCorregir) {
             const reenviado = await this.pedidoService.reenviar(aCorregir.id, items);
 
@@ -168,10 +177,7 @@ export class MiPedidoPage {
         const mesaId = this.salonService.situacion()?.mesaId;
 
         if (!clienteId || !mesaId) {
-            this.modal.setOpen(
-                'Falta la mesa',
-                'Escaneá el código QR de tu mesa antes de enviar el pedido.'
-            );
+            this.modal.setOpen('Falta la mesa', 'Escaneá el código QR de tu mesa antes de enviar el pedido.');
 
             return;
         }
@@ -213,9 +219,7 @@ export class MiPedidoPage {
     }
 
     /** Punto 15: alcanza con que alguno de sus pedidos ya esté confirmado. */
-    puedeJugar = computed(() =>
-        this.pedidos().some((p) => puedeAccederAJuegos(p.estado, this.authService.perfil()))
-    );
+    puedeJugar = computed(() => this.pedidos().some((p) => puedeAccederAJuegos(p.estado, this.authService.perfil())));
 
     /**
      * Punto 19: la encuesta y la cuenta se habilitan cuando recibió TODO lo que
@@ -269,7 +273,14 @@ export class MiPedidoPage {
     async confirmarRecepcion(pedido: PedidoInterface) {
         const usuarioId = this.authService.session()?.user.id;
 
-        if (!usuarioId) return;
+        if (!usuarioId) {
+            this.modal.setOpen(
+                'Error con el usuario.',
+                'Hubo un error al obtener el usuario actual. Por favor, cierre sesión y vuelva a ingresar.',
+                'error'
+            );
+            return;
+        }
 
         const confirmado = await this.pedidoService.confirmarRecepcion(pedido.id, usuarioId);
 
@@ -288,7 +299,6 @@ export class MiPedidoPage {
     totalFormateado(pedido: PedidoInterface): string {
         return formatearImporte(this.pedidoService.totalConDescuento(pedido));
     }
-
 
     /**
      * Lleva al estado del pedido o a los juegos (punto 14), a la encuesta o a

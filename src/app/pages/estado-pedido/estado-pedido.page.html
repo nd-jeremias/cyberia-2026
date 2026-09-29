@@ -61,18 +61,17 @@
                     </li>
                     }
                 </ul>
+                <button type="button" class="btn-principal" (click)="irAMiPedido(pedido.id)">
+                    <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
+                    Ir a mi pedido
+                </button>
             </article>
             } @empty {
             <div class="estado-vacio">
                 <fa-icon [icon]="['fas', 'rectangle-xmark']"></fa-icon>
                 <p>Todavía no enviaste ningún pedido.</p>
             </div>
-            }
-            <button type="button" class="btn-principal" (click)="irAMiPedido()">
-                <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
-                Ir a mi pedido
-            </button>
-            }
+            } }
         </div>
     </div>
 </ion-content>
