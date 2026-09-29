@@ -2,31 +2,41 @@
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Encuestas'"></app-header>
 
-        <div class="superior hoja">
+        <div class="superior hoja hoja-angosta">
             <!-- Selector superior de vista si tiene permiso para responder -->
-            @if (puedeResponder()) {
+            <!-- @if (puedeResponder()){ -->
             <div class="selector-pestana">
-                <button type="button" class="btn-tab" [class.activo]="vista() === 'formulario'" (click)="cambiarVista('formulario')">
+                <button 
+                    type="button" 
+                    class="btn-secundario" 
+                    [class.activo]="vista() === 'formulario'" 
+                    (click)="cambiarVista('formulario')"
+                >
                     <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
                     Completar Encuesta
                 </button>
-                <button type="button" class="btn-tab" [class.activo]="vista() === 'graficos'" (click)="cambiarVista('graficos')">
+                <button 
+                    type="button"
+                    class="btn-secundario" 
+                    [class.activo]="vista() === 'graficos'"
+                    (click)="cambiarVista('graficos')"
+                >
                     <fa-icon [icon]="['fas', 'chart-simple']"></fa-icon>
                     Ver Resultados
                 </button>
             </div>
-            }
+            <!-- } -->
 
             <!-- VISTA 1: FORMULARIO (1 sola vez por estadía) -->
             @if (vista() === 'formulario') {
-            <div class="contenedor-formulario">
+            <article class="tarjeta seccion-form">
                 <h2 class="titulo-seccion">¿Cómo fue tu experiencia?</h2>
                 
                 <form [formGroup]="form" (ngSubmit)="enviarEncuesta()">
                 
                 <!-- Calificación Comida (Estrellas FontAwesome) -->
-                <div class="campo-encuesta">
-                    <label class="etiqueta">Calidad de la comida:</label>
+                <div class="grupo-input">
+                    <label class="input-label">Calidad de la comida:</label>
   
                     <div class="selector-estrellas" role="radiogroup" aria-label="Calificación de la comida">
                         @for (estrella of [1, 2, 3, 4, 5]; track estrella) {
@@ -40,20 +50,18 @@
                             <fa-icon [icon]="form.get('calificacionComida')?.value! >= estrella ? ['fas', 'star'] : ['far', 'star']"></fa-icon>
                         </button>
                         }
-                        <span class="valor-estrellas">
-                            {{ form.get('calificacionComida')?.value }} / 5
-                        </span>
+                        
                     </div>
                 </div>
 
                 <!-- Atención del Mozo -->
-                <div class="campo-encuesta">
-                    <label class="etiqueta">Atención del mozo:</label>
-                    <div class="opciones-grilla">
+                <div class="grupo-input">
+                    <label class="input-label">Atención del mozo:</label>
+                    <div class="grilla-opciones">
                     @for (opcion of ['Excelente', 'Buena', 'Regular', 'Mala']; track opcion) {
                         <button 
                             type="button" 
-                            class="btn-opcion" 
+                            class="btn-secundario btn-opcion" 
                             [class.seleccionado]="form.get('atencionMozo')?.value === opcion"
                             (click)="form.get('atencionMozo')?.setValue(opcion)"
                         >
@@ -64,8 +72,8 @@
                 </div>
 
                 <!-- Tiempo de espera -->
-                <div class="campo-encuesta">
-                    <label class="etiqueta" for="select-tiempo-espera">Tiempos de espera:</label>
+                <div class="grupo-input">
+                    <label class="input-label" for="select-tiempo-espera">Tiempos de espera:</label>
                     <div class="caja-input">
                         <fa-icon [icon]="['far', 'clock']" class="icono-campo"></fa-icon>
                         <ion-select
@@ -83,12 +91,12 @@
                 </div>
 
                 <!-- Recomienda lugar -->
-                <div class="campo-encuesta">
-                    <label class="etiqueta">¿Recomendarías Cyberia Restó?</label>
-                    <div class="opciones-grilla dos-col">
+                <div class="grupo-input">
+                    <label class="input-label">¿Recomendarías Cyberia Restó?</label>
+                    <div class="grilla-opciones dos-columnas">
                         <button 
                             type="button" 
-                            class="btn-opcion" 
+                            class="btn-secundario btn-opcion" 
                             [class.seleccionado]="form.get('recomiendaLugar')?.value === true"
                             (click)="form.get('recomiendaLugar')?.setValue(true)"
                         >
@@ -96,7 +104,7 @@
                         </button>
                         <button 
                             type="button" 
-                            class="btn-opcion" 
+                            class="btn-secundario btn-opcion" 
                             [class.seleccionado]="form.get('recomiendaLugar')?.value === false"
                             (click)="form.get('recomiendaLugar')?.setValue(false)"
                         >
@@ -106,13 +114,14 @@
                 </div>
 
                 <!-- Comentario libre -->
-                <div class="campo-encuesta">
-                    <label class="etiqueta">Comentarios adicionales:</label>
+                <div class="grupo-input">
+                    <label class="input-label" for="comentario-encuesta">Comentarios adicionales:</label>
                     <ion-textarea 
+                        id="comentario-encuesta"
                         formControlName="comentario" 
                         placeholder="Contanos qué te pareció o qué podemos mejorar..."
                         [rows]="3"
-                        class="caja-input"
+                        [autoGrow]="true"
                     ></ion-textarea>
                 </div>
 
@@ -120,38 +129,38 @@
                     Enviar Encuesta
                 </button>
                 </form>
-            </div>
+            </article>
             }
 
             <!-- VISTA 2: GRÁFICOS (Un gráfico por pantalla) -->
             @if (vista() === 'graficos') {
-            <div class="contenedor-graficos">
+            <article class="tarjeta seccion-graficos">
                 
                 @if (yaRespondio()) {
-                <div class="cartel-info">
+                <div class="chip estado-info">
                     <fa-icon [icon]="['far', 'circle-check']"></fa-icon>
                     <span>Ya completaste tu encuesta de esta visita. Mirá las estadísticas generales:</span>
                 </div>
                 }
 
                 <!-- Selector de Gráficos (1 gráfico por pantalla) -->
-                <nav class="selector-grafico">
-                    <button type="button" class="btn-tipo" [class.activo]="graficoSeleccionado() === 'torta'" (click)="cambiarTipoGrafico('torta')">
+                <div class="grilla-opciones">
+                    <button type="button" class="btn-secundario btn-opcion" [class.activo]="graficoSeleccionado() === 'torta'" (click)="cambiarTipoGrafico('torta')">
                         Torta
                     </button>
-                    <button type="button" class="btn-tipo" [class.activo]="graficoSeleccionado() === 'barras'" (click)="cambiarTipoGrafico('barras')">
+                    <button type="button" class="btn-secundario btn-opcion" [class.activo]="graficoSeleccionado() === 'barras'" (click)="cambiarTipoGrafico('barras')">
                         Barras
                     </button>
-                    <button type="button" class="btn-tipo" [class.activo]="graficoSeleccionado() === 'lineas'" (click)="cambiarTipoGrafico('lineas')">
+                    <button type="button" class="btn-secundario btn-opcion" [class.activo]="graficoSeleccionado() === 'lineas'" (click)="cambiarTipoGrafico('lineas')">
                         Lineal
                     </button>
-                </nav>
+                </div>
 
                 <!-- Canvas del gráfico visible sin cortar -->
                 <div class="area-grafico">
                     <canvas #canvasGrafico></canvas>
                 </div>
-            </div>
+            </article>
             }
         </div>
     </div>
