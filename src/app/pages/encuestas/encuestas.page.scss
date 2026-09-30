@@ -1,144 +1,66 @@
-/* Envoltorio de la hoja con padding superior estándar */
 :host ::ng-deep {
   .layout-superpuesto { min-height: 100vh; }
   .inferior { height: auto; padding-bottom: 0; }
   .superior { padding-top: 1.5rem; }
 }
 
-.tarjeta {
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-}
-
-/* Selector superior de navegación */
-.selector-pestana {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-
-  .btn-secundario {
-    min-height: 2.85rem;
-    font-size: var(--texto-epigrafe);
-
-    &.activo {
-      background: var(--grad-naranja);
-      border-color: transparent;
-      color: var(--sobre-naranja);
-      box-shadow: var(--sombra-naranja);
-    }
-  }
-}
-
-/* Grilla de botones de opciones */
-.grilla-opciones {
-  display: grid;
-  // En móviles: 2 columnas x 2 filas para que ningún botón quede cortado
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-
-  &.dos-columnas {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  // En pantallas más anchas (tablets o PC) entran los 4 en una fila
-  @media (min-width: 32rem) {
-    &:not(.dos-columnas) {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .btn-opcion {
-    min-height: 2.75rem;
-    font-size: var(--texto-epigrafe);
-    text-transform: none; // Respeta mayúsculas naturales
-
-    &.seleccionado {
-      background: var(--naranja);
-      border-color: var(--naranja);
-      color: var(--sobre-naranja);
-    }
-  }
-}
-
-/* Estrellas interactivas */
-.selector-estrellas {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0;
-
-  .btn-estrella {
-    background: transparent;
-    border: none;
-    padding: 0.25rem;
-    cursor: pointer;
-
-    fa-icon {
-      font-size: 2rem;
-      color: var(--tinta-suave);
-      transition: color 0.15s ease, transform 0.15s ease;
-    }
-
-    &:active {
-      transform: scale(0.88);
-    }
-
-    &.activa fa-icon {
-      color: var(--alerta); // Tono ámbar/dorado de variables.scss
-    }
-  }
-
-  .chip {
-    margin-left: 0.5rem;
-    font-size: 0.95rem;
-  }
-}
-
-/* Ajuste de textarea dentro de caja-input */
-.caja-textarea {
-  min-height: 5rem;
-  padding: 0.5rem 1rem;
-}
-
-/* Contenedor del gráfico Chart.js */
-.seccion-graficos {
+.contenedor-acciones {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-
-  .estado-listo {
-    align-self: flex-start;
-    color: var(--exito-tinta);
-    background: var(--exito-velo);
-    border-color: rgba(27, 122, 75, 0.35);
-  }
+  gap: 0.85rem;
+  width: 100%;
 }
 
-.area-grafico {
-  position: relative;
-  width: 100%;
-  height: 380px !important;
-  min-height: 380px !important;
+/* Tarjeta interactiva con estilo Home */
+.tarjeta-accion {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 1rem;
+  padding: 1.15rem 1rem;
+  box-sizing: border-box;
+  background: var(--hoja-alta);
+  border: var(--borde-hoja);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-apoyada);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 
-  canvas {
-    width: 100% !important;
-    height: 100% !important;
-    max-height: 380px !important;
+  &:active {
+    transform: scale(0.985);
+  }
+
+  .titulo-accion {
+    flex: 1;
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    color: var(--tinta);
+  }
+
+  .flecha-accion {
+    font-size: 1.4rem;
+    color: var(--tinta-tenue);
   }
 }
 
-.contenedor-botones-home {
-    display: flex;
-    flex-direction: column; // Fuerza que aparezcan uno debajo del otro
-    gap: 0.75rem;
-    width: 100%;
-    margin-bottom: 1.25rem;
+.aviso-estado {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--velo-tinta);
+  border-radius: var(--radio-chico);
+  color: var(--tinta-media);
+  font-size: var(--texto-epigrafe);
 
-    app-boton-home {
-        display: block;
-        width: 100%;
-    }
+  ion-icon {
+    font-size: 1.35rem;
+    color: var(--naranja);
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+  }
 }
