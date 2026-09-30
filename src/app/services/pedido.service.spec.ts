@@ -643,10 +643,31 @@ describe('PedidoService', () => {
             expect(mesas.liberar).toHaveBeenCalledWith('mesa-1', 'cliente-1');
             expect(salon.terminarVisita).toHaveBeenCalledWith('cliente-1');
             expect(cobro.update).toHaveBeenCalledWith({ estado: 'Pagado' });
+            expect(cobro.eq).toHaveBeenCalledWith('cliente_id', 'cliente-1');
+            expect(cobro.eq).toHaveBeenCalledWith('mesa_id', 'mesa-1');
             // Excluir lo ya pagado es lo que detecta el cobro doble.
             expect(cobro.neq).toHaveBeenCalledWith('estado', 'Pagado');
             expect(servicio.pedidos()).toEqual([]);
             expect(servicio.cargando()).toBe(false);
+        });
+
+        // El cliente pudo mandar un segundo pedido antes de que el mozo
+        // confirmara el primero. Si quedara sin cobrar, no volvería a la
+        // lista del mozo (su cliente ya está libre).
+        it('cobra todos los pedidos de la visita, no sólo el de la tarjeta', async () => {
+            cobroEnBase({ data: [{ id: 'a' }, { id: 'b' }], error: null });
+
+            servicio.pedidos.set([
+                pedidoDePrueba({ id: 'a', estado: 'Recibido', estadoCliente: 'pagando' }),
+                pedidoDePrueba({ id: 'b', estado: 'Entregado', estadoCliente: 'pagando' }),
+                pedidoDePrueba({ id: 'c', mesaId: 'mesa-2', clienteId: 'cliente-2', estadoCliente: 'sentado' }),
+            ]);
+
+            const ok = await servicio.confirmarPago(servicio.pedidos()[0]);
+
+            expect(ok).toBe(true);
+            // Sólo queda el pedido de otra mesa.
+            expect(servicio.pedidos().map((p) => p.id)).toEqual(['c']);
         });
 
         // Si el pedido quedara "Pagado" con la mesa ocupada, saldría de la

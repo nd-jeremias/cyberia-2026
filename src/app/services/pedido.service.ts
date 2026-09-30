@@ -516,13 +516,21 @@ export class PedidoService {
      *  1. la mesa vuelve a estar disponible y sin cliente;
      *  2. el cliente sale del circuito del local: queda libre, sin mesa y con
      *     la hora en que terminó su visita (ver SalonService.terminarVisita);
-     *  3. recién entonces el pedido pasa a "Pagado".
+     *  3. recién entonces los pedidos de la visita pasan a "Pagado".
      *
-     * El orden importa porque la base no hace las tres juntas. El pedido se
-     * marca al final porque, una vez "Pagado", sale de la lista del mozo: si
+     * Se cobran todos los pedidos que el cliente tenga sin pagar en esa mesa, no
+     * sólo el de la tarjeta: puede haber mandado más de uno antes de que el mozo
+     * confirmara el primero, y la cuenta los suma a todos (punto 21). Uno que
+     * quedara abierto no volvería a la lista del mozo, porque su cliente ya
+     * está libre, y le aparecería al cliente en la visita siguiente.
+     *
+     * El orden importa porque la base no hace las tres juntas. Los pedidos se
+     * marcan al final porque, una vez "Pagado", salen de la lista del mozo: si
      * fuera primero y fallara la mesa, quedaría ocupada sin que nadie pudiera
      * reintentar. Así, si falla la mesa o el cliente, el cobro sigue en "Pagos
-     * por confirmar" y el mozo lo vuelve a tocar.
+     * por confirmar" y el mozo lo vuelve a tocar. Si falla el último paso, el
+     * mozo ve el error, pero el cobro ya no vuelve a su lista: el cliente
+     * quedó libre.
      *
      * Los tres pasos son seguros de repetir: si dos mozos confirman a la vez,
      * el segundo no libera una mesa ya reasignada ni cierra dos veces la
@@ -556,7 +564,8 @@ export class PedidoService {
             const { data, error } = await this.supabase
                 .from('pedidos')
                 .update({ estado: 'Pagado' })
-                .eq('id', pedido.id)
+                .eq('cliente_id', pedido.clienteId)
+                .eq('mesa_id', pedido.mesaId)
                 .neq('estado', 'Pagado')
                 .select('id');
 
@@ -568,7 +577,10 @@ export class PedidoService {
                 return false;
             }
 
-            this.pedidos.update((actuales) => actuales.filter((p) => p.id !== pedido.id));
+            const esDeLaVisita = (p: PedidoInterface) =>
+                p.clienteId === pedido.clienteId && p.mesaId === pedido.mesaId;
+
+            this.pedidos.update((actuales) => actuales.filter((p) => !esDeLaVisita(p)));
 
             return true;
         } catch (error) {
