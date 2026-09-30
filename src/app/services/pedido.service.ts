@@ -8,7 +8,9 @@ import {
     NuevoPedidoInterface,
     PedidoInterface,
 } from '../interfaces/pedido.interface';
+import { MesaService } from './mesa.service';
 import { ModalService } from './modal.service';
+import { SalonService } from './salon.service';
 import { supabase } from './supabase.service';
 
 /**
@@ -103,6 +105,8 @@ function codigoDeError(error: unknown): string | null {
 @Service()
 export class PedidoService {
     private modal = inject(ModalService);
+    private mesaService = inject(MesaService);
+    private salonService = inject(SalonService);
 
     /** Pedidos cargados en memoria; las pantallas se enganchan a este signal. */
     pedidos = signal<PedidoInterface[]>([]);
@@ -491,14 +495,24 @@ export class PedidoService {
      * Punto 22: el mozo confirma el pago y se libera la mesa.
      *
      * Son tres escrituras, en este orden:
-     *  1. el pedido pasa a "Pagado", que dispara el aviso al dueño y al
-     *     supervisor (sql/notificaciones.sql);
-     *  2. la mesa vuelve a estar disponible y sin cliente;
-     *  3. el cliente sale del circuito del local: queda "libre" y sin mesa, y
-     *     así puede volver a anotarse en la lista de espera otro día.
+     *  1. la mesa vuelve a estar disponible y sin cliente;
+     *  2. el cliente sale del circuito del local: queda libre, sin mesa y con
+     *     la hora en que terminó su visita (ver SalonService.terminarVisita);
+     *  3. recién entonces el pedido pasa a "Pagado".
      *
-     * El primer UPDATE excluye los pedidos ya pagados: si dos mozos confirman a
-     * la vez, el segundo no afecta ninguna fila y se le avisa.
+     * El orden importa porque la base no hace las tres juntas. El pedido se
+     * marca al final porque, una vez "Pagado", sale de la lista del mozo: si
+     * fuera primero y fallara la mesa, quedaría ocupada sin que nadie pudiera
+     * reintentar. Así, si falla la mesa o el cliente, el cobro sigue en "Pagos
+     * por confirmar" y el mozo lo vuelve a tocar.
+     *
+     * Los tres pasos son seguros de repetir: si dos mozos confirman a la vez,
+     * el segundo no libera una mesa ya reasignada ni cierra dos veces la
+     * visita, y el último UPDATE (que excluye lo ya pagado) le avisa.
+     *
+     * El aviso a dueño y supervisor lo manda la pantalla del mozo, como el
+     * resto de los avisos de la aplicación: el trigger de sql/notificaciones.sql
+     * nunca se instaló en la base.
      */
     async confirmarPago(pedido: PedidoInterface): Promise<boolean> {
         if (pedido.estadoCliente !== 'pagando') {
@@ -514,6 +528,13 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
+            // liberar() ya muestra su propio error si falla.
+            const mesaLiberada = await this.mesaService.liberar(pedido.mesaId, pedido.clienteId);
+
+            if (!mesaLiberada) return false;
+
+            await this.salonService.terminarVisita(pedido.clienteId);
+
             const { data, error } = await supabase
                 .from('pedidos')
                 .update({ estado: 'Pagado' })
@@ -528,20 +549,6 @@ export class PedidoService {
 
                 return false;
             }
-
-            const { error: errorMesa } = await supabase
-                .from('mesas')
-                .update({ disponibilidad: 'disponible', cliente_id: null })
-                .eq('id', pedido.mesaId);
-
-            if (errorMesa) throw errorMesa;
-
-            const { error: errorCliente } = await supabase
-                .from('usuarios')
-                .update({ estado_en_resto: 'libre', mesa_id: null })
-                .eq('id', pedido.clienteId);
-
-            if (errorCliente) throw errorCliente;
 
             this.pedidos.update((actuales) => actuales.filter((p) => p.id !== pedido.id));
 

@@ -104,8 +104,30 @@ export class PedidosPage implements OnInit {
 
         await this.recargar();
 
-        if (cobrado) {
-            this.modal.setOpen('Pago confirmado', `La mesa ${pedido.numeroMesa} quedó libre.`, 'info');
+        if (!cobrado) return;
+
+        this.modal.setOpen('Pago confirmado', `La mesa ${pedido.numeroMesa} quedó libre.`, 'info');
+
+        await this.avisarPagoConfirmado(pedido);
+    }
+
+    /**
+     * Punto 22: "luego de la confirmación de pago, la notificación automática
+     * llega al dueño y al supervisor".
+     *
+     * Si el aviso falla, el cobro ya quedó registrado y la mesa libre: no se le
+     * muestra un error al mozo, que lo leería como que el pago no salió.
+     */
+    private async avisarPagoConfirmado(pedido: PedidoInterface): Promise<void> {
+        try {
+            await this.notificaciones.enviarAvisos(
+                ['dueño', 'supervisor'],
+                'Pago confirmado',
+                `Mesa ${pedido.numeroMesa}: el mozo confirmó el pago y la mesa quedó libre.`,
+                'pago'
+            );
+        } catch (error) {
+            console.error('No se pudo avisar el pago al dueño y al supervisor:', error);
         }
     }
 

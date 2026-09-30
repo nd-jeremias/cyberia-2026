@@ -114,6 +114,7 @@ export class HomePage {
             estado: this.estadoCliente(),
             perfil,
             estadosDePedidos: this.estadosDePedidos(),
+            acabaDeTerminarSuVisita: this.salonService.acabaDeTerminarSuVisita(),
         });
     });
 

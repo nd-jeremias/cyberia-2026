@@ -69,6 +69,10 @@ CREATE TABLE public.usuarios (
     -- Mesa que tiene asignada ahora mismo. Sin REFERENCES acá porque `mesas`
     -- todavía no existe: la clave foránea se agrega al final de mesas.sql.
     mesa_id UUID NULL,
+    -- Cuándo terminó su última visita: el mozo confirmó el pago (punto 22).
+    -- Mientras no pase la ventana entre visitas, escanear un QR lo lleva a
+    -- las encuestas en lugar de volver a anotarlo. NULL = nunca vino.
+    fecha_ultima_visita TIMESTAMP WITH TIME ZONE NULL,
     fecha_registro TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
