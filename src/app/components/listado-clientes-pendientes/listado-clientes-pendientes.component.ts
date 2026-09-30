@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
-import { IonIcon } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { ACCIONES_APROBACION, AccionTarjetaUsuario, TarjetaUsuarioComponent } from '../tarjeta-usuario/tarjeta-usuario.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Botones que ofrece cada fila del listado (Aceptar y Rechazar).
@@ -19,7 +19,7 @@ const ACCIONES: AccionTarjetaUsuario[] = ACCIONES_APROBACION;
     selector: 'app-listado-clientes-pendientes',
     templateUrl: './listado-clientes-pendientes.component.html',
     styleUrls: ['./listado-clientes-pendientes.component.scss'],
-    imports: [IonIcon, TarjetaUsuarioComponent],
+    imports: [FaIconComponent, TarjetaUsuarioComponent],
 })
 export class ListadoClientesPendientesComponent {
     /** Los clientes los provee la página; este componente no consulta la base. */

@@ -1,10 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
+import { IonBadge, IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { ModalService } from '../../services/modal.service';
 import { formatearImporte } from '../../utils/importe';
 import { PedidoService } from '../../services/pedido.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Pantalla del mozo: confirmar, rechazar, entregar y cobrar pedidos.
@@ -18,11 +20,12 @@ import { PedidoService } from '../../services/pedido.service';
     selector: 'app-pedidos',
     templateUrl: './pedidos.page.html',
     styleUrls: ['./pedidos.page.scss'],
-    imports: [IonContent, IonButton, IonBadge, IonIcon, HeaderComponent],
+    imports: [IonContent, FaIconComponent, IonContent, IonBadge, HeaderComponent],
 })
 export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);
     private modal = inject(ModalService);
+    private notificaciones = inject(NotificacionesService);
 
     pedidos = this.pedidoService.pedidos;
     pendientes = this.pedidoService.pendientesDeConfirmacion;
@@ -59,10 +62,32 @@ export class PedidosPage implements OnInit {
 
     async onConfirmar(pedido: PedidoInterface) {
         await this.pedidoService.confirmar(pedido.id);
+        // Verificamos qué sectores tienen productos en este pedido
+        const tieneComida = pedido.detalles.some((d) => d.tipoProducto !== 'Bebida');
+        const tieneBebida = pedido.detalles.some((d) => d.tipoProducto === 'Bebida');
+
+        const sectores: string[] = [];
+        if (tieneComida) sectores.push('cocinero');
+        if (tieneBebida) sectores.push('cantinero');
+
+        if (sectores.length > 0) {
+            void this.notificaciones.enviarAvisos(
+                sectores,
+                `Nuevo pedido - Mesa ${pedido.numeroMesa}`,
+                'Hay nuevos productos pendientes de elaboración.',
+                'pedido-nuevo'
+            );
+        }
         await this.recargar();
     }
 
     async onRechazar(pedido: PedidoInterface) {
+        await this.notificaciones.enviarAvisoAUsuario(
+            pedido.clienteId,
+            'Pedido rechazado.',
+            'Su pedido ha sido rechazado, realize cambios y vuelva a pedir. ',
+            'pedido-estado'
+        );
         await this.pedidoService.rechazar(pedido.id);
         await this.recargar();
     }
@@ -79,8 +104,30 @@ export class PedidosPage implements OnInit {
 
         await this.recargar();
 
-        if (cobrado) {
-            this.modal.setOpen('Pago confirmado', `La mesa ${pedido.numeroMesa} quedó libre.`, 'info');
+        if (!cobrado) return;
+
+        this.modal.setOpen('Pago confirmado', `La mesa ${pedido.numeroMesa} quedó libre.`, 'info');
+
+        await this.avisarPagoConfirmado(pedido);
+    }
+
+    /**
+     * Punto 22: "luego de la confirmación de pago, la notificación automática
+     * llega al dueño y al supervisor".
+     *
+     * Si el aviso falla, el cobro ya quedó registrado y la mesa libre: no se le
+     * muestra un error al mozo, que lo leería como que el pago no salió.
+     */
+    private async avisarPagoConfirmado(pedido: PedidoInterface): Promise<void> {
+        try {
+            await this.notificaciones.enviarAvisos(
+                ['dueño', 'supervisor'],
+                'Pago confirmado',
+                `Mesa ${pedido.numeroMesa}: el mozo confirmó el pago y la mesa quedó libre.`,
+                'pago'
+            );
+        } catch (error) {
+            console.error('No se pudo avisar el pago al dueño y al supervisor:', error);
         }
     }
 

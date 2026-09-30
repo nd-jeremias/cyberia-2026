@@ -79,9 +79,11 @@ describe('TarjetaUsuarioComponent', () => {
         });
     });
 
+    // Los botones son <button> propios con íconos de FontAwesome: la tarjeta
+    // dejó de usar ion-button e Ionicons.
     describe('acciones', () => {
         it('no muestra botones si no se le pasan acciones', () => {
-            const botones = fixture.nativeElement.querySelectorAll('ion-button');
+            const botones = fixture.nativeElement.querySelectorAll('.acciones button');
 
             expect(botones.length).toBe(0);
         });
@@ -91,21 +93,23 @@ describe('TarjetaUsuarioComponent', () => {
                 {
                     id: 'aprobar',
                     etiqueta: 'Aprobar',
-                    icono: 'checkmark-circle',
+                    icono: 'circle-check',
                     color: 'success',
                 },
                 {
                     id: 'rechazar',
                     etiqueta: 'Rechazar',
-                    icono: 'close-circle',
+                    icono: 'circle-xmark',
                     color: 'danger',
                 },
             ]);
             fixture.detectChanges();
 
-            const botones = fixture.nativeElement.querySelectorAll('ion-button');
+            const botones = fixture.nativeElement.querySelectorAll('.acciones button');
 
             expect(botones.length).toBe(2);
+            expect(botones[0].textContent).toContain('Aprobar');
+            expect(botones[1].textContent).toContain('Rechazar');
         });
 
         it('emite la acción junto con el usuario al que corresponde', () => {

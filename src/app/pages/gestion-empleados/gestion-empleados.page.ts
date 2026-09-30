@@ -9,6 +9,8 @@ import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { TarjetaEmpleadoComponent } from '../../components/tarjeta-empleado/tarjeta-empleado.component';
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 /**
  * Alta y administración de empleados (punto 1).
@@ -20,7 +22,16 @@ import { ModalService } from '../../services/modal.service';
     selector: 'app-gestion-empleados',
     templateUrl: './gestion-empleados.page.html',
     styleUrls: ['./gestion-empleados.page.scss'],
-    imports: [IonContent, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaEmpleadoComponent],
+    imports: [
+        FaIconComponent,
+        IonContent,
+        CommonModule,
+        FormsModule,
+        RouterLink,
+        HeaderComponent,
+        TarjetaEmpleadoComponent,
+        FooterComponent,
+    ],
 })
 export class GestionEmpleadosPage {
     empleadosService = inject(EmpleadosService);
@@ -38,7 +49,7 @@ export class GestionEmpleadosPage {
             this.listaEmpleados.set(data);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los empleados.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -52,7 +63,7 @@ export class GestionEmpleadosPage {
             this.listaEmpleados.update((actuales) => actuales.filter((p) => p.id !== empleado.id));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el empleado.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

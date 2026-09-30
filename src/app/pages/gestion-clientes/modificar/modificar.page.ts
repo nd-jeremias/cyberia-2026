@@ -44,7 +44,7 @@ export class ModificarPage implements OnInit {
             this.clienteExistente.set(cliente);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el empleado.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -66,7 +66,7 @@ export class ModificarPage implements OnInit {
             }
             this.router.navigate(['/gestion-clientes']);
         } catch (error: any) {
-            console.error('Error en el proceso de registro:', error);
+            console.error('Error en el proceso de registro:', error, 'error');
             this.modal.setOpen('Error', error.message || 'No se pudo completar la modificación');
         } finally {
             this.spinner.hide();

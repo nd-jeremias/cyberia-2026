@@ -43,7 +43,7 @@
     line-height: 1.1;
     color: var(--tinta);
 
-    ion-icon {
+    fa-icon {
         font-size: 1.25rem;
         color: var(--naranja);
     }
@@ -105,7 +105,7 @@
     line-height: 1.45;
     color: var(--tinta);
 
-    ion-icon {
+    fa-icon {
         flex-shrink: 0;
         margin-top: 0.0625rem;
         font-size: 1.5rem;
@@ -156,8 +156,7 @@
     text-transform: capitalize;
 }
 
-.tarjeta-mesa ion-button {
+.tarjeta-mesa .btn {
     margin: 0.25rem 0 0;
     min-height: 3.25rem;
-    font-weight: 800;
 }

@@ -1,29 +1,31 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Mi mesa'"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja pantalla-mesa">
-        <div class="tarjeta-estado">
-            <span class="medallon">
-                <ion-icon name="qr-code-outline"></ion-icon>
-            </span>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Mi mesa'"></app-header>
 
-            @if (numeroMesa(); as numero) {
-            <p class="mesa-numero">Mesa N° {{ numero }}</p>
-            <p class="leyenda">
-                Escaneá el código QR que está sobre tu mesa para ver la carta y hacer tu pedido.
-            </p>
-            } @else {
-            <p class="leyenda">
-                Todavía no tenés una mesa asignada. Esperá a que el metre te ubique.
-            </p>
-            }
+        <div class="superior hoja pantalla-mesa">
+            <div class="tarjeta-estado">
+                <span class="medallon">
+                    <fa-icon [icon]="['fas', 'user-slash']"></fa-icon>
+                </span>
+
+                @if (numeroMesa(); as numero) {
+                <p class="mesa-numero">Mesa N° {{ numero }}</p>
+                <p class="leyenda">
+                    Escaneá el código QR que está sobre tu mesa para ver la carta y hacer tu pedido.
+                </p>
+                } @else {
+                <p class="leyenda">
+                    Todavía no tenés una mesa asignada. Esperá a que el metre te ubique.
+                </p>
+                }
+            </div>
+
+            <!-- @if (numeroMesa() !== null) { -->
+            <button type="button" class="btn-principal" (click)="escanear()">
+                <fa-icon [icon]="['fas', 'qrcode']"></fa-icon>
+                Escanear código de mi mesa
+            </button>
+            <!-- } -->
         </div>
-
-        @if (numeroMesa() !== null) {
-        <button type="button" class="btn-principal" (click)="escanear()">
-            <ion-icon name="scan-outline"></ion-icon>
-            Escanear código de mi mesa
-        </button>
-        }
     </div>
 </ion-content>

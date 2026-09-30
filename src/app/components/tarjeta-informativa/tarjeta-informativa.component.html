@@ -1,0 +1,42 @@
+<section class="panel-estado">
+    <!-- Título de la tarjeta adaptado a la cocina/salón -->
+    <h2 class="titulo-seccion">Estado del Servicio</h2>
+
+    <div class="cifras">
+        <!-- Métrica 1: Mesas Ocupadas -->
+        <div class="ficha-cifra fondo-naranja">
+            @if(advertencia()){
+            <!-- Componente de advertencia -->
+            <div class="alerta-badge">
+                <fa-icon [icon]="['fas', 'exclamation']"></fa-icon>
+            </div>
+            }
+            <fa-icon [icon]="['fas', 'chair']"></fa-icon>
+            <span class="rotulo">Mesas Ocupadas</span>
+            <b class="valor">14 / 20</b>
+        </div>
+
+        <!-- Métrica 2: Demora en Cocina -->
+        <div class="ficha-cifra fondo-verde">
+            <div class="alerta-badge">
+                <fa-icon [icon]="['fas', 'exclamation']"></fa-icon>
+            </div>
+            <fa-icon [icon]="['fas', 'clock']"></fa-icon>
+            <span class="rotulo">Demora </span>
+            <b class="valor">25"</b>
+        </div>
+
+        <!-- Métrica 3: Pedidos en Espera -->
+        <div class="ficha-cifra fondo-azul">
+            <div class="alerta-badge">
+                <fa-icon [icon]="['fas', 'exclamation']"></fa-icon>
+            </div>
+            <fa-icon [icon]="['fas', 'fire-burner']"></fa-icon>
+            <span class="rotulo">Pedidos en Espera</span>
+            <b class="valor">8</b>
+        </div>
+    </div>
+
+    <!-- Mensaje informativo o leyenda sutil al pie de la card -->
+    <!-- <p class="leyenda"><span class="punto punto-verde"></span> Cocina operativa</p> -->
+</section>

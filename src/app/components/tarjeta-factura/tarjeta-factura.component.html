@@ -1,0 +1,90 @@
+<article class="factura">
+    <!-- ── Cabecera ───────────────────────────────────────────────────── -->
+    <header class="factura-cabecera">
+        <img class="factura-logo" src="assets/logo-3d-solo.png" alt="Cyberia Restó" />
+        <p class="factura-nombre-local">Cyberia Restó</p>
+        <p class="factura-leyenda">Esperamos que haya disfrutado su estadía.</p>
+    </header>
+
+    <!-- ── Datos del pedido ───────────────────────────────────────────── -->
+    <div class="factura-perforado"></div>
+
+    <section class="factura-datos">
+        <div class="factura-dato fecha">
+            <span class="factura-dato-rotulo">Fecha</span>
+            <span class="factura-dato-valor">{{ pedido()?.fecha | date : "dd/MM/yyyy" }}</span>
+        </div>
+        <div class="factura-dato">
+            <span class="factura-dato-rotulo">Mesa</span>
+            <span class="factura-dato-valor factura-mesa-num">{{ pedido()?.numeroMesa }}</span>
+        </div>
+    </section>
+
+    <!-- ── Columnas de la tabla de ítems ─────────────────────────────── -->
+    <div class="factura-perforado"></div>
+
+    <section class="factura-items">
+        <div class="factura-items-header">
+            <span>Producto</span>
+            <span class="alinear-derecha">Precio</span>
+        </div>
+
+        <ul class="factura-lista">
+            @for (item of pedido()?.detalles; track item.id) {
+            <li class="factura-item">
+                <span class="factura-item-nombre">{{ item.nombreProducto }}</span>
+                <span class="factura-item-total alinear-derecha">$ {{ item.precioTotalParcial }}</span>
+                <span class="factura-item-precio-unitario">{{ item.cantidad }} × $ {{ item.precioUnitario }}</span>
+            </li>
+            }
+        </ul>
+    </section>
+
+    <!-- ── Subtotales ─────────────────────────────────────────────────── -->
+    <div class="factura-perforado"></div>
+
+    <section class="factura-subtotales">
+        <div class="factura-subtotal-fila">
+            <span class="factura-subtotal-rotulo">Subtotal</span>
+            <span class="factura-subtotal-valor">$ {{ pedido()?.precioTotalNeto }}</span>
+        </div>
+        
+        @let conDescuento = (pedido()?.precioTotalNeto ?? 0) * ((pedido()?.descuentoJuego ?? 0) / 100);
+        @let conPropina = (pedido()?.precioTotalNeto ?? 0) * ((pedido()?.propinaPorcentaje ?? 0) / 100);
+
+        @if (pedido()?.descuentoJuego) {
+        <div class="factura-subtotal-fila factura-descuento">
+            <span class="factura-subtotal-rotulo"> Descuento juego ({{ pedido()?.descuentoJuego }}%) </span>
+            
+            <span class="factura-subtotal-valor">
+                − $ {{ conDescuento | number : "1.2-2" }}
+            </span>
+        </div>
+        } @if (pedido()?.propinaPorcentaje) {
+        <div class="factura-subtotal-fila factura-propina">
+            <span class="factura-subtotal-rotulo"> Propina ({{ pedido()?.propinaPorcentaje }}%) </span>
+            
+            <span class="factura-subtotal-valor">
+                + $
+                {{ conPropina | number : "1.2-2" }}
+            </span>
+        </div>
+        }
+    </section>
+
+    <!-- ── Total ──────────────────────────────────────────────────────── -->
+    <div class="factura-perforado factura-perforado--grueso"></div>
+
+    <p class="factura-total">
+        <span class="factura-total-rotulo">TOTAL</span>
+        <span class="factura-total-importe">$ {{ (pedido()?.precioTotalNeto ?? 0) - (conDescuento ?? 0) + (conPropina ?? 0) }} </span>
+    </p>
+
+    <!-- ── Pie ────────────────────────────────────────────────────────── -->
+    <div class="factura-perforado"></div>
+
+    <footer class="factura-pie">
+        <p class="factura-pie-texto">¡Gracias por visitarnos!</p>
+        <p class="factura-pie-texto">Volvé pronto 🍽️</p>
+    </footer>
+</article>

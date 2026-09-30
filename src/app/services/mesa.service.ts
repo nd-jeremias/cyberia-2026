@@ -162,16 +162,14 @@ export class MesaService {
             // No se espera y se atrapa el rechazo aparte: la mesa ya quedó
             // asignada, y `enviarAvisoAUsuario` lanza si la Edge Function falla.
             // Sin el catch, ese fallo quedaría como un rechazo sin capturar.
-            this.notificaciones
-                .enviarAvisoAUsuario(
-                    clienteId,
-                    'Mesa asignada',
-                    `Te tocó la mesa N° ${mesa.numeroMesa}. Escaneá su código QR para ver la carta.`,
-                    'mesa-asignada'
-                )
-                .catch((error) => console.error('No se pudo avisar al cliente de su mesa:', error));
-
-            this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
+            // this.notificaciones
+            //     .enviarAvisoAUsuario(
+            //         clienteId,
+            //         'Mesa asignada',
+            //         `Te tocó la mesa N° ${mesa.numeroMesa}. Escaneá su código QR para ver la carta.`,
+            //         'mesa-asignada'
+            //     )
+            //     .catch((error) => console.error('No se pudo avisar al cliente de su mesa:', error));
 
             return true;
         } catch (error) {
@@ -183,16 +181,29 @@ export class MesaService {
         }
     }
 
-    // Punto 22: al confirmarse el pago la mesa vuelve a estar disponible.
-    async liberar(mesaId: string): Promise<boolean> {
+    /**
+     * Punto 22: al confirmarse el pago la mesa vuelve a estar disponible y sin
+     * cliente.
+     *
+     * Con `clienteId` sólo la libera si sigue ocupada por ese cliente: si dos
+     * mozos confirman el mismo pago y entre medio el metre ya la reasignó, el
+     * segundo no le saca la mesa al cliente nuevo. Si ya estaba libre, la
+     * consulta no afecta ninguna fila, y eso no es un error.
+     */
+    async liberar(mesaId: string, clienteId?: string): Promise<boolean> {
+        // El tipo ata el valor al ENUM de la base. Escrito a mano en minúscula
+        // ('disponible'), Postgres lo rechaza y la mesa nunca se libera.
+        const libre: { disponibilidad: DisponibilidadMesa; cliente_id: null } = {
+            disponibilidad: 'Disponible',
+            cliente_id: null,
+        };
+
         try {
-            const { error } = await this.supabase
-                .from('mesas')
-                .update({
-                    disponibilidad: 'Disponible',
-                    cliente_id: null,
-                })
-                .eq('id', mesaId);
+            let consulta = this.supabase.from('mesas').update(libre).eq('id', mesaId);
+
+            if (clienteId) consulta = consulta.eq('cliente_id', clienteId);
+
+            const { error } = await consulta;
 
             if (error) throw error;
 

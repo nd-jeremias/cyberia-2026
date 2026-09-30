@@ -1,40 +1,42 @@
-<div #lista class="mensajes" aria-live="polite">
-    @for (mensaje of mensajes(); track mensaje.id) {
-    <div class="burbuja" [class.propia]="esPropio(mensaje)">
-        <p class="cuerpo">{{ mensaje.cuerpo }}</p>
-        <span class="firma">{{ firma(mensaje) }}</span>
-    </div>
-    } @empty {
-    <div class="vacio">
-        <ion-icon name="chatbubbles-outline"></ion-icon>
-        <p>{{ textoVacio() }}</p>
+<div class="container">
+    <div #lista class="mensajes" aria-live="polite">
+        @for (mensaje of mensajes(); track mensaje.id) {
+        <div class="burbuja" [class.propia]="esPropio(mensaje)">
+            <p class="cuerpo">{{ mensaje.cuerpo }}</p>
+            <span class="firma">{{ firma(mensaje) }}</span>
+        </div>
+        } @empty {
+        <div class="vacio">
+            <fa-icon [icon]="['fas', 'comments']"></fa-icon>
+            <p>{{ textoVacio() }}</p>
 
-        @if (sugerencias().length > 0) {
-        <div class="sugerencias">
-            @for (sugerencia of sugerencias(); track sugerencia) {
-            <button type="button" class="sugerencia" [disabled]="enviando()" (click)="usarSugerencia(sugerencia)">
-                {{ sugerencia }}
-            </button>
+            @if (sugerencias().length > 0) {
+            <div class="sugerencias">
+                @for (sugerencia of sugerencias(); track sugerencia) {
+                <button type="button" class="sugerencia" [disabled]="enviando()" (click)="usarSugerencia(sugerencia)">
+                    {{ sugerencia }}
+                </button>
+                }
+            </div>
             }
         </div>
         }
     </div>
-    }
+
+    <form class="caja" (submit)="$event.preventDefault(); mandar()">
+        <input
+            class="campo"
+            type="text"
+            placeholder="Escribí tu mensaje…"
+            aria-label="Mensaje"
+            enterkeyhint="send"
+            [maxLength]="largoMaximo"
+            [value]="texto()"
+            (input)="alEscribir($event)"
+        />
+
+        <button type="submit" class="enviar" aria-label="Enviar mensaje" [disabled]="!puedeEnviar()">
+            <fa-icon [icon]="['fas', 'paper-plane']"></fa-icon>
+        </button>
+    </form>
 </div>
-
-<form class="caja" (submit)="$event.preventDefault(); mandar()">
-    <input
-        class="campo"
-        type="text"
-        placeholder="Escribí tu mensaje…"
-        aria-label="Mensaje"
-        enterkeyhint="send"
-        [maxLength]="largoMaximo"
-        [value]="texto()"
-        (input)="alEscribir($event)"
-    />
-
-    <button type="submit" class="enviar" aria-label="Enviar mensaje" [disabled]="!puedeEnviar()">
-        <ion-icon name="send"></ion-icon>
-    </button>
-</form>

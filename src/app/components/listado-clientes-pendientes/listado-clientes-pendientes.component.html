@@ -3,7 +3,7 @@
 
     @if (clientes().length === 0) {
         <div class="estado-vacio">
-            <ion-icon name="checkmark-circle"></ion-icon>
+            <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
             <p>No hay clientes esperando aprobación en este momento.</p>
         </div>
     } @else {

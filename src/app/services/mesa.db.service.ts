@@ -9,6 +9,20 @@ export class MesaDbService {
     galeriaService = inject(GaleriaService);
     qrService = inject(QrService);
 
+    async verificarNumero(mesaNumero: number): Promise<boolean> {
+        try {
+            const { data, error } = await supabase.from('mesas').select('*').eq('numero_mesa', mesaNumero);
+            if (error) throw new Error(error.message);
+
+            if (data.length > 0) return true;
+
+            return false;
+        } catch (error) {
+            console.log(error);
+            throw Error;
+        }
+    }
+
     /**
      * Da de alta una mesa con su código QR (punto 4 del enunciado).
      *
@@ -18,7 +32,12 @@ export class MesaDbService {
      * QR después y volver a actualizar la fila.
      */
     async altaMesa(mesa: MesaAltaInterface): Promise<void> {
+        let urlPublica: string | null = null;
+
         try {
+            const existe = await this.verificarNumero(mesa.numeroMesa);
+            if (existe) throw new Error('El numero de mesa ya existe');
+
             // Postgres acepta un id propio; su DEFAULT sólo actúa si no se envía.
             const mesaId = crypto.randomUUID();
 
@@ -33,12 +52,17 @@ export class MesaDbService {
             // `upsert` en true: el nombre del archivo es fijo por mesa, así que al
             // regenerar el QR de una mesa existente se pisa el anterior en lugar de
             // fallar por duplicado.
-            const publicQrUrl = await this.galeriaService.subirImagenDb(archivoQr, 'qr', true, `${mesaId}-qr.png`);
+            const publicQrUrl = await this.galeriaService.subirImagenDb(
+                archivoQr,
+                'qr',
+                true,
+                `mesa_${mesa.numeroMesa}-${mesaId}-qr.png`
+            );
 
             // Las siguientes 3 lineas suben 1 sola img:
             const extension = mesa.fotos.name.split('.').pop() || 'png';
             const nombrePersonalizado = `mesa${mesa.numeroMesa}-foto-${Date.now()}.${extension}`;
-            const urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', false, nombrePersonalizado);
+            urlPublica = await this.galeriaService.subirImagenDb(mesa.fotos, 'mesas', false, nombrePersonalizado);
 
             if (!urlPublica) throw Error;
 
@@ -53,9 +77,26 @@ export class MesaDbService {
             });
 
             if (error) throw error;
-        } catch (error) {
-            console.log(error);
-            throw error;
+        } catch (error: any) {
+            if (urlPublica) {
+                const filePath = this.galeriaService.obtenerPathDesdeUrl(urlPublica, 'Fotos');
+                if (filePath) {
+                    const { error: storageError } = await supabase.storage.from('Fotos').remove([filePath]);
+
+                    if (storageError) {
+                        console.error('Error al borrar la foto del bucket:', storageError);
+                        throw new Error();
+                    }
+                }
+            }
+            console.error('Error en el proceso de creacion de mesa:', error);
+
+            // Extraemos el mensaje de texto del error
+            // Si por alguna razón no es un objeto Error, usamos un mensaje genérico por seguridad
+            const mensajeAmigable = error instanceof Error ? error.message : 'Ocurrió un error inesperado.';
+
+            // 3. Propagamos el error de forma correcta (Sintaxis válida)
+            throw new Error(mensajeAmigable);
         }
     }
 
@@ -92,10 +133,11 @@ export class MesaDbService {
         };
     }
 
-    async obtenerPorId(mesaId: string) {
+    async obtenerPorId(mesaId: string): Promise<MesaInterface> {
         try {
             const { data, error } = await supabase.from('mesas').select('*').eq('id', mesaId).single();
             if (error) throw error;
+
             return this.mapMesa(data);
         } catch (error) {
             console.log(error);
@@ -109,13 +151,13 @@ export class MesaDbService {
             const cantidadLugares = mesa.cantidadLugares;
             const tipo = mesa.tipo;
             const fotoUrl = mesa.fotos;
-            const disponibilidad = mesa.disponibilidad
+            const disponibilidad = mesa.disponibilidad;
 
             const mesaNueva: any = {
                 numero_mesa: numeroMesa,
                 cantidad_lugares: cantidadLugares,
                 tipo,
-                disponibilidad
+                disponibilidad,
             };
 
             if (fotoUrl instanceof File) {

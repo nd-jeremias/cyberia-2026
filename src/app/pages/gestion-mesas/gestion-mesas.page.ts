@@ -10,6 +10,7 @@ import { TarjetaMesaComponent } from '../../components/tarjeta-mesa/tarjeta-mesa
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { MesaDbService } from '../../services/mesa.db.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Administración de mesas del salón (punto 4): listado, edición y baja.
@@ -18,7 +19,15 @@ import { MesaDbService } from '../../services/mesa.db.service';
     selector: 'app-gestion-mesas',
     templateUrl: './gestion-mesas.page.html',
     styleUrls: ['./gestion-mesas.page.scss'],
-    imports: [IonContent, IonIcon, CommonModule, FormsModule, RouterLink, HeaderComponent, TarjetaMesaComponent],
+    imports: [
+        IonContent,
+        FaIconComponent,
+        CommonModule,
+        FormsModule,
+        RouterLink,
+        HeaderComponent,
+        TarjetaMesaComponent,
+    ],
 })
 export class GestionMesasPage {
     mesaService = inject(MesaService);
@@ -31,7 +40,7 @@ export class GestionMesasPage {
     mesasCargadas = signal<MesaInterface[]>([]);
 
     async ionViewWillEnter() {
-        this.cargarMesas()
+        this.cargarMesas();
     }
 
     async cargarMesas() {
@@ -42,7 +51,7 @@ export class GestionMesasPage {
             this.mesasCargadas.set(mesas);
         } catch (error) {
             console.log(error);
-            this.modal.setOpen('Error', 'No se pudieron cargar las mesas. Por favor, intente nuevamente más tarde.');
+            this.modal.setOpen('Error', 'No se pudieron cargar las mesas. Por favor, intente nuevamente más tarde.', 'error');
         } finally {
             this.spinner.hide();
         }
@@ -65,7 +74,7 @@ export class GestionMesasPage {
             this.mesasCargadas.update((actuales) => actuales.filter((p) => p.id !== mesa.id));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el producto.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             await this.cargarMesas();
             this.spinner.hide();

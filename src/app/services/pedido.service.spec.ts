@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PedidoInterface } from '../interfaces/pedido.interface';
+import { MesaService } from './mesa.service';
 import { ModalService } from './modal.service';
 import { PedidoService } from './pedido.service';
+import { SalonService } from './salon.service';
 import { SupabaseService } from './supabase.service';
 
 /**
@@ -15,6 +17,21 @@ class SupabaseFalso {
     from = vi.fn();
     auth = { getSession: vi.fn() };
     cliente = {} as never;
+}
+
+/**
+ * Dobles de los servicios con los que se cobra (punto 22).
+ *
+ * `confirmarPago` libera la mesa con MesaService y cierra la visita del
+ * cliente con SalonService. Esos servicios tienen sus propios tests; acá sólo
+ * importa que se los llame, con qué datos y en qué orden.
+ */
+class MesaServiceFalso {
+    liberar = vi.fn<(mesaId: string, clienteId?: string) => Promise<boolean>>().mockResolvedValue(true);
+}
+
+class SalonServiceFalso {
+    terminarVisita = vi.fn<(clienteId: string) => Promise<void>>().mockResolvedValue(undefined);
 }
 
 /** Arma un pedido completo con valores por defecto sobreescribibles. */
@@ -64,12 +81,20 @@ describe('PedidoService', () => {
     let servicio: PedidoService;
     let modal: ModalService;
     let supabase: SupabaseFalso;
+    let mesas: MesaServiceFalso;
+    let salon: SalonServiceFalso;
 
     beforeEach(() => {
         supabase = new SupabaseFalso();
+        mesas = new MesaServiceFalso();
+        salon = new SalonServiceFalso();
 
         TestBed.configureTestingModule({
-            providers: [{ provide: SupabaseService, useValue: supabase }],
+            providers: [
+                { provide: SupabaseService, useValue: supabase },
+                { provide: MesaService, useValue: mesas },
+                { provide: SalonService, useValue: salon },
+            ],
         });
 
         servicio = TestBed.inject(PedidoService);
@@ -405,7 +430,7 @@ describe('PedidoService', () => {
             const ok = await servicio.confirmar('pedido-1');
 
             expect(ok).toBe(false);
-            expect(espia).toHaveBeenCalledWith('Error', 'sin conexión');
+            expect(espia).toHaveBeenCalledWith('Error', 'sin conexión', 'error');
         });
 
         it('apaga el indicador de carga aunque la operación falle', async () => {
@@ -535,8 +560,10 @@ describe('PedidoService', () => {
             expect(espia).toHaveBeenCalledWith('Pedido sin entregar', expect.any(String), 'error');
         });
 
-        it('explica que falta la migración si la base no conoce "Recibido"', async () => {
+        // El aviso de la migración faltante va a la consola, no a un modal.
+        it('deja en la consola qué migración falta si la base no conoce "Recibido"', async () => {
             const espia = vi.spyOn(modal, 'setOpen');
+            const consola = vi.spyOn(console, 'log').mockImplementation(() => undefined);
 
             supabase.from.mockReturnValue(
                 consultaFalsa({
@@ -548,15 +575,48 @@ describe('PedidoService', () => {
             const ok = await servicio.confirmarRecepcion('pedido-1', 'cliente-1');
 
             expect(ok).toBe(false);
-            expect(espia).toHaveBeenCalledWith(
-                'Falta actualizar la base',
-                expect.stringContaining('migracion-recepcion-pedido.sql')
-            );
+            expect(consola).toHaveBeenCalledWith(expect.stringContaining('migracion-recepcion-pedido.sql'));
+            expect(espia).not.toHaveBeenCalled();
+
+            consola.mockRestore();
         });
     });
 
     describe('confirmarPago (punto 22)', () => {
-        it('no toca la base si el cliente todavía no pagó', async () => {
+        /**
+         * Registro de las escrituras en el orden en que ocurren, para verificar
+         * el camino del cobro: la mesa, después el cliente y al final el pedido.
+         */
+        let pasos: string[];
+
+        beforeEach(() => {
+            pasos = [];
+
+            mesas.liberar.mockImplementation(async () => {
+                pasos.push('mesa');
+                return true;
+            });
+
+            salon.terminarVisita.mockImplementation(async () => {
+                pasos.push('cliente');
+            });
+        });
+
+        /** El UPDATE que marca el cobro, anotado como un paso más. */
+        function cobroEnBase(respuesta: { data?: unknown; error: unknown }) {
+            const consulta = consultaFalsa(respuesta);
+
+            supabase.from.mockImplementation((tabla: string) => {
+                pasos.push(tabla);
+                return consulta;
+            });
+
+            return consulta;
+        }
+
+        const pedidoPagando = () => pedidoDePrueba({ estado: 'Recibido', estadoCliente: 'pagando' });
+
+        it('no toca nada si el cliente todavía no pagó', async () => {
             const espia = vi.spyOn(modal, 'setOpen');
 
             const ok = await servicio.confirmarPago(
@@ -564,50 +624,87 @@ describe('PedidoService', () => {
             );
 
             expect(ok).toBe(false);
+            expect(mesas.liberar).not.toHaveBeenCalled();
+            expect(salon.terminarVisita).not.toHaveBeenCalled();
             expect(supabase.from).not.toHaveBeenCalled();
             expect(espia).toHaveBeenCalledWith('El cliente no pagó', expect.any(String), 'error');
         });
 
-        it('cobra el pedido, libera la mesa y deja al cliente libre', async () => {
-            const pedido = consultaFalsa({ data: [{ id: 'pedido-1' }], error: null });
-            const mesa = consultaFalsa({ error: null });
-            const cliente = consultaFalsa({ error: null });
+        it('libera la mesa, deja libre al cliente y recién después marca el pedido pagado', async () => {
+            const cobro = cobroEnBase({ data: [{ id: 'pedido-1' }], error: null });
 
-            supabase.from
-                .mockReturnValueOnce(pedido)
-                .mockReturnValueOnce(mesa)
-                .mockReturnValueOnce(cliente);
-
-            servicio.pedidos.set([pedidoDePrueba({ estado: 'Recibido', estadoCliente: 'pagando' })]);
+            servicio.pedidos.set([pedidoPagando()]);
 
             const ok = await servicio.confirmarPago(servicio.pedidos()[0]);
 
             expect(ok).toBe(true);
-            expect(supabase.from.mock.calls.map(([tabla]) => tabla)).toEqual([
-                'pedidos',
-                'mesas',
-                'usuarios',
-            ]);
-            expect(pedido.update).toHaveBeenCalledWith({ estado: 'Pagado' });
-            expect(mesa.update).toHaveBeenCalledWith({ disponibilidad: 'disponible', cliente_id: null });
-            expect(mesa.eq).toHaveBeenCalledWith('id', 'mesa-1');
-            expect(cliente.update).toHaveBeenCalledWith({ estado_en_resto: 'libre', mesa_id: null });
-            expect(cliente.eq).toHaveBeenCalledWith('id', 'cliente-1');
+            expect(pasos).toEqual(['mesa', 'cliente', 'pedidos']);
+            // La mesa se libera sólo si sigue siendo de este cliente.
+            expect(mesas.liberar).toHaveBeenCalledWith('mesa-1', 'cliente-1');
+            expect(salon.terminarVisita).toHaveBeenCalledWith('cliente-1');
+            expect(cobro.update).toHaveBeenCalledWith({ estado: 'Pagado' });
+            // Excluir lo ya pagado es lo que detecta el cobro doble.
+            expect(cobro.neq).toHaveBeenCalledWith('estado', 'Pagado');
             expect(servicio.pedidos()).toEqual([]);
+            expect(servicio.cargando()).toBe(false);
         });
 
-        it('si otro mozo ya lo cobró, avisa y no vuelve a liberar la mesa', async () => {
-            const espia = vi.spyOn(modal, 'setOpen');
+        // Si el pedido quedara "Pagado" con la mesa ocupada, saldría de la
+        // lista del mozo y nadie podría reintentar la liberación.
+        it('si no se pudo liberar la mesa, no cierra la visita ni cobra', async () => {
+            mesas.liberar.mockResolvedValue(false);
 
-            supabase.from.mockReturnValueOnce(consultaFalsa({ data: [], error: null }));
+            servicio.pedidos.set([pedidoPagando()]);
 
-            const ok = await servicio.confirmarPago(
-                pedidoDePrueba({ estado: 'Recibido', estadoCliente: 'pagando' })
-            );
+            const ok = await servicio.confirmarPago(servicio.pedidos()[0]);
 
             expect(ok).toBe(false);
-            expect(supabase.from).toHaveBeenCalledTimes(1);
+            expect(salon.terminarVisita).not.toHaveBeenCalled();
+            expect(supabase.from).not.toHaveBeenCalled();
+            expect(servicio.pedidos()).toHaveLength(1);
+            expect(servicio.cargando()).toBe(false);
+        });
+
+        it('si no se pudo cerrar la visita, avisa y no marca el pedido pagado', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            salon.terminarVisita.mockRejectedValue(new Error('sin conexión'));
+
+            servicio.pedidos.set([pedidoPagando()]);
+
+            const ok = await servicio.confirmarPago(servicio.pedidos()[0]);
+
+            expect(ok).toBe(false);
+            expect(supabase.from).not.toHaveBeenCalled();
+            expect(espia).toHaveBeenCalledWith('Error', 'sin conexión', 'error');
+            // Sigue en "Pagos por confirmar" para volver a intentarlo.
+            expect(servicio.pedidos()).toHaveLength(1);
+        });
+
+        it('si otro mozo ya lo cobró, avisa y no lo cuenta como cobrado', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            cobroEnBase({ data: [], error: null });
+
+            const ok = await servicio.confirmarPago(pedidoPagando());
+
+            expect(ok).toBe(false);
+            // Repetir la liberación no hace daño: con el cliente como filtro,
+            // una mesa que el metre ya reasignó no se toca.
+            expect(mesas.liberar).toHaveBeenCalledWith('mesa-1', 'cliente-1');
             expect(espia).toHaveBeenCalledWith('Pago ya registrado', expect.any(String), 'info');
+        });
+
+        it('avisa si la base rechaza el cobro', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            cobroEnBase({ data: null, error: new Error('caída') });
+
+            const ok = await servicio.confirmarPago(pedidoPagando());
+
+            expect(ok).toBe(false);
+            expect(espia).toHaveBeenCalledWith('Error', 'caída', 'error');
+            expect(servicio.cargando()).toBe(false);
         });
     });
 });

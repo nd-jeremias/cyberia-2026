@@ -6,8 +6,7 @@ import { NotificacionesService } from '../../services/notificaciones.service';
 import { BotonAtrasComponent } from '../boton-atras/boton-atras.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map } from 'rxjs/operators';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { remixLogoutCircleLine } from '@ng-icons/remixicon';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Cabecera de la aplicación.
@@ -31,8 +30,8 @@ import { remixLogoutCircleLine } from '@ng-icons/remixicon';
     selector: 'app-header',
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss'],
-    providers: [provideIcons({ remixLogoutCircleLine })],
-    imports: [BotonAtrasComponent, NgIcon],
+    providers: [],
+    imports: [BotonAtrasComponent, FaIconComponent],
 })
 export class HeaderComponent {
     private authService = inject(AuthService);
@@ -101,9 +100,9 @@ export class HeaderComponent {
     saludo = computed(() => {
         const hora = new Date().getHours();
 
-        if (hora < 6) return 'Buenas madrugadas';
-        if (hora < 13) return 'Buen día';
-        if (hora < 20) return 'Buenas tardes';
+        if (hora < 6) return 'Buena día';
+        if (hora < 13) return 'Buenas tardes';
+        if (hora < 19) return 'Buenas noches';
 
         return 'Buenas noches';
     });
@@ -131,7 +130,7 @@ export class HeaderComponent {
             await this.authService.logout();
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cerrar sesión.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.router.navigate(['/ingresar']);
         }

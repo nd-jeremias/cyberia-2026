@@ -18,7 +18,7 @@
     text-align: center;
     color: var(--tinta-suave);
 
-    ion-icon {
+    fa-icon {
         font-size: 3rem;
         opacity: 0.6;
     }
@@ -27,4 +27,9 @@
         margin: 0;
         font-size: var(--texto-cuerpo);
     }
+}
+
+.inferior-final{
+    padding-bottom: 40px !important;
+    padding-top: 10px;
 }

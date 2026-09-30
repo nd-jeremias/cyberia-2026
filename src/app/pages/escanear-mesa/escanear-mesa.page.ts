@@ -8,6 +8,7 @@ import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
 import { SalonService } from '../../services/salon.service';
 import { SpinnerService } from '../../services/spinner.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * El cliente escanea el QR de su mesa y se sienta (puntos 10 y 11).
@@ -22,7 +23,7 @@ import { SpinnerService } from '../../services/spinner.service';
     selector: 'app-escanear-mesa',
     templateUrl: './escanear-mesa.page.html',
     styleUrls: ['./escanear-mesa.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent],
 })
 export class EscanearMesaPage {
     private authService = inject(AuthService);
@@ -92,6 +93,17 @@ export class EscanearMesaPage {
 
             this.spinner.show();
 
+            // Si el mozo acaba de confirmar el pago, hay que saberlo antes de
+            // decidir qué hace este escaneo.
+            await this.salonService.cargarSituacion(usuarioId);
+
+            // Recién terminó su visita: no se lo vuelve a sentar, se le muestra
+            // cómo quedó la mesa y va a las encuestas (punto 22).
+            if (this.salonService.acabaDeTerminarSuVisita()) {
+                await this.verificarMesaLiberada(payload.id);
+                return;
+            }
+
             const sentado = await this.salonService.sentarseEnMesa(usuarioId, payload.id);
 
             if (sentado) return; // El efecto de arriba se encarga de navegar.
@@ -112,9 +124,39 @@ export class EscanearMesaPage {
         }
     }
 
+    /**
+     * Punto 22: "verificar que la mesa esté libre nuevamente (haciendo que el
+     * cliente vuelva a escanear el QR de la mesa)".
+     *
+     * Se consulta la mesa en la base en lugar de suponerla libre, porque eso
+     * es justamente lo que el enunciado pide comprobar. Después, igual que el
+     * QR de ingreso, lo lleva a las encuestas.
+     */
+    private async verificarMesaLiberada(mesaId: string): Promise<void> {
+        await this.mesaService.listar();
+
+        const mesa = this.mesaService.mesas().find((m) => m.id === mesaId);
+
+        if (mesa?.disponibilidad === 'Disponible') {
+            this.modal.setOpen(
+                'La mesa quedó libre',
+                `La mesa N° ${mesa.numeroMesa} ya está disponible para otros clientes. ¡Gracias por tu visita! Te llevamos a las encuestas.`,
+                'info'
+            );
+        } else {
+            this.modal.setOpen(
+                'Tu visita terminó',
+                'Esta mesa ya no está a tu nombre. ¡Gracias por tu visita! Te llevamos a las encuestas.',
+                'info'
+            );
+        }
+
+        void this.router.navigate(['/encuestas']);
+    }
+
     private avisar(error: unknown, alternativa: string) {
         const mensaje = error instanceof Error ? error.message : alternativa;
 
-        this.modal.setOpen('Error', mensaje);
+        this.modal.setOpen('Error', mensaje, 'error');
     }
 }

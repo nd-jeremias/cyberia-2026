@@ -75,8 +75,12 @@ android/app/build/
 android/build/
 
 notas.md
+
 # Pruebas de extremo a extremo (Playwright)
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+#supabase
+supabase/.temp

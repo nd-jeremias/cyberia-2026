@@ -1,12 +1,13 @@
-<app-header [defaultHref]="'/inicio'" [tituloHeader]="'Asignar mesas'"></app-header>
-
 <ion-content [fullscreen]="true">
-  <div class="hoja">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Asignar mesas'"></app-header>
+
+        <div class="superior hoja">
     <!-- Estado del salón de un vistazo, antes de entrar al procedimiento. -->
     <div class="resumen">
         <div class="ficha-resumen">
             <span class="cifra">
-                <ion-icon name="grid-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'table-cells-large']"></fa-icon>
                 {{ mesasDisponibles().length }}
             </span>
             <span class="rotulo">Mesas libres</span>
@@ -14,7 +15,7 @@
 
         <div class="ficha-resumen">
             <span class="cifra">
-                <ion-icon name="pricetag-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'list-ol']"></fa-icon>
                 {{ mesas().length }}
             </span>
             <span class="rotulo">Total de mesas</span>
@@ -22,7 +23,7 @@
 
         <div class="ficha-resumen">
             <span class="cifra">
-                <ion-icon name="people-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'user-group']"></fa-icon>
                 {{ clientes().length }}
             </span>
             <span class="rotulo">Clientes activos</span>
@@ -39,20 +40,19 @@
                     [mostrarContacto]="false"
                 ></app-tarjeta-usuario>
 
-                <ion-button
-                    expand="block"
-                    fill="outline"
-                    color="medium"
+                <button
+                    type="button"
+                    class="btn btn-secundario"
                     (click)="limpiarSeleccion()"
                 >
-                    <ion-icon slot="start" name="swap-horizontal"></ion-icon>
+                    <fa-icon [icon]="['fas', 'rotate']"></fa-icon>
                     Elegir otro cliente
-                </ion-button>
+                </button>
             </div>
 
             @if (mesaYaAsignada(); as asignada) {
                 <p class="aviso-asignada">
-                    <ion-icon name="alert-circle-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'circle-exclamation']"></fa-icon>
                     <span>
                         Este cliente ya tiene la mesa N° {{ asignada.numeroMesa }}.
                         Debe dirigirse a esa mesa.
@@ -61,7 +61,7 @@
             }
         } @else if (clientes().length === 0) {
             <div class="estado-vacio">
-                <ion-icon name="people-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'user-group']"></fa-icon>
                 <p>No hay clientes registrados activos.</p>
             </div>
         } @else {
@@ -69,7 +69,7 @@
                 @for (cliente of clientes(); track cliente.id) {
                     <app-tarjeta-usuario
                         [usuario]="cliente"
-                        [acciones]="accionesTarjeta"
+                        [modo]="'seleccion'"
                         [mostrarContacto]="false"
                         (accionSeleccionada)="onSeleccionCliente($event)"
                     ></app-tarjeta-usuario>
@@ -83,7 +83,7 @@
 
         @if (mesasDisponibles().length === 0) {
             <div class="estado-vacio">
-                <ion-icon name="grid-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'table-cells-large']"></fa-icon>
                 <p>No hay mesas disponibles en este momento.</p>
             </div>
         } @else {
@@ -100,27 +100,29 @@
 
                         <div class="datos-mesa">
                             <span class="chip chip-tipo">
-                                <ion-icon name="pricetag-outline"></ion-icon>
+                                <fa-icon [icon]="['fas', 'list-ol']"></fa-icon>
                                 {{ mesa.tipo }}
                             </span>
                             <span class="chip">
-                                <ion-icon name="people-outline"></ion-icon>
+                                <fa-icon [icon]="['fas', 'users']"></fa-icon>
                                 {{ mesa.cantidadLugares }} lugares
                             </span>
                         </div>
 
-                        <ion-button
-                            expand="block"
+                        <button
+                            type="button"
+                            class="btn btn-primario"
                             [disabled]="!clienteElegido() || cargando()"
                             (click)="onAsignar(mesa)"
                         >
-                            <ion-icon slot="start" name="checkmark-circle"></ion-icon>
+                            <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                             Asignar esta mesa
-                        </ion-button>
+                        </button>
                     </article>
                 }
             </div>
         }
     </section>
-  </div>
+        </div>
+    </div>
 </ion-content>

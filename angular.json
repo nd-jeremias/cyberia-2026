@@ -105,7 +105,9 @@
                         "buildTarget": "::development",
                         "setupFiles": [
                             "src/test-setup.ts"
-                        ]
+                        ],
+                        "providersFile": "src/test-providers.ts",
+                        "isolate": true
                     },
                     "configurations": {
                         "ci": {

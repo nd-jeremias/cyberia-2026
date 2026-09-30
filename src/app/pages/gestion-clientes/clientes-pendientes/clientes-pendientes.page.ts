@@ -1,4 +1,3 @@
-import { EmailService } from './../../../services/email.service';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../../components/header/header.component';
@@ -8,6 +7,7 @@ import { ModalService } from '../../../services/modal.service';
 import { SpinnerService } from '../../../services/spinner.service';
 import { supabase } from '../../../services/supabase.service';
 import { ClientesService } from '../../../services/clientes.service';
+import { BrevoEmailService } from '../../../services/brevo.email.service';
 
 /**
  * Aprobación de clientes registrados (puntos 6, 7 y 8 del enunciado).
@@ -25,7 +25,7 @@ import { ClientesService } from '../../../services/clientes.service';
 export class ClientesPendientesPage implements OnInit {
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
-    emailService = inject(EmailService);
+    emailService = inject(BrevoEmailService);
     clientesService = inject(ClientesService);
 
     clientes = signal<ClienteInterface[]>([]);
@@ -60,7 +60,7 @@ export class ClientesPendientesPage implements OnInit {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo cargar el listado de clientes.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -90,32 +90,21 @@ export class ClientesPendientesPage implements OnInit {
 
             // Se quita del listado: ya no esta pendiente.
             this.clientes.update((actuales) => actuales.filter((c) => c.id !== cliente.id));
-
             const nombreEmail = `${cliente.apellidos}, ${cliente.nombres}`;
-            const aprobado = estado === 'Activo';
+            const estadoEmail = estado == 'Activo' ? true : false;
 
-            // Se espera el correo para poder decir si salió. Antes se lanzaba
-            // sin esperar y el modal prometía un correo que podía no haberse
-            // enviado nunca; encima, al fallar dejaba un rechazo sin capturar.
-            const correoEnviado = await this.emailService.enviarResolucionCuenta(
-                cliente.correo_electronico,
-                nombreEmail,
-                aprobado
-            );
+            this.emailService.enviarEmailConfirmacion(cliente.correo_electronico, nombreEmail, estadoEmail);
 
             this.modal.setOpen(
-                aprobado ? 'Cliente aprobado' : 'Cliente rechazado',
-                `${nombreEmail} fue ${aprobado ? 'aprobado' : 'rechazado'}. ${
-                    correoEnviado
-                        ? 'Se le envió un correo con la novedad.'
-                        : 'No se pudo enviar el correo de aviso: avisale por otro medio.'
-                }`,
-                'info'
+                estado === 'Activo' ? 'Cliente aprobado' : 'Cliente rechazado',
+                `${nombreEmail} fue ${
+                    estado === 'Activo' ? 'aprobado' : 'rechazado'
+                }. Se le enviará un correo con la novedad.`
             );
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el estado del cliente.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }

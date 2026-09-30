@@ -7,7 +7,9 @@ import { SupabaseService } from './supabase.service';
 
 class SupabaseFalso {
     from = vi.fn();
-    auth = { getSession: vi.fn() };
+    // MesaService usa NotificacionesService, que al crearse se suscribe a
+    // los cambios de sesión.
+    auth = { getSession: vi.fn(), onAuthStateChange: vi.fn() };
     cliente = {} as never;
 }
 
@@ -238,6 +240,51 @@ describe('MesaService', () => {
                 disponibilidad: 'Disponible',
                 cliente_id: null,
             });
+        });
+
+        /** UPDATE encadenable: cada `eq` devuelve la misma consulta, que al esperarla resuelve `respuesta`. */
+        function actualizacionFalsa(respuesta: { error: unknown }) {
+            const consulta = {
+                eq: vi.fn(),
+                then: (resolver: (valor: unknown) => unknown, rechazar?: (motivo: unknown) => unknown) =>
+                    Promise.resolve(respuesta).then(resolver, rechazar),
+            };
+
+            consulta.eq.mockReturnValue(consulta);
+
+            return consulta;
+        }
+
+        // Punto 22: si dos mozos confirman el mismo pago y entre medio el
+        // metre ya le dio la mesa a otro, el segundo no se la saca.
+        it('con el cliente, sólo libera la mesa si sigue siendo suya', async () => {
+            const consulta = actualizacionFalsa({ error: null });
+
+            supabase.from.mockReturnValue({
+                update: vi.fn().mockReturnValue(consulta),
+                select: vi.fn().mockReturnValue({
+                    order: vi.fn().mockResolvedValue({ data: [], error: null }),
+                }),
+            });
+
+            const ok = await servicio.liberar('mesa-1', 'cliente-1');
+
+            expect(ok).toBe(true);
+            expect(consulta.eq).toHaveBeenCalledWith('id', 'mesa-1');
+            expect(consulta.eq).toHaveBeenCalledWith('cliente_id', 'cliente-1');
+        });
+
+        it('avisa y devuelve false si la base rechaza el cambio', async () => {
+            const espia = vi.spyOn(modal, 'setOpen');
+
+            supabase.from.mockReturnValue({
+                update: vi.fn().mockReturnValue(actualizacionFalsa({ error: new Error('sin conexión') })),
+            });
+
+            const ok = await servicio.liberar('mesa-1', 'cliente-1');
+
+            expect(ok).toBe(false);
+            expect(espia).toHaveBeenCalledWith('Error', 'sin conexión');
         });
     });
 });

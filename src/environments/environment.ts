@@ -20,9 +20,8 @@ export const environment = {
         publicKey: 'RLbRJhW8Gk9IN-Z3Z',
         // Plantillas: una por tipo de aviso, porque el enunciado (puntos 5, 7 y
         // 8) pide que se distingan entre sí.
-        plantillaPendiente: 'template_8fl84ys',
-        plantillaAprobado: 'template_8fl84ys',
-        plantillaRechazado: 'template_t44g5mr',
+        plantillaSolicitud: 'template_8fl84ys',
+        plantillaRespuesta: 'template_t44g5mr',
     },
 };
 

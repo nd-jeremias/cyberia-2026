@@ -1,13 +1,15 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Empleados'">
-            <a accion class="btn-banda" routerLink="/gestion-empleados/alta"> Agregar </a>
+            <a accion class="btn-banda" routerLink="/gestion-empleados/alta"
+                ><fa-icon [icon]="['fas', 'circle-plus']"></fa-icon> Agregar
+            </a>
         </app-header>
-        
+
         <div class="superior hoja">
             <section class="listado-clientes">
                 @if (listaEmpleados().length === 0) {
-                <p class="listado-vacio">No hay clientes esperando aprobación en este momento.</p>
+                <p class="listado-vacio">No hay empleados cargados para mostrar.</p>
                 } @else {
                 <div class="lista">
                     @for (empleado of listaEmpleados(); track empleado.id) {
@@ -21,6 +23,6 @@
                 }
             </section>
         </div>
+        <!-- <app-footer class="inferior-final fondo-texturizado"></app-footer> -->
     </div>
 </ion-content>
-

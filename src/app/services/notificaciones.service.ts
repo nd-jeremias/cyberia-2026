@@ -13,7 +13,7 @@ import {
 } from '../interfaces/notificacion.interface';
 import { VibracionService } from './vibracion.service';
 import { ModalService } from './modal.service';
-import { supabase } from './supabase.service';
+import { SupabaseService } from './supabase.service';
 
 const CLAVE_TOKEN = 'token-push';
 
@@ -46,6 +46,9 @@ export class NotificacionesService {
     private modal = inject(ModalService);
     private vibracion = inject(VibracionService);
     private toastCtrl = inject(ToastController);
+    // Inyectado y no importado: así los tests lo reemplazan por un doble
+    // con TestBed, sin salir a la red (misma razón que en PedidoService).
+    private supabase = inject(SupabaseService);
 
     /** Evita registrar los listeners dos veces si se inicializa de nuevo. */
     private inicializado = false;
@@ -120,7 +123,7 @@ export class NotificacionesService {
      * asociado al usuario que esté en sesión.
      */
     private sincronizarAlCambiarSesion(): void {
-        supabase.auth.onAuthStateChange((evento, sesion) => {
+        this.supabase.auth.onAuthStateChange((evento, sesion) => {
             if (!sesion) return;
 
             // Supabase advierte que llamar a otros métodos suyos dentro de este
@@ -305,13 +308,13 @@ export class NotificacionesService {
             const token = await this.recuperarToken();
             if (!token) return;
 
-            const { data, error: sessionError } = await supabase.auth.getSession();
+            const { data, error: sessionError } = await this.supabase.auth.getSession();
             if (sessionError) throw sessionError;
 
             const usuarioId = data.session?.user.id;
             if (!usuarioId) return;
 
-            const { error: updateError } = await supabase
+            const { error: updateError } = await this.supabase
                 .from('usuarios')
                 .update({ token_push: token })
                 .eq('id', usuarioId);
@@ -335,14 +338,14 @@ export class NotificacionesService {
 
     private async olvidarTokenEnBase(): Promise<void> {
         try {
-            const { data, error: sessionError } = await supabase.auth.getSession();
+            const { data, error: sessionError } = await this.supabase.auth.getSession();
             if (sessionError) throw sessionError;
 
             const usuarioId = data.session?.user.id;
             if (!usuarioId) return;
 
             // Ejecutamos la consulta guardando la respuesta para evaluar errores
-            const { error: updateError } = await supabase
+            const { error: updateError } = await this.supabase
                 .from('usuarios')
                 .update({ token_push: null })
                 .eq('id', usuarioId);
@@ -356,11 +359,11 @@ export class NotificacionesService {
     }
 
     // Método para notificar a varios perfiles (ej: ['dueño', 'supervisor', 'barman'])
-    async enviarAvisos(perfiles: string[], titulo: string, cuerpo: string, tipo: string) {
+    async enviarAvisos(perfiles: string[], titulo: string, cuerpo: string, tipo: TipoNotificacion) {
         try {
             // 1. Buscamos TODOS los usuarios que coincidan con CUALQUIERA de los perfiles.
             // Al usar .in() no hace falta un bucle "for", Supabase trae todos juntos.
-            const { data: usuarios, error: userError } = await supabase
+            const { data: usuarios, error: userError } = await this.supabase
                 .from('usuarios')
                 .select('token_push')
                 .in('perfil', perfiles) // Busca múltiples perfiles a la vez!
@@ -373,13 +376,14 @@ export class NotificacionesService {
             const tokens = usuarios?.map((u) => u.token_push).filter((t) => !!t) || [];
 
             if (tokens.length === 0) {
-                console.log('No hay usuarios activos con esos perfiles listos para recibir avisos.');
+                // console.log('No hay usuarios activos con esos perfiles listos para recibir avisos.');
+                console.log('No se encontraron los tokens para enviar las notificaciones.')
                 return;
             }
 
             // 2. Invocamos la Edge Function UNA SOLA VEZ pasando toda la lista de tokens juntos.
             // La función de Supabase se encarga internamente de enviar todos los mensajes sin saturar la app.
-            const { data, error } = await supabase.functions.invoke('enviar-notificacion', {
+            const { data, error } = await this.supabase.cliente.functions.invoke('enviar-notificacion', {
                 body: {
                     tokens: tokens, // ¡Le pasamos el arreglo gigante de corrido!
                     titulo: titulo,
@@ -400,9 +404,9 @@ export class NotificacionesService {
 
     // Igual que enviarAvisos, pero para UNA persona puntual y no para un perfil.
     // Lo usa el chat (punto 11): la respuesta del mozo le llega sólo al cliente de ese chat.
-    async enviarAvisoAUsuario(usuarioId: string, titulo: string, cuerpo: string, tipo: string) {
+    async enviarAvisoAUsuario(usuarioId: string, titulo: string, cuerpo: string, tipo: TipoNotificacion) {
         try {
-            const { data: usuario, error: userError } = await supabase
+            const { data: usuario, error: userError } = await this.supabase
                 .from('usuarios')
                 .select('token_push')
                 .eq('id', usuarioId)
@@ -415,7 +419,7 @@ export class NotificacionesService {
                 return;
             }
 
-            const { data, error } = await supabase.functions.invoke('enviar-notificacion', {
+            const { data, error } = await this.supabase.cliente.functions.invoke('enviar-notificacion', {
                 body: {
                     tokens: [usuario.token_push],
                     titulo: titulo,

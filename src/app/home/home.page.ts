@@ -1,14 +1,16 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { MesaService } from '../services/mesa.service';
 import { PedidoService } from '../services/pedido.service';
 import { EstadoPedido } from '../interfaces/pedido.interface';
-import { BOTONES_CLIENTE_POR_ESTADO, BOTONES_POR_ROL } from './home-botones.config';
+import { BOTONES_POR_ROL, botonesDelCliente } from './home-botones.config';
 import { SalonService } from '../services/salon.service';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import { HeaderComponent } from '../components/header/header.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FooterComponent } from '../components/footer/footer.component';
 
 /** Una ficha del mapa: el número de mesa y si está en verde o en naranja. */
 interface FichaMapa {
@@ -59,11 +61,7 @@ const ROLES_SALON = ['dueño', 'supervisor', 'metre', 'mozo'];
 const ROLES_SECTOR = ['cocinero', 'cantinero'];
 
 // Un pedido "en curso" es el que ya se confirmó y todavía no se entregó.
-const PEDIDOS_EN_CURSO: EstadoPedido[] = [
-    'Confirmado',
-    'En Preparación',
-    'Listo para Entregar',
-];
+const PEDIDOS_EN_CURSO: EstadoPedido[] = ['Confirmado', 'En Preparación', 'Listo para Entregar'];
 
 /**
  * Pantalla de inicio.
@@ -79,7 +77,7 @@ const PEDIDOS_EN_CURSO: EstadoPedido[] = [
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
-    imports: [IonContent, IonIcon, RouterLink, HeaderComponent],
+    imports: [FaIconComponent, IonContent, RouterLink, HeaderComponent, FooterComponent],
 })
 export class HomePage {
     authService = inject(AuthService);
@@ -94,9 +92,7 @@ export class HomePage {
     });
 
     /** Tramo del circuito en el que está el cliente. */
-    estadoCliente = computed<EstadoEnResto>(
-        () => this.salonService.situacion()?.estado ?? 'libre'
-    );
+    estadoCliente = computed<EstadoEnResto>(() => this.salonService.situacion()?.estado ?? 'libre');
 
     /**
      * Accesos de la pantalla.
@@ -110,19 +106,27 @@ export class HomePage {
 
         if (!perfil) return [];
 
-        return this.esCliente()
-            ? BOTONES_CLIENTE_POR_ESTADO[this.estadoCliente()]
-            : BOTONES_POR_ROL[perfil];
+        if (!this.esCliente()) return BOTONES_POR_ROL[perfil];
+
+        // El cliente no se resuelve sólo por su estado en el local: los juegos,
+        // la encuesta y la cuenta dependen de en qué anda su pedido.
+        return botonesDelCliente({
+            estado: this.estadoCliente(),
+            perfil,
+            estadosDePedidos: this.estadosDePedidos(),
+            acabaDeTerminarSuVisita: this.salonService.acabaDeTerminarSuVisita(),
+        });
     });
+
+    /** Estados de los pedidos de la visita, para decidir qué accesos mostrar. */
+    private estadosDePedidos = signal<EstadoPedido[]>([]);
 
     /** Cartel de situación del cliente, con la mesa si ya la tiene. */
     situacionCliente = computed(() => {
         if (!this.esCliente()) return null;
 
         const mesaId = this.salonService.situacion()?.mesaId ?? null;
-        const mesa = mesaId
-            ? this.mesaService.mesas().find((m) => m.id === mesaId) ?? null
-            : null;
+        const mesa = mesaId ? this.mesaService.mesas().find((m) => m.id === mesaId) ?? null : null;
 
         return {
             ...SITUACION_CLIENTE[this.estadoCliente()],
@@ -229,7 +233,35 @@ export class HomePage {
 
             // Para poder mostrarle el número de su mesa cuando se la asignen.
             this.mesaService.listar();
+
+            void this.cargarPedidosDelCliente(usuarioId);
         });
+    }
+
+    /**
+     * Vuelve a mirar los pedidos al entrar al inicio.
+     *
+     * Ionic mantiene viva la pantalla, así que al volver de la carta o de "Mi
+     * pedido" este es el momento en el que los accesos se rearman: el cliente
+     * mandó su pedido, o el mozo se lo confirmó mientras estaba en otra
+     * pantalla.
+     */
+    ionViewWillEnter() {
+        const usuarioId = this.authService.session()?.user.id;
+
+        if (this.esCliente() && usuarioId) void this.cargarPedidosDelCliente(usuarioId);
+    }
+
+    private async cargarPedidosDelCliente(usuarioId: string) {
+        try {
+            const pedidos = await this.pedidoService.pedidosActivosDelCliente(usuarioId);
+
+            this.estadosDePedidos.set(pedidos.map((pedido) => pedido.estado));
+        } catch (error) {
+            // Un fallo acá no puede dejar la pantalla en blanco: se muestran
+            // los accesos básicos del estado en el que está.
+            console.error('No se pudieron consultar los pedidos del cliente', error);
+        }
     }
 
     ngOnDestroy() {

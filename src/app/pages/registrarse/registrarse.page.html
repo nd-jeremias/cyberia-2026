@@ -1,8 +1,6 @@
 <ion-content [fullscreen]="true" [scrollY]="true">
     <div class="layout-superpuesto fondo-texturizado">
-        <div class="inferior">
-            <app-header-logo class="sin-labio"></app-header-logo>
-        </div>
+        <app-header-logo class="inferior sin-labio"></app-header-logo>
         <div class="superior hoja hoja-angosta">
             <app-formulario-registro
                 (registroSubmit)="handleRegistro($event)"

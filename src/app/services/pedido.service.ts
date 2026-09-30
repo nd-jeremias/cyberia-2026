@@ -8,7 +8,9 @@ import {
     NuevoPedidoInterface,
     PedidoInterface,
 } from '../interfaces/pedido.interface';
+import { MesaService } from './mesa.service';
 import { ModalService } from './modal.service';
+import { SalonService } from './salon.service';
 import { SupabaseService } from './supabase.service';
 
 /**
@@ -80,7 +82,7 @@ const SELECT_PEDIDO =
     'usuarios ( estado_en_resto ), ' +
     'pedido_detalles ( id, pedido_id, producto_id, cantidad, precio_unitario, ' +
     'precio_total_parcial, estado_producto, ' +
-    'productos ( nombre, tiempo_elaboracion_minutos ) )';
+    'productos ( nombre, tiempo_elaboracion_minutos, tipo ) )';
 
 /** El pedido ya está en la mesa: entregado por el mozo o, además, recibido. */
 const ESTADOS_EN_LA_MESA: ReadonlySet<EstadoPedido> = new Set<EstadoPedido>(['Entregado', 'Recibido']);
@@ -104,6 +106,8 @@ function codigoDeError(error: unknown): string | null {
 export class PedidoService {
     private modal = inject(ModalService);
     private supabase = inject(SupabaseService);
+    private mesaService = inject(MesaService);
+    private salonService = inject(SalonService);
 
     /** Pedidos cargados en memoria; las pantallas se enganchan a este signal. */
     pedidos = signal<PedidoInterface[]>([]);
@@ -112,13 +116,9 @@ export class PedidoService {
     cargando = signal<boolean>(false);
 
     // El mozo necesita ver primero lo que espera su confirmacion (punto 12).
-    pendientesDeConfirmacion = computed(() =>
-        this.pedidos().filter((p) => p.estado === 'Pendiente de Confirmación')
-    );
+    pendientesDeConfirmacion = computed(() => this.pedidos().filter((p) => p.estado === 'Pendiente de Confirmación'));
 
-    listosParaEntregar = computed(() =>
-        this.pedidos().filter((p) => p.estado === 'Listo para Entregar')
-    );
+    listosParaEntregar = computed(() => this.pedidos().filter((p) => p.estado === 'Listo para Entregar'));
 
     /**
      * Punto 22: pedidos en la mesa cuyo cliente ya pagó y espera que el mozo
@@ -136,9 +136,7 @@ export class PedidoService {
      * perder precisión en dinero; por eso cada uno pasa por `Number`.
      */
     private mapear(fila: FilaPedido): PedidoInterface {
-        const detalles: DetallePedidoInterface[] = (
-            fila.pedido_detalles ?? []
-        ).map((d) => ({
+        const detalles: DetallePedidoInterface[] = (fila.pedido_detalles ?? []).map((d) => ({
             id: d.id,
             pedidoId: d.pedido_id,
             productoId: d.producto_id,
@@ -147,8 +145,8 @@ export class PedidoService {
             precioUnitario: Number(d.precio_unitario),
             precioTotalParcial: Number(d.precio_total_parcial),
             estadoProducto: d.estado_producto,
-            tiempoElaboracionMinutos:
-                d.productos?.tiempo_elaboracion_minutos ?? 0,
+            tiempoElaboracionMinutos: d.productos?.tiempo_elaboracion_minutos ?? 0,
+            tipoProducto: (d.productos as any)?.tipo,
         }));
 
         return {
@@ -175,7 +173,7 @@ export class PedidoService {
     private avisarError(error: unknown, alternativa: string): void {
         const mensaje = error instanceof Error ? error.message : alternativa;
 
-        this.modal.setOpen('Error', mensaje);
+        this.modal.setOpen('Error', mensaje, 'error');
     }
 
     /**
@@ -281,10 +279,7 @@ export class PedidoService {
     // Punto 12: el cliente arma el pedido y queda esperando al mozo.
     async crear(nuevo: NuevoPedidoInterface): Promise<string | null> {
         if (nuevo.items.length === 0) {
-            this.modal.setOpen(
-                'Pedido vacío',
-                'Debe elegir al menos un producto antes de confirmar.'
-            );
+            this.modal.setOpen('Pedido vacío', 'Debe elegir al menos un producto antes de confirmar.');
 
             return null;
         }
@@ -292,10 +287,7 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
-            const total = nuevo.items.reduce(
-                (suma, item) => suma + item.cantidad * item.precioUnitario,
-                0
-            );
+            const total = nuevo.items.reduce((suma, item) => suma + item.cantidad * item.precioUnitario, 0);
 
             const { data, error } = await this.supabase
                 .from('pedidos')
@@ -353,10 +345,7 @@ export class PedidoService {
      *
      * @returns `true` si se guardó; `false` si falló (ya avisado al usuario).
      */
-    private async cambiarEstado(
-        pedidoId: string,
-        estado: EstadoPedido
-    ): Promise<boolean> {
+    private async cambiarEstado(pedidoId: string, estado: EstadoPedido): Promise<boolean> {
         this.cargando.set(true);
 
         try {
@@ -367,9 +356,7 @@ export class PedidoService {
 
             if (error) throw error;
 
-            this.pedidos.update((actuales) =>
-                actuales.map((p) => (p.id === pedidoId ? { ...p, estado } : p))
-            );
+            this.pedidos.update((actuales) => actuales.map((p) => (p.id === pedidoId ? { ...p, estado } : p)));
 
             return true;
         } catch (error) {
@@ -407,10 +394,7 @@ export class PedidoService {
      */
     async reenviar(pedidoId: string, items: ItemNuevoPedido[]): Promise<boolean> {
         if (items.length === 0) {
-            this.modal.setOpen(
-                'Pedido vacío',
-                'Debe quedar al menos un producto para volver a enviarlo.'
-            );
+            this.modal.setOpen('Pedido vacío', 'Debe quedar al menos un producto para volver a enviarlo.');
 
             return false;
         }
@@ -418,10 +402,7 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
-            const total = items.reduce(
-                (suma, item) => suma + item.cantidad * item.precioUnitario,
-                0
-            );
+            const total = items.reduce((suma, item) => suma + item.cantidad * item.precioUnitario, 0);
 
             const { error: errorBorrado } = await this.supabase
                 .from('pedido_detalles')
@@ -515,9 +496,8 @@ export class PedidoService {
             return true;
         } catch (error) {
             if (codigoDeError(error) === VALOR_FUERA_DEL_ENUM) {
-                this.modal.setOpen(
-                    'Falta actualizar la base',
-                    'Para confirmar la recepción hay que correr sql/migracion-recepcion-pedido.sql en Supabase.'
+                console.log(
+                    'Falta actualizar la base. Para confirmar la recepción hay que correr sql/migracion-recepcion-pedido.sql en Supabase.'
                 );
             } else {
                 this.avisarError(error, 'No se pudo confirmar la recepción.');
@@ -533,14 +513,24 @@ export class PedidoService {
      * Punto 22: el mozo confirma el pago y se libera la mesa.
      *
      * Son tres escrituras, en este orden:
-     *  1. el pedido pasa a "Pagado", que dispara el aviso al dueño y al
-     *     supervisor (sql/notificaciones.sql);
-     *  2. la mesa vuelve a estar disponible y sin cliente;
-     *  3. el cliente sale del circuito del local: queda "libre" y sin mesa, y
-     *     así puede volver a anotarse en la lista de espera otro día.
+     *  1. la mesa vuelve a estar disponible y sin cliente;
+     *  2. el cliente sale del circuito del local: queda libre, sin mesa y con
+     *     la hora en que terminó su visita (ver SalonService.terminarVisita);
+     *  3. recién entonces el pedido pasa a "Pagado".
      *
-     * El primer UPDATE excluye los pedidos ya pagados: si dos mozos confirman a
-     * la vez, el segundo no afecta ninguna fila y se le avisa.
+     * El orden importa porque la base no hace las tres juntas. El pedido se
+     * marca al final porque, una vez "Pagado", sale de la lista del mozo: si
+     * fuera primero y fallara la mesa, quedaría ocupada sin que nadie pudiera
+     * reintentar. Así, si falla la mesa o el cliente, el cobro sigue en "Pagos
+     * por confirmar" y el mozo lo vuelve a tocar.
+     *
+     * Los tres pasos son seguros de repetir: si dos mozos confirman a la vez,
+     * el segundo no libera una mesa ya reasignada ni cierra dos veces la
+     * visita, y el último UPDATE (que excluye lo ya pagado) le avisa.
+     *
+     * El aviso a dueño y supervisor lo manda la pantalla del mozo, como el
+     * resto de los avisos de la aplicación: el trigger de sql/notificaciones.sql
+     * nunca se instaló en la base.
      */
     async confirmarPago(pedido: PedidoInterface): Promise<boolean> {
         if (pedido.estadoCliente !== 'pagando') {
@@ -556,6 +546,13 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
+            // liberar() ya muestra su propio error si falla.
+            const mesaLiberada = await this.mesaService.liberar(pedido.mesaId, pedido.clienteId);
+
+            if (!mesaLiberada) return false;
+
+            await this.salonService.terminarVisita(pedido.clienteId);
+
             const { data, error } = await this.supabase
                 .from('pedidos')
                 .update({ estado: 'Pagado' })
@@ -571,20 +568,6 @@ export class PedidoService {
                 return false;
             }
 
-            const { error: errorMesa } = await this.supabase
-                .from('mesas')
-                .update({ disponibilidad: 'disponible', cliente_id: null })
-                .eq('id', pedido.mesaId);
-
-            if (errorMesa) throw errorMesa;
-
-            const { error: errorCliente } = await this.supabase
-                .from('usuarios')
-                .update({ estado_en_resto: 'libre', mesa_id: null })
-                .eq('id', pedido.clienteId);
-
-            if (errorCliente) throw errorCliente;
-
             this.pedidos.update((actuales) => actuales.filter((p) => p.id !== pedido.id));
 
             return true;
@@ -598,15 +581,26 @@ export class PedidoService {
     }
 
     /**
+     * Punto 16
+     * Agregar un método para verificar si un pedido pasa a "Listo para Entregar":
+     * Cuando todos los ítems de un pedido pasan a estado 'Listo', el pedido completo debe actualizarse a 'Listo para Entregar' para que el mozo lo vea en su lista de entrega.
+     */
+    async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<void> {
+        const pedido = this.pedidos().find((p) => p.id === pedidoId);
+        if (!pedido) return;
+        const todosListos = pedido.detalles.every((d) => d.estadoProducto === 'Listo');
+        if (todosListos) {
+            await this.cambiarEstado(pedidoId, 'Listo para Entregar');
+        }
+    }
+
+    /**
      * Puntos 16 a 18: cocina y bar marcan el avance producto por producto.
      *
      * El estado va por ítem y no por pedido porque una mesa puede pedir comida
      * y bebida a la vez, y cada sector termina lo suyo por separado.
      */
-    async cambiarEstadoItem(
-        detalleId: string,
-        estado: EstadoItem
-    ): Promise<boolean> {
+    async cambiarEstadoItem(detalleId: string, estado: EstadoItem): Promise<boolean> {
         try {
             const { error } = await this.supabase
                 .from('pedido_detalles')
@@ -618,9 +612,7 @@ export class PedidoService {
             this.pedidos.update((actuales) =>
                 actuales.map((pedido) => ({
                     ...pedido,
-                    detalles: pedido.detalles.map((d) =>
-                        d.id === detalleId ? { ...d, estadoProducto: estado } : d
-                    ),
+                    detalles: pedido.detalles.map((d) => (d.id === detalleId ? { ...d, estadoProducto: estado } : d)),
                 }))
             );
 
@@ -639,10 +631,7 @@ export class PedidoService {
      * en paralelo. Sumarlos daría una espera muy por encima de la real.
      */
     tiempoEstimado(pedido: PedidoInterface): number {
-        return pedido.detalles.reduce(
-            (mayor, d) => Math.max(mayor, d.tiempoElaboracionMinutos),
-            0
-        );
+        return pedido.detalles.reduce((mayor, d) => Math.max(mayor, d.tiempoElaboracionMinutos), 0);
     }
 
     /**
@@ -654,9 +643,19 @@ export class PedidoService {
      */
     totalConDescuento(pedido: PedidoInterface): number {
         const descuento = pedido.precioTotalNeto * (pedido.descuentoJuego / 100);
-        const propina =
-            pedido.precioTotalNeto * (pedido.propinaPorcentaje / 100);
+        const propina = pedido.precioTotalNeto * (pedido.propinaPorcentaje / 100);
 
         return pedido.precioTotalNeto - descuento + propina;
+    }
+
+    async setPropina(pedidoId: string, propina: number): Promise<void> {
+        try {
+            const { error } = await this.supabase.from('pedidos').update({ propina_porcentaje: propina }).eq('id', pedidoId);
+
+            if (error) throw error;
+        } catch (error) {
+            console.log('No se pudo actualizar la propina del pedido.', error);
+            throw new Error('No se pudo actualizar la propina del pedido.');
+        }
     }
 }

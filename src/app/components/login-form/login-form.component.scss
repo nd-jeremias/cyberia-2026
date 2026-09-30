@@ -151,7 +151,7 @@
     }
 
     .accesos-flecha {
-        transform: rotate(180deg);
+        transform: rotate(360deg);
     }
 
     .accesos-panel {
@@ -266,7 +266,11 @@
      */
     .rol {
         min-width: 0;
-        font-size: clamp(0.8125rem, 3vw, var(--texto-apoyo));
+
+        /* Tamaño atado al ancho de la pantalla y no sólo a la letra del
+           sistema: así "Cantinero" entra al lado del icono en cualquier
+           teléfono, sin partirse ni salirse de la ficha. */
+        font-size: clamp(0.8125rem, 3.6vw, var(--texto-apoyo));
         font-weight: 800;
         line-height: 1.2;
         color: var(--tinta);

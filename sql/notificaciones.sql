@@ -7,6 +7,12 @@
 --
 --   supabase functions deploy enviar-notificacion
 --   supabase secrets set FIREBASE_SERVICE_ACCOUNT="$(cat cuenta-servicio.json)"
+--
+-- ATENCIÓN: este archivo NUNCA se instaló en la base real (backup.sql no
+-- tiene ningún disparador propio). La aplicación manda los avisos desde el
+-- cliente con NotificacionesService.enviarAvisos(), incluido el del pago
+-- confirmado (pedidos.page.ts). Instalarlo tal cual duplicaría esos avisos:
+-- antes hay que quitar de la aplicación los que pasen a mandarse desde acá.
 -- =========================================================================
 
 CREATE EXTENSION IF NOT EXISTS pg_net;

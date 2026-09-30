@@ -1,7 +1,8 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
-import { IonBadge, IonButton, IonIcon } from '@ionic/angular';
+import { IonBadge } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { Router } from '@angular/router';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /**
  * Botón configurable de la tarjeta.
@@ -9,7 +10,7 @@ import { Router } from '@angular/router';
  * Recibir las acciones como datos permite que la misma tarjeta sirva para
  * aprobar clientes en una pantalla y seleccionarlos en otra.
  */
-export type ModoTarjetaUsuario = 'aprobacion' | 'gestion' | 'personalizado';
+export type ModoTarjetaUsuario = 'aprobacion' | 'gestion' | 'personalizado' | 'seleccion';
 
 export interface AccionTarjetaUsuario {
     id: string;
@@ -17,20 +18,23 @@ export interface AccionTarjetaUsuario {
     icono?: string;
     color?: string;
     fill?: 'clear' | 'outline' | 'solid' | 'default';
+    clase?: string;
 }
 
 export const ACCIONES_APROBACION: AccionTarjetaUsuario[] = [
     {
         id: 'aceptar',
         etiqueta: 'Aceptar',
-        icono: 'checkmark-circle',
+        icono: 'circle-check',
         color: 'success',
+        clase: 'btn-exito',
     },
     {
         id: 'rechazar',
         etiqueta: 'Rechazar',
-        icono: 'close-circle',
+        icono: 'circle-xmark',
         color: 'danger',
+        clase: 'btn-delete',
     },
 ];
 
@@ -38,16 +42,35 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
     {
         id: 'modificar',
         etiqueta: 'Modificar',
-        icono: 'create-outline',
+        icono: 'pen-to-square',
         color: 'primary',
         fill: 'outline',
+        clase: 'btn-edit',
     },
     {
         id: 'eliminar',
         etiqueta: 'Eliminar',
-        icono: 'trash-outline',
+        icono: 'trash-can',
         color: 'danger',
         fill: 'solid',
+        clase: 'btn-delete',
+    },
+];
+
+export const ACCIONES_SELECCION: AccionTarjetaUsuario[] = [
+    {
+        id: 'seleccionar',
+        etiqueta: 'Seleccionar',
+        icono: 'circle-check',
+        color: 'success',
+        clase: 'btn-exito',
+    },
+    {
+        id: 'quitar',
+        etiqueta: 'Quitar',
+        icono: 'trash-can',
+        color: 'danger',
+        clase: 'btn-delete',
     },
 ];
 
@@ -64,12 +87,12 @@ export const ACCIONES_GESTION: AccionTarjetaUsuario[] = [
     selector: 'app-tarjeta-usuario',
     templateUrl: './tarjeta-usuario.component.html',
     styleUrls: ['./tarjeta-usuario.component.scss'],
-    imports: [IonBadge, IonButton, IonIcon],
+    imports: [IonBadge, FaIconComponent],
 })
 export class TarjetaUsuarioComponent {
     usuario = input.required<ClienteInterface>();
     router = inject(Router);
-    rutaActual = signal<string>('')
+    rutaActual = signal<string>('');
 
     /**
      * Modo de la tarjeta para usar conjuntos de acciones predefinidos:
@@ -94,6 +117,9 @@ export class TarjetaUsuarioComponent {
         if (this.modo() === 'gestion') {
             return ACCIONES_GESTION;
         }
+        if (this.modo() === 'seleccion') {
+            return ACCIONES_SELECCION;
+        }
         return [];
     });
 
@@ -107,7 +133,12 @@ export class TarjetaUsuarioComponent {
     }>();
 
     /** "Apellidos, Nombres": el orden con el que se buscan personas en listas. */
-    nombreCompleto = computed(() => `${this.usuario().apellidos}, ${this.usuario().nombres}`);
+    nombreCompleto = computed(() => {
+        if (this.usuario().apellidos) {
+            return `${this.usuario().apellidos}, ${this.usuario().nombres}`;
+        }
+        return this.usuario().nombres;
+    });
 
     fechaFormateada = computed(() =>
         new Date(this.usuario().fecha_registro).toLocaleString('es-AR', {
@@ -131,15 +162,33 @@ export class TarjetaUsuarioComponent {
         }
     });
 
-    ngOnInit(){
-        this.obtenerRutaActual()
+    ngOnInit() {
+        this.obtenerRutaActual();
     }
 
     obtenerRutaActual() {
         // Retorna un string tipo '/home' o '/perfil/usuario'
         const urlActual = this.router.url;
-        console.log(urlActual)
-        this.rutaActual.set(urlActual)
+        this.rutaActual.set(urlActual);
+    }
+
+    obtenerClaseBoton(accion: AccionTarjetaUsuario): string {
+        if (accion.clase) {
+            return accion.clase;
+        }
+        if (accion.id === 'modificar' || accion.id === 'editar') {
+            return 'btn-edit';
+        }
+        if (accion.id === 'eliminar' || accion.id === 'rechazar') {
+            return 'btn-delete';
+        }
+        if (accion.id === 'aceptar' || accion.id === 'aprobar') {
+            return 'btn-exito';
+        }
+        if (accion.fill === 'outline') {
+            return 'btn-secundario';
+        }
+        return 'btn-primario';
     }
 
     onAccion(accion: string) {

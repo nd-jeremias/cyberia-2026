@@ -9,11 +9,22 @@
              que no informa alto propio, así que con `--height: auto` el modal
              colapsaba y recortaba el mensaje. -->
         <div class="contenido">
+            <!-- Usamos las señales directas desde el servicio -->
+            @if(modalService.modalSelect()){ @for(opt of modalService.options(); track opt.texto){
+            <!-- Al hacer click, le pasamos el objeto completo o el opt.value al servicio -->
+            <div class="opcion-item" (click)="modalService.notificarSeleccion(opt.value)">
+                <div class="opcion-icon">
+                    <fa-icon [icon]="['fas', opt.icono ?? 'check']"></fa-icon>
+                </div>
+                <span class="opcion-texto">{{ opt.texto }}</span>
+            </div>
+            } } @else {
             <p>{{ modalService.mensajeModal() }}</p>
+            }
         </div>
-        <ion-footer>
+        <ion-footer class="footer">
             <ion-buttons class="botonContainer">
-                <ion-button class="botonCerrar" (click)="modalService.setClose()">Cerrar</ion-button>
+                <button class="botonCerrar" (click)="modalService.setClose()">Cerrar</button>
             </ion-buttons>
         </ion-footer>
     </ng-template>

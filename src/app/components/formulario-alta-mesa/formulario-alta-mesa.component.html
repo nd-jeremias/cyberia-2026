@@ -5,16 +5,8 @@
             <div class="grupo-input">
                 <label class="input-label">Número de mesa</label>
                 <div class="caja-input">
-                    <ion-icon name="grid-outline" class="icono-campo"></ion-icon>
-                    <ion-input
-                        formControlName="numeroMesa"
-                        type="number"
-                        inputmode="numeric"
-                        min="1"
-                        label="Número de mesa"
-                        labelPlacement="floating"
-                        placeholder="1"
-                    >
+                    <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                    <ion-input formControlName="numeroMesa" type="number" inputmode="numeric" min="1" placeholder="1">
                     </ion-input>
                 </div>
                 @if (hayError("numeroMesa", "required")) {
@@ -28,14 +20,12 @@
             <div class="grupo-input">
                 <label class="input-label">Cantidad de lugares</label>
                 <div class="caja-input">
-                    <ion-icon name="people-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'users']"></fa-icon>
                     <ion-input
                         formControlName="cantidadLugares"
                         type="number"
                         inputmode="numeric"
                         min="1"
-                        label="Cantidad de lugares"
-                        labelPlacement="floating"
                         placeholder="4"
                     ></ion-input>
                 </div>
@@ -50,17 +40,14 @@
             <div class="grupo-input">
                 <label class="input-label">Tipo de mesa</label>
                 <div class="caja-input">
-                    <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
-                    <ion-select
-                        formControlName="tipo"
-                        label="Tipo de mesa"
-                        labelPlacement="floating"
-                        placeholder="Seleccionar"
-                    >
+                    <div class="select-trigger" (click)="seleccionarTipoMesa()">{{ tipoSeleccionado() }}</div>
+                    <!--
+                    <fa-icon [icon]="['fas', 'wheelchair']"></fa-icon>
+                    <ion-select formControlName="tipo" placeholder="Seleccionar" interface="popover">
                         @for (tipo of tiposMesa; track tipo) {
                         <ion-select-option [value]="tipo">{{ tipo }}</ion-select-option>
                         }
-                    </ion-select>
+                    </ion-select> -->
                 </div>
                 @if (hayError("tipo", "required")) {
                 <span class="mensaje-error">Seleccione el tipo de mesa a cargar</span>
@@ -72,7 +59,7 @@
             <div class="grupo-input">
                 <label class="input-label">Disponibilidad</label>
                 <div class="caja-input">
-                    <ion-icon name="pricetag-outline" class="icono-campo"></ion-icon>
+                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
                     <ion-select formControlName="disponibilidad" labelPlacement="floating" placeholder="Seleccionar">
                         @for (d of disponibilidad; track d) {
                         <ion-select-option [value]="d">{{ d }}</ion-select-option>
@@ -84,7 +71,6 @@
                 }
             </div>
             }
-
             <div class="img-preview">
                 <app-subida-imagenes
                     [label]="'Foto de la mesa'"
@@ -104,9 +90,9 @@
             </div>
 
             <div class="enlaces-secundarios">
-                <ion-button expand="block" type="submit" class="btn-principal"
+                <button type="submit" class="btn-principal"
                     >{{ mesaExistente() ? "Editar mesa" : "Agregar mesa" }}
-                </ion-button>
+                </button>
             </div>
         </form>
     </div>

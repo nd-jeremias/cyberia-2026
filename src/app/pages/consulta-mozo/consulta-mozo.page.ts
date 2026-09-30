@@ -10,6 +10,7 @@ import { ModalService } from '../../services/modal.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
 import { SalonService } from '../../services/salon.service';
 import { formatearFechaHora } from '../../utils/fecha';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 const ROLES_CLIENTE = ['cliente registrado', 'cliente anónimo'];
 
@@ -36,7 +37,8 @@ const SUGERENCIAS = ['¿Cuánto falta para mi pedido?', 'Necesito cubiertos', 'T
 @Component({
     selector: 'app-consulta-mozo',
     templateUrl: './consulta-mozo.page.html',
-    imports: [IonContent, IonIcon, HeaderComponent, SalaConversacionComponent],
+    styleUrls: ['./consulta-mozo.page.scss'],
+    imports: [FaIconComponent, IonContent, HeaderComponent, SalaConversacionComponent],
 })
 export class ConsultaMozoPage {
     private authService = inject(AuthService);
@@ -122,7 +124,7 @@ export class ConsultaMozoPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo abrir la conversación.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
         }
@@ -188,13 +190,12 @@ export class ConsultaMozoPage {
             }
 
             const mensaje = await this.conversacion.enviar(chat.id, usuarioId, cuerpo);
-
             this.agregar(mensaje);
             void this.avisar(chat, mensaje);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo enviar el mensaje.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.enviando.set(false);
         }

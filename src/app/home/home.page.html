@@ -1,97 +1,92 @@
-<app-header modo="usuario"></app-header>
-
 <ion-content [fullscreen]="true">
-    <div class="hoja">
-        <div class="grilla-acciones">
-            @for (boton of botonesDelRol(); track boton.ruta) {
-            <a class="tarjeta-accion" [routerLink]="boton.ruta">
-                <span class="medallon">
-                    <ion-icon [name]="boton.icono"></ion-icon>
-                </span>
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" modo="usuario"></app-header>
 
-                <span class="titulo-accion">{{ boton.texto }}</span>
+        <div class="superior hoja">
+            <!--
+              Situación del cliente en el local. Se actualiza sola: el inicio queda
+              escuchando su fila, así que cuando el metre le asigna una mesa desde
+              otro teléfono, este cartel y los accesos de arriba cambian solos.
+            -->
+            @if (situacionCliente(); as situacion) {
+            <section class="panel-situacion">
+                <h2 class="titulo-seccion">{{ situacion.titulo }}</h2>
 
-                <ion-icon class="flecha-accion" name="chevron-forward-outline"></ion-icon>
-            </a>
-            } @empty {
-            <div class="estado-vacio">
-                <ion-icon name="alert-circle-outline"></ion-icon>
-                @if (authService.perfilError(); as motivo) {
-                <p>No se pudo consultar tu perfil: {{ motivo }}</p>
-                } @else if (authService.perfil() === null) {
-                <p>Tu usuario todavía no tiene un perfil asignado.</p>
-                } @else if (esCliente()) {
-                <p>Seguí las indicaciones de abajo.</p>
-                } @else {
-                <p>Todavía no hay funciones asignadas a tu perfil.</p>
+                <p class="situacion-detalle">{{ situacion.detalle }}</p>
+
+                @if (situacion.numeroMesa !== null) {
+                <p class="situacion-mesa">
+                    <fa-icon [icon]="['fas', 'utensils']"></fa-icon>
+                    Tu mesa es la <strong>N° {{ situacion.numeroMesa }}</strong>
+                </p>
                 }
-            </div>
+            </section>
             }
-        </div>
 
-<!--
-          Situación del cliente en el local. Se actualiza sola: el inicio queda
-          escuchando su fila, así que cuando el metre le asigna una mesa desde
-          otro teléfono, este cartel y los accesos de arriba cambian solos.
-        -->
-        @if (situacionCliente(); as situacion) {
-        <section class="panel-situacion">
-            <h2 class="titulo-seccion">{{ situacion.titulo }}</h2>
+            <div class="grilla-acciones">
+                @for (boton of botonesDelRol(); track boton.ruta) {
+                <a class="tarjeta-accion" [routerLink]="boton.ruta">
+                    <span class="medallon">
+                        <fa-icon [icon]="['fas', boton.icono]"></fa-icon>
+                    </span>
 
-            <p class="situacion-detalle">{{ situacion.detalle }}</p>
-
-            @if (situacion.numeroMesa !== null) {
-            <p class="situacion-mesa">
-                <ion-icon name="restaurant-outline"></ion-icon>
-                Tu mesa es la <strong>N° {{ situacion.numeroMesa }}</strong>
-            </p>
-            }
-        </section>
-        }
-
-                <!--
-          Panel de estado. El contenido lo arma `panel()` según el rol: el mapa
-          del salón para quien lo atiende, los pedidos en curso para cocina y
-          barra. Si todavía no hay datos, no se dibuja.
-        -->
-        @if (panel(); as estado) {
-        <section class="panel-estado">
-            <h2 class="titulo-seccion">{{ estado.titulo }}</h2>
-
-            <div class="cifras">
-                @for (cifra of estado.cifras; track cifra.rotulo) {
-                <div class="ficha-cifra">
-                    <b [class]="'valor valor-' + cifra.tono">{{ cifra.valor }}</b>
-                    <span class="rotulo">{{ cifra.rotulo }}</span>
+                    <span class="titulo-accion">{{ boton.texto }}</span>
+                    <fa-icon class="flecha-accion" [icon]="['fas', 'chevron-right']"></fa-icon>
+                </a>
+                } @empty {
+                <div class="estado-vacio">
+                    <fa-icon [icon]="['fas', 'circle-exclamation']"></fa-icon>
+                    @if (authService.perfilError(); as motivo) {
+                    <p>No se pudo consultar tu perfil: {{ motivo }}</p>
+                    } @else if (authService.perfil() === null) {
+                    <p>Tu usuario todavía no tiene un perfil asignado.</p>
+                    } @else if (esCliente()) {
+                    <p>Seguí las indicaciones de abajo.</p>
+                    } @else {
+                    <p>Todavía no hay funciones asignadas a tu perfil.</p>
+                    }
                 </div>
                 }
             </div>
 
-            @if (estado.fichas.length) {
-            <div class="mapa">
-                @for (ficha of estado.fichas; track $index) {
-                <span class="ficha-mapa" [class.ficha-verde]="ficha.enVerde">
-                    {{ ficha.numero }}
-                </span>
+            <!--
+              Panel de estado. El contenido lo arma `panel()` según el rol: el mapa
+              del salón para quien lo atiende, los pedidos en curso para cocina y
+              barra. Si todavía no hay datos, no se dibuja.
+            -->
+            @if (panel(); as estado) {
+            <section class="panel-estado">
+                <h2 class="titulo-seccion">{{ estado.titulo }}</h2>
+
+                <div class="cifras">
+                    @for (cifra of estado.cifras; track cifra.rotulo) {
+                    <div class="ficha-cifra">
+                        <b [class]="'valor valor-' + cifra.tono">{{ cifra.valor }}</b>
+                        <span class="rotulo">{{ cifra.rotulo }}</span>
+                    </div>
+                    }
+                </div>
+
+                @if (estado.fichas.length) {
+                <div class="mapa">
+                    @for (ficha of estado.fichas; track $index) {
+                    <span class="ficha-mapa" [class.ficha-verde]="ficha.enVerde"> {{ ficha.numero }} </span>
+                    }
+                </div>
+
+                <p class="leyenda">
+                    <span class="punto punto-verde"></span> {{ estado.leyendaVerde }}
+                    <span class="punto punto-naranja"></span> {{ estado.leyendaNaranja }}
+                </p>
+                } @else {
+                <p class="panel-vacio">
+                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                    {{ estado.vacio }}
+                </p>
                 }
-            </div>
-
-            <p class="leyenda">
-                <span class="punto punto-verde"></span> {{ estado.leyendaVerde }}
-                <span class="punto punto-naranja"></span> {{ estado.leyendaNaranja }}
-            </p>
-            } @else {
-            <p class="panel-vacio">
-                <ion-icon name="checkmark-circle"></ion-icon>
-                {{ estado.vacio }}
-            </p>
+            </section>
             }
-        </section>
-        }
-
-        <footer class="pie-marca">
-            <span class="linea-marca"></span>
-            <p>Cyberia Restó</p>
-        </footer>
+        </div>
+        <!-- <app-footer class="inferior-final fondo-texturizado"></app-footer> -->
     </div>
 </ion-content>

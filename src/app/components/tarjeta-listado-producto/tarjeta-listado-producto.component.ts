@@ -1,13 +1,13 @@
 import { Component, input, output } from '@angular/core';
-import { IonIcon } from '@ionic/angular';
 import { TarjetaProductoComponent } from '../tarjeta-producto/tarjeta-producto.component';
 import { Producto } from '../../interfaces/producto.interface';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
     selector: 'app-tarjeta-listado-producto',
     templateUrl: './tarjeta-listado-producto.component.html',
     styleUrls: ['./tarjeta-listado-producto.component.scss'],
-    imports: [IonIcon, TarjetaProductoComponent],
+    imports: [FaIconComponent, TarjetaProductoComponent],
 })
 export class TarjetaListadoProductoComponent {
     productos = input.required<Producto[]>();

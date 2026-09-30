@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { EstadoEnResto } from '../../interfaces/auth.interface';
 import { AuthService } from '../../services/auth.service';
@@ -8,6 +8,10 @@ import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
 import { SalonService } from '../../services/salon.service';
 import { SpinnerService } from '../../services/spinner.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
+import { formatearFechaHora } from '../../utils/fecha';
+import { fechaDeNuevaVisita } from '../../utils/visita';
 
 /** Qué decirle al cliente según dónde esté parado en el circuito. */
 const LEYENDA_ESTADO: Record<EstadoEnResto, string> = {
@@ -29,7 +33,7 @@ const LEYENDA_ESTADO: Record<EstadoEnResto, string> = {
     selector: 'app-escanear-ingreso',
     templateUrl: './escanear-ingreso.page.html',
     styleUrls: ['./escanear-ingreso.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [IonContent, FaIconComponent, HeaderComponent],
 })
 export class EscanearIngresoPage {
     private authService = inject(AuthService);
@@ -38,11 +42,14 @@ export class EscanearIngresoPage {
     private modal = inject(ModalService);
     private spinner = inject(SpinnerService);
     private router = inject(Router);
+    private notificaciones = inject(NotificacionesService)
 
     situacion = this.salonService.situacion;
 
     estado = computed<EstadoEnResto>(() => this.situacion()?.estado ?? 'libre');
-    leyenda = computed(() => LEYENDA_ESTADO[this.estado()]);
+    leyenda = computed(() =>
+        this.salonService.acabaDeTerminarSuVisita() ? this.leyendaVisitaTerminada() : LEYENDA_ESTADO[this.estado()]
+    );
     puedeAnotarse = computed(() => this.estado() === 'libre');
 
     /** Se apaga en cuanto se conoce la situación, para no mostrar datos viejos. */
@@ -103,6 +110,19 @@ export class EscanearIngresoPage {
 
             this.spinner.show();
 
+            // La situación pudo cambiar desde que se abrió la pantalla: si el
+            // mozo acaba de confirmar el pago, hay que saberlo antes de decidir
+            // a dónde lleva este escaneo.
+            await this.salonService.cargarSituacion(usuarioId);
+
+            // Recién terminó su visita: el escaneo no lo vuelve a anotar, lo
+            // lleva a las encuestas (punto 22). Pasada la ventana entre
+            // visitas, el mismo escaneo es un ingreso normal.
+            if (this.salonService.acabaDeTerminarSuVisita()) {
+                this.irAEncuestas();
+                return;
+            }
+
             const anotado = await this.salonService.entrarEnListaDeEspera(usuarioId);
 
             this.modal.setOpen(
@@ -111,6 +131,12 @@ export class EscanearIngresoPage {
                     ? 'Te anotamos en la lista de espera. Aguardá a que el metre te asigne una mesa.'
                     : LEYENDA_ESTADO[this.estado()]
             );
+
+            // Sólo si efectivamente entró: si ya estaba anotado o tiene mesa,
+            // el metre no tiene a nadie nuevo que atender.
+            if (anotado) {
+                await this.notificaciones.enviarAvisos(['metre'], 'Cliente en lista de espera', 'Un cliente acaba de acceder mediante QR y esta a la espera de una mesa.', 'cliente-en-espera')
+            }
         } catch (error) {
             this.avisarError(error, 'No se pudo completar el ingreso al local.');
         } finally {
@@ -118,9 +144,28 @@ export class EscanearIngresoPage {
         }
     }
 
+    /** Punto 22: quien acaba de pagar ve las encuestas en lugar de volver a anotarse. */
+    private irAEncuestas() {
+        this.modal.setOpen(
+            '¡Gracias por tu visita!',
+            'Tu visita ya terminó, así que no te volvemos a anotar. Te llevamos a las encuestas.',
+            'info'
+        );
+
+        void this.router.navigate(['/encuestas']);
+    }
+
+    /** Explica por qué el escaneo no lo anota y desde cuándo va a poder. */
+    private leyendaVisitaTerminada(): string {
+        const nuevaVisita = fechaDeNuevaVisita(this.situacion()?.fechaUltimaVisita);
+        const desde = nuevaVisita ? ` Vas a poder anotarte de nuevo desde el ${formatearFechaHora(nuevaVisita)}.` : '';
+
+        return `Tu visita terminó hace poco: al escanear el código vas a ver las encuestas.${desde}`;
+    }
+
     private avisarError(error: unknown, alternativa: string) {
         const mensaje = error instanceof Error ? error.message : alternativa;
 
-        this.modal.setOpen('Error', mensaje);
+        this.modal.setOpen('Error', mensaje, 'error');
     }
 }

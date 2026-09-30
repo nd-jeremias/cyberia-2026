@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
-import { IonBadge, IonButton, IonContent, IonIcon } from '@ionic/angular';
+import { IonBadge, IonContent } from '@ionic/angular';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
 import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
@@ -7,6 +7,8 @@ import { SalonService } from '../../services/salon.service';
 import { ModalService } from '../../services/modal.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
 import { HeaderComponent } from '../../components/header/header.component';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Pantalla del metre: asignar una mesa a un cliente (punto 10).
@@ -23,12 +25,13 @@ import { HeaderComponent } from '../../components/header/header.component';
     selector: 'app-asignar-mesas',
     templateUrl: './asignar-mesas.page.html',
     styleUrls: ['./asignar-mesas.page.scss'],
-    imports: [IonContent, IonButton, IonBadge, IonIcon, TarjetaUsuarioComponent, HeaderComponent],
+    imports: [IonContent, IonBadge, FaIconComponent, TarjetaUsuarioComponent, HeaderComponent],
 })
 export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
+    private notificaciones = inject(NotificacionesService);
 
     clientes = signal<ClienteInterface[]>([]);
     clienteElegido = signal<ClienteInterface | null>(null);
@@ -50,23 +53,6 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
 
         return cliente ? this.mesaService.mesaDelCliente(cliente.id) : null;
     });
-
-    accionesTarjeta = [
-        {
-            id: 'elegir',
-            etiqueta: 'Seleccionar',
-            icono: 'hand-right',
-            color: 'primary',
-        },
-        // Punto 9: el metre tiene que poder sacar a alguien de la lista, por
-        // ejemplo si se fue sin esperar.
-        {
-            id: 'quitar',
-            etiqueta: 'Quitar',
-            icono: 'person-remove',
-            color: 'danger',
-        },
-    ];
 
     ngOnInit() {
         this.cargarClientes();
@@ -93,14 +79,11 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 
-    async onSeleccionCliente(evento: {
-        accion: string;
-        usuario: ClienteInterface;
-    }) {
+    async onSeleccionCliente(evento: { accion: string; usuario: ClienteInterface }) {
         if (evento.accion === 'quitar') {
             await this.quitarDeLista(evento.usuario);
             return;
@@ -121,12 +104,9 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
 
             await this.cargarClientes();
         } catch (error) {
-            const mensaje =
-                error instanceof Error
-                    ? error.message
-                    : 'No se pudo quitar al cliente de la lista.';
+            const mensaje = error instanceof Error ? error.message : 'No se pudo quitar al cliente de la lista.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 
@@ -158,13 +138,20 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
         // por alguien que sigue figurando en la lista, así que se avisa.
         try {
             await this.salonService.asignarMesa(cliente.id, mesa.id);
+            await this.notificaciones.enviarAvisoAUsuario(
+                cliente.id,
+                'Mesa asignada.',
+                `Se le asigno la mesa N° ${mesa.numeroMesa}, ya puede tomar asiento.`,
+                'mesa-asignada'
+            );
+            this.modal.setOpen('Mesa asignada', `El cliente fue asignado a la mesa N° ${mesa.numeroMesa}.`);
         } catch (error) {
             const mensaje =
                 error instanceof Error
                     ? error.message
                     : 'La mesa quedó tomada pero no se pudo actualizar el estado del cliente.';
 
-            this.modal.setOpen('Revisar la asignación', mensaje);
+            this.modal.setOpen('Revisar la asignación', mensaje, 'error');
         }
 
         this.clienteElegido.set(null);

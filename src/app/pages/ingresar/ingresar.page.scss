@@ -1,22 +1,24 @@
-// El fondo naranja de ion-content asoma detrás de la banda naranja al rebotar
-// el scroll, lo que da continuidad visual sin un corte brusco.
-ion-content {
-    --background: var(--naranja);
-    --padding-bottom: 0;
-}
+/* La estructura y estilos de .layout-superpuesto se gestionan globalmente en global.scss */
 
-/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
-:host ::ng-deep {
-    .layout-superpuesto {
-        min-height: 100vh;
-    }
+/**
+ * El ingreso tiene que entrar entero en la pantalla, sin desplazarse: es la
+ * primera pantalla de la aplicación y no hay nada más abajo que buscar.
+ *
+ * Los valores generales del layout están pensados para pantallas con listados,
+ * que sí se desplazan; acá se recortan los tres espacios que sobran.
+ */
 
+.layout-superpuesto {
+    /* La banda del logotipo ocupa lo que mide el logo. El 20 % de alto que pide
+       el layout general le sobra, y era lo que empujaba el formulario fuera de
+       la pantalla en los teléfonos con la letra del sistema agrandada. */
     .inferior {
-        height: auto;
-        padding-bottom: 50px;
+        min-height: 0;
     }
 
+    /* El papel llega hasta abajo de todo: el espacio libre lo reparte el propio
+       formulario (los accesos rápidos van anclados al pie). */
     .superior {
-        padding-top: 1.5rem;
+        padding-bottom: 1rem;
     }
 }

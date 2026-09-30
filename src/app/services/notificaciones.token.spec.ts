@@ -3,6 +3,7 @@ import { Platform, ToastController } from '@ionic/angular';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ModalService } from './modal.service';
 import { NotificacionesService } from './notificaciones.service';
+import { SupabaseService } from './supabase.service';
 import { VibracionService } from './vibracion.service';
 
 /**
@@ -10,10 +11,26 @@ import { VibracionService } from './vibracion.service';
  *
  * `vi.hoisted` es necesario porque `vi.mock` se eleva por encima de los
  * imports: sin esto, las fábricas correrían antes de que existieran los objetos.
+ *
+ * Los plugins se reemplazan con `vi.mock` porque son paquetes. Supabase no:
+ * el sistema de tests de Angular no admite `vi.mock` sobre imports relativos,
+ * así que entra por TestBed en lugar de `SupabaseService`.
+ *
+ * `vi.mock` sólo es confiable si cada spec corre aislado, y por eso angular.json
+ * activa `isolate` en los tests. Sin eso los specs comparten los módulos ya
+ * cargados: si otro cargó antes el plugin real, este spec recibe el real y
+ * falla con "PushNotifications plugin is not implemented on web", según el
+ * orden en que se repartan los archivos.
  */
 const dobles = vi.hoisted(() => {
     /** Cada `update()` que llega a la tabla `usuarios`. */
     const actualizaciones: Record<string, unknown>[] = [];
+
+    /** Cada filtro que se aplica al buscar destinatarios, en orden. */
+    const filtros: unknown[][] = [];
+
+    /** Lo que devuelve la búsqueda de destinatarios por perfil. */
+    const destinatarios: { token_push: string }[] = [];
 
     /** Capacitor Preferences, en memoria. */
     const preferencias = new Map<string, string>();
@@ -23,6 +40,8 @@ const dobles = vi.hoisted(() => {
 
     return {
         actualizaciones,
+        filtros,
+        destinatarios,
         preferencias,
         escuchas,
 
@@ -49,20 +68,40 @@ const dobles = vi.hoisted(() => {
                     error: null,
                 })),
             },
-            from: vi.fn(() => ({
-                update: (valores: Record<string, unknown>) => {
-                    actualizaciones.push(valores);
+            // Consulta encadenable: `maybeSingle` es la búsqueda de una
+            // persona puntual, y esperar la consulta sin más es la búsqueda
+            // por perfil, que devuelve `destinatarios`.
+            from: vi.fn(() => {
+                const consulta = {
+                    update: (valores: Record<string, unknown>) => {
+                        actualizaciones.push(valores);
 
-                    return { eq: async () => ({ error: null }) };
+                        return { eq: async () => ({ error: null }) };
+                    },
+                    select: () => consulta,
+                    in: (columna: string, valores: unknown) => {
+                        filtros.push(['in', columna, valores]);
+                        return consulta;
+                    },
+                    eq: (columna: string, valor: unknown) => {
+                        filtros.push(['eq', columna, valor]);
+                        return consulta;
+                    },
+                    not: (columna: string, operador: string, valor: unknown) => {
+                        filtros.push(['not', columna, operador, valor]);
+                        return consulta;
+                    },
+                    maybeSingle: async () => ({ data: { token_push: 'token-cliente' }, error: null }),
+                    then: (resolver: (valor: unknown) => unknown, rechazar?: (motivo: unknown) => unknown) =>
+                        Promise.resolve({ data: [...destinatarios], error: null }).then(resolver, rechazar),
+                };
+
+                return consulta;
+            }),
+            cliente: {
+                functions: {
+                    invoke: vi.fn(async () => ({ data: { enviados: 1 }, error: null }) as { data: unknown; error: unknown }),
                 },
-                select: () => ({
-                    eq: () => ({
-                        maybeSingle: async () => ({ data: { token_push: 'token-cliente' }, error: null }),
-                    }),
-                }),
-            })),
-            functions: {
-                invoke: vi.fn(async () => ({ data: { enviados: 1 }, error: null })),
             },
         },
     };
@@ -82,8 +121,6 @@ vi.mock('@capacitor/preferences', () => ({
     },
 }));
 
-vi.mock('./supabase.service', () => ({ supabase: dobles.supabase }));
-
 /**
  * Ciclo de vida del token push y envío de avisos.
  *
@@ -101,6 +138,8 @@ describe('NotificacionesService: token y envíos', () => {
 
     beforeEach(() => {
         dobles.actualizaciones.length = 0;
+        dobles.filtros.length = 0;
+        dobles.destinatarios.length = 0;
         dobles.preferencias.clear();
         dobles.escuchas.clear();
 
@@ -114,6 +153,7 @@ describe('NotificacionesService: token y envíos', () => {
                 { provide: ToastController, useValue: { create: async () => ({ present: async () => undefined }) } },
                 { provide: ModalService, useValue: { setOpen: vi.fn() } },
                 { provide: VibracionService, useValue: { error: vi.fn(), exito: vi.fn() } },
+                { provide: SupabaseService, useValue: dobles.supabase },
             ],
         });
 
@@ -198,15 +238,85 @@ describe('NotificacionesService: token y envíos', () => {
         expect(servicio.notificaciones()).toHaveLength(0);
     });
 
-    // La usa MesaService al asignar una mesa (punto 10).
+    // La usa la pantalla del metre al asignar una mesa (punto 10).
     it('enviarAvisoAUsuario le manda el aviso al token de esa persona', async () => {
         await servicio.enviarAvisoAUsuario('usuario-9', 'Mesa asignada', 'Te tocó la mesa 3', 'mesa-asignada');
 
-        expect(dobles.supabase.functions.invoke).toHaveBeenCalledWith(
+        expect(dobles.supabase.cliente.functions.invoke).toHaveBeenCalledWith(
             'enviar-notificacion',
             expect.objectContaining({
                 body: expect.objectContaining({ tokens: ['token-cliente'], titulo: 'Mesa asignada' }),
             })
         );
+    });
+
+    /**
+     * Punto 22: así avisa la pantalla del mozo al dueño y al supervisor.
+     *
+     * Los perfiles tienen que coincidir letra por letra con el ENUM
+     * `usuarios_rol` de la base ('dueño', con eñe): uno mal escrito no falla,
+     * simplemente no encuentra a nadie.
+     */
+    describe('enviarAvisos (punto 22: dueño y supervisor)', () => {
+        const avisarPago = () =>
+            servicio.enviarAvisos(
+                ['dueño', 'supervisor'],
+                'Pago confirmado',
+                'Mesa 4: el mozo confirmó el pago y la mesa quedó libre.',
+                'pago'
+            );
+
+        it('busca a los usuarios activos de esos perfiles que tienen el teléfono registrado', async () => {
+            dobles.destinatarios.push({ token_push: 'token-duenio' });
+
+            await avisarPago();
+
+            expect(dobles.supabase.from).toHaveBeenCalledWith('usuarios');
+            expect(dobles.filtros).toEqual([
+                ['in', 'perfil', ['dueño', 'supervisor']],
+                ['eq', 'estado', 'Activo'],
+                ['not', 'token_push', 'is', null],
+            ]);
+        });
+
+        it('manda un solo envío con los tokens de todos', async () => {
+            dobles.destinatarios.push({ token_push: 'token-duenio' }, { token_push: 'token-supervisor' });
+
+            await avisarPago();
+
+            expect(dobles.supabase.cliente.functions.invoke).toHaveBeenCalledTimes(1);
+            expect(dobles.supabase.cliente.functions.invoke).toHaveBeenCalledWith('enviar-notificacion', {
+                body: {
+                    tokens: ['token-duenio', 'token-supervisor'],
+                    titulo: 'Pago confirmado',
+                    cuerpo: 'Mesa 4: el mozo confirmó el pago y la mesa quedó libre.',
+                    tipo: 'pago',
+                },
+            });
+        });
+
+        // Es lo que pasa si el dueño y el supervisor nunca entraron desde un
+        // teléfono: no hay a quién mandarle nada, y no es un error.
+        it('no llama a la función si nadie de esos perfiles tiene el teléfono registrado', async () => {
+            await expect(avisarPago()).resolves.toBeUndefined();
+
+            expect(dobles.supabase.cliente.functions.invoke).not.toHaveBeenCalled();
+        });
+
+        // La pantalla del mozo atrapa este error para no mostrar como fallido
+        // un cobro que ya se registró.
+        it('lanza si la función de envío falla', async () => {
+            const consola = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+            dobles.destinatarios.push({ token_push: 'token-duenio' });
+            dobles.supabase.cliente.functions.invoke.mockResolvedValueOnce({
+                data: null,
+                error: new Error('Firebase no respondió'),
+            });
+
+            await expect(avisarPago()).rejects.toThrow('Error al enviar notificaciones.');
+
+            consola.mockRestore();
+        });
     });
 });

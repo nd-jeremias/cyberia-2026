@@ -98,15 +98,13 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu máquina local:
 
 Los scripts de la carpeta `sql/` se corren desde el **SQL Editor** de Supabase, en este orden:
 
-| Script                         | Para qué sirve                                                                  |
-| :----------------------------- | :------------------------------------------------------------------------------ |
-| `usuarios.sql`                 | Crea la tabla `usuarios`, los tipos ENUM y las cuentas `@test.com`.              |
-| `usuarios-acceso-rapido.sql`   | Crea las cuentas `@restaurante.com` que usan los botones de **acceso rápido**.   |
-| `mesas.sql` / `productos.sql`  | Salón y carta.                                                                   |
-| `pedidos.sql`                  | Circuito del pedido.                                                             |
-| `notificaciones.sql`           | Disparadores que mandan las notificaciones push (necesita `pg_net`).             |
-
-> ⚠️ Sin `usuarios-acceso-rapido.sql` los botones de acceso rápido cargan credenciales que no existen y el ingreso falla: esas cuentas usan `@restaurante.com` con la contraseña `12345678`, que **no** son las que siembra `usuarios.sql` (`@test.com` con `Password123!`).
+| Script                        | Para qué sirve                                                                 |
+| :---------------------------- | :----------------------------------------------------------------------------- |
+| `usuarios.sql`                | Crea la tabla `usuarios`, los tipos ENUM y las cuentas `@test.com`.            |
+| `usuarios-acceso-rapido.sql`  | Crea las cuentas `@restaurante.com` que usan los botones de **acceso rápido**. |
+| `mesas.sql` / `productos.sql` | Salón y carta.                                                                 |
+| `pedidos.sql`                 | Circuito del pedido.                                                           |
+| `notificaciones.sql`          | Disparadores que mandan las notificaciones push (necesita `pg_net`).           |
 
 ---
 
@@ -248,7 +246,7 @@ npx cap open android
 
 ### Favicon (web)
 
-<img src="/src/assets/icon/favicon.png" width="300" alt="Splash Screen"/>
+<img src="src/assets/icon/favicon.png" width="300" alt="Favicon"/>
 
 ---
 
@@ -282,6 +280,63 @@ npx cap open android
 
 ---
 
+### Pantalla de QR de Ingreso al Local
+
+<img src="assets\screenshots/Screenshot_qr_ingreso.jpeg" width="600" alt="Pantalla qr de ingreso"/>
+
+---
+
+### Pantalla de Asignar mesa (Lado Metre)
+
+<img src="assets\screenshots/Screenshot_asignar_mesa_metre.jpeg" width="600" alt="Pantalla de asignar mesa"/>
+
+---
+
+### Pantalla de Consultas al Mozo
+
+<img src="assets\screenshots/Screenshot_consultas_mozo.jpeg" width="600" alt="Pantalla de consultas"/>
+
+---
+
+### Pantalla de Gestión de Clientes
+
+<img src="assets\screenshots/Screenshot_gestion_clientes.jpeg" width="600" alt="Pantalla de gestión clientes"/>
+
+---
+
+### Pantalla de Gestión de Empleados
+
+<img src="assets\screenshots/Screenshot_gestion_empleados.jpeg" width="600" alt="Pantalla de gestión empleados"/>
+
+---
+
+### Pantalla de Gestión de Mesas
+
+<img src="assets\screenshots/Screenshot_gestion_mesas.jpeg" width="600" alt="Pantalla de gestión mesas"/>
+
+---
+
+### Pantalla de Inicio de cliente
+
+<img src="assets\screenshots/Screenshot_inicio_cliente.jpeg" width="600" alt="Pantalla de inicio"/>
+
+---
+
+### Pantalla de Pedidos (Lado Mozo)
+
+<img src="assets\screenshots/Screenshot_pedidos_mozo.jpeg" width="600" alt="Pantalla de pedidos"/>
+
+---
+
+### Envio de Correos automatizados
+
+<img src="assets\screenshots/Screenshot_correo_bandeja.jpg" width="600" alt="Bandeja de correos"/>
+<img src="assets\screenshots/Screenshot_correo_solicitud.jpg" width="600" alt="Correo Solicitud"/>
+<img src="assets\screenshots/Screenshot_correo_aprobado.jpg" width="600" alt="Correo Aprobado"/>
+<img src="assets\screenshots/Screenshot_correo_rechazado.jpg" width="600" alt="Correo Rechazado"/>
+
+---
+
 <!-- ### Pantalla de Inicio
 
 <img src="assets\screenshots\Screenshot_pantalla_inicio.png" width="600" alt="Pantalla de Inicio"/> -->
@@ -298,71 +353,73 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 
 | 📝 Tarea / Descripción                                    | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                                   Observaciones                                   |
 | :-------------------------------------------------------- | :-------------: | :--------: | :--------: | :-------------------------------------------------------------------------------: |
+| **Actualizacion constante del readme**                    |
 | Configuración inicial del proyecto                        |   24/08/2026    | 23/08/2026 | Completado |                                                                                   |
 | Creación de Base de Datos y datos de prueba (preliminar)  |   24/08/2026    | 23/08/2026 | Completado |                                                                                   |
 | Diseño de icono y pantalla de presentación                |   26/08/2026    | 25/08/2026 | Completado |                       ✅ Corregir color de fondo del splash                       |
 | Servicio de Lectura y Generación de QR + lectura DNI      |   26/08/2026    | 26/08/2026 | Completado |                  ✅ Verificar la funcionalidad del lector de DNI                  |
 | Servicio de registro                                      |   --/--/----    | 26/08/2026 | Completado |                                                                                   |
 | Servicio para manejo de "Carrito"                         |   27/08/2026    | 29/08/2026 | Completado |                                                                                   |
-| Páginas dueño/supervisor + componentes necesarios         |   02/09/2026    | --/-/----  | En proceso | Demora en la página general. Se avanzo solamente en la creacion de una nueva mesa |
-| Servicio de Chat Mozo-Cliente                             |   --/--/----    | --/--/---- | Pendiente  |                                                                                   |
+| Páginas dueño/supervisor + componentes necesarios         |   02/09/2026    | 18/09/2026 | Completado | Demora en la página general. Se avanzo solamente en la creacion de una nueva mesa |
+| Servicio de audio                                         |   23/09/2026    | 23/09/2026 | Completado |                  Corregir disparo de audio al utilizar la camara                  |
 | **Puntos del TP a realizar:**                             |
-| 1.- Agregar un empleado                                   |   02/09/2026    | 02/09/2026 | Completado |                                                                                   |
+| 1.- Agregar un empleado                                   |   02/09/2026    | 02/09/2026 | Completado |                         Verificar el boton de "ir atras"                          |
 | 4.- Agregar una nueva mesa                                |   02/09/2026    | 04/09/2026 | Completado |                                                                                   |
-| 6.- Verificar ingreso del cliente registrado              |   14/09/2026    | --/--/---- | En proceso |                                                                                   |
-| 7.- El dueño o supervisor rechaza a un cliente.           |   14/09/2026    | --/--/---- | Pendiente  |                                                                                   |
-| 8.- El dueño o supervisor acepta a un cliente registrado. |   14/09/2026    | --/--/---- | Pendiente  |                                                                                   |
+| 6.- Verificar ingreso del cliente registrado              |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
+| 7.- El dueño o supervisor rechaza a un cliente.           |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
+| 8.- El dueño o supervisor acepta a un cliente registrado. |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
+| 21.- El cliente solicita la cuenta al mozo.               |   30/09/2026    | --/--/---- | En Proceso  |                                                                                   |
 
 ---
 
 ### 👤 Plucci, Kevin 🌿 Branch: kev-dev
 
-| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                        Observaciones                         |
-| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :----------------------------------------------------------: |
-| Creación de módulo ´formulario-ingreso´                                                      |   25/08/2026    | 23/08/2026 | Completado |                                                              |
-| Creación de interfaz de usuarios (autenticación, registro, cliente, usuario)                 |   25/08/2026    | 23/08/2026 | Completado |                                                              |
+| 📝 Tarea / Descripción                                                                       | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                          Observaciones                          |
+| :------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :-------------------------------------------------------------: |
+| Creación de módulo ´formulario-ingreso´                                                      |   25/08/2026    | 23/08/2026 | Completado |                                                                 |
+| Creación de interfaz de usuarios (autenticación, registro, cliente, usuario)                 |   25/08/2026    | 23/08/2026 | Completado |                                                                 |
 | Creación de módulo: ´formulario-registro´,´formulario-alta-producto´, ´formulario-alta-mesa´ |   27/08/2026    | 25/08/2026 | Completado | ✅ Revisar la validación de datos antes de hacer el envío(emit) |
 | Componente para listar Clientes Pendientes                                                   |   27/08/2026    | 27/08/2026 | Completado |  ✅ Crear una tarjeta `usuario` para modularizar y reutilizar   |
-| Creación de módulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |                                                              |
+| Creación de módulo: ´formulario-usuario-anonimo´                                             |   27/08/2026    | 27/08/2026 | Completado |                                                                 |
 | Servicio de Notificaciones Push                                                              |   27/08/2026    | 27/08/2026 | Completado |                   ✅ Revisar la funcionalidad                   |
-| páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                              |
-| Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                              |
-| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | 02/09/2026 | Completado |                                                              |
-| Envío de correos, notificaciones push y vibración ante errores                               |   17/09/2026    | 17/09/2026 | Completado | Credenciales de EmailJS en `environment.ts`                  |
-| Aviso push al asignar mesa (punto 10)                                                        |   17/09/2026    | 17/09/2026 | Completado | No hay disparador en la base: sale desde `MesaService`        |
-| Corrección: el `token_push` no se renovaba al volver a ingresar                              |   17/09/2026    | 17/09/2026 | Completado | Ver `notificaciones.token.spec.ts`                            |
-| Accesos rápidos: se agregan supervisor y una cuenta rechazada                                |   17/09/2026    | 17/09/2026 | Completado | Requiere correr `sql/usuarios-acceso-rapido.sql`             |
-| Corrección: el texto se recortaba en los botones de acceso rápido                            |   17/09/2026    | 17/09/2026 | Completado | Se notaba sólo en pantallas angostas o con fuente agrandada  |
+| páginas metre/mozo + componentes necesarios                                                  |   04/09/2026    | 31/08/2026 | Completado |                                                                 |
+| Servicio de manejo de pedidos                                                                |   31/08/2026    | 31/08/2026 | Completado |                                                                 |
+| Servicio para manejo de "Mesa"-"Lista_espera"-"Productos"                                    |   02/09/2026    | 02/09/2026 | Completado |                                                                 |
+| Envío de correos, notificaciones push y vibración ante errores                               |   17/09/2026    | 17/09/2026 | Completado |           Credenciales de EmailJS en `environment.ts`           |
+| Aviso push al asignar mesa (punto 10)                                                        |   17/09/2026    | 17/09/2026 | Completado |     No hay disparador en la base: sale desde `MesaService`      |
+| Corrección: el `token_push` no se renovaba al volver a ingresar                              |   17/09/2026    | 17/09/2026 | Completado |               Ver `notificaciones.token.spec.ts`                |
+| Accesos rápidos: se agregan supervisor y una cuenta rechazada                                |   17/09/2026    | 17/09/2026 | Completado |        Requiere correr `sql/usuarios-acceso-rapido.sql`         |
+| Corrección: el texto se recortaba en los botones de acceso rápido                            |   17/09/2026    | 17/09/2026 | Completado |   Se notaba sólo en pantallas angostas o con fuente agrandada   |
 | **Puntos del TP a realizar:**                                                                |
-| 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                              |
-| 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                              |
-| 13.- El mozo rechaza el pedido                                                               |   14/09/2026    | 12/09/2026 | Completado |                                                              |
-| 14.- El mozo confirma el pedido                                                              |   14/09/2026    | 12/09/2026 | Completado |                                                              |
-| 15.- El cliente accede a los juegos en busca de descuentos                                   |   12/09/2026    | 12/09/2026 | Completado |                                                              |
-| 19.- El mozo entrega el pedido completo                                                      |   14/09/2026    | 12/09/2026 | Completado |                                                              |
-| 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | 12/09/2026 | Completado |                                                              |
+| 5.- Crear un cliente registrado                                                              |   02/09/2026    | 31/08/2026 | Completado |                                                                 |
+| 10.- El metre asigna una mesa a un cliente registrado                                        |   02/09/2026    | 31/08/2026 | Completado |                                                                 |
+| 13.- El mozo rechaza el pedido                                                               |   14/09/2026    | 12/09/2026 | Completado |                                                                 |
+| 14.- El mozo confirma el pedido                                                              |   14/09/2026    | 12/09/2026 | Completado |                                                                 |
+| 15.- El cliente accede a los juegos en busca de descuentos                                   |   12/09/2026    | 12/09/2026 | Completado |                                                                 |
+| 19.- El mozo entrega el pedido completo                                                      |   14/09/2026    | 12/09/2026 | Completado |                                                                 |
+| 22.- El mozo confirma el pago y se libera la mesa.                                           |   16/09/2026    | 12/09/2026 | Completado |                                                                 |
 
 ---
 
 ### 👤 Cura, Ezequiel 🌿 Branch: eze-dev
 
-| 📝 Tarea / Descripción                                                                                             | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                                                      Observaciones                                                      |
-| :----------------------------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :---------------------------------------------------------------------------------------------------------------------: |
-| Creación del servicio de autenticación                                                                             |   25/08/2026    | 23/08/2026 | Completado |                                                                                                                         |
-| Creación de página de ´ingreso´                                                                                    |   25/08/2026    | 24/08/2026 | Completado |                                                                                                                         |
-| Creación de página de ´home´                                                                                       |   27/08/2026    | 25/08/2026 | Completado | Aparece un mensaje de error antes de que termine de cargar la página. Revisar la línea 25 de `home.page.html`. Corregir |
-| Estructura preliminar de todas las páginas(solo estructura)                                                        |   27/08/2026    | 25/08/2026 | Completado |                                                                                                                         |
-| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´                                                         |   27/08/2026    | 26/08/2026 | Completado |                                                                                                                         |
-| Creación de página de ´seleccion-productos´                                                                        |   28/08/2026    | 26/08/2026 | Completado |                                                                                                                         |
-| Páginas cocinero/cantinero + componentes necesarios                                                                |   04/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
-| Servicio de facturación                                                                                            |    --/-/----    | --/--/---- | Pendiente  |                                                                                                                         |
+| 📝 Tarea / Descripción                                                                                             | 📅 F. Tentativa | ⏳ F. Real | ✅ Estado  |                                                       Observaciones                                                        |
+| :----------------------------------------------------------------------------------------------------------------- | :-------------: | :--------: | :--------: | :------------------------------------------------------------------------------------------------------------------------: |
+| Creación del servicio de autenticación                                                                             |   25/08/2026    | 23/08/2026 | Completado |                                                                                                                            |
+| Creación de página de ´ingreso´                                                                                    |   25/08/2026    | 24/08/2026 | Completado |                                                                                                                            |
+| Creación de página de ´home´                                                                                       |   27/08/2026    | 25/08/2026 | Completado | ✅ Aparece un mensaje de error antes de que termine de cargar la página. Revisar la línea 25 de `home.page.html`. Corregir |
+| Estructura preliminar de todas las páginas(solo estructura)                                                        |   27/08/2026    | 25/08/2026 | Completado |                                                                                                                            |
+| Componente ´tarjeta-producto´ + ´tarjeta-listado-producto´                                                         |   27/08/2026    | 26/08/2026 | Completado |                                                                                                                            |
+| Creación de página de ´seleccion-productos´                                                                        |   28/08/2026    | 26/08/2026 | Completado |                                                                                                                            |
+| Páginas cocinero/cantinero + componentes necesarios                                                                |   04/09/2026    | 02/09/2026 | Pendiente  |                                                                                                                            |
+| Servicio de Chat Mozo-Cliente                                                                                      |   --/--/----    | 10/09/2026 | Pendiente  |                                                                                                                            |
+| Servicio de facturación                                                                                            |    --/-/----    | --/--/---- | Pendiente  |                                                                                                                            |
 | **Puntos del TP a realizar:**                                                                                      |
-| 2.- Agregar un nuevo plato                                                                                         |   02/09/2026    | 02/09/2026 |  Completo  |                                                ✅ Correccion de errores                                                 |
-| 3.- Agregar una nueva bebida                                                                                       |   02/09/2026    | 02/09/2026 |  Completo  |                                                                                                                         |
-| 9.- Ingresar al local como un cliente anónimo                                                                      |   14/09/2026    | --/--/---- | En proceso |                            Reevaluar la fecha conciderando relaciones con otros componentes                             |
-| 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos |   14/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
-| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   14/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
-| 21.- El cliente solicita la cuenta al mozo.                                                                        |   19/09/2026    | --/--/---- | Pendiente  |                                                                                                                         |
+| 2.- Agregar un nuevo plato                                                                                         |   02/09/2026    | 02/09/2026 | Completado |                                                  ✅ Correccion de errores                                                  |
+| 3.- Agregar una nueva bebida                                                                                       |   02/09/2026    | 02/09/2026 | Completado |                                                                                                                            |
+| 9.- Ingresar al local como un cliente anónimo                                                                      |   14/09/2026    | 14/09/2026 | Completado |                            ✅ Reevaluar la fecha conciderando relaciones con otros componentes                             |
+| 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos |   14/09/2026    | 14/09/2026 | Completado |                                                                                                                            |
+| 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                 |   14/09/2026    | 14/09/2026 | Completado |                         ✅ Falta revisar que el pedido sea enviado a los sectores correspondientes                         |
 
 ---
 
@@ -382,11 +439,11 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | Gráficos de estadísticas                                              |   --/--/----    | --/--/---- | Pendiente  |                                                                |
 | Juegos                                                                |   --/--/----    | --/--/---- | Pendiente  |                                                                |
 | **Puntos del TP a realizar:**                                         |
-| 16.- El sector cocina recibe los productos correspondientes           |   14/09/2026    | --/--/---- | Pendiente  |                                                                |
-| 17.- El sector bar recibe los productos correspondientes              |   14/09/2026    | --/--/---- | Pendiente  |                                                                |
-| 18.- Cada sector verifica el pedido completo.                         |   14/09/2026    | --/--/---- | Pendiente  |                                                                |
-| 15.- El cliente accede a la sección de juegos en busca de descuentos. |   16/09/2026    | --/--/---- | Pendiente  |                                                                |
-| 20.- El cliente accede a la encuesta                                  |   19/09/2026    | --/--/---- | Pendiente  |                                                                |
+| 16.- El sector cocina recibe los productos correspondientes           |   14/09/2026    | 14/09/2026 | Completado |                                                                |
+| 17.- El sector bar recibe los productos correspondientes              |   14/09/2026    | 14/09/2026 | Completado |                                                                |
+| 18.- Cada sector verifica el pedido completo.                         |   14/09/2026    | 15/09/2026 | Completado |                                                                |
+| 15.- El cliente accede a la sección de juegos en busca de descuentos. |   30/09/2026    | --/--/---- | Pendiente  |                                                                |
+| 20.- El cliente accede a la encuesta                                  |   30/09/2026    | --/--/---- | Pendiente  |                                                                |
 
 ---
 

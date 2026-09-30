@@ -3,7 +3,9 @@
         @if (usuario().foto_url) {
         <img class="foto-usuario" [src]="usuario().foto_url" [alt]="'Foto de ' + nombreCompleto()" />
         } @else {
-        <div class="foto-ausente"></div>
+        <div class="foto-ausente">
+            <fa-icon [icon]="['fas', 'user-xmark']"></fa-icon>
+        </div>
         }
     </div>
 
@@ -11,11 +13,21 @@
         <h3 class="nombre-usuario">{{ nombreCompleto() }}</h3>
         <p class="dato">CUIL: {{ usuario().cuil }}</p>
         <p class="dato">{{ usuario().correo_electronico }}</p>
-        <p>{{ usuario().perfil }}</p>
+        <ion-badge>{{ usuario().perfil }}</ion-badge>
     </div>
 
     <div class="acciones-gestion">
-        <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()"> Editar </ion-button>
-        <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()"> Eliminar </ion-button>
+        <button type="button" class="btn btn-edit" (click)="onEditar()">
+            <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon> Modificar
+        </button>
+        <button
+            type="button"
+            [disabled]="usuario().perfil == 'dueño'"
+            class="btn btn-delete"
+            (click)="onEliminar()"
+        >
+            <fa-icon [icon]="['fas', 'user-xmark']"></fa-icon>
+            Eliminar
+        </button>
     </div>
 </article>

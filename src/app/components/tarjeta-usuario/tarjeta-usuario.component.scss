@@ -22,10 +22,10 @@
     // grid-template-areas:
     //     "foto datos"
     //     "acciones acciones";
+    // min-height: 32rem;
     gap: 0.875rem 1rem;
     padding: 1rem;
     box-sizing: border-box;
-    min-height: 32rem;
     background: var(--hoja-alta);
     border: var(--borde-hoja);
     border-radius: var(--radio-grande);
@@ -64,7 +64,7 @@
     color: rgba(255, 255, 255, 0.55);
 }
 
-.foto-ausente ion-icon {
+.foto-ausente fa-icon {
     font-size: 4rem;
 }
 
@@ -121,14 +121,7 @@ ion-badge {
     gap: 0.625rem;
     padding-top: 0.75rem;
     border-top: 0.0625rem solid var(--hoja-borde);
-    height: 2.8rem;
-
-    ion-button {
-        flex: 1 1 0;
-        margin: 0;
-        font-size: var(--texto-apoyo);
-        font-weight: 800;
-    }
+    height: auto;
 }
 
 /* En pantallas muy angostas la foto se achica para que el nombre no quede

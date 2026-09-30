@@ -4,7 +4,7 @@
         <img class="foto-usuario" [src]="usuario().foto_url" [alt]="'Foto de ' + nombreCompleto()" />
         } @else {
         <div class="foto-ausente">
-            <ion-icon name="person"></ion-icon>
+            <fa-icon [icon]="['fas', 'user-xmark']"></fa-icon>
         </div>
         }
     </div>
@@ -26,17 +26,17 @@
     @if (accionesVisibles().length > 0) {
     <div class="acciones">
         @for (accion of accionesVisibles(); track accion.id) {
-        <ion-button
-            expand="block"
-            [color]="accion.color || 'primary'"
-            [fill]="accion.fill || 'solid'"
+        <button
+            type="button"
+            class="btn"
+            [class]="'btn ' + obtenerClaseBoton(accion)"
             (click)="onAccion(accion.id)"
         >
             @if (accion.icono) {
-            <ion-icon slot="start" [name]="accion.icono"></ion-icon>
+            <fa-icon [icon]="['fas', accion.icono]"></fa-icon>
             }
             {{ accion.etiqueta }}
-        </ion-button>
+        </button>
         }
     </div>
     }

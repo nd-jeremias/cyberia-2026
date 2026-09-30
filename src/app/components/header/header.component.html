@@ -12,7 +12,7 @@
         <div class="banda-lado banda-lado-fin">
             @if (haySesion()) {
             <button class="btn-salir" (click)="cerrarSesion()" aria-label="Cerrar sesión">
-                <ng-icon class="icono-salir" name="remixLogoutCircleLine" />
+                <fa-icon [icon]="['fas', 'right-from-bracket']"></fa-icon>
             </button>
             }
         </div>
@@ -51,5 +51,5 @@
     </div>
 
     <!-- Borde superior redondeado del papel crema (ver el .scss). -->
-    <div class="labio-hoja" aria-hidden="true"></div>
+    <!-- <div class="labio-hoja" aria-hidden="true"></div> -->
 </header>

@@ -73,6 +73,10 @@ export const routes: Routes = [
         canActivate: [authGuard],
     },
     {
+        path: 'estado-pedido/pedido',
+        loadComponent: () => import('./pages/estado-pedido/pedido/pedido.page').then((m) => m.PedidoPage),
+    },
+    {
         path: 'juegos',
         loadComponent: () => import('./pages/juegos/juegos.page').then((m) => m.JuegosPage),
         canActivate: [authGuard],
@@ -86,6 +90,10 @@ export const routes: Routes = [
         path: 'pedir-cuenta',
         loadComponent: () => import('./pages/pedir-cuenta/pedir-cuenta.page').then((m) => m.PedirCuentaPage),
         canActivate: [authGuard],
+    },
+    {
+        path: 'pagar',
+        loadComponent: () => import('./pages/pedir-cuenta/pagar/pagar.page').then((m) => m.PagarPage),
     },
     // El QR de una mesa, para imprimirlo y pegarlo sobre ella.
     {
@@ -196,4 +204,10 @@ export const routes: Routes = [
                 (m) => m.MetreRegistrarClientePage
             ),
     },
+    //punto 16
+    {
+        path: 'pedidos-sector',
+        loadComponent: () => import('./pages/pedidos-sector/pedidos-sector.page').then((m) => m.PedidosSectorPage),
+    },
+    
 ];

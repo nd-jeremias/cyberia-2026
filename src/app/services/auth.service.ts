@@ -30,6 +30,9 @@ export class AuthService {
     galeriaService = inject(GaleriaService);
     modal = inject(ModalService);
 
+    //Este delay corrige fallo de desfase de reloj (clock skew) entre los servidores internos de Supabase
+    delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
     constructor() {
         supabase.auth.onAuthStateChange((_event, session) => {
             this.session.set(session);
@@ -103,7 +106,7 @@ export class AuthService {
     }
 
     async login({ email, password }: LoginInterface): Promise<void> {
-        const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+        // const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
         const response: AuthResponse = await supabase.auth.signInWithPassword({
             email,
@@ -116,7 +119,7 @@ export class AuthService {
             throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
 
-        await delay(1500);
+        await this.delay(300);
 
         // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
         // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
@@ -226,7 +229,8 @@ export class AuthService {
             const tipoEmpleado = form.get('tipoEmpleado') as string;
             const fotoArchivo = form.get('foto') as File;
 
-            publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios');
+            const nombre_foto = `usuario-${correo}-${Date.now()}.jpg`;
+            publicUrl = await this.galeriaService.subirImagenDb(fotoArchivo, 'usuarios', false, nombre_foto);
             if (!publicUrl) throw new Error('No se pudo cargar la imágen');
 
             // Normalizacion de datos
@@ -234,25 +238,49 @@ export class AuthService {
             const correolimpio = correoRaw.replace(/["']/g, '').trim().toLowerCase();
             const perfilFinal = tipoEmpleado && tipoEmpleado.trim() !== '' ? tipoEmpleado : 'cliente registrado';
 
-            const { data, error: authError } = await supabase.auth.signUp({
-                email: correo,
-                password,
-                options: {
-                    // Metadatos que van directamente al usuario de Auth (Opcional)
-                    data: { nombres, apellidos },
-                },
-            });
+            let createdUser: any = null;
+            let authError: any = null;
+            
+            if (this.session()) {
+                // CAMINO 1: Registro administrativo vía Edge Function (Mantiene sesión activa)
+                const { data: functionData, error: functionError } = await supabase.functions.invoke('crear-empleado', {
+                    body: { email: correolimpio, password, nombres, apellidos },
+                });
+
+                if (functionError) {
+                    authError = functionError;
+                } else if (functionData?.error) {
+                    authError = new Error(functionData.error);
+                } else {
+                    // Obtenemos el usuario que mapeamos en el JSON de la Edge Function
+                    createdUser = functionData?.user;
+                }
+            } else {
+                // CAMINO 2: Registro público autogestionado (Crea sesión nueva)
+                const { data, error } = await supabase.auth.signUp({
+                    email: correolimpio,
+                    password,
+                    options: {
+                        data: { nombres, apellidos },
+                    },
+                });
+
+                authError = error;
+                createdUser = data?.user;
+            }
 
             if (authError) throw authError;
 
-            if (data.user) {
+            await this.delay(300);
+            // Si el usuario fue creado con éxito (por cualquiera de los dos caminos), insertamos en la BD
+            if (createdUser) {
                 const { error: dbError } = await supabase.from('usuarios').insert({
-                    id: data.user.id,
+                    id: createdUser.id, // Aquí tienes garantizado el ID del nuevo usuario
                     nombres,
                     apellidos,
                     dni,
                     cuil,
-                    correo_electronico: correo,
+                    correo_electronico: correolimpio,
                     foto_url: publicUrl,
                     perfil: perfilFinal,
                     estado: tipoEmpleado ? 'Activo' : 'Pendiente',
@@ -260,7 +288,7 @@ export class AuthService {
 
                 if (dbError) throw new Error('Error al insertar datos del usuario.');
 
-                return data.user;
+                return createdUser;
             }
             return null;
         } catch (error) {
@@ -273,8 +301,10 @@ export class AuthService {
             // estado 'Pendiente' hasta que un dueño o supervisor lo apruebe:
             // no tiene que quedar logueado. Va en el finally para que tampoco
             // quede una sesión a medias si el alta falla por el camino.
-            await supabase.auth.signOut();
-            localStorage.removeItem('user');
+            if (this.perfil() != 'dueño') {
+                await supabase.auth.signOut();
+                localStorage.removeItem('user');
+            }
         }
     }
 

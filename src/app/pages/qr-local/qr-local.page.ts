@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
-import { IonContent, IonIcon, Platform } from '@ionic/angular';
+import { IonContent, Platform } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ModalService } from '../../services/modal.service';
 import { QrService } from '../../services/qr.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 const NOMBRE_ARCHIVO = 'qr-ingreso-local.png';
 
@@ -20,7 +21,7 @@ const NOMBRE_ARCHIVO = 'qr-ingreso-local.png';
     selector: 'app-qr-local',
     templateUrl: './qr-local.page.html',
     styleUrls: ['./qr-local.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [IonContent, FaIconComponent, HeaderComponent],
 })
 export class QrLocalPage {
     private qrService = inject(QrService);
@@ -39,16 +40,13 @@ export class QrLocalPage {
         if (this.archivo) return;
 
         try {
-            this.archivo = await this.qrService.generateQrFile(
-                this.qrService.contenidoIngresoLocal(),
-                NOMBRE_ARCHIVO
-            );
+            this.archivo = await this.qrService.generateQrFile(this.qrService.contenidoIngresoLocal(), NOMBRE_ARCHIVO);
 
             this.imagenQr.set(URL.createObjectURL(this.archivo));
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo generar el código QR.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 
@@ -73,7 +71,7 @@ export class QrLocalPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo guardar el código QR.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 }

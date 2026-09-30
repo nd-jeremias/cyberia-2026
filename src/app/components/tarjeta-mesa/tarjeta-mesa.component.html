@@ -2,7 +2,7 @@
     <div class="container">
         @if (!mesa().fotoUrl) {
         <div class="container-placeholder">
-            <ion-icon name="image-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'image']"></fa-icon>
             <span>Sin imagen disponible</span>
         </div>
         } @else {
@@ -10,7 +10,7 @@
             <div class="container-slide">
                 @if (!mesa().fotoUrl) {
                 <div class="container-placeholder">
-                    <ion-icon name="image-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'image']"></fa-icon>
                     <span>Sin imagen disponible</span>
                 </div>
                 } @else {
@@ -34,28 +34,28 @@
         </div>
         <div class="detalles">
             <span class="detalle">
-                <ion-icon name="time-outline"></ion-icon>
+                <fa-icon [icon]="['fas', icono()]"></fa-icon>
                 {{ mesa().tipo }}
             </span>
-            <span class="lugares">Lugares: {{ mesa().cantidadLugares }}</span>
+            <span class="lugares"><fa-icon [icon]="['fas', 'chair']"></fa-icon>: {{ mesa().cantidadLugares }}</span>
         </div>
 
         <!-- El QR va primero y a lo ancho: es lo que hay que imprimir y pegar
              en la mesa, así que es la acción que más se busca acá. -->
-        <ion-button expand="block" fill="outline" class="boton-qr" (click)="onVerQr()">
-            <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+        <button class="btn boton-qr" (click)="onVerQr()">
+            <fa-icon [icon]="['fas', 'qrcode']"></fa-icon>
             Ver código QR
-        </ion-button>
+        </button>
 
         <div class="acciones-gestion">
-            <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
-                <ion-icon name="create-outline" slot="start"></ion-icon>
-                Editar
-            </ion-button>
-            <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
-                <ion-icon name="trash-outline" slot="start"></ion-icon>
+            <button type="button" class="btn btn-edit" (click)="onEditar()">
+                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
+                Modificar
+            </button>
+            <button type="button" class="btn btn-delete" (click)="onEliminar()">
+                <fa-icon [icon]="['fas', 'trash-can']"></fa-icon>
                 Eliminar
-            </ion-button>
+            </button>
         </div>
     </div>
 </article>

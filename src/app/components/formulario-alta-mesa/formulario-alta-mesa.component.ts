@@ -1,12 +1,12 @@
-import { Component, computed, effect, inject, input, output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonButton, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
-import { Haptics, NotificationType } from '@capacitor/haptics';
+import { IonInput, IonSelect, IonSelectOption } from '@ionic/angular';
 import { MesaAltaInterface, MesaInterface, TipoMesa } from '../../interfaces/mesa.interface';
-import { ModalService } from '../../services/modal.service';
+import { ModalOption, ModalService } from '../../services/modal.service';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { FileService } from '../../services/file.service';
 import { QrService } from '../../services/qr.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Campos que el usuario ve marcados en rojo; la foto se avisa aparte. */
 const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
@@ -22,12 +22,14 @@ const CAMPOS_DE_DATOS = ['numeroMesa', 'cantidadLugares', 'tipo'] as const;
     selector: 'app-formulario-alta-mesa',
     templateUrl: './formulario-alta-mesa.component.html',
     styleUrls: ['./formulario-alta-mesa.component.scss'],
-    imports: [IonIcon, IonInput, IonSelect, IonSelectOption, IonButton, ReactiveFormsModule, SubidaImagenesComponent],
+    imports: [FaIconComponent, IonInput, IonSelect, IonSelectOption, ReactiveFormsModule, SubidaImagenesComponent],
 })
 export class FormularioAltaMesaComponent {
     private modal = inject(ModalService);
     private fileService = inject(FileService);
     qrService = inject(QrService);
+
+    tipoSeleccionado = signal<string>('Seleccionar');
 
     direccionCamara = input<'frontal' | 'trasera'>('frontal');
     mesaExistente = input<MesaInterface>();
@@ -78,10 +80,10 @@ export class FormularioAltaMesaComponent {
         // Los mínimos replican los CHECK (> 0) que ya impone la tabla `mesas`.
         // Validar acá evita un viaje a la base para recibir un rechazo.
         numeroMesa: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(100)],
         }),
         cantidadLugares: new FormControl<number | null>(null, {
-            validators: [Validators.required, Validators.min(1)],
+            validators: [Validators.required, Validators.min(1), Validators.max(20)],
         }),
         tipo: new FormControl<TipoMesa | null>(null, {
             validators: [Validators.required],
@@ -117,6 +119,24 @@ export class FormularioAltaMesaComponent {
         return !!campo && campo.touched && campo.hasError(error);
     }
 
+    async seleccionarTipoMesa() {
+        // 1. Definimos las opciones con su texto, icono de FontAwesome y valor real
+        const opciones: ModalOption[] = [
+            { texto: 'Estándar', icono: 'users', value: 'Estándar' },
+            { texto: 'Movilidad reducida', icono: 'wheelchair', value: 'Movilidad reducida' },
+            { texto: 'VIP', icono: 'star', value: 'VIP' },
+        ];
+
+        // 2. Abrimos el modal y ESPERAMOS a que el empleado toque una opción
+        const seleccion = await this.modal.setOpenSelect('Tipo de Mesa', opciones);
+
+        // 3. Si el usuario seleccionó algo (no cerró el modal en blanco), lo guardamos en el formulario
+        if (seleccion) {
+            this.formulario.get('tipo')?.setValue(seleccion);
+            this.tipoSeleccionado.set(seleccion);
+        }
+    }
+
     /**
      * Valida y, si todo está bien, emite los datos de la mesa.
      *
@@ -136,12 +156,12 @@ export class FormularioAltaMesaComponent {
         }
 
         const valores = this.formulario.getRawValue();
-        
+
         const datosMesa = {
             numeroMesa: valores.numeroMesa,
             cantidadLugares: valores.cantidadLugares,
             tipo: valores.tipo,
-            disponibilidad: valores.disponibilidad
+            disponibilidad: valores.disponibilidad,
         };
 
         const data = JSON.stringify(datosMesa);
@@ -158,7 +178,7 @@ export class FormularioAltaMesaComponent {
             tipo: valores.tipo as TipoMesa,
             fotos: this.fotos[0],
             qrFile: this.formulario.value.qr!,
-            disponibilidad: valores.disponibilidad as string
+            disponibilidad: valores.disponibilidad as string,
         };
 
         // No se limpia el formulario al emitir: si el guardado falla, la página

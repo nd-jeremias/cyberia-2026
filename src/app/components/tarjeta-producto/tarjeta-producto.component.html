@@ -2,7 +2,7 @@
     <div class="carrusel" (touchstart)="onToqueInicio($event)" (touchend)="onToqueFin($event)">
         @if (sinFotoValida()) {
         <div class="carrusel-placeholder">
-            <ion-icon name="image-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'image']"></fa-icon>
             <span>Sin imagen disponible</span>
         </div>
         } @else {
@@ -11,7 +11,7 @@
             <div class="carrusel-slide">
                 @if (fotoTieneError($index)) {
                 <div class="carrusel-placeholder">
-                    <ion-icon name="image-outline"></ion-icon>
+                    <fa-icon [icon]="['fas', 'image']"></fa-icon>
                     <span>Sin imagen disponible</span>
                 </div>
                 } @else {
@@ -31,7 +31,7 @@
             aria-label="Foto anterior"
             (click)="fotoAnterior()"
         >
-            <ion-icon name="chevron-back-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'chevron-left']"></fa-icon>
         </button>
 
         <button
@@ -40,7 +40,7 @@
             aria-label="Foto siguiente"
             (click)="fotoSiguiente()"
         >
-            <ion-icon name="chevron-forward-outline"></ion-icon>
+            <fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
         </button>
 
         <div class="puntos-carrusel">
@@ -63,7 +63,7 @@
 
         <div class="detalles">
             <span class="detalle">
-                <ion-icon name="time-outline"></ion-icon>
+                <fa-icon [icon]="['far', 'clock']"></fa-icon>
                 {{ producto().tiempoElaboracionMinutos }} min
             </span>
             <span class="precio">{{ precioFormateado() }}</span>
@@ -71,14 +71,14 @@
 
         @if (modo() === 'gestion') {
         <div class="acciones-gestion">
-            <ion-button expand="block" fill="outline" class="boton-editar" (click)="onEditar()">
-                <ion-icon name="create-outline" slot="start"></ion-icon>
-                Editar
-            </ion-button>
-            <ion-button expand="block" color="danger" class="boton-eliminar" (click)="onEliminar()">
-                <ion-icon name="trash-outline" slot="start"></ion-icon>
+            <button type="button" class="btn btn-edit" (click)="onEditar()">
+                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
+                Modificar
+            </button>
+            <button type="button" class="btn btn-delete" (click)="onEliminar()">
+                <fa-icon [icon]="['fas', 'trash-can']"></fa-icon>
                 Eliminar
-            </ion-button>
+            </button>
         </div>
         } @else if (cantidad() > 0) {
         <!-- Punto 12: el cliente elige los productos con sus cantidades. -->
@@ -89,7 +89,7 @@
                 [attr.aria-label]="'Quitar una unidad de ' + producto().nombre"
                 (click)="onQuitarCarrito()"
             >
-                <ion-icon name="remove-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'minus']"></fa-icon>
             </button>
 
             <span class="cantidad-elegida" aria-live="polite">
@@ -103,14 +103,14 @@
                 [attr.aria-label]="'Agregar una unidad de ' + producto().nombre"
                 (click)="onAgregarCarrito()"
             >
-                <ion-icon name="add-outline"></ion-icon>
+                <fa-icon [icon]="['fas', 'plus']"></fa-icon>
             </button>
         </div>
         } @else {
-        <ion-button expand="block" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
-            <ion-icon name="cart-outline" slot="start"></ion-icon>
+        <button type="button" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
+            <fa-icon [icon]="['fas', 'cart-plus']"></fa-icon>
             Agregar al pedido
-        </ion-button>
+        </button>
         }
     </div>
 </article>

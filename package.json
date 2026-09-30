@@ -28,6 +28,7 @@
         "@angular/forms": "22.0.1",
         "@angular/platform-browser": "22.0.1",
         "@angular/router": "22.0.1",
+        "@capacitor-community/native-audio": "^8.0.0",
         "@capacitor-mlkit/barcode-scanning": "^8.1.0",
         "@capacitor/android": "^8.5.0",
         "@capacitor/app": "8.1.1",
@@ -40,6 +41,7 @@
         "@capacitor/push-notifications": "^8.1.2",
         "@capacitor/share": "^8.0.1",
         "@capacitor/status-bar": "8.0.3",
+        "@capawesome/capacitor-background-task": "^8.0.3",
         "@emailjs/browser": "^4.4.1",
         "@fortawesome/angular-fontawesome": "^5.1.0",
         "@fortawesome/free-brands-svg-icons": "^7.3.0",
@@ -70,6 +72,7 @@
         "angular-eslint": "22.0.0",
         "eslint": "^9.16.0",
         "jsdom": "^26.0.0",
+        "supabase": "^2.118.0",
         "typescript": "~6.0.0",
         "typescript-eslint": "^8.61.0",
         "vitest": "^4.0.8"

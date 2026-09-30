@@ -66,7 +66,7 @@ export class QrMesaPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo descargar el código.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         }
     }
 }

@@ -105,6 +105,8 @@
     height: 2.625rem;
     padding: 0;
 
+    font-size: 1.3rem;
+
     background: var(--velo-blanco);
     border: 0.0625rem solid var(--velo-blanco-fuerte);
     border-radius: 50%;
@@ -220,6 +222,11 @@
 .contexto-titulo {
     letter-spacing: -0.02em;
     line-height: 1.1;
+
+    /* El título acompaña al ancho de la pantalla, no a la letra del sistema:
+       así entra al lado del botón de acción sin partirse ("Empleado s"). */
+    font-size: clamp(1.375rem, 6.5vw, var(--texto-titulo-grande));
+    overflow-wrap: break-word;
 }
 
 /* Insignia del perfil: fondo claro y texto naranja oscuro, para que se despegue

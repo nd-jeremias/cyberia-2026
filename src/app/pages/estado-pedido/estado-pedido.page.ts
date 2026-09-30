@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonContent, IonIcon } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { DetallePedidoInterface, EstadoItem, PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { LEYENDA_PAGANDO, LEYENDA_PEDIDO } from '../mi-pedido/mi-pedido.estado';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Cómo se ve cada ítem según en qué punto de la cocina o la barra está. */
 const CLASE_ITEM: Record<EstadoItem, string> = {
@@ -31,7 +32,7 @@ const CLASE_ITEM: Record<EstadoItem, string> = {
     templateUrl: './estado-pedido.page.html',
     // La tarjeta se ve igual que la del mozo y que la de "Mi pedido".
     styleUrls: ['../pedidos/pedidos.page.scss', '../mi-pedido/mi-pedido.page.scss', './estado-pedido.page.scss'],
-    imports: [IonContent, IonIcon, HeaderComponent],
+    imports: [FaIconComponent, IonContent, HeaderComponent],
 })
 export class EstadoPedidoPage {
     private authService = inject(AuthService);
@@ -62,7 +63,7 @@ export class EstadoPedidoPage {
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo consultar tu pedido.';
 
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
         }
@@ -99,7 +100,10 @@ export class EstadoPedidoPage {
         return this.pedidoService.tiempoEstimado(pedido);
     }
 
-    irAMiPedido() {
-        void this.router.navigate(['/mi-pedido']);
+    irAMiPedido(pedidoId: string) {
+        // Si se arma la otra pagina cambiar la ruta a "estado-pedido/pedido"
+        void this.router.navigate(['/mi-pedido'], {
+            queryParams: { pedidoId: pedidoId },
+        });
     }
 }

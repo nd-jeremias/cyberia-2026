@@ -1,10 +1,11 @@
 import { Component, computed, input, output, signal } from '@angular/core';
-import { IonBadge, IonButton, IonIcon } from '@ionic/angular';
+import { IonBadge } from '@ionic/angular';
 import { Producto, TipoProducto } from '../../interfaces/producto.interface';
 import { formatearImporte } from '../../utils/importe';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 const ETIQUETAS_TIPO: Record<TipoProducto, string> = {
-    Comida: 'Comida',
+    Comida: 'Plato',
     Bebida: 'Bebida',
     Postre: 'Postre',
 };
@@ -19,7 +20,7 @@ const COLORES_TIPO: Record<TipoProducto, string> = {
     selector: 'app-tarjeta-producto',
     templateUrl: './tarjeta-producto.component.html',
     styleUrls: ['./tarjeta-producto.component.scss'],
-    imports: [IonBadge, IonButton, IonIcon],
+    imports: [IonBadge, FaIconComponent],
 })
 export class TarjetaProductoComponent {
     producto = input.required<Producto>();

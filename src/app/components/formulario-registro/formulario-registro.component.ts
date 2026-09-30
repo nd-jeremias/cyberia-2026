@@ -8,15 +8,17 @@ import {
     ValidationErrors,
     Validators,
 } from '@angular/forms';
-import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton, IonIcon } from '@ionic/angular';
+import { IonInput, IonSelect, IonSelectOption, IonInputPasswordToggle, IonButton } from '@ionic/angular';
 import { DniInterface } from '../../interfaces/dni.interface';
 import { QrService } from '../../services/qr.service';
-import { ModalService } from '../../services/modal.service';
+import { ModalOption, ModalService } from '../../services/modal.service';
 import { RouterLink } from '@angular/router';
 import { SubidaImagenesComponent } from '../subida-imagenes/subida-imagenes.component';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { EmpleadoInterface } from '../../interfaces/empleado.interface';
 import { ClienteInterface } from '../../interfaces/cliente.interface';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { TitleCasePipe } from '@angular/common';
 
 /**
  * Validador para comprobar que las contraseñas coincidan.
@@ -48,10 +50,8 @@ const passwordsIguales = (group: AbstractControl): ValidationErrors | null => {
     templateUrl: './formulario-registro.component.html',
     styleUrls: ['./formulario-registro.component.scss'],
     imports: [
-        IonIcon,
-        IonButton,
-        IonSelect,
-        IonSelectOption,
+        FaIconComponent,
+        TitleCasePipe,
         ReactiveFormsModule,
         RouterLink,
         IonInput,
@@ -92,6 +92,8 @@ export class FormularioRegistroComponent {
 
     usuarioRol = input<'cliente' | 'dueño' | 'metre'>('cliente');
     modo = input<'modificar_empleado' | null>(null);
+
+    tipoSeleccionado = signal<string>('Seleccionar');
     /**
      * Si existe un empleado, estamos en modo edición.
      * Si es undefined, estamos en modo creación.
@@ -125,7 +127,7 @@ export class FormularioRegistroComponent {
     // DATOS
     // ============================================================
 
-    tiposEmpleado = ['supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
+    // tiposEmpleado = ['supervisor', 'metre', 'mozo', 'cocinero', 'cantinero'];
     fotosUrlsExistentes: string[] = [];
 
     // ============================================================
@@ -135,13 +137,18 @@ export class FormularioRegistroComponent {
     formulario = new FormGroup(
         {
             nombres: new FormControl('', {
-                validators: [Validators.required],
+                validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
             }),
             apellidos: new FormControl('', {
-                validators: [Validators.required],
+                validators: [Validators.required, Validators.minLength(3), Validators.maxLength(50)],
             }),
             dni: new FormControl('', {
-                validators: [Validators.required, Validators.pattern(/^\d{7,8}$/)],
+                validators: [
+                    Validators.required,
+                    Validators.pattern(/^\d{7,8}$/),
+                    Validators.minLength(7),
+                    Validators.maxLength(8),
+                ],
             }),
             cuil: new FormControl(''),
             correo: new FormControl('', {
@@ -168,7 +175,7 @@ export class FormularioRegistroComponent {
              * En edición son opcionales.
              */
             password: new FormControl('', {
-                validators: [Validators.required, Validators.minLength(8)],
+                validators: [Validators.required, Validators.minLength(8), Validators.maxLength(25)],
             }),
 
             confirmPassword: new FormControl('', {
@@ -192,18 +199,6 @@ export class FormularioRegistroComponent {
     // ============================================================
 
     constructor() {
-        // Registramos los íconos
-        // addIcons({
-        //     personAddOutline,
-        //     personOutline,
-        //     cardOutline,
-        //     qrCodeOutline,
-        //     briefcaseOutline,
-        //     peopleOutline,
-        //     mailOutline,
-        //     lockClosedOutline,
-        // });
-
         /**
          * Este effect se ejecuta cuando cambia:
          *
@@ -374,6 +369,21 @@ export class FormularioRegistroComponent {
         this.fotosUrlsExistentes = urls;
     }
 
+    async seleccionarTipoEmpleado() {
+        const opciones: ModalOption[] = [
+            { texto: 'Supervisor', icono: 'user-shield', value: 'supervisor' },
+            { texto: 'Metre', icono: 'person-chalkboard', value: 'metre' },
+            { texto: 'Mozo', icono: 'clipboard-user', value: 'mozo' },
+            { texto: 'Cocinero', icono: 'utensils', value: 'cocinero' },
+            { texto: 'Cantinero', icono: 'martini-glass', value: 'cantinero' },
+        ];
+
+        const seleccion = await this.modal.setOpenSelect('Tipo de Empleado', opciones);
+        if (seleccion) {
+            this.formulario.get('tipoEmpleado')?.setValue(seleccion);
+            this.tipoSeleccionado.set(seleccion);
+        }
+    }
     // ============================================================
     // UTILIDADES
     // ============================================================
@@ -382,8 +392,8 @@ export class FormularioRegistroComponent {
         if (!word || word.length === 0) {
             return '';
         }
-
-        return word[0].toUpperCase() + word.slice(1);
+        // Convertimos la primera letra a Mayúscula y el resto a minúsculas
+        return word[0].toUpperCase() + word.slice(1).toLowerCase();
     }
 
     /**
@@ -431,6 +441,62 @@ export class FormularioRegistroComponent {
     // VALIDACIÓN
     // ============================================================
 
+    mensajesModales() {
+        let mensaje: string = '';
+
+        const campos = [
+            'nombres',
+            'apellidos',
+            'dni',
+            'cuil',
+            'correo',
+            'tipoEmpleado',
+            'perfil',
+            'foto',
+            'password',
+            'confirmPassword',
+        ];
+
+        const campoInvalido = campos.find((campo) => this.formulario.get(campo)?.invalid);
+
+        switch (campoInvalido) {
+            case 'nombres':
+                mensaje = 'Ingrese su nombre para continuar.';
+                break;
+            case 'apellidos':
+                mensaje = 'Ingrese su apellido para continuar.';
+                break;
+            case 'dni':
+                mensaje = 'Ingrese un DNI válido para continuar.';
+                break;
+            case 'cuil':
+                mensaje = 'Ingrese un CUIL válido para continuar.';
+                break;
+            case 'correo':
+                mensaje = 'Ingrese un correo electrónico válido.';
+                break;
+            case 'tipoEmpleado':
+                mensaje = 'Seleccione un tipo de empleado.';
+                break;
+            case 'perfil':
+                mensaje = 'Seleccione un perfil para continuar.';
+                break;
+            case 'foto':
+                mensaje = 'Tome una foto para poder ingresar al local.';
+                break;
+            case 'password':
+                mensaje = 'Ingrese una contraseña para continuar.';
+                break;
+            case 'confirmPassword':
+                mensaje = 'Las contraseñas no coinciden.';
+                break;
+            default:
+                mensaje = 'Complete los datos requeridos para continuar.';
+                break;
+        }
+        this.modal.setOpen('Datos incompletos', mensaje);
+    }
+
     validateForm(form: FormGroup): boolean {
         // --------------------------------------------------------
         // CUIL
@@ -453,8 +519,7 @@ export class FormularioRegistroComponent {
         // --------------------------------------------------------
 
         if (!form.valid) {
-            this.modal.setOpen('Datos inválidos', 'Revise los datos ingresados');
-
+            this.mensajesModales();
             return true;
         }
 

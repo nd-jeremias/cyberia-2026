@@ -10,6 +10,8 @@ import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjet
 import { SpinnerService } from '../../services/spinner.service';
 import { ModalService } from '../../services/modal.service';
 import { Router } from '@angular/router';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { FooterComponent } from '../../components/footer/footer.component';
 
 /**
  * Gestión de clientes para dueño y supervisor (puntos 6, 7 y 8).
@@ -20,12 +22,13 @@ import { Router } from '@angular/router';
     styleUrls: ['./gestion-clientes.page.scss'],
     imports: [
         IonContent,
-        IonIcon,
+        FaIconComponent,
         CommonModule,
         FormsModule,
         HeaderComponent,
         BotonAccionComponent,
         TarjetaUsuarioComponent,
+        FooterComponent
     ],
 })
 export class GestionClientesPage {
@@ -33,7 +36,7 @@ export class GestionClientesPage {
     private alertCtrl = inject(AlertController);
     private spinner = inject(SpinnerService);
     private modal = inject(ModalService);
-    private router = inject(Router)
+    private router = inject(Router);
 
     clientes = signal<ClienteInterface[]>([]);
 
@@ -49,7 +52,7 @@ export class GestionClientesPage {
             this.clientes.set(clientes);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -88,7 +91,7 @@ export class GestionClientesPage {
             this.modal.setOpen('Cliente eliminado', `Se dio de baja a ${cliente.nombres} ${cliente.apellidos}.`);
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo eliminar el cliente.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
@@ -108,7 +111,7 @@ export class GestionClientesPage {
             this.modal.setOpen('Cliente actualizado', 'Los datos del cliente se actualizaron correctamente.');
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudo actualizar el cliente.';
-            this.modal.setOpen('Error', mensaje);
+            this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.spinner.hide();
         }
