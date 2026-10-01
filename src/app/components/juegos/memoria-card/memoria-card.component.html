@@ -1,0 +1,14 @@
+<div class="card-slot" (click)="alHacerClic()">
+    <!-- Vinculamos la clase 'flipped' a nuestro estado local -->
+    <div class="card" [class.flipped]="cartaData().estado !== 'default'">
+        <!-- Dorso (Boca abajo) -->
+        <div class="card-face card-back">
+            <img [src]="'assets/games/memory/card_back.jpeg'" alt="Dorso" />
+        </div>
+
+        <!-- Frente (Boca arriba) -->
+        <div class="card-face card-front">
+            <img [src]="cartaData().imagen" alt="Frente" />
+        </div>
+    </div>
+</div>

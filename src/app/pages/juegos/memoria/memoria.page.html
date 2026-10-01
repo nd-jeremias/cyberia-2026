@@ -3,18 +3,20 @@
         <app-header class="inferior sin-labio" [defaultHref]="'/juegos'" [tituloHeader]="'Adivina el par'">
         </app-header>
         <div class="superior hoja">
-            @switch (game.gameState()) { @case ('RULES'){
-            <app-tarjeta-informacion-cliente [texto]="textoInformativo"></app-tarjeta-informacion-cliente>
-            <button class="btn-primario" (click)="game.gameState.set('PLAYING')">
-                Continuar<fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
-            </button>
-            } @case ('PLAYING') { @if(game.memoriaJugado()){
-            <p>segundo intento</p>
-            } @else {
-            <p>Primer intento</p>
+            @switch (game.gameState()) { 
+                @case ('RULES'){
+                    <app-tarjeta-informacion-cliente [texto]="textoInformativo"></app-tarjeta-informacion-cliente>
+                    <button class="btn-primario" (click)="game.gameState.set('PLAYING')">
+                        Continuar<fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
+                    </button>
+                } 
+                @case ('PLAYING') {
+                    <app-memoria-board></app-memoria-board>
+                    <button class="btn-primario" (click)="cancelarIntento()">SALIR</button>
+                }
+                @case ('RESULT'){
+                }
             }
-            <button class="btn-primario" (click)="cancelarIntento()">SALIR</button>
-            } @case ('RESULT'){ } }
         </div>
     </div>
 </ion-content>

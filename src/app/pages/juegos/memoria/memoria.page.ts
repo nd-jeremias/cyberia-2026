@@ -8,6 +8,7 @@ import { JuegosMemoriaService } from '../../../services/juegos.memoria.service';
 import { JuegosService } from '../../../services/juegos.service';
 import { TarjetaInformacionClienteComponent } from '../../../components/tarjeta-informacion-cliente/tarjeta-informacion-cliente.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { MemoriaBoardComponent } from '../../../components/juegos/memoria-board/memoria-board.component';
 
 @Component({
     selector: 'app-memoria',
@@ -20,6 +21,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
         FormsModule,
         TarjetaInformacionClienteComponent,
         FaIconComponent,
+        MemoriaBoardComponent
     ],
 })
 export class MemoriaPage implements OnInit {
@@ -34,6 +36,10 @@ export class MemoriaPage implements OnInit {
     constructor() {}
 
     ngOnInit() {}
+
+    ionViewWillLeave(){
+        this.cancelarIntento();
+    }
 
     cancelarIntento() {
         this.game.gameState.set('RULES');
