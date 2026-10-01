@@ -1,9 +1,10 @@
-import { map } from 'rxjs/operators';
 import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
 import { AuthService } from '../../services/auth.service';
 import { PedidoService } from '../../services/pedido.service';
+import { BotonHomeComponent } from '../../components/boton-home/boton-home.component';
+import { BotonHomeInterface } from '../../interfaces/component.interface';
 
 /**
  * Juegos — PANTALLA PENDIENTE.
@@ -19,7 +20,8 @@ import { PedidoService } from '../../services/pedido.service';
 @Component({
     selector: 'app-juegos',
     templateUrl: './juegos.page.html',
-    imports: [IonContent, IonIcon, HeaderComponent],
+    styleUrls: ['./juegos.page.scss'],
+    imports: [IonContent, BotonHomeComponent, HeaderComponent],
 })
 export class JuegosPage {
     auth = inject(AuthService);
@@ -37,4 +39,22 @@ export class JuegosPage {
             this.verJuegos.set(true);
         }
     }
+
+    botonMemoria: BotonHomeInterface = {
+        texto: 'Adivina el par',
+        icono: 'brain',
+        ruta: '/juegos/memoria',
+    };
+
+    botonQuiz: BotonHomeInterface = {
+        texto: 'Preguntas Rapidas',
+        icono: 'question',
+        ruta: '/juegos/preguntas',
+    };
+
+    boton: BotonHomeInterface = {
+        texto: '',
+        icono: '',
+        ruta: '',
+    };
 }
