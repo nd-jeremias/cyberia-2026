@@ -82,6 +82,14 @@ export const routes: Routes = [
         canActivate: [authGuard],
     },
     {
+        path: 'juegos/memoria',
+        loadComponent: () => import('./pages/juegos/memoria/memoria.page').then((m) => m.MemoriaPage),
+    },
+    {
+        path: 'juegos/preguntas',
+        loadComponent: () => import('./pages/juegos/preguntas/preguntas.page').then((m) => m.PreguntasPage),
+    },
+    {
         path: 'encuestas',
         loadComponent: () => import('./pages/encuestas/encuestas.page').then((m) => m.EncuestasPage),
         canActivate: [authGuard],
@@ -215,5 +223,4 @@ export const routes: Routes = [
         path: 'pedidos-sector',
         loadComponent: () => import('./pages/pedidos-sector/pedidos-sector.page').then((m) => m.PedidosSectorPage),
     },
-    
 ];
