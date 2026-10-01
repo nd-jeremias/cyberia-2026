@@ -77,6 +77,16 @@ const BOTON_ESCANEAR_MESA: BotonHome = {
     ruta: '/escanear-mesa',
 };
 
+/**
+ * Recién terminada la visita, volver a escanear la mesa para comprobar que
+ * quedó libre (punto 22). Ya no dice "mi mesa": se liberó al pagar.
+ */
+const BOTON_VERIFICAR_MESA: BotonHome = {
+    texto: 'Escanear QR de la mesa',
+    icono: 'qrcode',
+    ruta: '/escanear-mesa',
+};
+
 const BOTON_CONSULTA_MOZO: BotonHome = {
     texto: 'Consulta al mozo',
     icono: 'comments',
@@ -127,9 +137,23 @@ export interface SituacionDelCliente {
     perfil: PerfilUsuario | null;
     /** Estados de los pedidos de esta visita (los que no están pagados). */
     estadosDePedidos: readonly EstadoPedido[];
+    /** Pagó hace poco y todavía no pasó la ventana entre visitas (utils/visita.ts). */
+    acabaDeTerminarSuVisita: boolean;
 }
 
-export function botonesDelCliente({ estado, perfil, estadosDePedidos }: SituacionDelCliente): BotonHome[] {
+export function botonesDelCliente({
+    estado,
+    perfil,
+    estadosDePedidos,
+    acabaDeTerminarSuVisita,
+}: SituacionDelCliente): BotonHome[] {
+    // Punto 22: acaba de pagar y su visita terminó. Puede volver a escanear la
+    // mesa para comprobar que quedó libre, y escanear el ingreso lo lleva a las
+    // encuestas. Pasada la ventana entre visitas es un cliente libre más.
+    if (estado === 'libre' && acabaDeTerminarSuVisita) {
+        return [BOTON_VERIFICAR_MESA, BOTON_ESCANEAR_INGRESO, BOTON_VER_ENCUESTAS];
+    }
+
     // Punto 9: sin mesa, anotarse y ver las encuestas anteriores. En la lista
     // de espera ya no hay nada que escanear: decide el metre.
     if (estado === 'libre') return [BOTON_ESCANEAR_INGRESO, BOTON_VER_ENCUESTAS];

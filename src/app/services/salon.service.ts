@@ -2,7 +2,38 @@ import { Service, signal } from '@angular/core';
 import { RealtimeChannel } from '@supabase/supabase-js';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import { ClienteInterface } from '../interfaces/cliente.interface';
+import { visitaReciente } from '../utils/visita';
 import { supabase } from './supabase.service';
+
+/**
+ * Columna que agrega sql/migracion-fin-de-visita.sql.
+ *
+ * Hasta que se corre esa migración la columna no existe, y Postgres rechaza
+ * cualquier consulta que la nombre. Leerla o escribirla junto con el resto de
+ * la fila tumbaría la pantalla de inicio del cliente o la confirmación del
+ * pago, así que cada uso tolera que falte: se reintenta sin ella y se avisa en
+ * la consola, como hace pedido.service.ts con el estado 'Recibido'.
+ */
+const COLUMNA_FIN_DE_VISITA = 'fecha_ultima_visita';
+
+/**
+ * Códigos con los que Supabase avisa que una columna no existe: 42703 lo da
+ * Postgres al leerla, PGRST204 lo da PostgREST al intentar escribirla.
+ */
+const CODIGOS_COLUMNA_INEXISTENTE = new Set(['42703', 'PGRST204']);
+
+/** Indica si el error se debe a que falta la columna de fin de visita. */
+function faltaColumnaFinDeVisita(error: { code?: string; message?: string } | null): boolean {
+    if (!error) return false;
+
+    return CODIGOS_COLUMNA_INEXISTENTE.has(String(error.code)) && (error.message ?? '').includes(COLUMNA_FIN_DE_VISITA);
+}
+
+function avisarMigracionPendiente(): void {
+    console.warn(
+        'Falta actualizar la base: para desviar a las encuestas a quien acaba de pagar hay que correr sql/migracion-fin-de-visita.sql en Supabase.'
+    );
+}
 
 /** Un cliente esperando mesa, tal como lo ve el metre. */
 export interface ClienteEnEspera {
@@ -18,12 +49,16 @@ export interface ClienteEnEspera {
 export interface SituacionCliente {
     estado: EstadoEnResto;
     mesaId: string | null;
+    /** Cuándo terminó su última visita; `null` si nunca vino. */
+    fechaUltimaVisita: string | null;
 }
 
 /** Lo que interesa de la fila que llega por Realtime. */
 interface FilaSituacion {
     estado_en_resto: EstadoEnResto;
     mesa_id: string | null;
+    /** Ausente mientras no se corra sql/migracion-fin-de-visita.sql. */
+    fecha_ultima_visita?: string | null;
 }
 
 interface FilaEspera {
@@ -35,7 +70,8 @@ interface FilaEspera {
 }
 
 /**
- * Circuito del cliente dentro del salón (puntos 9 y 10 del enunciado).
+ * Circuito del cliente dentro del salón (puntos 9, 10, 21 y 22 del
+ * enunciado): lista de espera, mesa, pago y fin de la visita.
  *
  * La lista de espera no es una tabla: son los usuarios cuyo `estado_en_resto`
  * quedó en 'esperando_mesa'. Modelarlo como un estado y no como una tabla
@@ -54,11 +90,23 @@ export class SalonService {
     private canalLista: RealtimeChannel | null = null;
 
     async cargarSituacion(usuarioId: string): Promise<SituacionCliente | null> {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
             .from('usuarios')
-            .select('estado_en_resto, mesa_id')
+            .select(`estado_en_resto, mesa_id, ${COLUMNA_FIN_DE_VISITA}`)
             .eq('id', usuarioId)
             .maybeSingle();
+
+        // Sin la migración, la misma consulta sin la columna nueva: el cliente
+        // tiene que poder usar la aplicación igual.
+        if (faltaColumnaFinDeVisita(error)) {
+            avisarMigracionPendiente();
+
+            ({ data, error } = await supabase
+                .from('usuarios')
+                .select('estado_en_resto, mesa_id')
+                .eq('id', usuarioId)
+                .maybeSingle());
+        }
 
         if (error) throw error;
 
@@ -67,14 +115,35 @@ export class SalonService {
             return null;
         }
 
-        const situacion: SituacionCliente = {
-            estado: data.estado_en_resto,
-            mesaId: data.mesa_id,
-        };
+        const situacion = this.aSituacion(data as FilaSituacion);
 
         this.situacion.set(situacion);
 
         return situacion;
+    }
+
+    /**
+     * Indica si el cliente acaba de terminar su visita: ya pagó (está libre) y
+     * todavía no pasó la ventana entre visitas.
+     *
+     * La usan el inicio para ofrecer volver a escanear la mesa, y los lectores
+     * de QR para mandarlo a las encuestas en lugar de anotarlo o sentarlo. Se
+     * exige además que esté libre: si por algún motivo figura en otro estado,
+     * rige el circuito normal.
+     */
+    acabaDeTerminarSuVisita(ahora: number = Date.now()): boolean {
+        const situacion = this.situacion();
+
+        return situacion?.estado === 'libre' && visitaReciente(situacion.fechaUltimaVisita, ahora);
+    }
+
+    /** Traduce la fila de la base a la situación que usan las pantallas. */
+    private aSituacion(fila: FilaSituacion): SituacionCliente {
+        return {
+            estado: fila.estado_en_resto,
+            mesaId: fila.mesa_id,
+            fechaUltimaVisita: fila.fecha_ultima_visita ?? null,
+        };
     }
 
     /**
@@ -194,6 +263,67 @@ export class SalonService {
         return sentado;
     }
 
+    /**
+     * El cliente paga la cuenta y queda esperando que el mozo lo confirme
+     * (punto 21).
+     *
+     * Es el paso que habilita el punto 22: el mozo sólo ve en "Pagos por
+     * confirmar" a los clientes en 'pagando'. Como el resto del circuito, la
+     * condición va dentro del UPDATE: sólo paga quien está sentado a una mesa.
+     *
+     * @returns `false` si no estaba sentado, y por lo tanto no había cuenta.
+     */
+    async pagarCuenta(usuarioId: string): Promise<boolean> {
+        const { data, error } = await supabase
+            .from('usuarios')
+            .update({ estado_en_resto: 'pagando' })
+            .eq('id', usuarioId)
+            .eq('estado_en_resto', 'sentado')
+            .select('id');
+
+        if (error) throw error;
+
+        const pagando = (data ?? []).length > 0;
+
+        if (pagando) await this.cargarSituacion(usuarioId);
+
+        return pagando;
+    }
+
+    /**
+     * Cierra la visita del cliente cuando el mozo confirma el pago (punto 22):
+     * queda libre, sin mesa, y se registra cuándo terminó.
+     *
+     * Esa fecha es la que después miran los lectores de QR para mandarlo a las
+     * encuestas en lugar de volver a anotarlo (ver utils/visita.ts).
+     *
+     * Sólo cierra la visita de quien está pagando. Si dos mozos confirman a la
+     * vez, el segundo no afecta ninguna fila y no pisa la fecha del primero.
+     */
+    async terminarVisita(clienteId: string): Promise<void> {
+        const fin = { estado_en_resto: 'libre' as const, mesa_id: null };
+
+        let { error } = await supabase
+            .from('usuarios')
+            .update({ ...fin, [COLUMNA_FIN_DE_VISITA]: new Date().toISOString() })
+            .eq('id', clienteId)
+            .eq('estado_en_resto', 'pagando');
+
+        // Sin la migración se libera igual al cliente: lo que se pierde es
+        // sólo el desvío posterior a las encuestas, no el cobro.
+        if (faltaColumnaFinDeVisita(error)) {
+            avisarMigracionPendiente();
+
+            ({ error } = await supabase
+                .from('usuarios')
+                .update(fin)
+                .eq('id', clienteId)
+                .eq('estado_en_resto', 'pagando'));
+        }
+
+        if (error) throw error;
+    }
+
     /** Saca al cliente de la lista sin darle mesa (punto 9: poder eliminarlo). */
     async quitarDeListaEspera(clienteId: string): Promise<void> {
         const { error } = await supabase
@@ -235,12 +365,9 @@ export class SalonService {
                     filter: `id=eq.${usuarioId}`,
                 },
                 (mensaje) => {
-                    const fila = mensaje.new as FilaSituacion;
-
-                    this.situacion.set({
-                        estado: fila.estado_en_resto,
-                        mesaId: fila.mesa_id,
-                    });
+                    // Trae la fila completa: al confirmarse el pago llega junto
+                    // con el fin de la visita, sin otra consulta.
+                    this.situacion.set(this.aSituacion(mensaje.new as FilaSituacion));
                 }
             )
             .subscribe();
