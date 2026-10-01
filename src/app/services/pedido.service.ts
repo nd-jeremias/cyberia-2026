@@ -1,4 +1,5 @@
 import { Service, computed, inject, signal } from '@angular/core';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import {
     DetallePedidoInterface,
@@ -623,14 +624,34 @@ export class PedidoService {
         return pedido.precioTotalNeto - descuento + propina;
     }
 
-    async setPropina(pedidoId: string, propina: number): Promise<void> {
-        try {
-            const { error } = await supabase.from('pedidos').update({ propina_porcentaje: propina }).eq('id', pedidoId);
+    /**
+     * Avisa cuando cambia algún pedido de este cliente (punto 14).
+     *
+     * El mozo confirma o rechaza desde otro teléfono: sin esto, el cliente se
+     * quedaría mirando una pantalla que ya no dice la verdad. Devuelve la
+     * función que corta la escucha, para llamarla al salir de la pantalla.
+     *
+     * Requiere que la tabla `pedidos` esté publicada para Realtime en Supabase
+     * (Database -> Publications -> supabase_realtime). Si no lo está, no falla
+     * nada: simplemente no llega el aviso y sigue estando el botón Actualizar.
+     */
+    escucharPedidosDelCliente(clienteId: string, alCambiar: (estado: EstadoPedido) => void): () => void {
+        const canal: RealtimeChannel = supabase
+            .channel(`pedidos-cliente-${clienteId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'pedidos',
+                    // El filtro va del lado del servidor: este teléfono recibe
+                    // sólo los cambios de sus propios pedidos.
+                    filter: `cliente_id=eq.${clienteId}`,
+                },
+                (cambio) => alCambiar((cambio.new as { estado: EstadoPedido }).estado)
+            )
+            .subscribe();
 
-            if (error) throw error;
-        } catch (error) {
-            console.log('No se pudo actualizar la propina del pedido.', error);
-            throw new Error('No se pudo actualizar la propina del pedido.');
-        }
+        return () => void supabase.removeChannel(canal);
     }
 }

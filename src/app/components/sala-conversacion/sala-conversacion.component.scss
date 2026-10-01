@@ -137,7 +137,7 @@
     align-items: center;
     gap: 0.5rem;
 
-    padding: 0.625rem 0.75rem calc(0.625rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.625rem 0.75rem var(--pie-seguro);
     box-sizing: border-box;
 
     background: var(--hoja-alta);

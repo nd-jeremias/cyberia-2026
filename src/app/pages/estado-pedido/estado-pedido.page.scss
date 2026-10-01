@@ -63,6 +63,53 @@
     transition: width 0.3s ease;
 }
 
+/* --- Fecha, descuento y totales -------------------------------------------
+   El estilo de `.total` viene de pedidos.page.scss; acá sólo lo propio de esta
+   pantalla.
+   ------------------------------------------------------------------------- */
+
+.fecha-pedido {
+    display: flex;
+    align-items: center;
+    gap: 0.4375rem;
+
+    margin: 0;
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: var(--tinta-suave);
+    font-variant-numeric: tabular-nums;
+}
+
+.descuento {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+
+    background: var(--exito-velo);
+    border-radius: var(--radio-chico);
+
+    font-size: var(--texto-apoyo);
+    font-weight: 700;
+    color: var(--exito-tinta);
+}
+
+/* Suma de todos los pedidos: va sobre la hoja, fuera de las tarjetas. */
+.total-visita {
+    width: 100%;
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 0.875rem 1rem;
+    box-sizing: border-box;
+
+    background: var(--grad-tarjeta);
+    border: var(--borde-hoja);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+}
+
 /* --- Ítems ----------------------------------------------------------------
    Cada ítem dice su estado con palabra y color: el color solo no alcanza para
    quien no distingue bien los tonos.
@@ -91,13 +138,28 @@
     border-left: 0.25rem solid var(--tinta-tenue);
 }
 
-.item-nombre {
+/* Nombre arriba, precio abajo: en una sola línea el precio empujaba la
+   pastilla de estado fuera de la ficha. */
+.item-datos {
     flex: 1;
     min-width: 0;
 
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.item-nombre {
     font-size: var(--texto-apoyo);
     color: var(--tinta);
     overflow-wrap: anywhere;
+}
+
+.item-precio {
+    font-size: var(--texto-epigrafe);
+    font-weight: 600;
+    color: var(--tinta-suave);
+    font-variant-numeric: tabular-nums;
 }
 
 .item-estado {
