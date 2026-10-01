@@ -1,8 +1,11 @@
-import { Service, signal } from '@angular/core';
+import { computed, Service, signal } from '@angular/core';
 import { MemoryCard } from '../interfaces/games.interface';
 
 @Service()
 export class JuegosMemoriaService {
+    // ============================================================
+    // IMÁGENES DE LAS CARTAS
+    // ============================================================
     backCardImg = 'assets/games/memory/card_back.jpeg';
     frontCardImg: string[] = [
         'assets/games/memory/foto1.png',
@@ -13,8 +16,35 @@ export class JuegosMemoriaService {
         'assets/games/memory/foto6.png',
     ];
 
+    // ============================================================
+    // ESTADO
+    // ============================================================
+
+    /**
+     * Indica si estamos esperando que termine la comprobación
+     * de un par.
+     *
+     * Esto evita que el usuario pueda tocar una tercera carta
+     * mientras se están comparando las dos anteriores.
+     */
     public bloqueado = signal<boolean>(false);
+
     public tablero = signal<MemoryCard[]>([]);
+
+    /**
+     * Cantidad de pares encontrados.
+     */
+    readonly paresEncontrados = computed(() => this.tablero().filter((card) => card.estado === 'matched').length / 2);
+
+    /**
+     * Cantidad total de pares.
+     */
+    readonly totalPares = computed(() => this.frontCardImg.length);
+
+    /**
+     * Indica si el jugador terminó la partida.
+     */
+    readonly juegoTerminado = computed(() => this.paresEncontrados() === this.totalPares());
 
     public cartasSeleccionadas: number[] = [];
 
@@ -43,9 +73,15 @@ export class JuegosMemoriaService {
 
     public seleccionarCarta(index: number) {
         const mazo = this.tablero();
+        const carta = mazo[index];
 
-        // 🛑 VALIDACIONES DE BLOQUEO
+        // VALIDACIONES DE BLOQUEO
         if (this.bloqueado() || mazo[index].estado !== 'default') return;
+
+        // No se puede seleccionar una carta ya encontrada.
+        if (!carta || carta.estado === 'matched') {
+            return;
+        }
 
         // 1. Volteamos la carta físicamente cambiando su estado en el mazo
         this.actualizarEstadoCarta(index, 'flipped');
@@ -57,25 +93,31 @@ export class JuegosMemoriaService {
             this.verificarMatch();
         }
     }
-
+    encontradas: MemoryCard[] = []
+    // ============================================================
+    // COMPROBAR PAR DE CARTAS SELECCIONADAS
+    // ============================================================
     private verificarMatch() {
         const mazo = this.tablero();
         const [idx1, idx2] = this.cartasSeleccionadas;
-        console.log('VERIFICANDO: ');
+        
         if (mazo[idx1].id === mazo[idx2].id) {
-            console.log('HAY MATCH');
             // ✅ Hubo Coincidencia: Se quedan descubiertas
             this.actualizarEstadoCarta(idx1, 'matched');
             this.actualizarEstadoCarta(idx2, 'matched');
+            this.encontradas.push(mazo[idx1], mazo[idx2])
             this.limpiarSeleccion();
         } else {
-            console.log('NO HAY MATCH');
             // ❌ Error: Esperamos 1.2 segundos para que el usuario las vea y las volvemos a ocultar
             setTimeout(() => {
                 this.actualizarEstadoCarta(idx1, 'default');
                 this.actualizarEstadoCarta(idx2, 'default');
                 this.limpiarSeleccion();
             }, 800);
+        }
+        
+        if(this.juegoTerminado()){
+            console.log("Juego finalizado")
         }
     }
 
