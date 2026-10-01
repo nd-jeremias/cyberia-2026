@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -7,6 +7,8 @@ import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { LEYENDA_PAGANDO, LEYENDA_PEDIDO } from '../mi-pedido/mi-pedido.estado';
+import { formatearFechaHora } from '../../utils/fecha';
+import { formatearImporte } from '../../utils/importe';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Cómo se ve cada ítem según en qué punto de la cocina o la barra está. */
@@ -100,7 +102,42 @@ export class EstadoPedidoPage {
         return this.pedidoService.tiempoEstimado(pedido);
     }
 
-    irAMiPedido() {
-        void this.router.navigate(['/mi-pedido']);
+    /** Puntos 16 y 17: la fecha del pedido, con hora y minutos. */
+    fechaDe(pedido: PedidoInterface): string {
+        return formatearFechaHora(pedido.fecha);
+    }
+
+    /** Lo que vale cada línea: cantidad por precio unitario (punto 21). */
+    importeDeLinea(item: DetallePedidoInterface): string {
+        return formatearImporte(item.precioTotalParcial);
+    }
+
+    precioUnitarioDe(item: DetallePedidoInterface): string {
+        return formatearImporte(item.precioUnitario);
+    }
+
+    /** Punto 12: el importe del pedido, siempre a la vista. */
+    totalDe(pedido: PedidoInterface): string {
+        return formatearImporte(this.pedidoService.totalConDescuento(pedido));
+    }
+
+    /** Sólo se muestra si el cliente ganó un descuento en los juegos (punto 15). */
+    descuentoDe(pedido: PedidoInterface): number {
+        return pedido.descuentoJuego;
+    }
+
+    /** Suma de todos los pedidos de la visita: lo que va a pagar (punto 21). */
+    totalDeLaVisita = computed(() =>
+        formatearImporte(
+            this.pedidos().reduce((suma, pedido) => suma + this.pedidoService.totalConDescuento(pedido), 0)
+        )
+    );
+
+    /**
+     * Sin pedidos todavía: se manda a la carta y no a "Mi pedido", que es el
+     * paso siguiente de elegir y no tiene sentido con el carrito vacío.
+     */
+    irALaCarta() {
+        void this.router.navigate(['/carta']);
     }
 }

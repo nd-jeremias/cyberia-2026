@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
-import { ItemNuevoPedido, PedidoInterface } from '../../interfaces/pedido.interface';
+import { EstadoPedido, ItemNuevoPedido, PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
 import { ChartService } from '../../services/chart.service';
 import { ModalService } from '../../services/modal.service';
@@ -240,6 +240,40 @@ export class MiPedidoPage {
     /** Se consulta cada vez que se entra: el estado cambia mientras el cliente espera. */
     ionViewWillEnter() {
         void this.recargar();
+
+        const usuarioId = this.authService.session()?.user.id;
+
+        // Punto 14: el mozo confirma desde otro teléfono. Cuando eso pasa, esta
+        // pantalla ya no sirve —no se puede agregar nada más al pedido— así que
+        // se lleva al cliente al inicio, donde están los accesos que sí puede
+        // usar ahora (estado del pedido, juegos).
+        if (usuarioId && !this.dejarDeEscuchar) {
+            this.dejarDeEscuchar = this.pedidoService.escucharPedidosDelCliente(usuarioId, (estado) =>
+                this.alCambiarUnPedido(estado)
+            );
+        }
+    }
+
+    ionViewWillLeave() {
+        this.dejarDeEscuchar?.();
+        this.dejarDeEscuchar = null;
+    }
+
+    private dejarDeEscuchar: (() => void) | null = null;
+
+    private alCambiarUnPedido(estado: EstadoPedido) {
+        // Los otros cambios de estado (rechazado, en preparación) se siguen
+        // viendo acá mismo: sólo la confirmación cierra esta pantalla.
+        if (estado !== 'Confirmado') {
+            void this.recargar();
+            return;
+        }
+
+        this.modal.setOpen('Pedido confirmado', 'El mozo confirmó tu pedido y ya pasó a cocina y barra.', 'info');
+
+        // `replaceUrl` saca esta pantalla del historial: el botón de volver del
+        // teléfono ya no trae de nuevo al pedido, que es lo que se quiere.
+        void this.router.navigate(['/inicio'], { replaceUrl: true });
     }
 
     /** Punto 14: vuelve a pedir los pedidos a la base, para ver si el mozo ya los confirmó. */
