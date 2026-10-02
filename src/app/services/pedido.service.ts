@@ -685,19 +685,21 @@ export class PedidoService {
         }
     }
 
-    async actualizarDescuento(pedidoId: string, cantidad: number) {
-        try {
-            const { data, error } = await supabase
-                .from('pedidos')
-                .update({
-                    descuento_juego: () => `descuento_juego + ${cantidad}`,
-                })
-                .eq('id', pedidoId);
+    // Método totalmente genérico
+    async incrementarValor(tabla: string, columna: string, id: string, cantidad: number) {
+        const { data, error } = await supabase.rpc('incrementar_campo', {
+            nombre_tabla: tabla,
+            nombre_columna: columna,
+            row_id: id,
+            cantidad_a_sumar: cantidad,
+        });
 
-            if (error) throw error;
-            return data;
-        } catch (error) {
-            throw new Error('No se pudo actualizar el descuento.');
+        if (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudo ingresar como invitado.';
+            console.error(`Error incrementando ${columna} en ${tabla}:`, mensaje);
+            throw new Error(`Error incrementando ${columna} en ${tabla}`);
         }
+
+        return data;
     }
 }

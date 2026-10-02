@@ -68,19 +68,17 @@ export class JuegosMemoriaService {
     public juegoTerminado = signal<boolean>(false);
 
     public cartasSeleccionadas: number[] = [];
+    TIEMPO_LIMITE = 20; // SEGUNDOS
 
     startGame() {
         this.bloqueado.set(false);
         this.juegoTerminado.set(false);
         this.generarTablero();
-        this.timerService.iniciar(20);
+        this.timerService.iniciar(this.TIEMPO_LIMITE);
     }
 
-    resetGame(victoria: boolean) {
-        if (victoria) {
-            // Cambiar estados en DB
-        }
-        this.juegosService.memoriaJugado.set(true);
+    exitGame() {
+        this.juegosService.marcarComoJugado('memoria');
         this.juegosService.gameState.set('RULES');
     }
 
@@ -96,29 +94,30 @@ export class JuegosMemoriaService {
         // Aquí puedes disparar tu modal de derrota
         console.log('💥 ¡Se acabó el tiempo! Fin del juego.');
         this.modal.setOpen('Juego terminado!', 'Se acabo el tiempo, ¡mas suerte para la próxima!', 'info');
-        this.resetGame(false);
+        this.exitGame();
     }
 
     async finalizarPorVictoria() {
         this.finalizaJuego();
         const user_id = this.auth.session()?.user.id;
         if (!user_id) return;
-        console.log('USER: ', this.auth.session()?.user);
+
         const pedido = await this.pedidoService.pedidoActualDelCliente(user_id);
         if (!pedido) return;
-        console.log('PEDIDO: ', pedido);
 
-        const data = await this.pedidoService.actualizarDescuento(pedido.id, 10);
-        console.log("DATA ACTUALIZADA ", data)
+        const descuento = this.juegosService.validarDescuento('memoria');
+        // Actualiza el valor del descuento. Si ya existe un descuento previo, le suma el nuevo valor.
+        const data = await this.pedidoService.incrementarValor('pedidos', 'descuento_juego', pedido.id, descuento);
 
-        // Aquí puedes disparar tu modal de victoria
+        // Aquí dispara la victoria
         console.log('🏆 ¡Ganaste!');
-        this.modal.setOpen(
-            '¡Ganaste!',
-            '¡Felicidades! Completaste el juego y obtuviste un descuento. Completa los otros para acumular descuentos adicionales.',
-            'info'
-        );
-        this.resetGame(true);
+        const mensaje =
+            descuento > 0
+                ? '¡Felicidades! Completaste el juego y obtuviste un descuento. Completa los otros para acumular descuentos adicionales.'
+                : '¡Felicidades! Completaste el juego satisfactoriamente.';
+
+        this.modal.setOpen('¡Ganaste!', mensaje, 'info');
+        this.exitGame();
     }
 
     generarTablero() {
