@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent } from '@ionic/angular';
@@ -21,29 +21,29 @@ import { MemoriaBoardComponent } from '../../../components/juegos/memoria-board/
         FormsModule,
         TarjetaInformacionClienteComponent,
         FaIconComponent,
-        MemoriaBoardComponent
+        MemoriaBoardComponent,
     ],
 })
 export class MemoriaPage implements OnInit {
     game = inject(JuegosService);
     memoria = inject(JuegosMemoriaService);
-    routes = inject(Router);
+    router = inject(Router);
 
-    textoInformativo = this.game.memoriaJugado()
-        ? 'Bienvenido de vuelta. Encontrá la pareja de cartas iguales antes que se termine el tiempo. En esta ocación ya no será aplicable el descuento. '
-        : 'Encontrá la pareja de cartas iguales antes que se termine el tiempo y accedé al descuento.';
+    public textoInformativo = computed(() => {
+        return this.game.memoriaJugado()
+            ? 'Bienvenido de vuelta. Encontrá la pareja de cartas iguales antes que se termine el tiempo. En esta ocasión ya no será aplicable el descuento.'
+            : 'Encontrá la pareja de cartas iguales antes que se termine el tiempo y accedé al descuento.';
+    });
 
     constructor() {}
 
     ngOnInit() {}
 
-    ionViewWillLeave(){
-        this.cancelarIntento();
+    ionViewWillLeave() {
+        this.memoria.resetGame(false);
     }
 
     cancelarIntento() {
-        this.game.gameState.set('RULES');
-        this.game.memoriaJugado.set(true);
-        this.routes.navigate(['/juegos']);
+        this.router.navigate(['/juegos']);
     }
 }

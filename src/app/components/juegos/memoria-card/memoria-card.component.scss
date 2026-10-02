@@ -1,7 +1,7 @@
 /* Contenedor principal que da la sensación de profundidad */
 .card-slot {
-    width: 100px;
-    height: 150px;
+    width: 126px;
+    height: 173px;
     perspective: 1000px;
     background-color: transparent;
 }
@@ -30,6 +30,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 5px solid var(--naranja-brasa);
+    border-radius: 10px;
 }
 
 .card-face img {
