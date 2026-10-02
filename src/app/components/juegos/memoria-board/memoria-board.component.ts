@@ -1,7 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MemoriaCardComponent } from '../memoria-card/memoria-card.component';
 import { JuegosMemoriaService } from '../../../services/juegos.memoria.service';
-import { MemoryCard } from '../../../interfaces/games.interface';
 
 @Component({
     selector: 'app-memoria-board',

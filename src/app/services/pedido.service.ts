@@ -633,4 +633,20 @@ export class PedidoService {
             throw new Error('No se pudo actualizar la propina del pedido.');
         }
     }
+
+    async actualizarDescuento(pedidoId: string, cantidad: number) {
+        try {
+            const { data, error } = await supabase
+                .from('pedidos')
+                .update({
+                    descuento_juego: () => `descuento_juego + ${cantidad}`,
+                })
+                .eq('id', pedidoId);
+
+            if (error) throw error;
+            return data;
+        } catch (error) {
+            throw new Error('No se pudo actualizar el descuento.');
+        }
+    }
 }
