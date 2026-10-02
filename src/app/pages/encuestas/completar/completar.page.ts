@@ -9,7 +9,7 @@ import { AuthService } from '../../../services/auth.service';
 import { SalonService } from '../../../services/salon.service';
 import { PedidoService } from '../../../services/pedido.service';
 import { EncuestasService } from '../../../services/encuestas.service';
-import { ModalService } from '../../../services/modal.service';
+import { ModalOption, ModalService } from '../../../services/modal.service';
 import { SpinnerService } from '../../../services/spinner.service';
 
 @Component({
@@ -43,6 +43,9 @@ export class CompletarPage {
   mesaId: string | null = null;
   pedidoId: string | null = null;
 
+  tipoSeleccionado = signal<string>('Seleccionar');
+
+
   form = this.fb.group({
     calificacionComida: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
     atencionMozo: ['Excelente', Validators.required],
@@ -53,10 +56,33 @@ export class CompletarPage {
 
   async ionViewWillEnter() {
     await this.verificarAcceso();
+    // this.mesaId = '36e7805f-940b-4d58-a261-1160a2212345';
+    // this.pedidoId = '11111111-2222-3333-4444-555555555555';
+    // this.cargando.set(false);
+
   }
 
   seleccionarEstrellas(valor: number) {
     this.form.get('calificacionComida')?.setValue(valor);
+  }
+
+  hayError(control: string, error: string): boolean {
+    const campo = this.form.get(control);
+    return !!campo && campo.touched && campo.hasError(error);
+  }
+
+  async seleccionarTiempoEspera(){
+    const opciones: ModalOption[] =[
+        { texto: 'Rápido', icono: 'bolt', value: 'Rápido' },
+        { texto: 'Aceptable', icono: 'clock', value: 'Aceptable' },
+        { texto: 'Lento', icono: 'hourglass-half', value: 'Lento' },
+    ];
+
+    const seleccion = await this.modal.setOpenSelect('Tiempo de Espera', opciones);
+    if (seleccion) {
+        this.form.get('tiempoEspera')?.setValue(seleccion);
+        this.tipoSeleccionado.set(seleccion);
+    }
   }
 
   async verificarAcceso() {

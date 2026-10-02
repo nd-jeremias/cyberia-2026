@@ -46,20 +46,13 @@
 
                     <!-- Tiempo de espera -->
                     <div class="grupo-input">
-                        <label class="input-label" for="select-tiempo-espera">Tiempos de espera</label>
+                        <span class="input-label">Tiempos de espera</span>
                         <div class="caja-input">
                             <fa-icon [icon]="['far', 'clock']" class="icono-campo"></fa-icon>
-                            <ion-select
-                                id="select-tiempo-espera"
-                                formControlName="tiempoEspera"
-                                placeholder="Seleccioná una opción"
-                                interface="alert"
-                                aria-label="Tiempos de espera"
-                            >
-                                <ion-select-option value="Rápido">Rápido (Menos de lo esperado)</ion-select-option>
-                                <ion-select-option value="Aceptable">Aceptable (Tiempo normal)</ion-select-option>
-                                <ion-select-option value="Lento">Lento (Demasiada demora)</ion-select-option>
-                            </ion-select>
+                            <div class="select-trigger" (click)="seleccionarTiempoEspera()">{{ tipoSeleccionado() }}</div>
+                            @if (hayError("tiempoEspera", "required")) {
+                                <span class="mensaje-error">Seleccione el tiempo de espera</span>
+                            }
                         </div>
                     </div>
 
