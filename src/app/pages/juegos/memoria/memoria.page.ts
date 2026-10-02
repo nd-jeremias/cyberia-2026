@@ -30,7 +30,7 @@ export class MemoriaPage implements OnInit {
     router = inject(Router);
 
     public textoInformativo = computed(() => {
-        return this.game.memoriaJugado()
+        return this.game.juegosEstado.memoria()
             ? 'Bienvenido de vuelta. Encontrá la pareja de cartas iguales antes que se termine el tiempo. En esta ocasión ya no será aplicable el descuento.'
             : 'Encontrá la pareja de cartas iguales antes que se termine el tiempo y accedé al descuento.';
     });
@@ -40,7 +40,7 @@ export class MemoriaPage implements OnInit {
     ngOnInit() {}
 
     ionViewWillLeave() {
-        this.memoria.resetGame(false);
+        this.memoria.exitGame();
     }
 
     cancelarIntento() {
