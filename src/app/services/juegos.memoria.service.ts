@@ -1,19 +1,35 @@
-import { computed, Service, signal } from '@angular/core';
+import { computed, effect, inject, Service, signal } from '@angular/core';
 import { MemoryCard } from '../interfaces/games.interface';
+import { JuegosService } from './juegos.service';
+import { TimerService } from './timer.service';
+import { ModalService } from './modal.service';
 
 @Service()
 export class JuegosMemoriaService {
+    public juegosService = inject(JuegosService);
+    public timerService = inject(TimerService);
+    modal = inject(ModalService);
+
+    constructor() {
+        // 💡 ESCUCHA ÚNICA: Reacciona automáticamente cuando el TimerService marca true
+        effect(() => {
+            if (this.timerService.terminado()) {
+                this.finalizarJuegoPorTiempo();
+            }
+        });
+    }
+
     // ============================================================
     // IMÁGENES DE LAS CARTAS
     // ============================================================
-    backCardImg = 'assets/games/memory/card_back.jpeg';
+    backCardImg = 'assets/juegos/cartas/card_back.webp';
     frontCardImg: string[] = [
-        'assets/games/memory/foto1.png',
-        'assets/games/memory/foto2.png',
-        'assets/games/memory/foto3.png',
-        'assets/games/memory/foto4.png',
-        'assets/games/memory/foto5.png',
-        'assets/games/memory/foto6.png',
+        'assets/juegos/cartas/foto1.webp',
+        'assets/juegos/cartas/foto2.webp',
+        'assets/juegos/cartas/foto3.webp',
+        'assets/juegos/cartas/foto4.webp',
+        'assets/juegos/cartas/foto5.webp',
+        'assets/juegos/cartas/foto6.webp',
     ];
 
     // ============================================================
@@ -44,9 +60,53 @@ export class JuegosMemoriaService {
     /**
      * Indica si el jugador terminó la partida.
      */
-    readonly juegoTerminado = computed(() => this.paresEncontrados() === this.totalPares());
+    // readonly juegoTerminado = computed(() => this.paresEncontrados() === this.totalPares());
+    public juegoTerminado = signal<boolean>(false);
 
     public cartasSeleccionadas: number[] = [];
+
+    startGame() {
+        this.bloqueado.set(false);
+        this.juegoTerminado.set(false);
+        this.generarTablero();
+        this.timerService.iniciar(20);
+    }
+
+    resetGame(victoria: boolean) {
+        if (victoria) {
+            // Cambiar estados en DB
+        }
+        this.juegosService.memoriaJugado.set(true);
+        this.juegosService.gameState.set('RULES');
+    }
+
+    private finalizaJuego() {
+        this.timerService.detener();
+        this.juegoTerminado.set(true);
+        this.bloqueado.set(true); // Congela el tablero para que no sigan tocando cartas
+    }
+
+    private finalizarJuegoPorTiempo() {
+        this.finalizaJuego();
+
+        // Aquí puedes disparar tu modal de derrota
+        console.log('💥 ¡Se acabó el tiempo! Fin del juego.');
+        this.modal.setOpen('Juego terminado!', 'Se acabo el tiempo, ¡mas suerte para la próxima!', 'info');
+        this.resetGame(false);
+    }
+
+    private finalizarPorVictoria() {
+        this.finalizaJuego();
+
+        // Aquí puedes disparar tu modal de victoria
+        console.log('🏆 ¡Ganaste!');
+        this.modal.setOpen(
+            '¡Ganaste!',
+            '¡Felicidades! Completaste el juego y obtuviste un descuento. Completa los otros para acumular descuentos adicionales.',
+            'info'
+        );
+        this.resetGame(true);
+    }
 
     generarTablero() {
         const mazo: MemoryCard[] = [];
@@ -93,19 +153,19 @@ export class JuegosMemoriaService {
             this.verificarMatch();
         }
     }
-    encontradas: MemoryCard[] = []
+    encontradas: MemoryCard[] = [];
     // ============================================================
     // COMPROBAR PAR DE CARTAS SELECCIONADAS
     // ============================================================
     private verificarMatch() {
         const mazo = this.tablero();
         const [idx1, idx2] = this.cartasSeleccionadas;
-        
+
         if (mazo[idx1].id === mazo[idx2].id) {
             // ✅ Hubo Coincidencia: Se quedan descubiertas
             this.actualizarEstadoCarta(idx1, 'matched');
             this.actualizarEstadoCarta(idx2, 'matched');
-            this.encontradas.push(mazo[idx1], mazo[idx2])
+            this.encontradas.push(mazo[idx1], mazo[idx2]);
             this.limpiarSeleccion();
         } else {
             // ❌ Error: Esperamos 1.2 segundos para que el usuario las vea y las volvemos a ocultar
@@ -115,9 +175,8 @@ export class JuegosMemoriaService {
                 this.limpiarSeleccion();
             }, 800);
         }
-        
-        if(this.juegoTerminado()){
-            console.log("Juego finalizado")
+        if (this.paresEncontrados() === this.totalPares()) {
+            this.finalizarPorVictoria();
         }
     }
 

@@ -15,6 +15,6 @@ export class MemoriaBoardComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {
-        this.game.generarTablero();
+        this.game.startGame();
     }
 }
