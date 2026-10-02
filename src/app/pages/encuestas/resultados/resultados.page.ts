@@ -85,7 +85,7 @@ export class ResultadosPage {
           plugins: {
             title: {
               display: true,
-              text: 'Atención del Personal (Torta)',
+              text: 'Atención del Personal',
               color: '#2b1b17', // var(--tinta)
               font: {
                 size: 18,
@@ -140,7 +140,7 @@ export class ResultadosPage {
             legend: { display: false },
             title: {
               display: true,
-              text: 'Calidad de la Comida (Barras)',
+              text: 'Calidad de la Comida',
               color: '#2b1b17', // var(--tinta)
               font: {
                 size: 18,
@@ -214,7 +214,7 @@ export class ResultadosPage {
             legend: { display: false },
             title: {
               display: true,
-              text: 'Tiempos de Espera (Lineal)',
+              text: 'Tiempos de Espera',
               color: '#2b1b17', // Color tinta oscuro de la app
               font: {
                 size: 18,
