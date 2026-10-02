@@ -27,21 +27,19 @@
                         </div>
                     </div>
 
-                    <!-- Atención del Mozo (2x2 para no cortarse) -->
+                    <!-- Atención del Mozo -->
                     <div class="grupo-input">
                         <span class="input-label">Atención del mozo</span>
-                        <div class="grilla-opciones">
+                        <ion-radio-group formControlName="atencionMozo" class="grilla-opciones">
                             @for (opcion of ['Excelente', 'Buena', 'Regular', 'Mala']; track opcion) {
-                            <button 
-                                type="button" 
-                                class="btn-secundario btn-opcion" 
-                                [class.seleccionado]="form.get('atencionMozo')?.value === opcion"
-                                (click)="form.get('atencionMozo')?.setValue(opcion)"
+                            <ion-radio
+                                [value]="opcion" 
+                                labelPlacement="end"
                             >
                                 {{ opcion }}
-                            </button>
+                            </ion-radio>
                             }
-                        </div>
+                        </ion-radio-group>
                     </div>
 
                     <!-- Tiempo de espera -->

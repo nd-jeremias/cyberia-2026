@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonContent, IonSelect, IonSelectOption, IonTextarea } from '@ionic/angular';
+import { IonContent, IonRadio, IonRadioGroup, IonSelect, IonSelectOption, IonTextarea } from '@ionic/angular';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { AuthService } from '../../../services/auth.service';
@@ -27,6 +27,8 @@ import { SpinnerService } from '../../../services/spinner.service';
     FormsModule,
     ReactiveFormsModule,
     HeaderComponent,
+    IonRadioGroup,
+    IonRadio
   ],
 })
 export class CompletarPage {
@@ -72,6 +74,9 @@ export class CompletarPage {
   }
 
   async seleccionarTiempoEspera(){
+    // if (document.activeElement instanceof HTMLElement) {
+    //     document.activeElement.blur();
+    // }
     const opciones: ModalOption[] =[
         { texto: 'Rápido', icono: 'bolt', value: 'Rápido' },
         { texto: 'Aceptable', icono: 'clock', value: 'Aceptable' },
