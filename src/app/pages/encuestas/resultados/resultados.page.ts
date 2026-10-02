@@ -83,8 +83,33 @@ export class ResultadosPage {
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { display: true, position: 'top' },
-            title: { display: true, text: 'Atención del Personal (Torta)', font: { size: 16 } },
+            title: {
+              display: true,
+              text: 'Atención del Personal (Torta)',
+              color: '#2b1b17', // var(--tinta)
+              font: {
+                size: 18,
+                weight: 'bold',
+              },
+              padding: {
+                top: 8,
+                bottom: 14,
+              },
+            },
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                color: '#2b1b17', // var(--tinta)
+                usePointStyle: true, // Puntos prolijos en vez de rectángulos duros
+                pointStyle: 'circle',
+                padding: 14,
+                font: {
+                  size: 13,
+                  weight: 'bold',
+                },
+              },
+            },
           },
         },
       });
@@ -113,11 +138,48 @@ export class ResultadosPage {
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
-            title: { display: true, text: 'Calidad de la Comida (Barras)', font: { size: 16 } },
+            title: {
+              display: true,
+              text: 'Calidad de la Comida (Barras)',
+              color: '#2b1b17', // var(--tinta)
+              font: {
+                size: 18,
+                weight: 'bold',
+              },
+              padding: {
+                top: 8,
+                bottom: 16,
+              },
+            },
           },
           scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#2b1b17',
+                font: {
+                  size: 14,
+                  weight: 'bold',
+                },
+                padding: 6,
+              },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#70655c', // var(--tinta-suave)
+                stepSize: 1,
+                precision: 0,
+                font: {
+                  size: 13,
+                  weight: 'bold',
+                },
+                padding: 8,
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.06)',
+              },
+            },
           },
         },
       });
@@ -150,11 +212,48 @@ export class ResultadosPage {
           maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
-            title: { display: true, text: 'Tiempos de Espera (Lineal)', font: { size: 16 } },
+            title: {
+              display: true,
+              text: 'Tiempos de Espera (Lineal)',
+              color: '#2b1b17', // Color tinta oscuro de la app
+              font: {
+                size: 18,
+                weight: 'bold',
+              },
+              padding: {
+                top: 8,
+                bottom: 16,
+              },
+            },
           },
           scales: {
-            x: { grid: { display: false } },
-            y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#2b1b17',
+                font: {
+                  size: 14,
+                  weight: 'bold',
+                },
+                padding: 6,
+              },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#70655c', // Tinta suave legible
+                stepSize: 1,
+                precision: 0,
+                font: {
+                  size: 13,
+                  weight: 'bold',
+                },
+                padding: 8,
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.06)',
+              },
+            },
           },
         },
       });
