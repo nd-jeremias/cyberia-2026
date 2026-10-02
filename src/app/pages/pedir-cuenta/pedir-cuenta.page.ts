@@ -96,7 +96,6 @@ export class PedirCuentaPage {
 
             this.propinaAgregada.set(true);
 
-            console.log('ACA LLAMAR A OTRA FUNCION QUE PIDA LA CUENTA. ');
         } catch (error) {
             console.log(error);
             const mensaje = error instanceof Error ? error.message : 'No se pudo asignar propina al pedido.';
@@ -107,11 +106,4 @@ export class PedirCuentaPage {
         }
     }
 
-    mostrarFactura(pedido: PedidoInterface): void {}
-
-    //     El detalle de la cuenta tendrá:
-    // Los items realizados (con precios unitarios) con su respectivo importe.
-    // Los descuentos correspondientes a los juegos (sólo si gana en el primer intento).
-    // El grado de satisfacción del cliente (propina).
-    // El TOTAL a abonar (grande y claro).
 }

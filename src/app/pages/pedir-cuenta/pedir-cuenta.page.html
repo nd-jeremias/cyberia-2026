@@ -6,7 +6,6 @@
             [tituloHeader]="'Pedir la cuenta'"
         ></app-header>
         <div class="superior hoja">
-            <button class="btn" (click)="propinaAgregada.set(true)">set flag</button>
 
             @if(propinaAgregada()){ @if(pedido()){
             <app-tarjeta-factura [pedido]="pedido()"></app-tarjeta-factura>

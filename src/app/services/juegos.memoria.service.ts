@@ -3,12 +3,16 @@ import { MemoryCard } from '../interfaces/games.interface';
 import { JuegosService } from './juegos.service';
 import { TimerService } from './timer.service';
 import { ModalService } from './modal.service';
+import { PedidoService } from './pedido.service';
+import { AuthService } from './auth.service';
 
 @Service()
 export class JuegosMemoriaService {
     public juegosService = inject(JuegosService);
     public timerService = inject(TimerService);
     modal = inject(ModalService);
+    pedidoService = inject(PedidoService);
+    auth = inject(AuthService);
 
     constructor() {
         // 💡 ESCUCHA ÚNICA: Reacciona automáticamente cuando el TimerService marca true
@@ -95,8 +99,17 @@ export class JuegosMemoriaService {
         this.resetGame(false);
     }
 
-    private finalizarPorVictoria() {
+    async finalizarPorVictoria() {
         this.finalizaJuego();
+        const user_id = this.auth.session()?.user.id;
+        if (!user_id) return;
+        console.log('USER: ', this.auth.session()?.user);
+        const pedido = await this.pedidoService.pedidoActualDelCliente(user_id);
+        if (!pedido) return;
+        console.log('PEDIDO: ', pedido);
+
+        const data = await this.pedidoService.actualizarDescuento(pedido.id, 10);
+        console.log("DATA ACTUALIZADA ", data)
 
         // Aquí puedes disparar tu modal de victoria
         console.log('🏆 ¡Ganaste!');
