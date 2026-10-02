@@ -96,15 +96,15 @@ export class PedidosSectorPage implements OnInit {
         await (this.pedidoService as any).cambiarEstado(pedidoId, 'En Preparación');
       }
 
-      // 1. Notificar al cliente que su producto cambió de estado
-        if (pedido?.clienteId) {
-            void this.notificaciones.enviarAvisoAUsuario(
-                pedido.clienteId,
-                'Actualización de tu pedido',
-                `${item.nombreProducto} está ${nuevoEstado.toLowerCase()}.`,
-                'pedido-estado'
-            );
-        }
+      // // 1. Notificar al cliente que su producto cambió de estado
+      //   if (pedido?.clienteId) {
+      //       void this.notificaciones.enviarAvisoAUsuario(
+      //           pedido.clienteId,
+      //           'Actualización de tu pedido',
+      //           `${item.nombreProducto} está ${nuevoEstado.toLowerCase()}.`,
+      //           'pedido-estado'
+      //       );
+      //   }
 
       // Verificar si con este cambio se terminó todo el pedido
       await this.pedidoService.actualizarEstadoGeneralSiListo(pedidoId);

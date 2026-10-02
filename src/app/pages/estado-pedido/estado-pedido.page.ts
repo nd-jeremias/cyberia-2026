@@ -6,7 +6,7 @@ import { DetallePedidoInterface, EstadoItem, PedidoInterface } from '../../inter
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
-import { LEYENDA_PAGANDO, LEYENDA_PEDIDO } from '../mi-pedido/mi-pedido.estado';
+import { LEYENDA_PAGANDO, LEYENDA_PEDIDO, puedeConfirmarRecepcion } from '../mi-pedido/mi-pedido.estado';
 import { formatearFechaHora } from '../../utils/fecha';
 import { formatearImporte } from '../../utils/importe';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -100,6 +100,34 @@ export class EstadoPedidoPage {
 
     tiempoEstimado(pedido: PedidoInterface): number {
         return this.pedidoService.tiempoEstimado(pedido);
+    }
+
+    /**
+     * Punto 19: el mozo marcó el pedido como entregado y falta que el cliente
+     * confirme que lo recibió.
+     *
+     * El botón vive acá y no sólo en "Mi pedido": una vez que el mozo confirma
+     * el pedido, esa pantalla deja de estar al alcance del cliente, y sin esto
+     * la visita quedaba trabada —sin recepción no hay encuesta ni cuenta, y el
+     * mozo tampoco veía nada para cobrar.
+     */
+    puedeConfirmar(pedido: PedidoInterface): boolean {
+        return puedeConfirmarRecepcion(pedido.estado);
+    }
+
+    async confirmarRecepcion(pedido: PedidoInterface) {
+        const usuarioId = this.authService.session()?.user.id;
+
+        if (!usuarioId) return;
+
+        const confirmado = await this.pedidoService.confirmarRecepcion(pedido.id, usuarioId);
+
+        // Se vuelve a leer también si falló: puede que el estado haya cambiado.
+        await this.recargar();
+
+        if (confirmado) {
+            this.modal.setOpen('Pedido recibido', 'Ya podés responder la encuesta y pedir la cuenta.', 'info');
+        }
     }
 
     /** Puntos 16 y 17: la fecha del pedido, con hora y minutos. */

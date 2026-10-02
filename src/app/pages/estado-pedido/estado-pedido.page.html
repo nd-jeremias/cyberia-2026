@@ -87,6 +87,14 @@
                     <span class="total-rotulo">Total del pedido</span>
                     <span class="total-importe">{{ totalDe(pedido) }}</span>
                 </p>
+
+                @if (puedeConfirmar(pedido)) {
+                <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme. -->
+                <button type="button" class="btn-principal" [disabled]="cargando()" (click)="confirmarRecepcion(pedido)">
+                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                    Confirmar recepción
+                </button>
+                }
             </article>
             }
 

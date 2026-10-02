@@ -905,6 +905,13 @@ body.barcode-scanner-active .barcode-scanner-ui {
         overflow: hidden;
         // flex-grow: 1;
         padding-top: 1.5rem;
+
+        /* El final de la hoja tiene que quedar POR ENCIMA de la barra de
+           navegación del teléfono. Android dibuja la página por debajo de esa
+           barra y no informa cuánto mide (ver MainActivity.java), así que acá
+           se deja un piso: sin esto, lo último de un listado largo —el botón
+           "Confirmar pago y liberar mesa" del mozo, por ejemplo— queda tapado
+           y no se puede tocar ni desplazando. */
         padding-bottom: 50px;
 
         flex: 1;
@@ -925,7 +932,6 @@ body.barcode-scanner-active .barcode-scanner-ui {
         // padding-bottom: 100px;
         padding-bottom: env(safe-area-inset-bottom, 0px);
         height: auto;
-        max-height: 15vh;
         border-radius: 40px 40px 0 0;
     }
 }

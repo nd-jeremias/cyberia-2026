@@ -91,10 +91,11 @@
        botón. Con los gestos activados la franja es finita y casi no se nota,
        por eso el mismo diseño se ve bien en un teléfono y mal en otro.
 
-       El `max()` resuelve los dos casos: si el sistema informa el espacio, se
-       respeta; si informa 0, igual quedan 3,25rem libres, que alcanzan para la
-       barra de los tres botones. */
-    --pie-seguro: max(3.25rem, calc(1.2rem + env(safe-area-inset-bottom, 0px)));
+       Del alto de la barra se encarga ahora MainActivity.java, que se lo
+       pregunta a Android y se lo deja libre al WebView: es el único que
+       conoce el dato. Acá queda sólo el aire de diseño, más el recorte de la
+       pantalla cuando el sistema sí lo informa (iOS, por ejemplo). */
+    --pie-seguro: calc(1.2rem + env(safe-area-inset-bottom, 0px));
 
     --radio-chico: 0.625rem;
     --radio: 1rem;
