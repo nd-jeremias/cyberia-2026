@@ -90,8 +90,10 @@ export class PagarPage implements OnInit {
                 `Un cliente ha realizado un pago. Confirma la recepción.`,
                 'pago'
             );
+            this.modal.setOpen('Pago realizado', 'Se envió una notificacion al mozo. Espera que confirme tu pago.', 'info');
         } catch (error) {
             console.error('No se pudo avisar el pago al mozo:', error);
+            this.modal.setOpen('Error', 'No se pudo avisar del pago al mozo', 'error');
         }
     }
 }
