@@ -8,7 +8,7 @@
                 <div class="selector-graficos">
                     <button 
                         type="button" 
-                        class="btn-secundario" 
+                        class="btn-secundario btn-pestana" 
                         [class.seleccionado]="graficoSeleccionado() === 'torta'" 
                         (click)="cambiarTipoGrafico('torta')"
                     >
@@ -16,7 +16,7 @@
                     </button>
                     <button 
                         type="button" 
-                        class="btn-secundario" 
+                        class="btn-secundario btn-pestana" 
                         [class.seleccionado]="graficoSeleccionado() === 'barras'" 
                         (click)="cambiarTipoGrafico('barras')"
                     >
@@ -24,7 +24,7 @@
                     </button>
                     <button 
                         type="button" 
-                        class="btn-secundario" 
+                        class="btn-secundario btn-pestana" 
                         [class.seleccionado]="graficoSeleccionado() === 'lineas'" 
                         (click)="cambiarTipoGrafico('lineas')"
                     >
