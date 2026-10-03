@@ -1,0 +1,52 @@
+<ion-content [fullscreen]="true">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'QR de propinas'"></app-header>
+
+        <div class="superior hoja pantalla-qr">
+            <p class="ayuda">
+                Elegí el nivel de satisfacción y mostrale el código al cliente. Al escanearlo desde
+                "Pedir la cuenta", ese porcentaje se suma a su cuenta.
+            </p>
+
+            <ul class="niveles">
+                @for (nivel of niveles; track nivel.porcentaje) {
+                <li>
+                    <button
+                        type="button"
+                        class="nivel"
+                        [class.nivel-elegido]="elegido()?.porcentaje === nivel.porcentaje"
+                        [attr.aria-pressed]="elegido()?.porcentaje === nivel.porcentaje"
+                        (click)="mostrar(nivel)"
+                    >
+                        <span class="medallon">
+                            <fa-icon [icon]="['fas', nivel.icono]"></fa-icon>
+                        </span>
+
+                        <span class="nivel-texto">{{ nivel.etiqueta }}</span>
+                        <span class="nivel-porcentaje">{{ nivel.porcentaje }}%</span>
+                    </button>
+
+                    <!-- El QR aparece debajo del nivel elegido, para que no haya
+                         dudas de cuál se está mostrando. -->
+                    @if (elegido()?.porcentaje === nivel.porcentaje) {
+                    <div class="tarjeta-qr">
+                        @if (imagenQr(); as imagen) {
+                        <img [src]="imagen" [alt]="'Código QR de propina ' + nivel.etiqueta" class="imagen-qr" />
+                        } @else {
+                        <p class="leyenda">Generando el código…</p>
+                        }
+                    </div>
+
+                    @if (imagenQr()) {
+                    <button type="button" class="btn-principal" [disabled]="generando()" (click)="guardar()">
+                        @let icono = esNativo ? 'share' : 'download';
+                        <fa-icon [icon]="['fas', icono]"></fa-icon>
+                        {{ esNativo ? 'Compartir imagen' : 'Descargar imagen' }}
+                    </button>
+                    } }
+                </li>
+                }
+            </ul>
+        </div>
+    </div>
+</ion-content>

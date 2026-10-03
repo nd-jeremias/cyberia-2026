@@ -101,6 +101,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/qr-mesa/qr-mesa.page').then((m) => m.QrMesaPage),
         canActivate: [authGuard],
     },
+    // Los cinco QR de propina, que el mozo le muestra al cliente (punto 21).
+    {
+        path: 'qr-propinas',
+        loadComponent: () => import('./pages/qr-propinas/qr-propinas.page').then((m) => m.QrPropinasPage),
+        canActivate: [authGuard],
+    },
     // El QR de ingreso, para imprimirlo y pegarlo en la puerta.
     {
         path: 'qr-local',
