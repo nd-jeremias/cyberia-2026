@@ -222,6 +222,13 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
             icono: 'receipt',
             ruta: '/pedidos-clientes',
         },
+        // Punto 21: el cliente sólo puede dejar propina escaneando uno de los
+        // cinco códigos, y es el mozo quien se los muestra en la mesa.
+        {
+            texto: 'QR de propinas',
+            icono: 'circle-dollar-to-slot',
+            ruta: '/qr-propinas',
+        },
     ],
 
     cocinero: [
