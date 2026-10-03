@@ -37,7 +37,7 @@
     color: var(--sobre-naranja);
 
     /* Deja libre la barra de estado del teléfono. */
-    padding-top: env(safe-area-inset-top, 0px);
+    padding-top: var(--top-seguro);
 
     /* El patrón es blanco sobre transparente, así que sobre el naranja va tal
        cual. Da textura sin robar protagonismo. */
@@ -65,7 +65,6 @@
     
     min-height: 3.25rem;
     padding: 0.5rem 0.875rem 0;
-    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem); // Esto empuja los botones para abajo segun el dispositivo 
     box-sizing: border-box;
 }
 
