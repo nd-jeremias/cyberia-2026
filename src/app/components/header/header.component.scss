@@ -58,14 +58,14 @@
 .banda-barra {
     position: relative;
     z-index: 1;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-
+    
     min-height: 3.25rem;
     padding: 0.5rem 0.875rem 0;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem); // Esto empuja los botones para abajo segun el dispositivo 
     box-sizing: border-box;
 }
 
