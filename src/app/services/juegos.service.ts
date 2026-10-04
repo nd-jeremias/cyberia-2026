@@ -1,9 +1,18 @@
-import { Service, signal, WritableSignal } from '@angular/core';
+import { inject, Service, signal, WritableSignal } from '@angular/core';
+import { AuthService } from './auth.service';
+import { PedidoService } from './pedido.service';
+import { ModalService } from './modal.service';
+import { SpinnerService } from './spinner.service';
 
 export type ListadoJuegos = 'memoria' | 'preguntas';
 
 @Service()
 export class JuegosService {
+    auth = inject(AuthService);
+    pedidos = inject(PedidoService);
+    modal = inject(ModalService);
+    spinner = inject(SpinnerService);
+
     public gameState = signal<'RULES' | 'PLAYING' | 'RESULT'>('RULES');
 
     // 1. Declaramos el mapa de signals directamente como propiedad de la clase
@@ -38,6 +47,41 @@ export class JuegosService {
         if (this.juegosEstado[juego]) {
             this.juegosEstado[juego].set(true);
             this.Jugado.set(true); // Actualiza también tu estado global si aplica
+        }
+    }
+
+    exitGame(juego: ListadoJuegos) {
+        this.marcarComoJugado(juego);
+        this.gameState.set('RULES');
+    }
+
+    async finalizarPorVictoria(juego: ListadoJuegos) {
+        this.spinner.show();
+        try {
+            const user_id = this.auth.session()?.user.id;
+            if (!user_id) return;
+
+            const pedido = await this.pedidos.pedidoActualDelCliente(user_id);
+            if (!pedido) return;
+
+            const descuento = this.validarDescuento('preguntas');
+            // Actualiza el valor del descuento. Si ya existe un descuento previo, le suma el nuevo valor.
+            const data = await this.pedidos.incrementarValor('pedidos', 'descuento_juego', pedido.id, descuento);
+
+            // Aquí dispara la victoria
+            console.log('🏆 ¡Ganaste!');
+            const mensaje =
+                descuento > 0
+                    ? '¡Felicidades! Completaste el juego y obtuviste un descuento. Completa los otros para acumular descuentos adicionales.'
+                    : '¡Felicidades! Completaste el juego satisfactoriamente.';
+
+            this.modal.setOpen('¡Felicidades!', mensaje, 'info');
+            this.exitGame(juego);
+        } catch (error) {
+            console.log(error);
+            this.modal.setOpen('Error', 'Lo sentimos. Hubo un error al finalizar el juego.', 'error');
+        } finally {
+            this.spinner.hide();
         }
     }
 }

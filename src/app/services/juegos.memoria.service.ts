@@ -77,11 +77,6 @@ export class JuegosMemoriaService {
         this.timerService.iniciar(this.TIEMPO_LIMITE);
     }
 
-    exitGame() {
-        this.juegosService.marcarComoJugado('memoria');
-        this.juegosService.gameState.set('RULES');
-    }
-
     private finalizaJuego() {
         this.timerService.detener();
         this.juegoTerminado.set(true);
@@ -94,30 +89,7 @@ export class JuegosMemoriaService {
         // Aquí puedes disparar tu modal de derrota
         console.log('💥 ¡Se acabó el tiempo! Fin del juego.');
         this.modal.setOpen('Juego terminado!', 'Se acabo el tiempo, ¡mas suerte para la próxima!', 'info');
-        this.exitGame();
-    }
-
-    async finalizarPorVictoria() {
-        this.finalizaJuego();
-        const user_id = this.auth.session()?.user.id;
-        if (!user_id) return;
-
-        const pedido = await this.pedidoService.pedidoActualDelCliente(user_id);
-        if (!pedido) return;
-
-        const descuento = this.juegosService.validarDescuento('memoria');
-        // Actualiza el valor del descuento. Si ya existe un descuento previo, le suma el nuevo valor.
-        const data = await this.pedidoService.incrementarValor('pedidos', 'descuento_juego', pedido.id, descuento);
-
-        // Aquí dispara la victoria
-        console.log('🏆 ¡Ganaste!');
-        const mensaje =
-            descuento > 0
-                ? '¡Felicidades! Completaste el juego y obtuviste un descuento. Completa los otros para acumular descuentos adicionales.'
-                : '¡Felicidades! Completaste el juego satisfactoriamente.';
-
-        this.modal.setOpen('¡Ganaste!', mensaje, 'info');
-        this.exitGame();
+        this.juegosService.exitGame('memoria');
     }
 
     generarTablero() {
@@ -188,7 +160,7 @@ export class JuegosMemoriaService {
             }, 800);
         }
         if (this.paresEncontrados() === this.totalPares()) {
-            this.finalizarPorVictoria();
+            this.juegosService.finalizarPorVictoria('memoria');
         }
     }
 

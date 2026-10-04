@@ -40,7 +40,7 @@ export class MemoriaPage implements OnInit {
     ngOnInit() {}
 
     ionViewWillLeave() {
-        this.memoria.exitGame();
+        this.game.exitGame('memoria');
     }
 
     cancelarIntento() {

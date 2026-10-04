@@ -697,7 +697,7 @@ export class PedidoService {
             //         fecha: '2026-10-04T15:34:48.09075+00:00',
             //     },
             // ];
-            return data ? true : false;
+            return data.length > 0 ? true : false;
         } catch (error) {
             console.log('No se pudo actualizar la propina del pedido.', error);
             throw new Error('No se pudo actualizar la propina del pedido.');
