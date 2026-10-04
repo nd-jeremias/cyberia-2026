@@ -1,5 +1,5 @@
 import { TarjetaInformacionClienteComponent } from './../../components/tarjeta-informacion-cliente/tarjeta-informacion-cliente.component';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon, IonRouterLink } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -13,6 +13,7 @@ import { QrPropina } from '../../interfaces/qr.interface';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { TarjetaFacturaComponent } from '../../components/tarjeta-factura/tarjeta-factura.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { AuthService } from '../../services/auth.service';
 
 /**
  * Pedir la cuenta — PANTALLA PENDIENTE.
@@ -45,6 +46,8 @@ export class PedirCuentaPage {
     modal = inject(ModalService);
     spinner = inject(SpinnerService);
     pedidoService = inject(PedidoService);
+    authService = inject(AuthService);
+    router = inject(Router);
 
     pedido = signal<PedidoInterface | null>(null);
     propinaAgregada = signal<boolean>(false);
@@ -61,8 +64,15 @@ export class PedirCuentaPage {
     };
 
     async ngOnInit() {
-        await this.pedidoService.listarSinPagar(); // Si el usuario sale de la app la lista de pedidos se pierde. Por eso aca la vuelve a completar
-        this.pedido.set(this.pedidoService.pedidos()[0]); // Suponiendo que manejamos siempre 1 pedido
+        const pedido_cliente = await this.pedidoService.pedidoActualDelCliente(this.authService.session()?.user.id!);
+
+        if (!pedido_cliente) {
+            this.modal.setOpen('Error', 'Hubo un error al cargar su pedido. Vuelva a intentarlo.', 'error');
+            this.router.navigate(['/inicio']);
+        }
+        this.pedido.set(pedido_cliente);
+
+        if (this.pedido()?.propinaPorcentaje) this.propinaAgregada.set(true);
     }
 
     async scanQrPropina() {
@@ -91,11 +101,19 @@ export class PedirCuentaPage {
             if (this.pedido() != null) {
                 pedidoId = this.pedido()?.id!;
                 if (!pedidoId) throw new Error('Error obteniendo el pedido. No se puede actualizar.');
-                await this.pedidoService.setPropina(pedidoId, propina);
+                const seActualizoPropina = await this.pedidoService.setPropina(pedidoId, propina);
+                if (seActualizoPropina) {
+                    this.pedido.update((pedidoActual) => {
+                        if (!pedidoActual) return null;
+                        return {
+                            ...pedidoActual,
+                            propinaPorcentaje: propina,
+                        };
+                    });
+                }
             }
 
             this.propinaAgregada.set(true);
-
         } catch (error) {
             console.log(error);
             const mensaje = error instanceof Error ? error.message : 'No se pudo asignar propina al pedido.';
@@ -105,5 +123,4 @@ export class PedirCuentaPage {
             this.spinner.hide();
         }
     }
-
 }

@@ -7,16 +7,18 @@
         ></app-header>
         <div class="superior hoja">
 
-            @if(propinaAgregada()){ @if(pedido()){
-            <app-tarjeta-factura [pedido]="pedido()"></app-tarjeta-factura>
-            <button class="btn btn-primario" [routerLink]="'/pagar'">
-                <fa-icon [icon]="['fas', 'credit-card']"></fa-icon> Realizar pago
-            </button>
+            @if(propinaAgregada()) {
+                @if(pedido()) {
+                    <app-tarjeta-factura a [pedido]="pedido()"></app-tarjeta-factura>
+                    <button class="btn  btn-primario" [routerLink]="'/pagar'">
+                        <fa-icon [icon] ="['fas', 'credit-card']"></fa-icon> Realizar pago
+                    </button>   
+                } @else {
+                    <p>No se pudo actualizar su pedido.</p>
+                }
             } @else {
-            <p>No se pudo actualizar su pedido.</p>
-            } } @else {
-            <app-tarjeta-informacion-cliente [texto]="texto"></app-tarjeta-informacion-cliente>
-            <app-boton-home [boton]="botonPropina"></app-boton-home>
+                <app-tarjeta-informacion-cliente [texto]="texto"></app-tarjeta-informacion-cliente>
+                <app-boton-home [boton]="botonPropina"></app-boton-home>
             }
         </div>
     </div>

@@ -50,7 +50,7 @@ export interface PedidoInterface {
     estado: EstadoPedido;
     precioTotalNeto: number;
     descuentoJuego: number;
-    propinaPorcentaje: number;
+    propinaPorcentaje: number | null;
     fecha: string;
     detalles: DetallePedidoInterface[];
 }
