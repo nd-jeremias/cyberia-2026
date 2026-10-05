@@ -1,0 +1,42 @@
+<ion-content [fullscreen]="true">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Resultados de Encuestas'"></app-header>
+
+        <div class="superior hoja hoja-angosta">
+            <article class="tarjeta seccion-graficos">
+                <!-- Selector de Gráficos (1 gráfico por pantalla) -->
+                <div class="selector-graficos">
+                    <button 
+                        type="button" 
+                        class="btn-secundario btn-pestana" 
+                        [class.seleccionado]="graficoSeleccionado() === 'torta'" 
+                        (click)="cambiarTipoGrafico('torta')"
+                    >
+                        Torta
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn-secundario btn-pestana" 
+                        [class.seleccionado]="graficoSeleccionado() === 'barras'" 
+                        (click)="cambiarTipoGrafico('barras')"
+                    >
+                        Barras
+                    </button>
+                    <button 
+                        type="button" 
+                        class="btn-secundario btn-pestana" 
+                        [class.seleccionado]="graficoSeleccionado() === 'lineas'" 
+                        (click)="cambiarTipoGrafico('lineas')"
+                    >
+                        Lineal
+                    </button>
+                </div>
+
+                <!-- Canvas grande aprovechando el espacio vertical -->
+                <div class="area-grafico">
+                    <canvas #canvasGrafico></canvas>
+                </div>
+            </article>
+        </div>
+    </div>
+</ion-content>

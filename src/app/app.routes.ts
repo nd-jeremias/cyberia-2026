@@ -98,6 +98,20 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/encuestas/encuestas.page').then((m) => m.EncuestasPage),
         canActivate: [authGuard],
     },
+    // Pantalla 1: Formulario puro
+    {
+        path: 'encuestas/completar',
+        loadComponent: () =>
+            import('./pages/encuestas/completar/completar.page').then((m) => m.CompletarPage),
+        canActivate: [authGuard],
+    },
+    // Pantalla 2: Gráficos puros
+    {
+        path: 'encuestas/resultados',
+        loadComponent: () =>
+            import('./pages/encuestas/resultados/resultados.page').then((m) => m.ResultadosPage),
+        canActivate: [authGuard],
+    },
     {
         path: 'pedir-cuenta',
         loadComponent: () => import('./pages/pedir-cuenta/pedir-cuenta.page').then((m) => m.PedirCuentaPage),

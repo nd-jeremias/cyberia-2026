@@ -1,0 +1,42 @@
+:host ::ng-deep {
+  .layout-superpuesto { min-height: 100vh; }
+  .inferior { height: auto; padding-bottom: 0; }
+  .superior { padding-top: 1.5rem; }
+}
+
+.tarjeta {
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.seccion-graficos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.selector-graficos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+
+  .btn-pestana {
+    min-width: 2.75rem;
+  }
+}
+
+.area-grafico {
+  position: relative;
+  width: 100%;
+  height: 420px !important;
+  min-height: 420px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 420px !important;
+  }
+}
