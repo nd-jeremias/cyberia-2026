@@ -52,9 +52,9 @@ export class JuegosPage {
         ruta: '/juegos/preguntas',
     };
 
-    boton: BotonHomeInterface = {
-        texto: '',
-        icono: '',
-        ruta: '',
+    botonMayorMenor: BotonHomeInterface = {
+        texto: '¿Mayor o Menor?',
+        icono: 'arrow-trend-up',
+        ruta: './juegos/mayor-menor',
     };
 }

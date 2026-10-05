@@ -90,6 +90,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/juegos/preguntas/preguntas.page').then((m) => m.PreguntasPage),
     },
     {
+        path: 'juegos/mayor-menor',
+        loadComponent: () => import('./pages/juegos/mayor-menor/mayor-menor.page').then((m) => m.MayorMenorPage),
+    },
+    {
         path: 'encuestas',
         loadComponent: () => import('./pages/encuestas/encuestas.page').then((m) => m.EncuestasPage),
         canActivate: [authGuard],

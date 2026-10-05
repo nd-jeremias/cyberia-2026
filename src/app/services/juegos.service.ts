@@ -4,7 +4,7 @@ import { PedidoService } from './pedido.service';
 import { ModalService } from './modal.service';
 import { SpinnerService } from './spinner.service';
 
-export type ListadoJuegos = 'memoria' | 'preguntas';
+export type ListadoJuegos = 'memoria' | 'preguntas' | 'mayormenor';
 
 @Service()
 export class JuegosService {
@@ -20,6 +20,7 @@ export class JuegosService {
     public juegosEstado: Record<ListadoJuegos, WritableSignal<boolean>> = {
         memoria: signal<boolean>(false),
         preguntas: signal<boolean>(false),
+        mayormenor: signal<boolean>(false)
     };
 
     // Mantienes tus signals globales de control

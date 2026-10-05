@@ -56,7 +56,7 @@ export class PreguntasBoardComponent implements OnInit {
         if (!this.opcionSeleccionada) return;
 
         // Validamos si la que seleccionó es la correcta
-        if (this.opcionSeleccionada.correcta) {
+        if (this.opcionSeleccionada.correcta && this.indiceActual < this.preguntasDelJuego.length - 1) {
             this.modal.setOpen('¡Bien hecho!', '¡Respuesta correcta!', 'info');
         } else {
             this.modal.setOpen('¡Lo siento!', '¡Respuesta incorrecta! Gracias por haber jugado', 'error');
