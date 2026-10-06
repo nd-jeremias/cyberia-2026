@@ -8,6 +8,7 @@ import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
 import { ChartService } from '../../services/chart.service';
 import { ModalService } from '../../services/modal.service';
+import { SpinnerService } from '../../services/spinner.service';
 import { PedidoService } from '../../services/pedido.service';
 import { ProductosService } from '../../services/productos.service';
 import { formatearImporte } from '../../utils/importe';
@@ -50,6 +51,7 @@ export class CartaPage {
     private pedidoService = inject(PedidoService);
     private authService = inject(AuthService);
     private modal = inject(ModalService);
+    private spinner = inject(SpinnerService);
     private router = inject(Router);
 
     carrito = inject(ChartService);
@@ -131,6 +133,7 @@ export class CartaPage {
 
     private async cargarCarta() {
         this.cargando.set(true);
+        this.spinner.show();
 
         try {
             this.productos.set(await this.productosService.listarTodos());
@@ -140,6 +143,7 @@ export class CartaPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
+            this.spinner.hide();
         }
     }
 

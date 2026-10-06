@@ -8,6 +8,7 @@ import { ChartService } from '../../services/chart.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { SalonService } from '../../services/salon.service';
+import { SpinnerService } from '../../services/spinner.service';
 import { formatearImporte } from '../../utils/importe';
 import {
     LEYENDA_PAGANDO,
@@ -74,6 +75,7 @@ export class MiPedidoPage {
     private pedidoService = inject(PedidoService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
+    private spinner = inject(SpinnerService);
     private router = inject(Router);
     private notificaciones = inject(NotificacionesService);
 
@@ -291,6 +293,7 @@ export class MiPedidoPage {
         }
 
         this.cargando.set(true);
+        this.spinner.show();
 
         try {
             this.pedidos.set(await this.pedidoService.pedidosActivosDelCliente(usuarioId));
@@ -300,6 +303,7 @@ export class MiPedidoPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
+            this.spinner.hide();
         }
     }
 
