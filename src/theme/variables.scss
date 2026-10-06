@@ -96,6 +96,7 @@
        conoce el dato. Acá queda sólo el aire de diseño, más el recorte de la
        pantalla cuando el sistema sí lo informa (iOS, por ejemplo). */
     --pie-seguro: calc(1.2rem + env(safe-area-inset-bottom, 0px));
+    --top-seguro: calc(1.5rem + env(safe-area-inset-top, 0px));
 
     --radio-chico: 0.625rem;
     --radio: 1rem;

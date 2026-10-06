@@ -1,0 +1,9 @@
+<app-tarjeta-informacion-cliente [texto]="preguntaActual.pregunta"></app-tarjeta-informacion-cliente>
+
+@for(resp of preguntaActual.opciones; track $index){
+<app-preguntas-boton
+    [opcion]="preguntaActual.opciones[$index]"
+    [seleccionado]="opcionSeleccionada === preguntaActual.opciones[$index]"
+    (click)="seleccionarOpcion(preguntaActual.opciones[$index])"
+></app-preguntas-boton>
+}

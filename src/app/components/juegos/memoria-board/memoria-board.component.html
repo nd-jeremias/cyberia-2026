@@ -1,0 +1,5 @@
+<div class="tablero">
+    @for(card of game.tablero(); track $index){
+    <app-memoria-card [cartaData]="card" (cardClick)="game.seleccionarCarta($index)"></app-memoria-card>
+    }
+</div>

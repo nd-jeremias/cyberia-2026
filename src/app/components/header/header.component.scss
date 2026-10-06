@@ -36,11 +36,8 @@
     background: var(--grad-banda);
     color: var(--sobre-naranja);
 
-    /* Deja libre la barra de estado del teléfono (la hora, la señal, la
-       batería). `--barra-superior` la publica MainActivity.java, porque el
-       WebView de Android informa 0 en env(): sin eso, el nombre del local y el
-       botón de salir quedaban debajo de los iconos del sistema. */
-    padding-top: max(env(safe-area-inset-top, 0px), var(--barra-superior, 0px));
+    /* Deja libre la barra de estado del teléfono. */
+    padding-top: var(--top-seguro);
 
     /* El patrón es blanco sobre transparente, así que sobre el naranja va tal
        cual. Da textura sin robar protagonismo. */
@@ -61,12 +58,11 @@
 .banda-barra {
     position: relative;
     z-index: 1;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-
+    
     min-height: 3.25rem;
     padding: 0.5rem 0.875rem 0;
     box-sizing: border-box;
