@@ -112,7 +112,9 @@ export class PedirCuentaPage {
             if (this.pedido() != null) {
                 pedidoId = this.pedido()?.id!;
                 if (!pedidoId) throw new Error('Error obteniendo el pedido. No se puede actualizar.');
+
                 const seActualizoPropina = await this.pedidoService.setPropina(pedidoId, propina);
+
                 if (seActualizoPropina) {
                     this.pedido.update((pedidoActual) => {
                         if (!pedidoActual) return null;
