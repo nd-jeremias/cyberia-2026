@@ -90,7 +90,6 @@ export class JuegosMemoriaService {
         // Aquí puedes disparar tu modal de derrota
         console.log('💥 ¡Se acabó el tiempo! Fin del juego.');
         this.modal.setOpen('Juego terminado!', 'Se acabo el tiempo, ¡mas suerte para la próxima!', 'info');
-        this.juegosService.exitGame('memoria');
     }
 
     generarTablero() {
