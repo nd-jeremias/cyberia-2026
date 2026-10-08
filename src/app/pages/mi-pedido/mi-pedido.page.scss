@@ -7,47 +7,51 @@
  */
 
 /**
- * La pantalla no se desplaza: lo único que se mueve es la lista de productos.
+ * Con sólo el borrador, la pantalla no se desplaza: lo único que se mueve es
+ * la lista de productos.
  *
  * La hoja ocupa el alto que queda entre la banda y el pie, y la lista se lleva
  * el sobrante. Así el total y el botón de enviar están siempre a la vista, que
  * es lo que pide el punto 12, y no hay dos desplazamientos peleándose.
+ *
+ * La clase la pone la plantilla y no un selector `:has()`: ese selector no
+ * existe en los WebView más viejos, y donde no existe la regla entera se
+ * ignora y la pantalla queda sin desplazamiento de ningún tipo.
  */
 .pantalla-mi-pedido {
-    display: flex;
+    /* El `!important` es obligatorio: global.scss declara
+       `.superior { display: block !important }` para el armado de las capas, y
+       sin repetirlo acá esta pantalla nunca llegaba a ser una columna flexible.
+       Eso era lo que impedía que la lista recibiera un alto limitado y, por lo
+       tanto, su propio desplazamiento. */
+    display: flex !important;
     flex-direction: column;
     gap: 1rem;
+}
 
+.pantalla-mi-pedido.solo-borrador {
     min-height: 0;
     overflow: hidden !important;
-}
 
-/* La tarjeta del borrador se estira y la lista scrollea por dentro. */
-.pantalla-mi-pedido > .tarjeta-pedido:has(.lineas-borrador) {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-}
+    /* La tarjeta del borrador se estira y la lista scrollea por dentro. */
+    .tarjeta-borrador {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+    }
 
-.lineas-borrador {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-
-    /* Deja ver que hay más abajo en lugar de cortar la última línea al ras. */
-    padding-bottom: 0.25rem;
-}
-
-/* Con pedidos ya enviados la pantalla tiene más que mostrar que la lista: ahí
-   se permite desplazar la hoja entera, como antes. */
-.pantalla-mi-pedido:has(.detalles) {
-    overflow-y: auto !important;
-
-    .tarjeta-pedido:has(.lineas-borrador),
     .lineas-borrador {
-        overflow: visible;
-        min-height: auto;
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+
+        /* Red de seguridad: aunque algo rompiera la cadena de alturas, la
+           lista nunca pasa de media pantalla y se puede desplazar igual. */
+        max-height: 55dvh;
+
+        /* Deja ver que hay más abajo en lugar de cortar la última línea. */
+        padding-bottom: 0.25rem;
     }
 }
 
@@ -187,4 +191,15 @@
     font-weight: 700;
     color: var(--sobre-naranja);
     font-variant-numeric: tabular-nums;
+}
+
+/* ── Espacio para el pie ───────────────────────────────────────────────
+   El pie va fijo encima del contenido, así que la hoja tiene que terminar más
+   arriba. El relleno que hereda de la carta (15vh) le quedaba corto: este pie
+   tiene un renglón más —el tiempo estimado— y tapaba la última línea del
+   pedido. Con 22vh la lista corta bien por encima.
+   ------------------------------------------------------------------- */
+
+.pantalla-mi-pedido {
+    padding-bottom: calc(22vh + var(--pie-seguro)) !important;
 }

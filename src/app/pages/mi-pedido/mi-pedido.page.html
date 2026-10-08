@@ -10,7 +10,13 @@
             }
         </app-header>
 
-        <div class="superior hoja pantalla-mi-pedido">
+        <!--
+          `solo-borrador`: cuando lo único que hay es el pedido que se está
+          armando, la pantalla se queda quieta y se desplaza nada más que la
+          lista de productos. Con pedidos ya enviados hay más cosas que mostrar
+          y ahí sí se desplaza la hoja entera.
+        -->
+        <div class="superior hoja pantalla-mi-pedido" [class.solo-borrador]="mostrarBorrador()">
         @if (cargando()) {
         <div class="estado-vacio">
             <fa-icon [icon]="['fas', 'clock']"></fa-icon>
@@ -34,7 +40,8 @@
         @if (borradorBloqueado()) {
         <p class="aviso-correccion">
             <fa-icon [icon]="['fas', 'lock']"></fa-icon>
-            Tu pedido ya fue confirmado y pasó a cocina. No se pueden agregar más productos en esta visita.
+            Ya enviaste tu pedido, así que lo que quedó elegido en la carta no se puede mandar: hay un solo pedido
+            por visita.
         </p>
 
         <button type="button" class="btn-secundario" (click)="descartarBorrador()">
@@ -44,7 +51,7 @@
         }
 
         @if (mostrarBorrador()) {
-        <article class="tarjeta-pedido">
+        <article class="tarjeta-pedido tarjeta-borrador">
             <div class="encabezado">
                 <span class="ficha-mesa">
                     <span class="ficha-mesa-rotulo">Tu pedido</span>
@@ -93,11 +100,7 @@
           en la visita (el punto 21 habla de "los pedidos realizados"), y cada
           uno se sigue y se confirma por separado (puntos 14 y 19).
         -->
-        @if (hayEnviados()) {
-        @if (mostrarBorrador()) {
-        <h2 class="titulo-seccion">Pedidos enviados</h2>
-        }
-
+        @if (mostrarEnviados()) {
         @for (pedido of pedidos(); track pedido.id) {
         <article class="tarjeta-pedido">
             <div class="encabezado">
@@ -162,34 +165,11 @@
         </button>
         }
 
-        @if (hayConfirmado()) {
-        <!-- Punto 14: con el pedido confirmado, el cliente sigue su preparación plato por plato. -->
-        <button type="button" class="btn-principal" (click)="irA('estado')">
-            <fa-icon [icon]="['fas', 'alarm-clock']"></fa-icon>
-            Ver estado del pedido
-        </button>
-        }
-
-        @if (puedeJugar()) {
-        <!-- Punto 15: sólo el cliente registrado, con algún pedido ya confirmado. -->
-        <button type="button" class="btn-principal" (click)="irA('juegos')">
-            <fa-icon [icon]="['fas', 'gamepad']"></fa-icon>
-            Ir a los juegos
-        </button>
-        }
-
-        @if (serviciosHabilitados()) {
-        <!-- Punto 19: con todo recibido se habilitan la encuesta y la cuenta. -->
-        <button type="button" class="btn-principal" (click)="irA('encuesta')">
-            <fa-icon [icon]="['fas', 'clipboard-list']"></fa-icon>
-            Responder la encuesta
-        </button>
-
-        <button type="button" class="btn-principal" (click)="irA('cuenta')">
-            <fa-icon [icon]="['fas', 'hand-holding-dollar']"></fa-icon>
-            Pedir la cuenta
-        </button>
-        }
+        <!--
+          Acá NO van los accesos a los juegos, la encuesta, la cuenta ni el
+          estado del pedido: viven en el inicio, que ya los muestra en cuanto
+          corresponde. Repetirlos acá daba dos lugares distintos para lo mismo.
+        -->
         }
         </div>
     </div>

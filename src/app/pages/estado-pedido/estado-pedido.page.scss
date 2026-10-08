@@ -6,8 +6,49 @@
  * avance y el estado de cada ítem.
  */
 
+/**
+ * Con un solo pedido, la pantalla no se desplaza: lo único que se mueve es la
+ * lista de ítems.
+ *
+ * La hoja ocupa el alto que queda debajo de la banda, la tarjeta se estira y
+ * los ítems scrollean por dentro. Así el avance ("3 de 6 listos"), el total y
+ * el botón de confirmar la recepción no se van nunca de la pantalla.
+ *
+ * La clase la pone la plantilla y no un selector `:has()`, que no existe en
+ * los WebView más viejos: ahí la regla entera se ignoraría.
+ */
 .pantalla-estado {
+    /* El `!important` es obligatorio: global.scss declara
+       `.superior { display: block !important }`, y sin repetirlo acá esta
+       pantalla nunca era una columna flexible, así que la lista de ítems no
+       recibía un alto limitado ni, por lo tanto, su propio desplazamiento. */
+    display: flex !important;
+    flex-direction: column;
     gap: 1rem;
+}
+
+.pantalla-estado.un-pedido {
+    min-height: 0;
+    overflow: hidden !important;
+
+    .tarjeta-pedido {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .items-estado {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+
+        /* Red de seguridad, igual que en "Mi pedido". */
+        max-height: 55dvh;
+
+        /* Deja ver que hay más abajo en lugar de cortar el último ítem. */
+        padding-bottom: 0.25rem;
+    }
 }
 
 .pantalla-estado > .btn-principal {
@@ -124,6 +165,8 @@
     padding: 0;
     list-style: none;
 }
+
+
 
 .item {
     display: flex;
