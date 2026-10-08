@@ -12,7 +12,7 @@ import { SpinnerService } from '../../services/spinner.service';
 import { PedidoService } from '../../services/pedido.service';
 import { ProductosService } from '../../services/productos.service';
 import { formatearImporte } from '../../utils/importe';
-import { puedeEnviarOtroPedido } from '../mi-pedido/mi-pedido.estado';
+import { puedeEnviarPedido } from '../mi-pedido/mi-pedido.estado';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 /** Las tres solapas de la carta, en el orden en que se come. */
@@ -78,17 +78,16 @@ export class CartaPage {
     corrigiendo = computed(() => this.pedidoACorregir() !== null);
 
     /**
-     * Con un pedido ya confirmado no se arma otro: la comanda bajó a cocina.
+     * Con un pedido ya enviado no se arma otro: una visita, un pedido.
      * Corregir uno rechazado sí se permite, porque no es un pedido nuevo.
      * Es la misma regla que aplica "Mi pedido", para que no se contradigan.
      */
     puedePedir = computed(
-        () => this.corrigiendo() || puedeEnviarOtroPedido(this.pedidosActivos().map((p) => p.estado))
+        () => this.corrigiendo() || puedeEnviarPedido(this.pedidosActivos().map((p) => p.estado))
     );
 
     productosVisibles = computed(() => this.productos().filter((p) => p.tipo === this.solapaActiva()));
 
-    tituloListado = computed(() => this.solapas.find((s) => s.tipo === this.solapaActiva())?.etiqueta ?? 'Carta');
 
     /** Unidades por producto, para que cada tarjeta muestre su contador. */
     cantidades = computed<Record<string, number>>(() => {
@@ -197,8 +196,8 @@ export class CartaPage {
     agregar(producto: Producto) {
         if (!this.puedePedir()) {
             this.modal.setOpen(
-                'Pedido ya confirmado',
-                'Tu pedido ya pasó a cocina y barra. No se pueden agregar más productos en esta visita.'
+                'Ya tenés un pedido',
+                'Sólo se puede tener un pedido por visita. Mirá cómo va el tuyo desde "Mi pedido".'
             );
 
             return;

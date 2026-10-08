@@ -53,15 +53,6 @@
                 <span class="estado">Sin enviar</span>
             </div>
 
-            <p class="leyenda">Repasá lo que elegiste. Podés cambiar las cantidades antes de enviarlo.</p>
-
-            <div class="datos-pedido">
-                <span class="chip">
-                    <fa-icon [icon]="['fas', 'clock']"></fa-icon>
-                    {{ carrito.tiempoEstimado() }} minutos estimados
-                </span>
-            </div>
-
             <ul class="lineas-borrador">
                 @for (linea of lineas(); track linea.id) {
                 <li class="linea">
@@ -95,11 +86,6 @@
                 }
             </ul>
         </article>
-
-        <button type="button" class="btn-secundario" (click)="irALaCarta()">
-            <fa-icon [icon]="['fas', 'cart-plus']"></fa-icon>
-            Seguir eligiendo
-        </button>
         }
 
         <!--
@@ -217,12 +203,16 @@
 @if (!cargando() && mostrarBorrador()) {
 <footer class="pie-pedido">
     <div class="pie-importe">
-        <span class="pie-rotulo">
-            {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} ·
-            {{ carrito.tiempoEstimado() }} min
-        </span>
+        <span class="pie-rotulo">{{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }}</span>
         <span class="pie-total">{{ totalBorrador() }}</span>
     </div>
+
+    <!-- Punto 12: el tiempo total estimado del pedido, en su propio renglón
+         para que se lea de un vistazo junto al importe. -->
+    <p class="pie-tiempo">
+        <fa-icon [icon]="['far', 'clock']"></fa-icon>
+        {{ carrito.tiempoEstimado() }} minutos estimados
+    </p>
 
     <div class="pie-acciones">
         <button type="button" class="btn-principal pie-boton" [disabled]="enviando()" (click)="enviarPedido()">
