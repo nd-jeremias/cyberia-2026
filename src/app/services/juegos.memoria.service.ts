@@ -77,11 +77,10 @@ export class JuegosMemoriaService {
         this.timerService.iniciar(this.TIEMPO_LIMITE);
     }
 
-    public finalizaJuego() {
-        this.bloqueado.set(true); // Congela el tablero para que no sigan tocando cartas
-        this.juegoTerminado.set(true);
+    private finalizaJuego() {
         this.timerService.detener();
-        this.juegosService.exitGame('memoria');
+        this.juegoTerminado.set(true);
+        this.bloqueado.set(true); // Congela el tablero para que no sigan tocando cartas
     }
 
     private finalizarJuegoPorTiempo() {
@@ -90,6 +89,7 @@ export class JuegosMemoriaService {
         // Aquí puedes disparar tu modal de derrota
         console.log('💥 ¡Se acabó el tiempo! Fin del juego.');
         this.modal.setOpen('Juego terminado!', 'Se acabo el tiempo, ¡mas suerte para la próxima!', 'info');
+        this.juegosService.exitGame('memoria');
     }
 
     generarTablero() {
@@ -160,7 +160,6 @@ export class JuegosMemoriaService {
             }, 800);
         }
         if (this.paresEncontrados() === this.totalPares()) {
-            this.timerService.detener();
             this.juegosService.finalizarPorVictoria('memoria');
         }
     }

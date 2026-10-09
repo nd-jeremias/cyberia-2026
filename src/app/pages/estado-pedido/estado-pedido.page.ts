@@ -6,6 +6,7 @@ import { DetallePedidoInterface, EstadoItem, PedidoInterface } from '../../inter
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
+import { SpinnerService } from '../../services/spinner.service';
 import { LEYENDA_PAGANDO, LEYENDA_PEDIDO, puedeConfirmarRecepcion } from '../mi-pedido/mi-pedido.estado';
 import { formatearFechaHora } from '../../utils/fecha';
 import { formatearImporte } from '../../utils/importe';
@@ -40,6 +41,7 @@ export class EstadoPedidoPage {
     private authService = inject(AuthService);
     private pedidoService = inject(PedidoService);
     private modal = inject(ModalService);
+    private spinner = inject(SpinnerService);
     private router = inject(Router);
     private dejarDeEscuchar: (() => void) | null = null;
 
@@ -72,6 +74,7 @@ export class EstadoPedidoPage {
         }
 
         this.cargando.set(true);
+        this.spinner.show();
 
         try {
             this.pedidos.set(await this.pedidoService.pedidosActivosDelCliente(usuarioId));
@@ -81,6 +84,7 @@ export class EstadoPedidoPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
+            this.spinner.hide();
         }
     }
 

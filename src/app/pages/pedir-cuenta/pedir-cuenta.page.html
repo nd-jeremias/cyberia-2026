@@ -10,7 +10,7 @@
             @if(propinaAgregada()) {
                 @if(pedido()) {
                     <app-tarjeta-factura a [pedido]="pedido()"></app-tarjeta-factura>
-                    <button class="btn  btn-primario" (click)="pagar()">
+                    <button class="btn  btn-primario" [routerLink]="'/pagar'">
                         <fa-icon [icon] ="['fas', 'credit-card']"></fa-icon> Realizar pago
                     </button>   
                 } @else {

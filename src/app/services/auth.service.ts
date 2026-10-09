@@ -55,34 +55,16 @@ export class AuthService {
         // un caso previsto (durante el alta la sesión se abre un instante
         // antes de insertarla), y `single` lo trata como error devolviendo un
         // 406 que ensucia la consola sin aportar nada.
-        let { data, error } = await supabase
+        const { data, error } = await supabase
             .from('usuarios')
             .select('perfil, nombres, apellidos, foto_url')
             .eq('id', userId)
             .maybeSingle();
 
-        // Reintento por clock skew: el JWT puede llegar a PostgREST con un
-        // timestamp ligeramente adelantado (PGRST303 / "JWT issued at future").
-        // El delay ya existe en el servicio para este mismo problema; basta
-        // con esperar y volver a intentar una sola vez antes de declarar error.
-        const esClockSkew =
-            error &&
-            (error.code === 'PGRST303' || /JWT issued at future/i.test(error.message));
-
-        if (esClockSkew) {
-            console.warn('Clock skew detectado al cargar perfil, reintentando…', error);
-            await this.delay(500);
-            ({ data, error } = await supabase
-                .from('usuarios')
-                .select('perfil, nombres, apellidos, foto_url')
-                .eq('id', userId)
-                .maybeSingle());
-        }
-
         if (error) {
-            // La consulta falló (o falló el reintento): no es que falte la fila.
-            // Se guarda el motivo para que la pantalla no mande a revisar la
-            // base cuando en realidad fue la red, los permisos o el token.
+            // La consulta falló: no es que falte la fila. Se guarda el motivo
+            // para que la pantalla no mande a revisar la base cuando en
+            // realidad fue la red, los permisos o el token.
             console.error('No se pudo cargar el perfil del usuario', userId, error);
 
             this.perfilError.set(error.message);
@@ -125,55 +107,46 @@ export class AuthService {
 
     async login({ email, password }: LoginInterface): Promise<void> {
         // const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
-        try {
-            const response: AuthResponse = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            });
 
-            if (response.error) throw response.error;
+        const response: AuthResponse = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
 
-            if (!response.data.session || !response.data.user) {
-                throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
-            }
+        if (response.error) throw response.error;
 
-            await this.delay(300);
-
-            // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
-            // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
-            // recien abierta para que no quede una sesion valida a medias.
-            const { data: fila } = await supabase
-                .from('usuarios')
-                .select('estado')
-                .eq('id', response.data.user.id)
-                .single();
-
-            if (fila && fila.estado !== 'Activo') {
-                await supabase.auth.signOut();
-
-                throw new Error(
-                    fila.estado === 'Rechazado'
-                        ? 'Su solicitud de registro fue rechazada. No puede ingresar a la aplicación.'
-                        : 'Su registro todavía está pendiente de aprobación. Aguarde el correo de confirmación.'
-                );
-            }
-
-            const user: LocalUserInterface = {
-                id: response.data.user.id,
-                correo: response.data.session.user.email,
-                nombres: response.data.session.user.user_metadata['nombre'],
-            };
-
-            this.setLocalUser(user);
-        } catch (error) {
-            console.log(error);
-            const mensaje = error instanceof Error ? error.message : 'No se pudo iniciar sesión.';
-
-            await supabase.auth.signOut();
-            localStorage.removeItem('user');
-
-            throw new Error(mensaje);
+        if (!response.data.session || !response.data.user) {
+            throw new Error('No se pudo iniciar sesión. Verifique sus credenciales.');
         }
+
+        await this.delay(300);
+
+        // Punto 5 del enunciado: el cliente registrado no puede ingresar hasta
+        // que un dueño o supervisor apruebe su solicitud. Se cierra la sesion
+        // recien abierta para que no quede una sesion valida a medias.
+        const { data: fila } = await supabase
+            .from('usuarios')
+            .select('estado')
+            .eq('id', response.data.user.id)
+            .single();
+
+        if (fila && fila.estado !== 'Activo') {
+            await supabase.auth.signOut();
+
+            throw new Error(
+                fila.estado === 'Rechazado'
+                    ? 'Su solicitud de registro fue rechazada. No puede ingresar a la aplicación.'
+                    : 'Su registro todavía está pendiente de aprobación. Aguarde el correo de confirmación.'
+            );
+        }
+
+        const user: LocalUserInterface = {
+            id: response.data.user.id,
+            correo: response.data.session.user.email,
+            nombres: response.data.session.user.user_metadata['nombre'],
+        };
+
+        this.setLocalUser(user);
     }
 
     // Espera a que el cliente de Supabase termine de leer la sesión persistida
@@ -267,7 +240,7 @@ export class AuthService {
 
             let createdUser: any = null;
             let authError: any = null;
-
+            
             if (this.session()) {
                 // CAMINO 1: Registro administrativo vía Edge Function (Mantiene sesión activa)
                 const { data: functionData, error: functionError } = await supabase.functions.invoke('crear-empleado', {

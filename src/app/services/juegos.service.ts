@@ -65,7 +65,7 @@ export class JuegosService {
             const pedido = await this.pedidos.pedidoActualDelCliente(user_id);
             if (!pedido) return;
 
-            const descuento = this.validarDescuento(juego);
+            const descuento = this.validarDescuento('preguntas');
             // Actualiza el valor del descuento. Si ya existe un descuento previo, le suma el nuevo valor.
             const data = await this.pedidos.incrementarValor('pedidos', 'descuento_juego', pedido.id, descuento);
 

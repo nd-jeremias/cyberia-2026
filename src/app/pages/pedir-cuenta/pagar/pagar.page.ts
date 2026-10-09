@@ -65,7 +65,7 @@ export class PagarPage implements OnInit {
                 return;
             }
 
-            await this.avisarPago();
+            await this.avisarAlMozo();
 
             this.router.navigate(['/inicio']);
         } catch (error) {
@@ -77,21 +77,17 @@ export class PagarPage implements OnInit {
     }
 
     /**
-     * Punto 21: "el cliente realiza el pago (simulado) y espera la confirmación
-     * del mozo. La notificación la recibirá tanto el mozo como el dueño y el
-     * supervisor".
-     *
-     * El mensaje no le habla sólo al mozo porque lo leen los tres: el mozo
-     * sabe que tiene que confirmarlo, y el dueño y el supervisor, que entró
-     * un pago.
+     * Si el aviso falla, el pago ya quedó registrado y el mozo lo ve igual en
+     * su pantalla: no se le muestra al cliente un error que parezca un cobro
+     * rechazado.
      */
-    private async avisarPago(): Promise<void> {
+    private async avisarAlMozo(): Promise<void> {
         try {
             // Aca deberia ser un mensaje mas personalizado, pero hay q traer la mesa, y para eso hay q traer el ID. Revisar el local storage primero
             await this.notificaciones.enviarAvisos(
-                ['mozo', 'dueño', 'supervisor'],
+                ['mozo'],
                 'Pago realizado',
-                'Un cliente pagó la cuenta y espera que el mozo confirme el pago.',
+                `Un cliente ha realizado un pago. Confirma la recepción.`,
                 'pago'
             );
             this.modal.setOpen('Pago realizado', 'Se envió una notificacion al mozo. Espera que confirme tu pago.', 'info');

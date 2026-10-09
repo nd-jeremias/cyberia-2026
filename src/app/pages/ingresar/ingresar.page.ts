@@ -42,10 +42,13 @@ export class IngresarPage {
             // Registramos el error real en la consola para poder debuggear
             console.error('Error en el proceso de login:', error);
 
-            // Redirigimos a /ingresar para asegurarnos de estar en la pantalla correcta
-            await this.router.navigate(['/ingresar']);
+            // Extraemos el mensaje de texto del error
+            // Si por alguna razón no es un objeto Error, usamos un mensaje genérico por seguridad
+            const mensajeAmigable = error instanceof Error ? error.message : 'Ocurrió un error al ingresar. Revise los datos ingresados';
 
-            // Mostramos el mensaje de error en el modal
+            // Mostramos el mensaje extraído en la interfaz
+            this.modal.setOpen('Error al ingresar', mensajeAmigable);
+
             this.modal.setOpen('Error al ingresar', this.mensajeDeIngreso(error), 'error');
         } finally {
             this.spinner.hide();
