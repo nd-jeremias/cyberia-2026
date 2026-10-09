@@ -9,7 +9,6 @@ import { AuthService } from '../../services/auth.service';
 import { FormularioRegistroComponent } from '../../components/formulario-registro/formulario-registro.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { BrevoEmailService } from '../../services/brevo.email.service';
-import { mensajeDeError } from '../../utils/errores';
 
 @Component({
     selector: 'app-metre-registrar-cliente',
@@ -48,7 +47,7 @@ export class MetreRegistrarClientePage implements OnInit {
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen('Error', mensajeDeError(error, 'No se pudo completar el registro.'), 'error');
+            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro', 'error');
         }
     }
 }

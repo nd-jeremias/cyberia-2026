@@ -5,7 +5,6 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { ChatInterface } from '../../interfaces/conversacion.interface';
 import { ConversacionService } from '../../services/conversacion.service';
 import { ModalService } from '../../services/modal.service';
-import { SpinnerService } from '../../services/spinner.service';
 import { formatearFechaHora } from '../../utils/fecha';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
@@ -28,7 +27,6 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 export class ConsultasClientesPage {
     private conversacion = inject(ConversacionService);
     private modal = inject(ModalService);
-    private spinner = inject(SpinnerService);
     private router = inject(Router);
 
     chats = signal<ChatInterface[]>([]);
@@ -49,12 +47,7 @@ export class ConsultasClientesPage {
 
     /** `mostrarCarga` en false para los refrescos por Realtime: sin parpadeo. */
     async recargar(mostrarCarga = true) {
-        // En los refrescos por Realtime no se muestra el spinner: taparía la
-        // pantalla cada vez que un cliente escribe.
-        if (mostrarCarga) {
-            this.cargando.set(true);
-            this.spinner.show();
-        }
+        if (mostrarCarga) this.cargando.set(true);
 
         try {
             this.chats.set(await this.conversacion.listarChatsAbiertos());
@@ -64,8 +57,6 @@ export class ConsultasClientesPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
-
-            if (mostrarCarga) this.spinner.hide();
         }
     }
 

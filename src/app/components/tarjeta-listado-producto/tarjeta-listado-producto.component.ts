@@ -11,8 +11,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 })
 export class TarjetaListadoProductoComponent {
     productos = input.required<Producto[]>();
-    /** Vacío = sin título: la carta no lo necesita, las solapas ya lo dicen. */
-    tituloListado = input<string>('');
+    tituloListado = input<string>('Menú');
     modo = input<'pedido' | 'gestion'>('pedido');
 
     /**

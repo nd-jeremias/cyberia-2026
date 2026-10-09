@@ -10,13 +10,7 @@
             }
         </app-header>
 
-        <!--
-          `solo-borrador`: cuando lo único que hay es el pedido que se está
-          armando, la pantalla se queda quieta y se desplaza nada más que la
-          lista de productos. Con pedidos ya enviados hay más cosas que mostrar
-          y ahí sí se desplaza la hoja entera.
-        -->
-        <div class="superior hoja pantalla-mi-pedido" [class.solo-borrador]="mostrarBorrador()">
+        <div class="superior hoja pantalla-mi-pedido">
         @if (cargando()) {
         <div class="estado-vacio">
             <fa-icon [icon]="['fas', 'clock']"></fa-icon>
@@ -40,8 +34,7 @@
         @if (borradorBloqueado()) {
         <p class="aviso-correccion">
             <fa-icon [icon]="['fas', 'lock']"></fa-icon>
-            Ya enviaste tu pedido, así que lo que quedó elegido en la carta no se puede mandar: hay un solo pedido
-            por visita.
+            Tu pedido ya fue confirmado y pasó a cocina. No se pueden agregar más productos en esta visita.
         </p>
 
         <button type="button" class="btn-secundario" (click)="descartarBorrador()">
@@ -51,13 +44,22 @@
         }
 
         @if (mostrarBorrador()) {
-        <article class="tarjeta-pedido tarjeta-borrador">
+        <article class="tarjeta-pedido">
             <div class="encabezado">
                 <span class="ficha-mesa">
                     <span class="ficha-mesa-rotulo">Tu pedido</span>
                     <!-- <span class="ficha-mesa-numero">{{ unidades() }}</span> -->
                 </span>
                 <span class="estado">Sin enviar</span>
+            </div>
+
+            <p class="leyenda">Repasá lo que elegiste. Podés cambiar las cantidades antes de enviarlo.</p>
+
+            <div class="datos-pedido">
+                <span class="chip">
+                    <fa-icon [icon]="['fas', 'clock']"></fa-icon>
+                    {{ carrito.tiempoEstimado() }} minutos estimados
+                </span>
             </div>
 
             <ul class="lineas-borrador">
@@ -93,6 +95,11 @@
                 }
             </ul>
         </article>
+
+        <button type="button" class="btn-secundario" (click)="irALaCarta()">
+            <fa-icon [icon]="['fas', 'cart-plus']"></fa-icon>
+            Seguir eligiendo
+        </button>
         }
 
         <!--
@@ -100,7 +107,11 @@
           en la visita (el punto 21 habla de "los pedidos realizados"), y cada
           uno se sigue y se confirma por separado (puntos 14 y 19).
         -->
-        @if (mostrarEnviados()) {
+        @if (hayEnviados()) {
+        @if (mostrarBorrador()) {
+        <h2 class="titulo-seccion">Pedidos enviados</h2>
+        }
+
         @for (pedido of pedidos(); track pedido.id) {
         <article class="tarjeta-pedido">
             <div class="encabezado">
@@ -165,11 +176,34 @@
         </button>
         }
 
-        <!--
-          Acá NO van los accesos a los juegos, la encuesta, la cuenta ni el
-          estado del pedido: viven en el inicio, que ya los muestra en cuanto
-          corresponde. Repetirlos acá daba dos lugares distintos para lo mismo.
-        -->
+        @if (hayConfirmado()) {
+        <!-- Punto 14: con el pedido confirmado, el cliente sigue su preparación plato por plato. -->
+        <button type="button" class="btn-principal" (click)="irA('estado')">
+            <fa-icon [icon]="['fas', 'alarm-clock']"></fa-icon>
+            Ver estado del pedido
+        </button>
+        }
+
+        @if (puedeJugar()) {
+        <!-- Punto 15: sólo el cliente registrado, con algún pedido ya confirmado. -->
+        <button type="button" class="btn-principal" (click)="irA('juegos')">
+            <fa-icon [icon]="['fas', 'gamepad']"></fa-icon>
+            Ir a los juegos
+        </button>
+        }
+
+        @if (serviciosHabilitados()) {
+        <!-- Punto 19: con todo recibido se habilitan la encuesta y la cuenta. -->
+        <button type="button" class="btn-principal" (click)="irA('encuesta')">
+            <fa-icon [icon]="['fas', 'clipboard-list']"></fa-icon>
+            Responder la encuesta
+        </button>
+
+        <button type="button" class="btn-principal" (click)="irA('cuenta')">
+            <fa-icon [icon]="['fas', 'hand-holding-dollar']"></fa-icon>
+            Pedir la cuenta
+        </button>
+        }
         }
         </div>
     </div>
@@ -183,16 +217,12 @@
 @if (!cargando() && mostrarBorrador()) {
 <footer class="pie-pedido">
     <div class="pie-importe">
-        <span class="pie-rotulo">{{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }}</span>
+        <span class="pie-rotulo">
+            {{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }} ·
+            {{ carrito.tiempoEstimado() }} min
+        </span>
         <span class="pie-total">{{ totalBorrador() }}</span>
     </div>
-
-    <!-- Punto 12: el tiempo total estimado del pedido, en su propio renglón
-         para que se lea de un vistazo junto al importe. -->
-    <p class="pie-tiempo">
-        <fa-icon [icon]="['far', 'clock']"></fa-icon>
-        {{ carrito.tiempoEstimado() }} minutos estimados
-    </p>
 
     <div class="pie-acciones">
         <button type="button" class="btn-principal pie-boton" [disabled]="enviando()" (click)="enviarPedido()">

@@ -2,7 +2,7 @@
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" modo="usuario"></app-header>
 
-        <div class="superior hoja pantalla-inicio">
+        <div class="superior hoja">
             <!--
               Situación del cliente en el local. Se actualiza sola: el inicio queda
               escuchando su fila, así que cuando el metre le asigna una mesa desde
@@ -11,6 +11,8 @@
             @if (situacionCliente(); as situacion) {
             <section class="panel-situacion">
                 <h2 class="titulo-seccion">{{ situacion.titulo }}</h2>
+
+                <p class="situacion-detalle">{{ situacion.detalle }}</p>
 
                 @if (situacion.numeroMesa !== null) {
                 <p class="situacion-mesa">

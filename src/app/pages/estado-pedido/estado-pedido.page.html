@@ -7,12 +7,7 @@
             </button>
         </app-header>
 
-        <!--
-          Con un solo pedido la pantalla se queda quieta y se desplaza nada más
-          que la lista de ítems; con varios, la hoja entera, porque hay más de
-          una tarjeta que mostrar.
-        -->
-        <div class="superior hoja pantalla-estado" [class.un-pedido]="pedidos().length === 1">
+        <div class="superior hoja pantalla-estado">
             @if (cargando()) {
             <div class="estado-vacio">
                 <fa-icon [icon]="['fas', 'clock']"></fa-icon>
@@ -32,6 +27,8 @@
                     <fa-icon [icon]="['far', 'clock']"></fa-icon>
                     Enviado el {{ fechaDe(pedido) }}
                 </p>
+
+                <p class="leyenda">{{ leyendaDe(pedido) }}</p>
 
                 @if (enPreparacion(pedido)) {
                 <!-- Avance general: cuántos ítems ya salieron de cocina y barra. -->
