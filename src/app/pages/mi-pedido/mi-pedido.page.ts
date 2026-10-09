@@ -180,12 +180,23 @@ export class MiPedidoPage {
     }
 
     /** Vacía el borrador y vuelve a leer los pedidos enviados. */
+    /**
+     * Cierra el envío y devuelve al cliente al inicio.
+     *
+     * Con el pedido mandado, esta pantalla ya no tiene nada que ofrecer: no se
+     * puede armar otro (una visita, un pedido) y el seguimiento vive en
+     * "Estado del pedido", que está en el inicio. `replaceUrl` saca "Mi
+     * pedido" del historial, así el botón de atrás del teléfono no trae de
+     * vuelta un carrito que ya se envió.
+     */
     private async terminarEnvio(titulo: string, mensaje: string) {
         this.carrito.vaciarCarrito();
 
         await this.recargar();
 
         this.modal.setOpen(titulo, mensaje, 'info');
+
+        void this.router.navigate(['/inicio'], { replaceUrl: true });
     }
 
     /** Descarta lo que quedó en el carrito y ya no se puede mandar. */
