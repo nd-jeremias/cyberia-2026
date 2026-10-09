@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
@@ -80,6 +80,16 @@ const PEDIDOS_EN_CURSO: EstadoPedido[] = ['Confirmado', 'En Preparación', 'List
     imports: [FaIconComponent, IonContent, RouterLink, HeaderComponent, FooterComponent],
 })
 export class HomePage {
+    /**
+     * El área de accesos que se desplaza.
+     *
+     * Hace falta por una sola cosa: publicar su alto como la variable CSS
+     * `--alto-lista`. Con eso el CSS puede repartir tres accesos por pantalla
+     * sin que el código tenga que dividir la lista, que es lo que antes hacía
+     * desaparecer alguno.
+     */
+    private lista = viewChild<ElementRef<HTMLElement>>('lista');
+
     authService = inject(AuthService);
     private mesaService = inject(MesaService);
     private pedidoService = inject(PedidoService);
@@ -201,6 +211,23 @@ export class HomePage {
     });
 
     constructor() {
+        // Publica el alto del área de accesos, y lo vuelve a publicar si cambia
+        // (girar el teléfono, cambiar la letra del sistema, aparecer el cartel
+        // de la mesa).
+        effect((alLimpiar) => {
+            const lista = this.lista()?.nativeElement;
+
+            if (!lista) return;
+
+            const publicar = () => lista.style.setProperty('--alto-lista', `${lista.clientHeight}px`);
+            const observador = new ResizeObserver(publicar);
+
+            observador.observe(lista);
+            publicar();
+
+            alLimpiar(() => observador.disconnect());
+        });
+
         // El perfil llega después de la sesión, así que la carga espera a
         // conocerlo. La bandera evita repetir el pedido en cada recálculo.
         let yaPedido = false;

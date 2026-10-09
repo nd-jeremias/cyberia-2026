@@ -234,9 +234,50 @@ export class QrService {
             if (!result.barcodes.length) return null;
 
             return this.interpretarQr(result.barcodes[0].rawValue);
+        } catch (error) {
+            // Cancelar no es un error: el usuario cerró el lector a propósito.
+            // Devolver null es lo mismo que hace un escaneo sin resultados, y
+            // las pantallas ya saben no decir nada en ese caso.
+            if (this.cancelo(error)) return null;
+
+            throw new Error(this.mensajeDelLector(error));
         } finally {
             this.stopScan();
         }
+    }
+
+    /** El plugin avisa la cancelación con un texto fijo, en inglés. */
+    private cancelo(error: unknown): boolean {
+        return this.textoDelError(error).includes('canceled');
+    }
+
+    /**
+     * Traduce al español lo que devuelve el lector.
+     *
+     * El plugin de escaneo está en inglés ("scan canceled.", "permission
+     * denied."), y el enunciado exige que todo mensaje esté en español. Se
+     * traduce acá, en un solo lugar, y no en cada pantalla que escanea.
+     */
+    private mensajeDelLector(error: unknown): string {
+        const texto = this.textoDelError(error);
+
+        if (texto.includes('permission')) {
+            return 'La aplicación no tiene permiso para usar la cámara. Habilitalo desde los ajustes del teléfono.';
+        }
+
+        if (texto.includes('not available') || texto.includes('not installed')) {
+            return 'El lector de códigos todavía no está instalado en este teléfono. Probá de nuevo en unos segundos.';
+        }
+
+        if (texto.includes('not supported')) {
+            return 'Este teléfono no puede leer códigos QR con la cámara.';
+        }
+
+        return 'No se pudo leer el código. Probá de nuevo.';
+    }
+
+    private textoDelError(error: unknown): string {
+        return (error instanceof Error ? error.message : String(error ?? '')).toLowerCase();
     }
 
     public async generateQrFile(text: string, fileName: string = 'qr-code.png'): Promise<File> {

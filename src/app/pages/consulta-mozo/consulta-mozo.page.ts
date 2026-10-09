@@ -9,6 +9,7 @@ import { MesaService } from '../../services/mesa.service';
 import { ModalService } from '../../services/modal.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
 import { SalonService } from '../../services/salon.service';
+import { SpinnerService } from '../../services/spinner.service';
 import { formatearFechaHora } from '../../utils/fecha';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
@@ -47,6 +48,7 @@ export class ConsultaMozoPage {
     private mesaService = inject(MesaService);
     private modal = inject(ModalService);
     private notificaciones = inject(NotificacionesService);
+    private spinner = inject(SpinnerService);
 
     /** Llega por la URL (`?chat=ID`) cuando entra un mozo desde el listado. */
     chat = input<string>();
@@ -110,6 +112,7 @@ export class ConsultaMozoPage {
 
         this.cargando.set(true);
         this.sinMesa.set(false);
+        this.spinner.show();
 
         try {
             const chat = this.esMozo()
@@ -127,6 +130,7 @@ export class ConsultaMozoPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
+            this.spinner.hide();
         }
     }
 
@@ -177,6 +181,7 @@ export class ConsultaMozoPage {
         if (!usuarioId || this.enviando()) return;
 
         this.enviando.set(true);
+        this.spinner.show();
 
         try {
             let chat = this.chatActual();
@@ -198,6 +203,7 @@ export class ConsultaMozoPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.enviando.set(false);
+            this.spinner.hide();
         }
     }
 

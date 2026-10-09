@@ -10,6 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { AuthService } from '../../../services/auth.service';
 import { EmpleadosService } from '../../../services/empleados.service';
 import { EmpleadoInterface } from '../../../interfaces/empleado.interface';
+import { mensajeDeError } from '../../../utils/errores';
 
 @Component({
     selector: 'app-alta-empleado',
@@ -81,7 +82,7 @@ export class AltaEmpleadoPage implements OnInit {
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro', 'error');
+            this.modal.setOpen('Error', mensajeDeError(error, 'No se pudo completar el registro.'), 'error');
         } finally {
             this.spinner.hide();
         }
