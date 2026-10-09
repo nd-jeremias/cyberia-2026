@@ -11,58 +11,6 @@
     gap: 0.75rem;
 }
 
-/* --- Accesos de a pantallas completas ------------------------------------
-   El cartel de la mesa queda fijo arriba y lo único que se desplaza es la
-   lista de accesos. Cada acceso mide un tercio de esa lista, así entran tres
-   justos: la primera pantalla termina en el tercero y los demás quedan abajo,
-   sin ninguno asomando.
-
-   El alto de la lista lo publica home.page.ts como `--alto-lista`: es el único
-   dato que el CSS no puede averiguar solo. La lista sigue siendo UNA, no se
-   divide en el código, así que ningún acceso puede quedar afuera.
-
-   `scroll-padding-top` es por el solapado del diseño: la hoja arranca 50px más
-   arriba que la banda naranja (global.scss, `margin-top: -50px`).
-   ------------------------------------------------------------------------- */
-
-$separacion: 0.75rem;
-$por-pantalla: 3;
-
-.pantalla-inicio {
-    /* El `!important` es obligatorio: global.scss declara
-       `.superior { display: block !important }`. */
-    display: flex !important;
-    flex-direction: column;
-    gap: 1rem;
-
-    min-height: 0;
-    overflow: hidden !important;
-}
-
-.pantalla-inicio > .panel-situacion {
-    flex-shrink: 0;
-}
-
-.lista-accesos {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-
-    scroll-snap-type: y mandatory;
-    overscroll-behavior-y: contain;
-}
-
-.lista-accesos .grilla-acciones {
-    grid-auto-rows: calc((var(--alto-lista, 18rem) - #{$separacion * ($por-pantalla - 1)}) / #{$por-pantalla});
-}
-
-/* Sólo el primero de cada tanda es punto de parada: una pasada lleva del
-   acceso 1 al 4, que es el comienzo de la pantalla siguiente. */
-.tarjeta-accion:nth-child(#{$por-pantalla}n + 1) {
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-}
-
 /* Sin accesos (los perfiles de cliente todavía no tienen) el cartel se lleva
    el alto sobrante, en lugar de dejar medio papel cortado. */
 .grilla-acciones:has(> .estado-vacio) {

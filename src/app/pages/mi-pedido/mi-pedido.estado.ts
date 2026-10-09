@@ -61,15 +61,13 @@ export function puedeUsarServiciosDeMesa(estado: EstadoPedido | null, estadoClie
 }
 
 /**
- * Si el cliente puede armar y mandar un pedido.
+ * Si el cliente puede mandar un pedido nuevo.
  *
- * UNA VISITA, UN PEDIDO: mientras haya uno enviado, no se arma otro. El
- * cliente ve un solo pedido y una sola cuenta, y el mozo una sola comanda por
- * mesa.
- *
- * El rechazado es la excepción, y no pasa por acá: se corrige y se REENVÍA el
- * mismo pedido (`PedidoService.reenviar`), así que no es uno nuevo.
+ * Una vez que el mozo confirmó alguno, no: la comanda ya bajó a cocina y barra
+ * y la cuenta de la visita quedó armada. Mientras el pedido espera revisión o
+ * fue rechazado, todavía se puede pedir (el rechazado se corrige y se reenvía,
+ * que no es "otro" pedido).
  */
-export function puedeEnviarPedido(estados: readonly EstadoPedido[]): boolean {
-    return estados.length === 0;
+export function puedeEnviarOtroPedido(estados: readonly EstadoPedido[]): boolean {
+    return !estados.some((estado) => ESTADOS_CONFIRMADOS.has(estado));
 }

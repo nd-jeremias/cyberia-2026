@@ -64,38 +64,3 @@
     display: block;
     height: 100%;
 }
-
-/* ── Modo reel (la carta del cliente) ──────────────────────────────────
-   Una tarjeta por pantalla: se pasa de producto en producto, como en los
-   reels, y el desplazamiento nunca queda a mitad de camino entre dos.
-   El resto de las pantallas (gestión de platos y bebidas) no cambia.
-   ------------------------------------------------------------------- */
-
-:host(.reel) {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-}
-
-:host(.reel) .listado-productos {
-    flex: 1;
-    min-height: 0;
-    padding: 0;
-}
-
-.lista-reel {
-    display: block;
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-
-    scroll-snap-type: y mandatory;
-    overscroll-behavior-y: contain;
-
-    .item-lista {
-        /* Exactamente el alto visible: una tarjeta entra entera, sin cortes. */
-        height: 100%;
-        scroll-snap-align: start;
-        scroll-snap-stop: always;
-    }
-}

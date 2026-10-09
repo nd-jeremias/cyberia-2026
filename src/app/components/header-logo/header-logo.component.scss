@@ -5,8 +5,7 @@
     flex-shrink: 0;
     overflow: hidden;
 
-    /* Ver header.component.scss: `--barra-superior` la publica el lado nativo. */
-    padding-top: calc(max(env(safe-area-inset-top, 0px), var(--barra-superior, 0px)) + 0.75rem);
+    padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
     background: var(--grad-banda);
 
     &::before {
