@@ -1,5 +1,5 @@
 import { TarjetaInformacionClienteComponent } from './../../components/tarjeta-informacion-cliente/tarjeta-informacion-cliente.component';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon, IonRouterLink } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -13,6 +13,8 @@ import { QrPropina } from '../../interfaces/qr.interface';
 import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { TarjetaFacturaComponent } from '../../components/tarjeta-factura/tarjeta-factura.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { AuthService } from '../../services/auth.service';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Pedir la cuenta — PANTALLA PENDIENTE.
@@ -45,6 +47,9 @@ export class PedirCuentaPage {
     modal = inject(ModalService);
     spinner = inject(SpinnerService);
     pedidoService = inject(PedidoService);
+    authService = inject(AuthService);
+    router = inject(Router);
+    notificaciones = inject(NotificacionesService);
 
     pedido = signal<PedidoInterface | null>(null);
     propinaAgregada = signal<boolean>(false);
@@ -61,8 +66,45 @@ export class PedirCuentaPage {
     };
 
     async ngOnInit() {
-        await this.pedidoService.listarSinPagar(); // Si el usuario sale de la app la lista de pedidos se pierde. Por eso aca la vuelve a completar
-        this.pedido.set(this.pedidoService.pedidos()[0]); // Suponiendo que manejamos siempre 1 pedido
+        const pedido_cliente = await this.pedidoService.pedidoActualDelCliente(this.authService.session()?.user.id!);
+
+        if (!pedido_cliente) {
+            this.modal.setOpen('Error', 'Hubo un error al cargar su pedido. Vuelva a intentarlo.', 'error');
+            this.router.navigate(['/inicio']);
+        }
+        this.pedido.set(pedido_cliente);
+
+        if (this.pedido()?.propinaPorcentaje) this.propinaAgregada.set(true);
+
+        // Con la propina ya elegida, el mozo ya pasó por la mesa con los QR.
+        if (pedido_cliente && !this.propinaAgregada()) await this.avisarAlMozo(pedido_cliente);
+    }
+
+    /**
+     * Punto 21: "el cliente solicita la cuenta al mozo (push notification)".
+     *
+     * Abrir esta pantalla es pedir la cuenta. El mozo recibe el número de mesa
+     * para acercarle los QR de propina, sin los que no se puede armar la cuenta.
+     *
+     * Si el aviso falla, el cliente igual puede seguir: se le pide que llame al
+     * mozo, que es lo que el aviso habría hecho por él.
+     */
+    private async avisarAlMozo(pedido: PedidoInterface): Promise<void> {
+        try {
+            await this.notificaciones.enviarAvisos(
+                ['mozo'],
+                'Pedido de cuenta',
+                `Mesa ${pedido.numeroMesa}: el cliente pidió la cuenta. Acercale los QR de propina.`,
+                'cuenta-solicitada'
+            );
+        } catch (error) {
+            console.error('No se pudo avisar al mozo del pedido de cuenta:', error);
+            this.modal.setOpen(
+                'No pudimos avisarle al mozo',
+                'Llamalo para pedirle la cuenta y los códigos QR de propina.',
+                'info'
+            );
+        }
     }
 
     async scanQrPropina() {
@@ -91,12 +133,19 @@ export class PedirCuentaPage {
             if (this.pedido() != null) {
                 pedidoId = this.pedido()?.id!;
                 if (!pedidoId) throw new Error('Error obteniendo el pedido. No se puede actualizar.');
-                await this.pedidoService.setPropina(pedidoId, propina);
+                const seActualizoPropina = await this.pedidoService.setPropina(pedidoId, propina);
+                if (seActualizoPropina) {
+                    this.pedido.update((pedidoActual) => {
+                        if (!pedidoActual) return null;
+                        return {
+                            ...pedidoActual,
+                            propinaPorcentaje: propina,
+                        };
+                    });
+                }
             }
 
             this.propinaAgregada.set(true);
-
-            console.log('ACA LLAMAR A OTRA FUNCION QUE PIDA LA CUENTA. ');
         } catch (error) {
             console.log(error);
             const mensaje = error instanceof Error ? error.message : 'No se pudo asignar propina al pedido.';
@@ -106,12 +155,4 @@ export class PedirCuentaPage {
             this.spinner.hide();
         }
     }
-
-    mostrarFactura(pedido: PedidoInterface): void {}
-
-    //     El detalle de la cuenta tendrá:
-    // Los items realizados (con precios unitarios) con su respectivo importe.
-    // Los descuentos correspondientes a los juegos (sólo si gana en el primer intento).
-    // El grado de satisfacción del cliente (propina).
-    // El TOTAL a abonar (grande y claro).
 }

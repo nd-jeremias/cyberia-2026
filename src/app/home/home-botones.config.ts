@@ -99,12 +99,6 @@ const BOTON_CARTA: BotonHome = {
     ruta: '/carta',
 };
 
-const BOTON_MI_PEDIDO: BotonHome = {
-    texto: 'Mi pedido',
-    icono: 'receipt',
-    ruta: '/mi-pedido',
-};
-
 const BOTON_ESTADO_PEDIDO: BotonHome = {
     texto: 'Estado del pedido',
     icono: 'hourglass-half',
@@ -169,6 +163,9 @@ export function botonesDelCliente({
     // consulta al mozo se habilita al tener la mesa asignada.
     if (estado === 'mesa_asignada') return [BOTON_ESCANEAR_MESA, BOTON_CONSULTA_MOZO];
 
+    // "Mi pedido" no está en el inicio a propósito: es el paso siguiente de la
+    // carta (se repasa lo elegido y se envía), no un destino en sí mismo. Desde
+    // el inicio se sigue el pedido ya enviado, que es otra cosa.
     const hayPedidoEnviado = estadosDePedidos.length > 0;
     const puedeJugar = estadosDePedidos.some((estadoPedido) => puedeAccederAJuegos(estadoPedido, perfil));
 
@@ -189,7 +186,7 @@ export function botonesDelCliente({
     return [
         BOTON_CARTA,
         BOTON_CONSULTA_MOZO,
-        ...(hayPedidoEnviado ? [BOTON_MI_PEDIDO, BOTON_ESTADO_PEDIDO] : []),
+        ...(hayPedidoEnviado ? [BOTON_ESTADO_PEDIDO] : []),
         ...(puedeJugar ? [BOTON_JUEGOS] : []),
         ...(serviciosDeMesa ? [BOTON_RESPONDER_ENCUESTA, BOTON_PEDIR_CUENTA] : []),
     ];
@@ -224,6 +221,13 @@ export const BOTONES_POR_ROL: Record<PerfilUsuario, BotonHome[]> = {
             texto: 'Pedidos de clientes',
             icono: 'receipt',
             ruta: '/pedidos-clientes',
+        },
+        // Punto 21: el cliente sólo puede dejar propina escaneando uno de los
+        // cinco códigos, y es el mozo quien se los muestra en la mesa.
+        {
+            texto: 'QR de propinas',
+            icono: 'circle-dollar-to-slot',
+            ruta: '/qr-propinas',
         },
     ],
 

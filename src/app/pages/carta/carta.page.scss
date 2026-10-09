@@ -11,13 +11,6 @@
 
 /* El alto del pie: el contenido reserva este espacio para que la última
    tarjeta no quede tapada. */
-// :host {
-//     --alto-pie: 7.5rem;
-// }
-
-// ion-content {
-//     --padding-bottom: calc(var(--alto-pie) + env(safe-area-inset-bottom, 0px));
-// }
 
 .pantalla-carta {
     display: flex;
@@ -116,7 +109,7 @@
 
     display: flex;
     flex-direction: column;
-    padding: 0.875rem 1rem calc(1.2rem + env(safe-area-inset-bottom, 0px));
+    padding: 0.875rem 1rem var(--pie-seguro);
     box-sizing: border-box;
     color: var(--sobre-naranja);
     // background: var(--hoja-alta);
@@ -174,5 +167,7 @@
 
 
 .superior{
-    padding-bottom: calc(15vh + 1.2rem + env(safe-area-inset-bottom, 0px)) !important;
+    /* El listado termina por encima del pie fijo: si no, la última tarjeta
+       queda debajo y no se puede tocar. */
+    padding-bottom: calc(15vh + var(--pie-seguro)) !important;
 }

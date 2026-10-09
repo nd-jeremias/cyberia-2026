@@ -7,6 +7,8 @@ import { formatearImporte } from '../../utils/importe';
 import { PedidoService } from '../../services/pedido.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NotificacionesService } from '../../services/notificaciones.service';
+import { SalonService } from '../../services/salon.service';
+``
 
 /**
  * Pantalla del mozo: confirmar, rechazar, entregar y cobrar pedidos.
@@ -26,6 +28,7 @@ export class PedidosPage implements OnInit {
     private pedidoService = inject(PedidoService);
     private modal = inject(ModalService);
     private notificaciones = inject(NotificacionesService);
+    private salonService = inject(SalonService);
 
     pedidos = this.pedidoService.pedidos;
     pendientes = this.pedidoService.pendientesDeConfirmacion;
@@ -106,6 +109,8 @@ export class PedidosPage implements OnInit {
 
         if (!cobrado) return;
 
+        this.salonService.acabaDeTerminarSuVisita();
+        
         this.modal.setOpen('Pago confirmado', `La mesa ${pedido.numeroMesa} quedó libre.`, 'info');
 
         await this.avisarPagoConfirmado(pedido);

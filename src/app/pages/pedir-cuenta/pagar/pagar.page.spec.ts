@@ -56,13 +56,21 @@ describe('PagarPage (punto 21)', () => {
         await pago;
     }
 
-    it('deja al cliente "pagando", avisa al mozo y vuelve al inicio', async () => {
+    // "La notificación automática la recibirá tanto el mozo como el dueño y el
+    // supervisor."
+    it('deja al cliente "pagando", avisa al mozo, al dueño y al supervisor, y vuelve al inicio', async () => {
         salon.pagarCuenta.mockResolvedValue(true);
 
         await pagar();
 
         expect(salon.pagarCuenta).toHaveBeenCalledWith('cliente-1');
-        expect(notificaciones.enviarAvisos).toHaveBeenCalledWith(['mozo'], 'Pago realizado', expect.any(String), 'pago');
+        expect(notificaciones.enviarAvisos).toHaveBeenCalledWith(
+            ['mozo', 'dueño', 'supervisor'],
+            'Pago realizado',
+            expect.any(String),
+            'pago'
+        );
+        expect(modal.setOpen).toHaveBeenCalledWith('Pago realizado', expect.any(String), 'info');
         expect(router.navigate).toHaveBeenCalledWith(['/inicio']);
         expect(spinner.hide).toHaveBeenCalled();
     });
@@ -77,8 +85,9 @@ describe('PagarPage (punto 21)', () => {
         expect(router.navigate).not.toHaveBeenCalled();
     });
 
-    // El pago ya quedó registrado y el mozo lo ve igual en su pantalla.
-    it('si falla el aviso al mozo, no lo muestra como un pago rechazado', async () => {
+    // El pago ya quedó registrado y el mozo lo ve igual en su pantalla: se
+    // avisa que falló la notificación, no el pago.
+    it('si falla el aviso, lo dice y vuelve al inicio igual', async () => {
         const consola = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
         salon.pagarCuenta.mockResolvedValue(true);
@@ -86,7 +95,8 @@ describe('PagarPage (punto 21)', () => {
 
         await pagar();
 
-        expect(modal.setOpen).not.toHaveBeenCalled();
+        expect(modal.setOpen).toHaveBeenCalledWith('Error', 'No se pudo avisar del pago al mozo', 'error');
+        expect(modal.setOpen).not.toHaveBeenCalledWith('Pago no registrado', expect.anything(), expect.anything());
         expect(router.navigate).toHaveBeenCalledWith(['/inicio']);
 
         consola.mockRestore();

@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
-        <app-header class="inferior sin-labio" [defaultHref]="'/mi-pedido'" [tituloHeader]="'Estado del pedido'">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Estado del pedido'">
             <button accion type="button" class="btn-banda" [disabled]="cargando()" (click)="recargar()">
                 <fa-icon [icon]="['fas', 'rotate']"></fa-icon>
                 Actualizar
@@ -22,6 +22,11 @@
                     </span>
                     <span class="estado">{{ pedido.estado }}</span>
                 </div>
+
+                <p class="fecha-pedido">
+                    <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                    Enviado el {{ fechaDe(pedido) }}
+                </p>
 
                 <p class="leyenda">{{ leyendaDe(pedido) }}</p>
 
@@ -53,7 +58,14 @@
                     @for (item of pedido.detalles; track item.id) {
                     <li class="item" [class]="claseItem(item)">
                         <span class="cantidad">{{ item.cantidad }}×</span>
-                        <span class="item-nombre">{{ item.nombreProducto }}</span>
+
+                        <span class="item-datos">
+                            <span class="item-nombre">{{ item.nombreProducto }}</span>
+                            <!-- Punto 21: precio unitario e importe de cada línea. -->
+                            <span class="item-precio">
+                                {{ precioUnitarioDe(item) }} c/u · {{ importeDeLinea(item) }}
+                            </span>
+                        </span>
 
                         @if (enPreparacion(pedido)) {
                         <span class="item-estado">{{ item.estadoProducto }}</span>
@@ -61,17 +73,51 @@
                     </li>
                     }
                 </ul>
-                <button type="button" class="btn-principal" (click)="irAMiPedido(pedido.id)">
-                    <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
-                    Ir a mi pedido
+
+                @if (descuentoDe(pedido) > 0) {
+                <!-- Punto 15: el descuento que ganó en los juegos ya viene aplicado. -->
+                <p class="descuento">
+                    <fa-icon [icon]="['fas', 'gamepad']"></fa-icon>
+                    {{ descuentoDe(pedido) }}% de descuento por los juegos
+                </p>
+                }
+
+                <!-- Punto 12: el importe siempre visible y con buen tamaño. -->
+                <p class="total">
+                    <span class="total-rotulo">Total del pedido</span>
+                    <span class="total-importe">{{ totalDe(pedido) }}</span>
+                </p>
+
+                @if (puedeConfirmar(pedido)) {
+                <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme. -->
+                <button type="button" class="btn-principal" [disabled]="cargando()" (click)="confirmarRecepcion(pedido)">
+                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                    Confirmar recepción
                 </button>
+                }
             </article>
-            } @empty {
+            }
+
+            @if (pedidos().length > 1) {
+            <!-- Con varios pedidos en la visita, lo que importa es cuánto va sumando. -->
+            <p class="total total-visita">
+                <span class="total-rotulo">Total de la visita</span>
+                <span class="total-importe">{{ totalDeLaVisita() }}</span>
+            </p>
+            }
+
+            @if (pedidos().length === 0) {
             <div class="estado-vacio">
                 <fa-icon [icon]="['fas', 'rectangle-xmark']"></fa-icon>
                 <p>Todavía no enviaste ningún pedido.</p>
             </div>
-            } }
+
+            <button type="button" class="btn-principal" (click)="irALaCarta()">
+                <fa-icon [icon]="['fas', 'utensils']"></fa-icon>
+                Ver la carta
+            </button>
+            }
+            }
         </div>
     </div>
 </ion-content>

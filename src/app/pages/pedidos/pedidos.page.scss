@@ -18,11 +18,7 @@
  * que con pocos pedidos (o ninguno) los recuadros crezcan en lugar de dejar la
  * mitad inferior de la pantalla en blanco.
  */
-.pantalla-pedidos {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-}
+
 
 .grupo {
     flex: 1;

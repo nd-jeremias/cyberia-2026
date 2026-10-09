@@ -1,4 +1,5 @@
 import { Service, computed, inject, signal } from '@angular/core';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import {
     DetallePedidoInterface,
@@ -577,8 +578,7 @@ export class PedidoService {
                 return false;
             }
 
-            const esDeLaVisita = (p: PedidoInterface) =>
-                p.clienteId === pedido.clienteId && p.mesaId === pedido.mesaId;
+            const esDeLaVisita = (p: PedidoInterface) => p.clienteId === pedido.clienteId && p.mesaId === pedido.mesaId;
 
             this.pedidos.update((actuales) => actuales.filter((p) => !esDeLaVisita(p)));
 
@@ -655,19 +655,91 @@ export class PedidoService {
      */
     totalConDescuento(pedido: PedidoInterface): number {
         const descuento = pedido.precioTotalNeto * (pedido.descuentoJuego / 100);
-        const propina = pedido.precioTotalNeto * (pedido.propinaPorcentaje / 100);
+        // Los paréntesis son necesarios: `??` se evalúa después de `/`, y sin
+        // ellos quedaba `propinaPorcentaje ?? (0 / 100)`, o sea, una propina
+        // del 10% sumaba diez veces el neto.
+        const propina = pedido.precioTotalNeto * ((pedido.propinaPorcentaje ?? 0) / 100);
 
         return pedido.precioTotalNeto - descuento + propina;
     }
 
-    async setPropina(pedidoId: string, propina: number): Promise<void> {
+    /**
+     * Avisa cuando cambia algún pedido de este cliente (punto 14).
+     *
+     * El mozo confirma o rechaza desde otro teléfono: sin esto, el cliente se
+     * quedaría mirando una pantalla que ya no dice la verdad. Devuelve la
+     * función que corta la escucha, para llamarla al salir de la pantalla.
+     *
+     * Requiere que la tabla `pedidos` esté publicada para Realtime en Supabase
+     * (Database -> Publications -> supabase_realtime). Si no lo está, no falla
+     * nada: simplemente no llega el aviso y sigue estando el botón Actualizar.
+     */
+    escucharPedidosDelCliente(clienteId: string, alCambiar: (estado: EstadoPedido) => void): () => void {
+        const canal: RealtimeChannel = this.supabase.cliente
+            .channel(`pedidos-cliente-${clienteId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'pedidos',
+                    // El filtro va del lado del servidor: este teléfono recibe
+                    // sólo los cambios de sus propios pedidos.
+                    filter: `cliente_id=eq.${clienteId}`,
+                },
+                (cambio) => alCambiar((cambio.new as { estado: EstadoPedido }).estado)
+            )
+            .subscribe();
+
+        return () => void this.supabase.cliente.removeChannel(canal);
+    }
+
+    async setPropina(pedidoId: string, propina: number): Promise<boolean> {
         try {
-            const { error } = await this.supabase.from('pedidos').update({ propina_porcentaje: propina }).eq('id', pedidoId);
+            const { data, error } = await this.supabase
+                .from('pedidos')
+                .update({ propina_porcentaje: propina })
+                .eq('id', pedidoId)
+                .select();
 
             if (error) throw error;
+
+            // console.log('Confirmar este objeto para mapear la respuesta si es necesario: ', JSON.stringify(data));
+            // [
+            //     {
+            //         id: 'e0912460-9854-4d38-b154-c7d4c060fef0',
+            //         numero_pedido: 28,
+            //         mesa_id: '36e7805f-940b-4d58-a261-116f0c77f157',
+            //         cliente_id: '8a8be430-3f4c-43c1-8f43-4b6ba8921e20',
+            //         estado: 'Recibido',
+            //         precio_total_neto: 24900,
+            //         descuento_juego: 0,
+            //         propina_porcentaje: 10,
+            //         fecha: '2026-10-04T15:34:48.09075+00:00',
+            //     },
+            // ];
+            return data.length > 0 ? true : false;
         } catch (error) {
             console.log('No se pudo actualizar la propina del pedido.', error);
             throw new Error('No se pudo actualizar la propina del pedido.');
         }
+    }
+
+    // Método totalmente genérico
+    async incrementarValor(tabla: string, columna: string, id: string, cantidad: number) {
+        const { data, error } = await this.supabase.cliente.rpc('incrementar_campo', {
+            nombre_tabla: tabla,
+            nombre_columna: columna,
+            row_id: id,
+            cantidad_a_sumar: cantidad,
+        });
+
+        if (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudo ingresar como invitado.';
+            console.error(`Error incrementando ${columna} en ${tabla}:`, mensaje);
+            throw new Error(`Error incrementando ${columna} en ${tabla}`);
+        }
+
+        return data;
     }
 }
