@@ -64,15 +64,24 @@ export class PedirCuentaPage {
     };
 
     async ngOnInit() {
-        const pedido_cliente = await this.pedidoService.pedidoActualDelCliente(this.authService.session()?.user.id!);
+        this.spinner.show();
+        try {
+            const pedido_cliente = await this.pedidoService.pedidoActualDelCliente(
+                this.authService.session()?.user.id!
+            );
 
-        if (!pedido_cliente) {
-            this.modal.setOpen('Error', 'Hubo un error al cargar su pedido. Vuelva a intentarlo.', 'error');
-            this.router.navigate(['/inicio']);
+            if (!pedido_cliente) {
+                this.modal.setOpen('Error', 'Hubo un error al cargar su pedido. Vuelva a intentarlo.', 'error');
+                this.router.navigate(['/inicio']);
+            }
+            this.pedido.set(pedido_cliente);
+
+            if (this.pedido()?.propinaPorcentaje) this.propinaAgregada.set(true);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            this.spinner.hide();
         }
-        this.pedido.set(pedido_cliente);
-
-        if (this.pedido()?.propinaPorcentaje) this.propinaAgregada.set(true);
     }
 
     async scanQrPropina() {
