@@ -9,159 +9,160 @@
         </app-header>
 
         <div class="superior hoja pantalla-pedidos">
-            <section class="grupo">
-                <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
+            <div class="grupos-reel">
+                <section class="grupo">
+                    <h2 class="titulo-grupo titulo-seccion">Esperando confirmación</h2>
 
-                @if (pendientes().length === 0) {
-                <div class="estado-vacio">
-                    <fa-icon [icon]="['fas', 'hourglass-half']"></fa-icon>
-                    <p>No hay pedidos esperando confirmación.</p>
-                </div>
-                } @else { @for (pedido of pendientes(); track pedido.id) {
-                <article class="tarjeta-pedido">
-                    <div class="encabezado">
-                        <span class="ficha-mesa">
-                            <span class="ficha-mesa-rotulo">Mesa</span>
-                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
-                        </span>
-                        <ion-badge color="warning">{{ pedido.estado }}</ion-badge>
+                    <div class="tarjetas-scroll">
+                        @if (pendientes().length === 0) {
+                        <div class="estado-vacio">
+                            <fa-icon [icon]="['fas', 'hourglass-half']"></fa-icon>
+                            <p>No hay pedidos esperando confirmación.</p>
+                        </div>
+                        } @else { @for (pedido of pendientes(); track pedido.id) {
+                        <article class="tarjeta-pedido">
+                            <div class="encabezado">
+                                <span class="ficha-mesa">
+                                    <span class="ficha-mesa-rotulo">Mesa</span>
+                                    <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                                </span>
+                                <ion-badge color="warning">{{ pedido.estado }}</ion-badge>
+                            </div>
+
+                            <div class="datos-pedido">
+                                <span class="chip">
+                                    <fa-icon [icon]="['fas', 'calendar']"></fa-icon>
+                                    {{ fechaFormateada(pedido) }}
+                                </span>
+                                <span class="chip">
+                                    <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                                    {{ tiempoEstimado(pedido) }}'
+                                </span>
+                            </div>
+
+                            <ul class="detalles">
+                                @for (item of pedido.detalles; track item.id) {
+                                <li>
+                                    <span class="cantidad">{{ item.cantidad }}×</span>
+                                    {{ item.nombreProducto }}
+                                </li>
+                                }
+                            </ul>
+
+                            <p class="total">
+                                <span class="total-rotulo">Total</span>
+                                <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                            </p>
+
+                            <div class="acciones">
+                                <button class="btn-exito" [disabled]="cargando()" (click)="onConfirmar(pedido)">
+                                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                                    Confirmar
+                                </button>
+
+                                <button class="btn-delete" [disabled]="cargando()" (click)="onRechazar(pedido)">
+                                    <fa-icon [icon]="['fas', 'circle-xmark']"></fa-icon>
+                                    Rechazar
+                                </button>
+                            </div>
+                        </article>
+                        } }
                     </div>
+                </section>
 
-                    <div class="datos-pedido">
-                        <span class="chip">
-                            <fa-icon [icon]="['fas', 'calendar']"></fa-icon>
-                            {{ fechaFormateada(pedido) }}
-                        </span>
-                        <span class="chip">
-                            <fa-icon [icon]="['far', 'clock']"></fa-icon>
-                            {{ tiempoEstimado(pedido) }} minutos estimados
-                        </span>
+                <section class="grupo">
+                    <h2 class="titulo-grupo titulo-seccion">Listos para entregar</h2>
+
+                    <div class="tarjetas-scroll">
+                        @if (listos().length === 0) {
+                        <div class="estado-vacio">
+                            <fa-icon [icon]="['fas', 'hourglass-half']"></fa-icon>
+                            <p>Todavía no hay pedidos listos.</p>
+                        </div>
+                        } @else { @for (pedido of listos(); track pedido.id) {
+                        <article class="tarjeta-pedido">
+                            <div class="encabezado">
+                                <span class="ficha-mesa">
+                                    <span class="ficha-mesa-rotulo">Mesa</span>
+                                    <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                                </span>
+                                <ion-badge color="success">{{ pedido.estado }}</ion-badge>
+                            </div>
+
+                            <div class="datos-pedido">
+                                <span class="chip">
+                                    <fa-icon [icon]="['fas', 'calendar']"></fa-icon>
+                                    {{ fechaFormateada(pedido) }}
+                                </span>
+                            </div>
+
+                            <ul class="detalles">
+                                @for (item of pedido.detalles; track item.id) {
+                                <li>
+                                    <span class="cantidad">{{ item.cantidad }}×</span>
+                                    {{ item.nombreProducto }}
+                                </li>
+                                }
+                            </ul>
+
+                            <p class="total">
+                                <span class="total-rotulo">Total</span>
+                                <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                            </p>
+
+                            <button class="btn-primario" [disabled]="cargando()" (click)="onEntregar(pedido)">
+                                <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                                Marcar como entregado
+                            </button>
+                        </article>
+                        } }
                     </div>
+                </section>
 
-                    <ul class="detalles">
-                        @for (item of pedido.detalles; track item.id) {
-                        <li>
-                            <span class="cantidad">{{ item.cantidad }}×</span>
-                            {{ item.nombreProducto }}
-                        </li>
-                        }
-                    </ul>
+                <!-- Punto 22: el cliente ya pagó y espera que el mozo confirme el cobro. -->
+                <section class="grupo">
+                    <h2 class="titulo-grupo titulo-seccion">Pagos por confirmar</h2>
 
-                    <p class="total">
-                        <span class="total-rotulo">Total</span>
-                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
-                    </p>
+                    <div class="tarjetas-scroll">
+                        @if (pagos().length === 0) {
+                        <div class="estado-vacio">
+                            <fa-icon [icon]="['fas', 'cash-register']"></fa-icon>
+                            <p>No hay pagos esperando confirmación.</p>
+                        </div>
+                        } @else { @for (pedido of pagos(); track pedido.id) {
+                        <article class="tarjeta-pedido">
+                            <div class="encabezado">
+                                <span class="ficha-mesa">
+                                    <span class="ficha-mesa-rotulo">Mesa</span>
+                                    <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                                </span>
+                                <ion-badge color="tertiary">Pagó, falta confirmar</ion-badge>
+                            </div>
 
-                    <div class="acciones">
-                        <button
-                            class="btn-exito"
-                            [disabled]="cargando()"
-                            (click)="onConfirmar(pedido)"
-                        >
-                            <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
-                            Confirmar
-                        </button>
+                            <ul class="detalles">
+                                @for (item of pedido.detalles; track item.id) {
+                                <li>
+                                    <span class="cantidad">{{ item.cantidad }}×</span>
+                                    {{ item.nombreProducto }}
+                                </li>
+                                }
+                            </ul>
 
-                        <button class="btn-delete" [disabled]="cargando()" (click)="onRechazar(pedido)">
-                            <fa-icon [icon]="['fas', 'circle-xmark']"></fa-icon>
-                            Rechazar
-                        </button>
+                            <p class="total">
+                                <span class="total-rotulo">Total</span>
+                                <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                            </p>
+
+                            <button class="btn btn-exito" [disabled]="cargando()" (click)="onConfirmarPago(pedido)">
+                                <fa-icon [icon]="['fas', 'hand-holding-dollar']"></fa-icon>
+                                Confirmar pago y liberar mesa
+                            </button>
+                        </article>
+                        } }
                     </div>
-                </article>
-                } }
-            </section>
-
-            <section class="grupo">
-                <h2 class="titulo-grupo titulo-seccion">Listos para entregar</h2>
-
-                @if (listos().length === 0) {
-                <div class="estado-vacio">
-                    <fa-icon [icon]="['fas', 'hourglass-half']"></fa-icon>
-                    <p>Todavía no hay pedidos listos.</p>
-                </div>
-                } @else { @for (pedido of listos(); track pedido.id) {
-                <article class="tarjeta-pedido">
-                    <div class="encabezado">
-                        <span class="ficha-mesa">
-                            <span class="ficha-mesa-rotulo">Mesa</span>
-                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
-                        </span>
-                        <ion-badge color="success">{{ pedido.estado }}</ion-badge>
-                    </div>
-
-                    <div class="datos-pedido">
-                        <span class="chip">
-                            <fa-icon [icon]="['fas', 'calendar']"></fa-icon>
-                            {{ fechaFormateada(pedido) }}
-                        </span>
-                    </div>
-
-                    <ul class="detalles">
-                        @for (item of pedido.detalles; track item.id) {
-                        <li>
-                            <span class="cantidad">{{ item.cantidad }}×</span>
-                            {{ item.nombreProducto }}
-                        </li>
-                        }
-                    </ul>
-
-                    <p class="total">
-                        <span class="total-rotulo">Total</span>
-                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
-                    </p>
-
-                    <button class="btn-primario" [disabled]="cargando()" (click)="onEntregar(pedido)">
-                        <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
-                        Marcar como entregado
-                    </button>
-                </article>
-                } }
-            </section>
-
-            <!-- Punto 22: el cliente ya pagó y espera que el mozo confirme el cobro. -->
-            <section class="grupo">
-                <h2 class="titulo-grupo titulo-seccion">Pagos por confirmar</h2>
-
-                @if (pagos().length === 0) {
-                <div class="estado-vacio">
-                    <fa-icon [icon]="['fas', 'cash-register']"></fa-icon>
-                    <p>No hay pagos esperando confirmación.</p>
-                </div>
-                } @else { @for (pedido of pagos(); track pedido.id) {
-                <article class="tarjeta-pedido">
-                    <div class="encabezado">
-                        <span class="ficha-mesa">
-                            <span class="ficha-mesa-rotulo">Mesa</span>
-                            <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
-                        </span>
-                        <ion-badge color="tertiary">Pagó, falta confirmar</ion-badge>
-                    </div>
-
-                    <ul class="detalles">
-                        @for (item of pedido.detalles; track item.id) {
-                        <li>
-                            <span class="cantidad">{{ item.cantidad }}×</span>
-                            {{ item.nombreProducto }}
-                        </li>
-                        }
-                    </ul>
-
-                    <p class="total">
-                        <span class="total-rotulo">Total</span>
-                        <span class="total-importe">{{ totalFormateado(pedido) }}</span>
-                    </p>
-
-                    <button
-                        class="btn btn-exito"
-                        [disabled]="cargando()"
-                        (click)="onConfirmarPago(pedido)"
-                    >
-                        <fa-icon [icon]="['fas', 'hand-holding-dollar']"></fa-icon>
-                        Confirmar pago y liberar mesa
-                    </button>
-                </article>
-                } }
-            </section>
+                </section>
+            </div>
+            <!-- /grupos-reel -->
         </div>
     </div>
 </ion-content>

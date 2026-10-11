@@ -917,7 +917,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
         flex: 1;
         min-height: 0;
 
-        overflow-y: auto;
+        // overflow-y: auto; // Esto es lo que muestra bordes negros, no lo vamos a usar, asi que podemos eliminarlo
         overflow-x: hidden;
     }
 

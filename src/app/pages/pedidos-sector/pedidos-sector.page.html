@@ -15,78 +15,79 @@
             </div>
             } @else {
             <div class="grilla-mesas">
-                @for (grupo of mesasAgrupadas(); track grupo.numeroMesa) { @for (comanda of grupo.pedidos; track
-                comanda.pedidoOriginal.id) {
-                <section class="bloque-mesa">
-                    <!-- <div class="cabecera-mesa">
-                                <span class="ficha-mesa">
-                                    <span class="ficha-mesa-rotulo">Mesa</span>
-                                    <span class="ficha-mesa-numero">{{ grupo.numeroMesa }}</span>
-                                </span>
-                                 <span class="pedidos-cant-chip">
-                                    {{ grupo.pedidos.length }} {{ grupo.pedidos.length === 1 ? 'comanda' : 'comandas' }}
-                                </span> 
-                            </div> -->
-
-                    <div class="lista-pedidos-mesa">
-                        <article class="tarjeta-pedido">
-                            <!-- Barra de estado de comanda: Fecha y Estado -->
-                            <div class="barra-comanda">
-                                <span class="chip-fecha">
-                                    <fa-icon [icon]="['far', 'clock']"></fa-icon>
-                                    {{ comanda.fecha }}
-                                </span>
-                                <span class="ficha-mesa">
-                                    <span class="ficha-mesa-rotulo">Mesa</span>
-                                    <span class="ficha-mesa-numero">{{ grupo.numeroMesa }}</span>
-                                </span>
-                                <!-- <span class="badge-comanda"> {{ comanda.pedidoOriginal.estado }} </span> -->
-                            </div>
-
-                            <div class="divisor"><span>Ítems a elaborar</span></div>
-
-                            <ul class="detalles-sector">
-                                @for (item of comanda.itemsSector; track item.id) {
-                                <li class="item-tarjeta" [class.item-listo]="item.estadoProducto === 'Listo'">
-                                    <!-- Fila superior: Cantidad + Nombre completo sin cortar -->
-                                    <div class="item-cabecera">
-                                        <span class="cantidad">{{ item.cantidad }}</span>
-                                        <span class="nombre">{{ item.nombreProducto }}</span>
-                                    </div>
-
-                                    <!-- Fila inferior: Estado actual + Botón de avance -->
-                                    <div class="item-barra-accion">
-                                        <span class="badge-estado" [attr.data-estado]="item.estadoProducto">
-                                            {{ item.estadoProducto }}
+                @for (grupo of mesasAgrupadas(); track grupo.numeroMesa) { 
+                    @for (comanda of grupo.pedidos; track comanda.pedidoOriginal.id) {
+                        <section class="bloque-mesa">
+                            <!-- <div class="cabecera-mesa">
+                                        <span class="ficha-mesa">
+                                            <span class="ficha-mesa-rotulo">Mesa</span>
+                                            <span class="ficha-mesa-numero">{{ grupo.numeroMesa }}</span>
                                         </span>
+                                        <span class="pedidos-cant-chip">
+                                            {{ grupo.pedidos.length }} {{ grupo.pedidos.length === 1 ? 'comanda' : 'comandas' }}
+                                        </span> 
+                                    </div> -->
 
-                                        @if (item.estadoProducto === 'Pendiente') {
-                                        <button
-                                            type="button"
-                                            class="btn-accion btn-preparar"
-                                            (click)="cambiarEstadoItem(item, 'En Preparación', comanda.pedidoOriginal.id)"
-                                        >
-                                            <fa-icon [icon]="['fas', 'fire-flame-curved']"></fa-icon>
-                                            Preparar
-                                        </button>
-                                        } @else if (item.estadoProducto === 'En Preparación') {
-                                        <button
-                                            type="button"
-                                            class="btn-accion btn-terminar"
-                                            (click)="cambiarEstadoItem(item, 'Listo', comanda.pedidoOriginal.id)"
-                                        >
-                                            <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
-                                            Terminar
-                                        </button>
-                                        }
+                            <div class="lista-pedidos-mesa">
+                                <article class="tarjeta-pedido">
+                                    <!-- Barra de estado de comanda: Fecha y Estado -->
+                                    <div class="barra-comanda">
+                                        <span class="chip-fecha">
+                                            <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                                            {{ comanda.fecha }}
+                                        </span>
+                                        <span class="ficha-mesa">
+                                            <span class="ficha-mesa-rotulo">Mesa</span>
+                                            <span class="ficha-mesa-numero">{{ grupo.numeroMesa }}</span>
+                                        </span>
+                                        <!-- <span class="badge-comanda"> {{ comanda.pedidoOriginal.estado }} </span> -->
                                     </div>
-                                </li>
-                                }
-                            </ul>
-                        </article>
-                    </div>
-                </section>
-                } }
+
+                                    <div class="divisor"><span>Ítems a elaborar</span></div>
+
+                                    <ul class="detalles-sector">
+                                        @for (item of comanda.itemsSector; track item.id) {
+                                        <li class="item-tarjeta" [class.item-listo]="item.estadoProducto === 'Listo'">
+                                            <!-- Fila superior: Cantidad + Nombre completo sin cortar -->
+                                            <div class="item-cabecera">
+                                                <span class="cantidad">{{ item.cantidad }}</span>
+                                                <span class="nombre">{{ item.nombreProducto }}</span>
+                                            </div>
+
+                                            <!-- Fila inferior: Estado actual + Botón de avance -->
+                                            <div class="item-barra-accion">
+                                                <span class="badge-estado" [attr.data-estado]="item.estadoProducto">
+                                                    {{ item.estadoProducto }}
+                                                </span>
+
+                                                @if (item.estadoProducto === 'Pendiente') {
+                                                <button
+                                                    type="button"
+                                                    class="btn-accion btn-preparar"
+                                                    (click)="cambiarEstadoItem(item, 'En Preparación', comanda.pedidoOriginal.id)"
+                                                >
+                                                    <fa-icon [icon]="['fas', 'fire-flame-curved']"></fa-icon>
+                                                    Preparar
+                                                </button>
+                                                } @else if (item.estadoProducto === 'En Preparación') {
+                                                <button
+                                                    type="button"
+                                                    class="btn-accion btn-terminar"
+                                                    (click)="cambiarEstadoItem(item, 'Listo', comanda.pedidoOriginal.id)"
+                                                >
+                                                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                                                    Terminar
+                                                </button>
+                                                }
+                                            </div>
+                                        </li>
+                                        }
+                                    </ul>
+                                </article>
+                            </div>
+                        </section>
+                    } 
+                }
             </div>
             }
         </div>
