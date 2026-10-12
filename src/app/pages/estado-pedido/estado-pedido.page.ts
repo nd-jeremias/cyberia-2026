@@ -41,12 +41,25 @@ export class EstadoPedidoPage {
     private pedidoService = inject(PedidoService);
     private modal = inject(ModalService);
     private router = inject(Router);
+    private dejarDeEscuchar: (() => void) | null = null;
+
 
     pedidos = signal<PedidoInterface[]>([]);
     cargando = signal(true);
 
     ionViewWillEnter() {
         void this.recargar();
+        const usuarioId = this.authService.session()?.user.id;
+        if (usuarioId && !this.dejarDeEscuchar) {
+            this.dejarDeEscuchar = this.pedidoService.escucharPedidosDelCliente(usuarioId, () => {
+                // Cuando cocina o bar tocan un ítem o el pedido pasa a "Listo para Entregar", recargamos
+                void this.recargar();
+            });
+        }
+    }
+    ionViewWillLeave() {
+        this.dejarDeEscuchar?.();
+        this.dejarDeEscuchar = null;
     }
 
     async recargar() {

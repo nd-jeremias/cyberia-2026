@@ -579,13 +579,20 @@ export class PedidoService {
      * Agregar un método para verificar si un pedido pasa a "Listo para Entregar":
      * Cuando todos los ítems de un pedido pasan a estado 'Listo', el pedido completo debe actualizarse a 'Listo para Entregar' para que el mozo lo vea en su lista de entrega.
      */
-    async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<void> {
-        const pedido = this.pedidos().find((p) => p.id === pedidoId);
-        if (!pedido) return;
-        const todosListos = pedido.detalles.every((d) => d.estadoProducto === 'Listo');
+    async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<boolean> {
+        const { data: detalles, error } = await supabase
+            .from('pedido_detalles')
+            .select('estado_producto')
+            .eq('pedido_id', pedidoId);
+
+        if (error || !detalles || detalles.length === 0) return false;
+
+        const todosListos = detalles.every((d) => d.estado_producto === 'Listo');
         if (todosListos) {
             await this.cambiarEstado(pedidoId, 'Listo para Entregar');
+            return true;
         }
+        return false;
     }
 
     /**

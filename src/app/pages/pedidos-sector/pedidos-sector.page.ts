@@ -89,12 +89,14 @@ export class PedidosSectorPage implements OnInit {
 
   async cambiarEstadoItem(item: DetallePedidoInterface, nuevoEstado: EstadoItem, pedidoId: string) {
     const exito = await this.pedidoService.cambiarEstadoItem(item.id, nuevoEstado);
-    if (exito) {
-      // Si el pedido estaba solo "Confirmado", al empezar la preparación pasa a "En Preparación"
-      const pedido = this.pedidoService.pedidos().find(p => p.id === pedidoId);
-      if (pedido && pedido.estado === 'Confirmado' && nuevoEstado === 'En Preparación') {
-        await (this.pedidoService as any).cambiarEstado(pedidoId, 'En Preparación');
-      }
+    if (!exito) return;
+    
+    // Si el pedido estaba solo "Confirmado", al empezar la preparación pasa a "En Preparación"
+    const pedido = this.pedidoService.pedidos().find(p => p.id === pedidoId);
+
+    if (pedido && pedido.estado === 'Confirmado' && nuevoEstado === 'En Preparación') {
+      await (this.pedidoService as any).cambiarEstado(pedidoId, 'En Preparación');
+    }
 
       // // 1. Notificar al cliente que su producto cambió de estado
       //   if (pedido?.clienteId) {
@@ -106,18 +108,22 @@ export class PedidosSectorPage implements OnInit {
       //       );
       //   }
 
-      // Verificar si con este cambio se terminó todo el pedido
-      await this.pedidoService.actualizarEstadoGeneralSiListo(pedidoId);
+    // Guardamos el estado previo antes de chequear si se completó
+    const estadoPrevio = pedido?.estado;
 
-      const pedidoActualizado = this.pedidoService.pedidos().find(p => p.id === pedidoId);
-        if (pedidoActualizado?.estado === 'Listo para Entregar') {
-            void this.notificaciones.enviarAvisos(
-                ['mozo'],
-                `Pedido listo - Mesa ${pedidoActualizado.numeroMesa}`,
-                'El pedido está completo y listo para ser entregado.',
-                'pedido-estado'
-            );
-        }
+    // 2. Verificar si con este cambio se terminó TODO el pedido (cocina + bar)
+    await this.pedidoService.actualizarEstadoGeneralSiListo(pedidoId);
+
+    // Volvemos a buscar el pedido actualizado en la lista
+    const pedidoActualizado = this.pedidoService.pedidos().find((p) => p.id === pedidoId);
+    // Solo se informa si el pedido PASÓ a estar listo en este preciso momento
+    if (estadoPrevio !== 'Listo para Entregar' && pedidoActualizado?.estado === 'Listo para Entregar') {
+      void this.notificaciones.enviarAvisos(
+        ['mozo'],
+        `Pedido listo - Mesa ${pedidoActualizado.numeroMesa}`,
+        'El pedido está completo y listo para ser entregado.',
+        'pedido-estado'
+      );
     }
   }
 }

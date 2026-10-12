@@ -4,6 +4,8 @@ import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { EncuestasService, EncuestaFila } from '../../../services/encuestas.service';
 import { Chart, registerables } from 'chart.js';
+import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 Chart.register(...registerables);
 
@@ -12,10 +14,21 @@ Chart.register(...registerables);
   templateUrl: './resultados.page.html',
   styleUrls: ['./resultados.page.scss'],
   standalone: true,
-  imports: [IonContent, CommonModule, HeaderComponent]
+  imports: [IonContent, CommonModule, HeaderComponent, FontAwesomeModule],
 })
 export class ResultadosPage {
   private encuestasService = inject(EncuestasService);
+  private faLibrary = inject(FaIconLibrary);
+
+  readonly iconoIzquierda = faChevronLeft;
+  readonly iconoDerecha = faChevronRight;
+
+  readonly itemsTorta = [
+    { etiqueta: 'Excelente', color: '#1b7a4b' },
+    { etiqueta: 'Buena', color: '#2372a8' },
+    { etiqueta: 'Regular', color: '#d98b14' },
+    { etiqueta: 'Mala', color: '#c0392b' },
+  ];
 
   @ViewChild('canvasGrafico') canvasGrafico?: ElementRef<HTMLCanvasElement>;
   chartInstance?: Chart;
@@ -23,6 +36,9 @@ export class ResultadosPage {
   graficoSeleccionado = signal<'torta' | 'barras' | 'lineas'>('torta');
   encuestas = signal<EncuestaFila[]>([]);
   cargando = signal(true);
+
+  readonly tiposGraficos: Array<'torta' | 'barras' | 'lineas'> = ['torta', 'barras', 'lineas'];
+  indiceGraficoActual = signal<number>(0);
 
   async ionViewWillEnter() {
     await this.cargarDatos();
@@ -41,7 +57,24 @@ export class ResultadosPage {
 
   cambiarTipoGrafico(tipo: 'torta' | 'barras' | 'lineas') {
     this.graficoSeleccionado.set(tipo);
+    this.indiceGraficoActual.set(this.tiposGraficos.indexOf(tipo));
     setTimeout(() => this.renderizarGrafico(), 50);
+  }
+
+  get graficoActual(): 'torta' | 'barras' | 'lineas' {
+    return this.tiposGraficos[this.indiceGraficoActual()];
+  }
+
+  graficoSiguiente() {
+    const proximo = (this.indiceGraficoActual() + 1) % this.tiposGraficos.length;
+    this.indiceGraficoActual.set(proximo);
+    this.cambiarTipoGrafico(this.tiposGraficos[proximo]);
+  }
+
+  graficoAnterior() {
+    const previo = (this.indiceGraficoActual() - 1 + this.tiposGraficos.length) % this.tiposGraficos.length;
+    this.indiceGraficoActual.set(previo);
+    this.cambiarTipoGrafico(this.tiposGraficos[previo]);
   }
 
   renderizarGrafico() {
@@ -84,7 +117,7 @@ export class ResultadosPage {
           maintainAspectRatio: false,
           plugins: {
             title: {
-              display: true,
+              display: false,
               text: 'Atención del Personal',
               color: '#2b1b17', // var(--tinta)
               font: {
@@ -97,18 +130,21 @@ export class ResultadosPage {
               },
             },
             legend: {
-              display: true,
-              position: 'top',
+              display: false,
+              position: 'bottom',
+              align: 'center',
               labels: {
-                color: '#2b1b17', // var(--tinta)
-                usePointStyle: true, // Puntos prolijos en vez de rectángulos duros
+                color: '#2b1b17',
+                usePointStyle: true,
                 pointStyle: 'circle',
-                padding: 14,
+                boxWidth: 16,   // Antes 10: agranda el círculo coloreado
+                padding: 16,    // Espaciado vertical más cómodo
                 font: {
-                  size: 13,
+                  size: 15,     // Antes 13: texto más nítido
                   weight: 'bold',
                 },
               },
+              
             },
           },
         },
@@ -139,7 +175,7 @@ export class ResultadosPage {
           plugins: {
             legend: { display: false },
             title: {
-              display: true,
+              display: false,
               text: 'Calidad de la Comida',
               color: '#2b1b17', // var(--tinta)
               font: {
@@ -213,7 +249,7 @@ export class ResultadosPage {
           plugins: {
             legend: { display: false },
             title: {
-              display: true,
+              display: false,
               text: 'Tiempos de Espera',
               color: '#2b1b17', // Color tinta oscuro de la app
               font: {
