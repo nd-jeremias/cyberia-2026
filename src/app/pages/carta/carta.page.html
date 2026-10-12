@@ -1,10 +1,18 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
+        <!-- Sin el título "Carta": su lugar lo ocupa "Ver mi pedido", que en el
+             pie fijo quedaba cortado en algunos teléfonos. -->
         <app-header
             class="inferior sin-labio"
             [defaultHref]="'/inicio'"
-            [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"
-        ></app-header>
+            [tituloHeader]="corrigiendo() ? 'Corregir pedido' : ''"
+        >
+            <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
+            <button accion type="button" class="btn-banda" [disabled]="!hayPedido()" (click)="irAlResumen()">
+                <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
+                {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
+            </button>
+        </app-header>
 
         <div class="superior hoja pantalla-carta">
             @if (corrigiendo()) {
@@ -66,14 +74,6 @@
                     carrito.tiempoEstimado() }} min } @else { Tu pedido está vacío }
                 </span>
                 <span class="pie-total">{{ totalFormateado() }}</span>
-            </div>
-
-            <div class="pie-acciones">
-                <!-- El pedido se manda desde "Mi pedido", después de repasarlo. -->
-                <button type="button" class="btn-banda pie-boton" [disabled]="!hayPedido()" (click)="irAlResumen()">
-                    <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
-                    {{ corrigiendo() ? 'Revisar cambios' : 'Ver mi pedido' }}
-                </button>
             </div>
         </footer>
     </div>
