@@ -141,22 +141,6 @@
     
 }
 
-.pie-acciones {
-    display: flex;
-    // gap: 0.5rem;
-    margin: 0.8rem 0;
-}
-
-.pie-boton {
-    flex: 1;
-    margin: 0;
-    font-size: var(--texto-subtitulo);
-}
-
-.pie-boton:disabled {
-    opacity: 0.55;
-}
-
 /* Mismo cartel que la corrección, pero informativo: acá no hay nada que
    corregir, sólo se avisa que el pedido ya está en manos del mozo. */
 .aviso-en-curso {
