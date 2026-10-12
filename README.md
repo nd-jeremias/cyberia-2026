@@ -110,6 +110,17 @@ Los scripts de la carpeta `sql/` se corren desde el **SQL Editor** de Supabase, 
 
 ## 🌿 Guía Rápida de Git
 
+## Prohibido hacer git pull origin main sobre ramas de desarrollo
+
+Para actualizar una rama propia luego de actualizar main o main-test seguir estos pasos:
+```bash
+git checkout main
+git pull
+git checkout mi-rama
+git rebase main
+
+```
+
 Esta guía es de lectura obligatoria antes de iniciar cualquier tarea. Sigue estos pasos para evitar conflictos de código y pérdida de cambios realizados.
 
 ### 1. Flujo Diario de Trabajo (Paso a Paso)
