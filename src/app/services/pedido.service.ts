@@ -1,4 +1,5 @@
 import { Service, computed, inject, signal } from '@angular/core';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import {
     DetallePedidoInterface,
@@ -8,7 +9,9 @@ import {
     NuevoPedidoInterface,
     PedidoInterface,
 } from '../interfaces/pedido.interface';
+import { MesaService } from './mesa.service';
 import { ModalService } from './modal.service';
+import { SalonService } from './salon.service';
 import { supabase } from './supabase.service';
 
 /**
@@ -103,6 +106,8 @@ function codigoDeError(error: unknown): string | null {
 @Service()
 export class PedidoService {
     private modal = inject(ModalService);
+    private mesaService = inject(MesaService);
+    private salonService = inject(SalonService);
 
     /** Pedidos cargados en memoria; las pantallas se enganchan a este signal. */
     pedidos = signal<PedidoInterface[]>([]);
@@ -491,14 +496,32 @@ export class PedidoService {
      * Punto 22: el mozo confirma el pago y se libera la mesa.
      *
      * Son tres escrituras, en este orden:
-     *  1. el pedido pasa a "Pagado", que dispara el aviso al dueño y al
-     *     supervisor (sql/notificaciones.sql);
-     *  2. la mesa vuelve a estar disponible y sin cliente;
-     *  3. el cliente sale del circuito del local: queda "libre" y sin mesa, y
-     *     así puede volver a anotarse en la lista de espera otro día.
+     *  1. la mesa vuelve a estar disponible y sin cliente;
+     *  2. el cliente sale del circuito del local: queda libre, sin mesa y con
+     *     la hora en que terminó su visita (ver SalonService.terminarVisita);
+     *  3. recién entonces los pedidos de la visita pasan a "Pagado".
      *
-     * El primer UPDATE excluye los pedidos ya pagados: si dos mozos confirman a
-     * la vez, el segundo no afecta ninguna fila y se le avisa.
+     * Se cobran todos los pedidos que el cliente tenga sin pagar en esa mesa, no
+     * sólo el de la tarjeta: puede haber mandado más de uno antes de que el mozo
+     * confirmara el primero, y la cuenta los suma a todos (punto 21). Uno que
+     * quedara abierto no volvería a la lista del mozo, porque su cliente ya
+     * está libre, y le aparecería al cliente en la visita siguiente.
+     *
+     * El orden importa porque la base no hace las tres juntas. Los pedidos se
+     * marcan al final porque, una vez "Pagado", salen de la lista del mozo: si
+     * fuera primero y fallara la mesa, quedaría ocupada sin que nadie pudiera
+     * reintentar. Así, si falla la mesa o el cliente, el cobro sigue en "Pagos
+     * por confirmar" y el mozo lo vuelve a tocar. Si falla el último paso, el
+     * mozo ve el error, pero el cobro ya no vuelve a su lista: el cliente
+     * quedó libre.
+     *
+     * Los tres pasos son seguros de repetir: si dos mozos confirman a la vez,
+     * el segundo no libera una mesa ya reasignada ni cierra dos veces la
+     * visita, y el último UPDATE (que excluye lo ya pagado) le avisa.
+     *
+     * El aviso a dueño y supervisor lo manda la pantalla del mozo, como el
+     * resto de los avisos de la aplicación: el trigger de sql/notificaciones.sql
+     * nunca se instaló en la base.
      */
     async confirmarPago(pedido: PedidoInterface): Promise<boolean> {
         if (pedido.estadoCliente !== 'pagando') {
@@ -514,10 +537,18 @@ export class PedidoService {
         this.cargando.set(true);
 
         try {
+            // liberar() ya muestra su propio error si falla.
+            const mesaLiberada = await this.mesaService.liberar(pedido.mesaId, pedido.clienteId);
+
+            if (!mesaLiberada) return false;
+
+            await this.salonService.terminarVisita(pedido.clienteId);
+
             const { data, error } = await supabase
                 .from('pedidos')
                 .update({ estado: 'Pagado' })
-                .eq('id', pedido.id)
+                .eq('cliente_id', pedido.clienteId)
+                .eq('mesa_id', pedido.mesaId)
                 .neq('estado', 'Pagado')
                 .select('id');
 
@@ -529,21 +560,9 @@ export class PedidoService {
                 return false;
             }
 
-            const { error: errorMesa } = await supabase
-                .from('mesas')
-                .update({ disponibilidad: 'disponible', cliente_id: null })
-                .eq('id', pedido.mesaId);
+            const esDeLaVisita = (p: PedidoInterface) => p.clienteId === pedido.clienteId && p.mesaId === pedido.mesaId;
 
-            if (errorMesa) throw errorMesa;
-
-            const { error: errorCliente } = await supabase
-                .from('usuarios')
-                .update({ estado_en_resto: 'libre', mesa_id: null })
-                .eq('id', pedido.clienteId);
-
-            if (errorCliente) throw errorCliente;
-
-            this.pedidos.update((actuales) => actuales.filter((p) => p.id !== pedido.id));
+            this.pedidos.update((actuales) => actuales.filter((p) => !esDeLaVisita(p)));
 
             return true;
         } catch (error) {
@@ -560,13 +579,20 @@ export class PedidoService {
      * Agregar un método para verificar si un pedido pasa a "Listo para Entregar":
      * Cuando todos los ítems de un pedido pasan a estado 'Listo', el pedido completo debe actualizarse a 'Listo para Entregar' para que el mozo lo vea en su lista de entrega.
      */
-    async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<void> {
-        const pedido = this.pedidos().find((p) => p.id === pedidoId);
-        if (!pedido) return;
-        const todosListos = pedido.detalles.every((d) => d.estadoProducto === 'Listo');
+    async actualizarEstadoGeneralSiListo(pedidoId: string): Promise<boolean> {
+        const { data: detalles, error } = await supabase
+            .from('pedido_detalles')
+            .select('estado_producto')
+            .eq('pedido_id', pedidoId);
+
+        if (error || !detalles || detalles.length === 0) return false;
+
+        const todosListos = detalles.every((d) => d.estado_producto === 'Listo');
         if (todosListos) {
             await this.cambiarEstado(pedidoId, 'Listo para Entregar');
+            return true;
         }
+        return false;
     }
 
     /**
@@ -618,19 +644,88 @@ export class PedidoService {
      */
     totalConDescuento(pedido: PedidoInterface): number {
         const descuento = pedido.precioTotalNeto * (pedido.descuentoJuego / 100);
-        const propina = pedido.precioTotalNeto * (pedido.propinaPorcentaje / 100);
+        const propina = pedido.precioTotalNeto * (pedido.propinaPorcentaje ?? 0 / 100);
 
         return pedido.precioTotalNeto - descuento + propina;
     }
 
-    async setPropina(pedidoId: string, propina: number): Promise<void> {
+    /**
+     * Avisa cuando cambia algún pedido de este cliente (punto 14).
+     *
+     * El mozo confirma o rechaza desde otro teléfono: sin esto, el cliente se
+     * quedaría mirando una pantalla que ya no dice la verdad. Devuelve la
+     * función que corta la escucha, para llamarla al salir de la pantalla.
+     *
+     * Requiere que la tabla `pedidos` esté publicada para Realtime en Supabase
+     * (Database -> Publications -> supabase_realtime). Si no lo está, no falla
+     * nada: simplemente no llega el aviso y sigue estando el botón Actualizar.
+     */
+    escucharPedidosDelCliente(clienteId: string, alCambiar: (estado: EstadoPedido) => void): () => void {
+        const canal: RealtimeChannel = supabase
+            .channel(`pedidos-cliente-${clienteId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'pedidos',
+                    // El filtro va del lado del servidor: este teléfono recibe
+                    // sólo los cambios de sus propios pedidos.
+                    filter: `cliente_id=eq.${clienteId}`,
+                },
+                (cambio) => alCambiar((cambio.new as { estado: EstadoPedido }).estado)
+            )
+            .subscribe();
+
+        return () => void supabase.removeChannel(canal);
+    }
+
+    async setPropina(pedidoId: string, propina: number): Promise<boolean> {
         try {
-            const { error } = await supabase.from('pedidos').update({ propina_porcentaje: propina }).eq('id', pedidoId);
+            const { data, error } = await supabase
+                .from('pedidos')
+                .update({ propina_porcentaje: propina })
+                .eq('id', pedidoId)
+                .select();
 
             if (error) throw error;
+
+            // console.log('Confirmar este objeto para mapear la respuesta si es necesario: ', JSON.stringify(data));
+            // [
+            //     {
+            //         id: 'e0912460-9854-4d38-b154-c7d4c060fef0',
+            //         numero_pedido: 28,
+            //         mesa_id: '36e7805f-940b-4d58-a261-116f0c77f157',
+            //         cliente_id: '8a8be430-3f4c-43c1-8f43-4b6ba8921e20',
+            //         estado: 'Recibido',
+            //         precio_total_neto: 24900,
+            //         descuento_juego: 0,
+            //         propina_porcentaje: 10,
+            //         fecha: '2026-10-04T15:34:48.09075+00:00',
+            //     },
+            // ];
+            return data.length > 0 ? true : false;
         } catch (error) {
             console.log('No se pudo actualizar la propina del pedido.', error);
             throw new Error('No se pudo actualizar la propina del pedido.');
         }
+    }
+
+    // Método totalmente genérico
+    async incrementarValor(tabla: string, columna: string, id: string, cantidad: number) {
+        const { data, error } = await supabase.rpc('incrementar_campo', {
+            nombre_tabla: tabla,
+            nombre_columna: columna,
+            row_id: id,
+            cantidad_a_sumar: cantidad,
+        });
+
+        if (error) {
+            const mensaje = error instanceof Error ? error.message : 'No se pudo ingresar como invitado.';
+            console.error(`Error incrementando ${columna} en ${tabla}:`, mensaje);
+            throw new Error(`Error incrementando ${columna} en ${tabla}`);
+        }
+
+        return data;
     }
 }
