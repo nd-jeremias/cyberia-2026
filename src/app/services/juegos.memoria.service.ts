@@ -77,10 +77,11 @@ export class JuegosMemoriaService {
         this.timerService.iniciar(this.TIEMPO_LIMITE);
     }
 
-    private finalizaJuego() {
-        this.timerService.detener();
-        this.juegoTerminado.set(true);
+    public finalizaJuego() {
         this.bloqueado.set(true); // Congela el tablero para que no sigan tocando cartas
+        this.juegoTerminado.set(true);
+        this.timerService.detener();
+        this.juegosService.exitGame('memoria');
     }
 
     private finalizarJuegoPorTiempo() {
@@ -160,6 +161,7 @@ export class JuegosMemoriaService {
             }, 800);
         }
         if (this.paresEncontrados() === this.totalPares()) {
+            this.timerService.detener();
             this.juegosService.finalizarPorVictoria('memoria');
         }
     }

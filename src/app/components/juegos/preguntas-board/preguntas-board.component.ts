@@ -55,19 +55,21 @@ export class PreguntasBoardComponent implements OnInit {
     procesarRespuesta() {
         if (!this.opcionSeleccionada) return;
 
-        // Validamos si la que seleccionó es la correcta
-        if (this.opcionSeleccionada.correcta && this.indiceActual < this.preguntasDelJuego.length - 1) {
-            this.modal.setOpen('¡Bien hecho!', '¡Respuesta correcta!', 'info');
-        } else {
+        // 1. Validar si la respuesta es incorrecta
+        if (!this.opcionSeleccionada.correcta) {
             this.modal.setOpen('¡Lo siento!', '¡Respuesta incorrecta! Gracias por haber jugado', 'error');
             this.juegosService.exitGame('preguntas');
+            return; // Cortamos la ejecución aquí si pierde
         }
 
-        // Avanzar a la siguiente pregunta o terminar
+        // 2. Si llegó aquí, la respuesta es CORRECTA. Evaluamos si hay más preguntas o si ganó.
         if (this.indiceActual < this.preguntasDelJuego.length - 1) {
+            // Aún quedan preguntas, mostramos éxito y avanzamos
+            this.modal.setOpen('¡Bien hecho!', '¡Respuesta correcta!', 'info');
             this.indiceActual++;
             this.cargarPreguntaActual();
         } else {
+            // Era la última pregunta y contestó bien ¡Ganó el juego!
             this.juegosService.finalizarPorVictoria('preguntas');
         }
     }
