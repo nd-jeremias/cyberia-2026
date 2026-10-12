@@ -1,11 +1,12 @@
 import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { MesaService } from '../services/mesa.service';
 import { PedidoService } from '../services/pedido.service';
 import { EstadoPedido } from '../interfaces/pedido.interface';
-import { BOTONES_POR_ROL, botonesDelCliente } from './home-botones.config';
+import { BOTONES_POR_ROL, BotonHome, botonesDelCliente } from './home-botones.config';
 import { SalonService } from '../services/salon.service';
 import { EstadoEnResto } from '../interfaces/auth.interface';
 import { HeaderComponent } from '../components/header/header.component';
@@ -64,6 +65,23 @@ const ROLES_SECTOR = ['cocinero', 'cantinero'];
 const PEDIDOS_EN_CURSO: EstadoPedido[] = ['Confirmado', 'En Preparación', 'Listo para Entregar'];
 
 /**
+ * Medidas del reel de accesos. Tienen que coincidir con home.page.scss
+ * (`$alto-acceso` y `$separacion`): son las mismas dos cifras, pero el
+ * reparto en pantallas se hace acá porque el CSS no sabe contar elementos.
+ */
+const ALTO_ACCESO = 100;
+const SEPARACION_ACCESO = 12;
+
+/**
+ * Alto del panel de estado cuando comparte pantalla con los accesos.
+ *
+ * Coincide con `$alto-maximo-panel` de la hoja: el panel comparte pantalla
+ * sólo si entra ENTERO. Apretado no sirve —se ve el título y poco más—, así
+ * que en ese caso es preferible darle una pantalla propia.
+ */
+const ALTO_PANEL = 240;
+
+/**
  * Pantalla de inicio.
  *
  * Lista los accesos del rol y, debajo, un panel con el estado de lo que a ese
@@ -77,16 +95,15 @@ const PEDIDOS_EN_CURSO: EstadoPedido[] = ['Confirmado', 'En Preparación', 'List
     selector: 'app-home',
     templateUrl: 'home.page.html',
     styleUrls: ['home.page.scss'],
-    imports: [FaIconComponent, IonContent, RouterLink, HeaderComponent, FooterComponent],
+    imports: [FaIconComponent, IonContent, NgTemplateOutlet, RouterLink, HeaderComponent, FooterComponent],
 })
 export class HomePage {
     /**
      * El área de accesos que se desplaza.
      *
-     * Hace falta por una sola cosa: publicar su alto como la variable CSS
-     * `--alto-lista`. Con eso el CSS puede repartir tres accesos por pantalla
-     * sin que el código tenga que dividir la lista, que es lo que antes hacía
-     * desaparecer alguno.
+     * Hace falta por una sola cosa: medir su alto. De esa medida sale cuántos
+     * accesos entran en una pantalla, que es lo único que el CSS no puede
+     * averiguar solo.
      */
     private lista = viewChild<ElementRef<HTMLElement>>('lista');
 
@@ -127,6 +144,139 @@ export class HomePage {
             acabaDeTerminarSuVisita: this.salonService.acabaDeTerminarSuVisita(),
         });
     });
+
+    /**
+     * Alto del área que se desplaza, en píxeles. 0 mientras no se midió.
+     *
+     * Lo publica el efecto del constructor y lo vuelve a publicar cada vez que
+     * cambia: girar el teléfono, agrandar la letra del sistema, o aparecer y
+     * desaparecer el cartel de situación del cliente.
+     */
+    private altoLista = signal(0);
+
+    /**
+     * ¿El panel de estado comparte pantalla con los accesos?
+     *
+     * El panel está para llenar el hueco que dejan los roles con pocos accesos
+     * (cocinero, cantinero, metre). Pero cuando los accesos ya ocupan buena
+     * parte de la pantalla, meterlo igual lo deja apretado contra el borde: ahí
+     * conviene darle una pantalla propia, que es lo que se ve bien en mozo
+     * (3 accesos) y en dueño y supervisor (4).
+     *
+     * Las dos condiciones dicen justamente eso:
+     *
+     *   - a los accesos les tiene que sobrar al menos media pantalla, y
+     *   - lo que sobre le tiene que alcanzar al panel ENTERO.
+     */
+    panelComparte = computed(() => {
+        const alto = this.altoLista();
+
+        if (!alto || !this.panel()) return false;
+
+        const cantidad = this.botonesDelRol().length;
+
+        // Sin accesos no hay nada con qué competir: el panel llena la pantalla.
+        if (cantidad === 0) return true;
+
+        const altoAccesos = cantidad * ALTO_ACCESO + (cantidad - 1) * SEPARACION_ACCESO;
+
+        return altoAccesos <= alto / 2 && alto - altoAccesos - SEPARACION_ACCESO >= ALTO_PANEL;
+    });
+
+    /**
+     * Cuántos accesos entran en una pantalla.
+     *
+     * Si el panel comparte pantalla hay que descontarle su lugar; si tiene
+     * pantalla propia, los accesos se quedan con todo el alto.
+     *
+     * `floor` y no `round`: el que no entra entero va a la pantalla siguiente,
+     * que es lo que evita que quede uno asomando abajo. El mínimo es 1 para que
+     * la cuenta siga teniendo sentido en una pantalla muy baja (teclado
+     * abierto, por ejemplo).
+     *
+     * Devuelve 0 mientras no haya medida: ahí todavía no se puede repartir.
+     */
+    private accesosPorPantalla = computed(() => {
+        const alto = this.altoLista();
+
+        if (!alto) return 0;
+
+        const reserva = this.panelComparte() ? ALTO_PANEL + SEPARACION_ACCESO : 0;
+
+        // La última fila no lleva separación debajo, por eso se le suma una al
+        // alto antes de dividir.
+        return Math.max(1, Math.floor((alto - reserva + SEPARACION_ACCESO) / (ALTO_ACCESO + SEPARACION_ACCESO)));
+    });
+
+    /**
+     * Los accesos repartidos en pantallas, para el desplazamiento tipo reel.
+     *
+     * Partir la lista en el código es lo único que garantiza que una pantalla
+     * nunca corte un acceso por la mitad: el CSS puede fijar el alto, pero no
+     * sabe dónde termina un grupo y empieza el otro.
+     *
+     * El reparto recorre TODOS los accesos y no descarta ninguno: la última
+     * pantalla queda incompleta si sobran lugares, y eso está bien.
+     */
+    paginasDeAccesos = computed<BotonHome[][]>(() => {
+        const botones = this.botonesDelRol();
+
+        // Una pantalla vacía y no ninguna: ahí va el cartel que explica por qué
+        // este perfil no tiene accesos, y con ella el panel de estado sigue
+        // teniendo dónde apoyarse.
+        if (botones.length === 0) return [[]];
+
+        const porPantalla = this.accesosPorPantalla();
+
+        // Sin medida todavía: una sola pantalla con todo. Repartir con un
+        // número inventado haría parpadear la lista en el primer cuadro.
+        if (!porPantalla) return [botones];
+
+        const pantallas: BotonHome[][] = [];
+
+        for (let desde = 0; desde < botones.length; desde += porPantalla) {
+            pantallas.push(botones.slice(desde, desde + porPantalla));
+        }
+
+        return pantallas;
+    });
+
+    /** Hay al menos un acceso dibujado (y no sólo el cartel de "sin accesos"). */
+    hayAccesos = computed(() => this.botonesDelRol().length > 0);
+
+    // --- Indicador de deslizar ------------------------------------------------
+    //
+    // Un reel no avisa que hay más abajo: la pantalla entra justa y nada asoma,
+    // que es lo que se buscaba, pero también lo que lo deja oculto. La flecha es
+    // la única pista de que el gesto existe.
+
+    /** Queda pantalla hacia abajo. */
+    puedeBajar = signal(false);
+
+    /** Ya se bajó: hay pantalla hacia arriba. */
+    puedeSubir = signal(false);
+
+    /**
+     * Mira dónde está parado el desplazamiento.
+     *
+     * El margen de 8px es por los redondeos del navegador: al final del todo,
+     * `scrollTop + clientHeight` queda a una fracción de píxel de `scrollHeight`
+     * y sin ese margen la flecha de abajo nunca se apagaba.
+     */
+    private revisarDesplazamiento(): void {
+        const lista = this.lista()?.nativeElement;
+
+        if (!lista) return;
+
+        const margen = 8;
+
+        this.puedeSubir.set(lista.scrollTop > margen);
+        this.puedeBajar.set(lista.scrollTop + lista.clientHeight < lista.scrollHeight - margen);
+    }
+
+    alDesplazar(): void {
+        this.revisarDesplazamiento();
+    }
 
     /** Estados de los pedidos de la visita, para decidir qué accesos mostrar. */
     private estadosDePedidos = signal<EstadoPedido[]>([]);
@@ -211,21 +361,39 @@ export class HomePage {
     });
 
     constructor() {
-        // Publica el alto del área de accesos, y lo vuelve a publicar si cambia
-        // (girar el teléfono, cambiar la letra del sistema, aparecer el cartel
-        // de la mesa).
+        // Mide el área de accesos, y la vuelve a medir cada vez que cambia
+        // (girar el teléfono, cambiar la letra del sistema, aparecer o
+        // desaparecer el cartel de situación del cliente).
         effect((alLimpiar) => {
             const lista = this.lista()?.nativeElement;
 
             if (!lista) return;
 
-            const publicar = () => lista.style.setProperty('--alto-lista', `${lista.clientHeight}px`);
-            const observador = new ResizeObserver(publicar);
+            // Medir no puede provocar un bucle: `.lista-accesos` es `flex: 1`
+            // dentro de una columna de alto fijo, así que su alto lo decide la
+            // pantalla y no lo que tenga adentro. Repartir los accesos de nuevo
+            // nunca la hace crecer.
+            const medir = () => {
+                this.altoLista.set(lista.clientHeight);
+                this.revisarDesplazamiento();
+            };
+            const observador = new ResizeObserver(medir);
 
             observador.observe(lista);
-            publicar();
+            medir();
 
             alLimpiar(() => observador.disconnect());
+        });
+
+        // Las pantallas cambian cuando llega el perfil o cuando el cliente
+        // avanza en el circuito, y ahí la flecha puede tener que aparecer o
+        // desaparecer. El `setTimeout` espera a que Angular haya dibujado: antes
+        // de eso `scrollHeight` todavía es el de las pantallas viejas.
+        effect(() => {
+            this.paginasDeAccesos();
+            this.panelComparte();
+
+            setTimeout(() => this.revisarDesplazamiento(), 0);
         });
 
         // El perfil llega después de la sesión, así que la carga espera a

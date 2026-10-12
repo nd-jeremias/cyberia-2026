@@ -11,22 +11,39 @@
     gap: 0.75rem;
 }
 
-/* --- Accesos de a pantallas completas ------------------------------------
-   El cartel de la mesa queda fijo arriba y lo único que se desplaza es la
-   lista de accesos. Cada acceso mide un tercio de esa lista, así entran tres
-   justos: la primera pantalla termina en el tercero y los demás quedan abajo,
-   sin ninguno asomando.
+/* --- Accesos, de a pantallas (reel) ----------------------------------------
+   El cartel de la mesa queda fijo arriba; lo único que se desplaza es la lista
+   de accesos, y lo hace de pantalla en pantalla.
 
-   El alto de la lista lo publica home.page.ts como `--alto-lista`: es el único
-   dato que el CSS no puede averiguar solo. La lista sigue siendo UNA, no se
-   divide en el código, así que ningún acceso puede quedar afuera.
+   El reparto NO se hace acá. El CSS puede fijar el alto de una pantalla, pero
+   no sabe contar cuántos accesos entran ni dónde termina un grupo: eso lo
+   calcula `paginasDeAccesos()` en home.page.ts, que mide el alto real y arma
+   los grupos. Acá sólo queda darle a cada grupo el alto exacto de la pantalla
+   y declararlo punto de parada.
 
-   `scroll-padding-top` es por el solapado del diseño: la hoja arranca 50px más
-   arriba que la banda naranja (global.scss, `margin-top: -50px`).
+   Las dos medidas de abajo tienen que coincidir con ALTO_ACCESO y
+   SEPARACION_ACCESO de home.page.ts: son las mismas cifras de los dos lados.
    ------------------------------------------------------------------------- */
 
-$separacion: 0.75rem;
-$por-pantalla: 3;
+$separacion: 0.75rem; // 12px — SEPARACION_ACCESO
+$alto-acceso: 6.25rem; // 100px — ALTO_ACCESO
+
+/* Tope del panel de estado. Se queda con el hueco que dejan los accesos, pero
+   hasta acá: con muchas mesas el mapa crecía sin freno. Más alto que esto
+   tampoco aporta, porque el mapa ya se lee de un vistazo. */
+$alto-maximo-panel: 15rem; // 240px
+
+/* Lo que hay que dejar libre abajo para que la barra de navegación de Android
+   no tape nada.
+
+   Android dibuja la página POR DEBAJO de esa barra y no informa cuánto mide
+   (ver MainActivity.java), así que `env(safe-area-inset-bottom)` vale 0 en la
+   mayoría de los teléfonos: el piso en rem es el que realmente protege, y el
+   `env()` sólo suma donde el sistema sí lo informa.
+
+   Lo usan dos cosas, y por eso está acá en vez de escrito dos veces: el fondo
+   de la hoja y el indicador de deslizar, que flota justo por encima. */
+$margen-barra: max(3rem, env(safe-area-inset-bottom, 0px));
 
 .pantalla-inicio {
     /* El `!important` es obligatorio: global.scss declara
@@ -37,6 +54,21 @@ $por-pantalla: 3;
 
     min-height: 0;
     overflow: hidden !important;
+
+    /* Ancla del indicador de deslizar, que va flotando sobre el reel. */
+    position: relative;
+
+    /* `.superior` (global.scss) reserva `50px + 2rem` abajo. Los 2rem son para
+       que la barra de navegación de Android no tape nada, y eso acá vale
+       igual. Los 50px son otra cosa: compensan el `margin-top: -50px` del
+       solapado, y sirven en las pantallas donde la hoja entera se desplaza. En
+       el home la hoja NO se desplaza —lo hace la lista de adentro—, así que
+       esos 50px sólo le recortaban alto al reel.
+
+       Se queda entonces con la parte que protege y se descarta la otra. El
+       `!important` es porque global.scss lo declara como `.layout-superpuesto
+       .superior`, que gana por especificidad. */
+    padding-bottom: $margen-barra !important;
 }
 
 .pantalla-inicio > .panel-situacion {
@@ -48,26 +80,136 @@ $por-pantalla: 3;
     min-height: 0;
     overflow-y: auto;
 
+    /* `mandatory`: el desplazamiento no puede quedar a mitad de camino entre
+       dos pantallas. Todo lo que vive acá adentro es una `.pagina-reel`, el
+       panel de estado incluido, así que no hay contenido sin anclaje que
+       pueda volverse inalcanzable. */
     scroll-snap-type: y mandatory;
     overscroll-behavior-y: contain;
 }
 
-.lista-accesos .grilla-acciones {
-    grid-auto-rows: calc((var(--alto-lista, 18rem) - #{$separacion * ($por-pantalla - 1)}) / #{$por-pantalla});
-}
+/* Una pantalla del reel. El alto exacto del área visible es lo que hace que el
+   anclaje caiga siempre justo y que nada quede cortado.
 
-/* Sólo el primero de cada tanda es punto de parada: una pasada lleva del
-   acceso 1 al 4, que es el comienzo de la pantalla siguiente. */
-.tarjeta-accion:nth-child(#{$por-pantalla}n + 1) {
+   `min-height` y no `height`: si alguna pantalla llegara a tener más contenido
+   del que entra (el panel de estado con muchas mesas), crece y se desplaza por
+   dentro, en lugar de recortarlo. */
+.pagina-reel {
+    /* Columna: arriba los accesos, con su alto fijo, y abajo el panel de
+       estado quedándose con lo que sobre. */
+    display: flex;
+    flex-direction: column;
+    gap: $separacion;
+
+    min-height: 100%;
+    box-sizing: border-box;
+
     scroll-snap-align: start;
     scroll-snap-stop: always;
 }
 
-/* Sin accesos (los perfiles de cliente todavía no tienen) el cartel se lleva
-   el alto sobrante, en lugar de dejar medio papel cortado. */
-.grilla-acciones:has(> .estado-vacio) {
+/* Los accesos de una pantalla.
+
+   `flex: 0 0 auto` con `grid-auto-rows` fijo: ocupan lo suyo y nada más. Todos
+   miden lo mismo en todas las pantallas, y el hueco que dejan es del panel.
+   Estirarlos para llenar la pantalla es justo lo que los hacía enormes en los
+   roles con dos o tres accesos. */
+.lista-accesos .grilla-acciones {
+    flex: 0 0 auto;
+
+    grid-auto-rows: $alto-acceso;
+    align-content: start;
+}
+
+/* Sin accesos (los perfiles de cliente en ciertos tramos) el cartel sí se lleva
+   el hueco, en lugar de dejar medio papel cortado. */
+.pagina-reel > .estado-vacio {
+    display: flex;
     flex: 1;
-    align-content: stretch;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 0;
+}
+
+/* En su pantalla propia el panel queda arriba y conserva el mismo tope: suelto
+   se estiraba hasta llenarla entera, que es justo lo que no se quiere. El resto
+   de la pantalla queda libre a propósito. */
+.pagina-panel .panel-estado {
+    flex: 0 1 auto;
+}
+
+/* --- Indicador de deslizar -------------------------------------------------
+   El reel no avisa que hay más: cada pantalla entra justa y nada asoma, que es
+   lo que se buscaba y también lo que deja el gesto oculto. Esta flecha es la
+   única pista, y por eso flota por encima en lugar de ocupar lugar.
+   ------------------------------------------------------------------------- */
+
+.indicador-reel {
+    position: absolute;
+
+    /* `bottom` se mide contra la caja de relleno, o sea el borde de abajo de la
+       hoja —que en Android queda por debajo de la barra de navegación—. Hay que
+       levantarla el mismo margen que protege a la hoja, más un respiro. */
+    bottom: calc(#{$margen-barra} + 0.5rem);
+    left: 50%;
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 2rem;
+    height: 2rem;
+    box-sizing: border-box;
+    border-radius: 50%;
+
+    background: var(--hoja-alta);
+    border: var(--borde-hoja);
+    box-shadow: var(--sombra-apoyada);
+
+    font-size: 0.8125rem;
+    color: var(--naranja-hondo);
+
+    /* No se interpone con el toque de lo que haya debajo. */
+    pointer-events: none;
+
+    /* El `translateX` vive en la animación y no acá: si estuviera en las dos
+       partes, la animación lo pisaría y la flecha saltaría a la izquierda. */
+    animation: asomar-abajo 1.8s ease-in-out infinite;
+}
+
+.indicador-reel.hacia-arriba {
+    animation-name: asomar-arriba;
+}
+
+@keyframes asomar-abajo {
+    0%,
+    100% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, 0.1875rem);
+    }
+}
+
+@keyframes asomar-arriba {
+    0%,
+    100% {
+        transform: translate(-50%, 0);
+    }
+    50% {
+        transform: translate(-50%, -0.1875rem);
+    }
+}
+
+/* Quien pidió menos movimiento ve la flecha quieta: sigue informando igual. */
+@media (prefers-reduced-motion: reduce) {
+    .indicador-reel {
+        animation: none;
+        transform: translateX(-50%);
+    }
 }
 
 /* Medallón, nombre y flecha: el patrón de lista de cualquier aplicación de
@@ -138,7 +280,29 @@ $por-pantalla: 3;
     flex-direction: column;
     gap: 0.75rem;
 
-    margin-top: 0.875rem;
+    /* Se queda con el hueco que dejan los accesos, pero nunca más de
+       `$alto-maximo-panel`: con muchas mesas el mapa crecía sin freno y
+       empujaba la pantalla, que es lo que descolocaba el anclaje.
+
+       `min-height: 0` es lo que le permite achicarse por debajo de su
+       contenido, y recién con eso el `overflow-y` de abajo sirve de algo. */
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: $alto-maximo-panel;
+    overflow-y: auto;
+
+    /* SIN `overscroll-behavior: contain` a propósito.
+
+       Parece lo correcto —que el desplazamiento del panel no se contagie al
+       reel— pero hace justo lo que no se quiere: cuando el panel ya está
+       arriba de todo, `contain` corta la cadena y el gesto muere ahí. En la
+       pantalla que es sólo panel eso dejaba al usuario encerrado, sin poder
+       volver a los accesos. Encadenando, al tocar su tope el desplazamiento
+       sigue en el reel, que es lo que uno espera. */
+
+    /* Sin margen: la separación con los accesos la da el `gap` de la pantalla,
+       y un margen acá se sumaría al alto, corriendo el anclaje. */
+    margin-top: 0;
     padding: 0.875rem;
     box-sizing: border-box;
 

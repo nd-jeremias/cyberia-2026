@@ -137,6 +137,18 @@ export class EscanearIngresoPage {
             if (anotado) {
                 await this.notificaciones.enviarAvisos(['metre'], 'Cliente en lista de espera', 'Un cliente acaba de acceder mediante QR y esta a la espera de una mesa.', 'cliente-en-espera')
             }
+
+            // Escaneado el código, acá ya no queda nada que hacer: esta
+            // pantalla sólo sabe repetir la leyenda del estado. El inicio
+            // muestra lo mismo y además los accesos que correspondan, así que
+            // es el lugar donde el cliente tiene que terminar.
+            //
+            // Vale para los dos casos: si ya estaba anotado también está en la
+            // lista, y quedarse acá no le aporta nada.
+            //
+            // `replaceUrl` saca el lector del historial: el botón de atrás no
+            // debe traer de nuevo la cámara del ingreso.
+            await this.router.navigate(['/inicio'], { replaceUrl: true });
         } catch (error) {
             this.avisarError(error, 'No se pudo completar el ingreso al local.');
         } finally {
