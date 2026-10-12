@@ -14,6 +14,7 @@ export type TipoNotificacion =
     | 'consulta-mozo'
     | 'pedido-nuevo'
     | 'pedido-estado'
+    | 'cuenta-solicitada'
     | 'pago';
 
 /** Aviso ya normalizado, listo para mostrarse en la aplicación. */

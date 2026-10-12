@@ -6,9 +6,6 @@ import { NotificacionesService } from './services/notificaciones.service';
 import { ModalComponent } from './components/modal/modal.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { AudioService } from './services/audio.service';
-import { MesaService } from './services/mesa.service';
-import { PedidoService } from './services/pedido.service';
-import { SpinnerService } from './services/spinner.service';
 import { App } from '@capacitor/app';
 
 @Component({
@@ -21,18 +18,6 @@ export class AppComponent implements OnInit {
     private notificaciones = inject(NotificacionesService);
     private sound = inject(AudioService);
     private platform = inject(Platform);
-    private spinner = inject(SpinnerService);
-    private pedidoService = inject(PedidoService);
-    private mesaService = inject(MesaService);
-
-    constructor() {
-        // El enunciado pide spinner en TODAS las esperas. Los pedidos y las
-        // mesas son lo que más se consulta y ya avisan cuándo están esperando:
-        // el spinner sigue esas banderas, así ninguna pantalla se olvida de
-        // prenderlo.
-        this.spinner.seguir(this.pedidoService.cargando);
-        this.spinner.seguir(this.mesaService.cargando);
-    }
 
     ngOnInit() {
         this.platform.ready().then(() => {

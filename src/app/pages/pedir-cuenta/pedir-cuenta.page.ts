@@ -14,6 +14,7 @@ import { PedidoInterface } from '../../interfaces/pedido.interface';
 import { TarjetaFacturaComponent } from '../../components/tarjeta-factura/tarjeta-factura.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../services/auth.service';
+import { NotificacionesService } from '../../services/notificaciones.service';
 
 /**
  * Pedir la cuenta — PANTALLA PENDIENTE.
@@ -48,6 +49,7 @@ export class PedirCuentaPage {
     pedidoService = inject(PedidoService);
     authService = inject(AuthService);
     router = inject(Router);
+    notificaciones = inject(NotificacionesService);
 
     pedido = signal<PedidoInterface | null>(null);
     propinaAgregada = signal<boolean>(false);
@@ -73,6 +75,36 @@ export class PedirCuentaPage {
         this.pedido.set(pedido_cliente);
 
         if (this.pedido()?.propinaPorcentaje) this.propinaAgregada.set(true);
+
+        // Con la propina ya elegida, el mozo ya pasó por la mesa con los QR.
+        if (pedido_cliente && !this.propinaAgregada()) await this.avisarAlMozo(pedido_cliente);
+    }
+
+    /**
+     * Punto 21: "el cliente solicita la cuenta al mozo (push notification)".
+     *
+     * Abrir esta pantalla es pedir la cuenta. El mozo recibe el número de mesa
+     * para acercarle los QR de propina, sin los que no se puede armar la cuenta.
+     *
+     * Si el aviso falla, el cliente igual puede seguir: se le pide que llame al
+     * mozo, que es lo que el aviso habría hecho por él.
+     */
+    private async avisarAlMozo(pedido: PedidoInterface): Promise<void> {
+        try {
+            await this.notificaciones.enviarAvisos(
+                ['mozo'],
+                'Pedido de cuenta',
+                `Mesa ${pedido.numeroMesa}: el cliente pidió la cuenta. Acercale los QR de propina.`,
+                'cuenta-solicitada'
+            );
+        } catch (error) {
+            console.error('No se pudo avisar al mozo del pedido de cuenta:', error);
+            this.modal.setOpen(
+                'No pudimos avisarle al mozo',
+                'Llamalo para pedirle la cuenta y los códigos QR de propina.',
+                'info'
+            );
+        }
     }
 
     async scanQrPropina() {

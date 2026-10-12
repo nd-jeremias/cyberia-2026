@@ -644,7 +644,10 @@ export class PedidoService {
      */
     totalConDescuento(pedido: PedidoInterface): number {
         const descuento = pedido.precioTotalNeto * (pedido.descuentoJuego / 100);
-        const propina = pedido.precioTotalNeto * (pedido.propinaPorcentaje ?? 0 / 100);
+        // Los paréntesis son necesarios: `??` se evalúa después de `/`, y sin
+        // ellos quedaba `propinaPorcentaje ?? (0 / 100)`, o sea, una propina
+        // del 10% sumaba diez veces el neto.
+        const propina = pedido.precioTotalNeto * ((pedido.propinaPorcentaje ?? 0) / 100);
 
         return pedido.precioTotalNeto - descuento + propina;
     }

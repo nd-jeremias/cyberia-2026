@@ -8,16 +8,35 @@ import { ChartService } from '../../services/chart.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { SalonService } from '../../services/salon.service';
-import { SpinnerService } from '../../services/spinner.service';
 import { formatearImporte } from '../../utils/importe';
 import {
     LEYENDA_PAGANDO,
     LEYENDA_PEDIDO,
+    puedeAccederAJuegos,
     puedeConfirmarRecepcion,
-    puedeEnviarPedido,
+    puedeEnviarOtroPedido,
+    puedeUsarServiciosDeMesa,
 } from './mi-pedido.estado';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NotificacionesService } from '../../services/notificaciones.service';
+
+/**
+ * Secciones del cliente que se desarrollan en otra rama (eze-dev), con las
+ * mismas rutas que tienen allá. Mientras la ruta no exista en esta rama, el
+ * botón avisa en lugar de no hacer nada.
+ */
+const SECCIONES = {
+    estado: {
+        ruta: 'estado-pedido',
+        titulo: 'Estado del pedido',
+        aviso: 'El seguimiento del pedido todavía no está habilitado.',
+    },
+    juegos: { ruta: 'juegos', titulo: 'Juegos', aviso: 'La sección de juegos todavía no está habilitada.' },
+    encuesta: { ruta: 'encuestas', titulo: 'Encuesta', aviso: 'La encuesta todavía no está habilitada.' },
+    cuenta: { ruta: 'pedir-cuenta', titulo: 'Cuenta', aviso: 'El pedido de la cuenta todavía no está habilitado.' },
+} as const;
+
+export type SeccionCliente = keyof typeof SECCIONES;
 
 /**
  * Pedido del cliente: lo que está armando y lo que ya mandó.
@@ -55,7 +74,6 @@ export class MiPedidoPage {
     private pedidoService = inject(PedidoService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
-    private spinner = inject(SpinnerService);
     private router = inject(Router);
     private notificaciones = inject(NotificacionesService);
 
@@ -83,7 +101,10 @@ export class MiPedidoPage {
     hayBorrador = computed(() => this.unidades() > 0);
 
     /** Si todavía se puede mandar un pedido nuevo: no, con alguno ya confirmado. */
-    puedeEnviar = computed(() => puedeEnviarPedido(this.pedidos().map((p) => p.estado)));
+    puedeEnviar = computed(() => puedeEnviarOtroPedido(this.pedidos().map((p) => p.estado)));
+
+    /** Algún pedido ya bajó a cocina: se puede seguir su preparación (punto 14). */
+    hayConfirmado = computed(() => !this.puedeEnviar());
 
     /**
      * El borrador se muestra si se puede mandar, o si hay que corregir uno
@@ -91,17 +112,6 @@ export class MiPedidoPage {
      * nada que corregir, lo que quedó en el carrito ya no se puede mandar.
      */
     mostrarBorrador = computed(() => this.hayBorrador() && (this.puedeEnviar() || this.rechazado()));
-
-    /**
-     * El pedido ya enviado se muestra sólo cuando no hay un borrador en
-     * pantalla.
-     *
-     * Con un pedido rechazado pasaban las dos cosas a la vez: arriba lo que el
-     * cliente está corrigiendo y abajo el pedido rechazado, con los mismos
-     * productos repetidos. Lo que importa es lo que va a reenviar; el motivo ya
-     * lo explica el aviso de arriba.
-     */
-    mostrarEnviados = computed(() => this.hayEnviados() && !this.mostrarBorrador());
 
     /** Quedaron productos elegidos que ya no se pueden mandar. */
     borradorBloqueado = computed(() => this.hayBorrador() && !this.mostrarBorrador());
@@ -132,8 +142,8 @@ export class MiPedidoPage {
         // acá para que la regla no dependa sólo de lo que se dibuja.
         if (!this.pedidoRechazado() && !this.puedeEnviar()) {
             this.modal.setOpen(
-                'Ya tenés un pedido',
-                'Sólo se puede tener un pedido por visita. Seguí el tuyo desde esta misma pantalla.'
+                'Pedido ya confirmado',
+                'Tu pedido ya pasó a cocina y barra. No se pueden agregar más productos en esta visita.'
             );
 
             return;
@@ -219,6 +229,19 @@ export class MiPedidoPage {
         this.router.navigate(['/carta']);
     }
 
+    /** Punto 15: alcanza con que alguno de sus pedidos ya esté confirmado. */
+    puedeJugar = computed(() => this.pedidos().some((p) => puedeAccederAJuegos(p.estado, this.authService.perfil())));
+
+    /**
+     * Punto 19: la encuesta y la cuenta se habilitan cuando recibió TODO lo que
+     * pidió. Con un solo pedido pendiente todavía no tiene sentido pagar.
+     */
+    serviciosHabilitados = computed(() => {
+        const pedidos = this.pedidos();
+
+        return pedidos.length > 0 && pedidos.every((p) => puedeUsarServiciosDeMesa(p.estado, p.estadoCliente));
+    });
+
     /** Qué decirle al cliente sobre un pedido en particular. */
     leyendaDe(pedido: PedidoInterface): string {
         return pedido.estadoCliente === 'pagando' ? LEYENDA_PAGANDO : LEYENDA_PEDIDO[pedido.estado];
@@ -279,7 +302,6 @@ export class MiPedidoPage {
         }
 
         this.cargando.set(true);
-        this.spinner.show();
 
         try {
             this.pedidos.set(await this.pedidoService.pedidosActivosDelCliente(usuarioId));
@@ -289,7 +311,6 @@ export class MiPedidoPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
-            this.spinner.hide();
         }
     }
 
@@ -328,4 +349,15 @@ export class MiPedidoPage {
      * Lleva al estado del pedido o a los juegos (punto 14), a la encuesta o a
      * pedir la cuenta (punto 19).
      */
+    irA(seccion: SeccionCliente) {
+        const { ruta, titulo, aviso } = SECCIONES[seccion];
+        const existe = this.router.config.some((definicion) => definicion.path === ruta);
+
+        if (!existe) {
+            this.modal.setOpen(titulo, aviso, 'info');
+            return;
+        }
+
+        void this.router.navigate(['/', ruta]);
+    }
 }

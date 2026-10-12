@@ -1,8 +1,5 @@
 <section class="listado-productos">
-    <!-- Sin título cuando la pantalla ya dice qué se está mirando (la carta). -->
-    @if (tituloListado()) {
     <h2 class="titulo-listado titulo-seccion">{{ tituloListado() }}</h2>
-    }
 
     @if (productos().length === 0) {
     <div class="estado-vacio">
@@ -10,7 +7,7 @@
         <p>Todavía no hay productos cargados en esta sección.</p>
     </div>
     } @else {
-    <div class="lista" [class.lista-reel]="modo() === 'pedido'">
+    <div class="lista">
         @for (producto of productos(); track producto.id) {
         <app-tarjeta-producto
             class="item-lista"

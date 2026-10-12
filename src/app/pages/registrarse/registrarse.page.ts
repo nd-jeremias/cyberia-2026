@@ -8,7 +8,6 @@ import { AuthService } from '../../services/auth.service';
 import { HeaderLogoComponent } from '../../components/header-logo/header-logo.component';
 import { NotificacionesService } from '../../services/notificaciones.service';
 import { BrevoEmailService } from '../../services/brevo.email.service';
-import { mensajeDeError } from '../../utils/errores';
 
 @Component({
     selector: 'app-registrarse',
@@ -51,7 +50,7 @@ export class RegistrarsePage {
         } catch (error: any) {
             this.spinner.hide();
             console.error('Error en el proceso de registro:', error);
-            this.modal.setOpen('Error', mensajeDeError(error, 'No se pudo completar el registro.'));
+            this.modal.setOpen('Error', error.message || 'No se pudo completar el registro');
         }
     }
 }
