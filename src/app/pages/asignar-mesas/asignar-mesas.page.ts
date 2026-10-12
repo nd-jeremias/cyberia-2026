@@ -5,6 +5,7 @@ import { MesaInterface } from '../../interfaces/mesa.interface';
 import { MesaService } from '../../services/mesa.service';
 import { SalonService } from '../../services/salon.service';
 import { ModalService } from '../../services/modal.service';
+import { SpinnerService } from '../../services/spinner.service';
 import { TarjetaUsuarioComponent } from '../../components/tarjeta-usuario/tarjeta-usuario.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -31,6 +32,7 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
     private mesaService = inject(MesaService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
+    private spinner = inject(SpinnerService);
     private notificaciones = inject(NotificacionesService);
 
     clientes = signal<ClienteInterface[]>([]);
@@ -74,12 +76,16 @@ export class AsignarMesasPage implements OnInit, OnDestroy {
      * esperando mesa ahora mismo (punto 9).
      */
     async cargarClientes() {
+        this.spinner.show();
+
         try {
             this.clientes.set(await this.salonService.clientesParaAsignar());
         } catch (error) {
             const mensaje = error instanceof Error ? error.message : 'No se pudieron cargar los clientes.';
 
             this.modal.setOpen('Error', mensaje, 'error');
+        } finally {
+            this.spinner.hide();
         }
     }
 

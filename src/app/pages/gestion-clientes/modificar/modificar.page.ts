@@ -10,6 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { AuthService } from '../../../services/auth.service';
 import { ClientesService } from '../../../services/clientes.service';
 import { ClienteInterface } from '../../../interfaces/cliente.interface';
+import { mensajeDeError } from '../../../utils/errores';
 
 @Component({
     selector: 'app-modificar',
@@ -67,7 +68,7 @@ export class ModificarPage implements OnInit {
             this.router.navigate(['/gestion-clientes']);
         } catch (error: any) {
             console.error('Error en el proceso de registro:', error, 'error');
-            this.modal.setOpen('Error', error.message || 'No se pudo completar la modificación');
+            this.modal.setOpen('Error', mensajeDeError(error, 'No se pudo completar la modificación.'));
         } finally {
             this.spinner.hide();
         }
