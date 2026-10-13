@@ -916,7 +916,7 @@ body.barcode-scanner-active .barcode-scanner-ui {
            El `max()` es el piso: cuando Android no informa el alto de la barra
            (que es lo habitual), igual quedan 2rem libres además del solapado
            del diseño. */
-        padding-bottom: calc(50px + max(2rem, env(safe-area-inset-bottom, 0px)));
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 
         flex: 1;
         min-height: 0;

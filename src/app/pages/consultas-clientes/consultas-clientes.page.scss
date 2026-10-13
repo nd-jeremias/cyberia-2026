@@ -7,13 +7,46 @@
 .lista-chats {
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
+    // gap: 1rem;
 
     width: 100%;
     max-width: 44rem;
     margin: 0 auto;
     padding: 0;
     list-style: none;
+
+    flex: 1;
+    min-height: 0;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    > li {
+        width: 100%;
+
+        // Anclaje de snap de 3 en 3 (en el elemento 1, 4, 7, etc.)
+        &:nth-child(3n + 1) {
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        // Si la última tanda tiene 1 o 2 elementos, compensa el espacio inferior para que el anclaje suba completo
+        &:last-child:nth-child(3n + 4) {
+            margin-bottom: calc(2 * (23vh + 1rem));
+        }
+
+        &:last-child:nth-child(3n + 5) {
+            margin-bottom: calc(1 * (23vh + 1rem));
+        }
+    }
 }
 
 .hoja > .lista-chats:has(> .estado-vacio) {
@@ -27,8 +60,9 @@
 .fila-chat {
     display: flex;
     align-items: center;
-    gap: 0.875rem;
-    height: 25vh;
+    margin: 0.5rem 0;
+    // gap: 0.875rem;
+    height: 23vh;
     width: 100%;
     padding: 0.75rem;
     box-sizing: border-box;
@@ -64,7 +98,7 @@
 
 .fila-datos {
     // flex: 1;
-    min-width: 0;
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -101,10 +135,11 @@
 }
 
 .fila-ultimo {
+    width: 80%;
     overflow: hidden;
-    white-space: nowrap;
+    white-space: wrap;
     text-overflow: ellipsis;
-
+    text-align: center;
     font-size: var(--texto-apoyo);
     color: var(--tinta-media);
 }
