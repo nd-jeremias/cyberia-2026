@@ -132,12 +132,14 @@
 
 .caja {
     flex-shrink: 0;
-    
+
     display: flex;
     align-items: center;
     gap: 0.5rem;
 
-    padding: 0.625rem 0.75rem var(--pie-seguro);
+    /* Un rem más que el resto de los pies fijos: con --pie-seguro solo, la
+       caja de texto quedaba demasiado pegada al borde de abajo. */
+    padding: 0.625rem 0.75rem calc(var(--pie-seguro) + 1rem);
     box-sizing: border-box;
 
     background: var(--hoja-alta);

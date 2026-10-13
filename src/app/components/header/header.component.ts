@@ -40,7 +40,7 @@ export class HeaderComponent {
     private notificaciones = inject(NotificacionesService);
 
     defaultHref = input<string>('/inicio');
-    tituloHeader = input<string>('Inicio');
+    tituloHeader = input<string>();
 
     /** 'usuario' muestra la identidad; 'pantalla', el título de la sección. */
     modo = input<'usuario' | 'pantalla'>('pantalla');
