@@ -28,7 +28,7 @@
     display: flex;
     align-items: center;
     gap: 0.875rem;
-
+    height: 25vh;
     width: 100%;
     padding: 0.75rem;
     box-sizing: border-box;
@@ -63,24 +63,27 @@
 }
 
 .fila-datos {
-    flex: 1;
+    // flex: 1;
     min-width: 0;
-
+    height: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    justify-content:  center;
 }
 
 .fila-arriba,
 .fila-abajo {
     display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
 }
 
 .fila-nombre {
-    overflow: hidden;
+    // overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 
