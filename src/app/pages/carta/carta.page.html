@@ -3,23 +3,17 @@
         <app-header
             class="inferior sin-labio"
             [defaultHref]="'/inicio'"
-            [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'"
+            /* [tituloHeader]="corrigiendo() ? 'Corregir pedido' : 'Carta'" */
         ></app-header>
 
         <div class="superior hoja pantalla-carta">
-            @if (corrigiendo()) {
-            <!-- Punto 13: se entró desde un pedido rechazado, con lo pedido ya cargado. -->
-            <p class="aviso-correccion">
-                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
-                El mozo pidió cambios. Ajustá lo que haga falta y volvé a enviarlo.
-            </p>
-            } @if (!puedePedir()) {
-            <!-- Con un pedido confirmado, la carta queda para mirar: ya no se agrega nada. -->
-            <p class="aviso-correccion">
-                <fa-icon [icon]="['fas', 'lock']"></fa-icon>
-                Tu pedido ya fue confirmado. Podés ver la carta, pero no agregar productos.
-            </p>
-            }
+            <!--
+              Acá no va ningún cartel informativo: el alto que ocupan es el que
+              necesita la foto del producto. Lo que había que decir ya está
+              dicho en otro lado: que el mozo pidió cambios lo dice el título
+              de la pantalla ("Corregir pedido"), y que ya hay un pedido
+              enviado se lo explica `agregar()` al tocar "Agregar al pedido".
+            -->
 
             <!-- Comidas, bebidas y postres: el filtro es de pantalla, la carta ya está cargada. -->
             <nav class="solapas" aria-label="Secciones de la carta">
@@ -44,9 +38,12 @@
                 <p>Cargando la carta…</p>
             </div>
             } @else {
+            <!-- `reel`: una tarjeta por pantalla, sin desplazamiento libre. El
+                 título del listado no va: las solapas de arriba ya dicen qué
+                 sección se está mirando. -->
             <app-tarjeta-listado-producto
+                class="reel"
                 [productos]="productosVisibles()"
-                [tituloListado]="tituloListado()"
                 [cantidades]="cantidades()"
                 modo="pedido"
                 (agregarCarrito)="agregar($event)"

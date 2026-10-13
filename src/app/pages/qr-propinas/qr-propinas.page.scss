@@ -1,0 +1,82 @@
+/**
+ * Los cinco QR de propina.
+ *
+ * La tarjeta blanca del código y la ayuda vienen de qr-local.page.scss; acá va
+ * sólo la lista de niveles.
+ */
+
+.niveles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    width: 100%;
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+    }
+}
+
+/* Cada nivel es una ficha, como los accesos del inicio: el porcentaje a la
+   derecha, grande, porque es el dato que define la cuenta. */
+.nivel {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+
+    width: 100%;
+    padding: 0.75rem 1rem;
+    box-sizing: border-box;
+    text-align: left;
+
+    font-family: var(--fuente);
+    color: var(--tinta);
+
+    background: var(--grad-tarjeta);
+    border: var(--borde-hoja);
+    border-left: 0.3125rem solid var(--hoja-borde);
+    border-radius: var(--radio-grande);
+    box-shadow: var(--sombra-apoyada);
+    cursor: pointer;
+
+    &:active {
+        transform: scale(0.99);
+    }
+}
+
+/* El elegido se marca con el naranja de la aplicación, además del QR que
+   aparece debajo: el color solo no alcanza para saber cuál está abierto. */
+.nivel-elegido {
+    border-left-color: var(--naranja);
+    box-shadow: var(--sombra-tarjeta);
+}
+
+.nivel-texto {
+    flex: 1;
+    min-width: 0;
+
+    font-size: var(--texto-cuerpo);
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.nivel-porcentaje {
+    flex-shrink: 0;
+
+    font-size: var(--texto-subtitulo);
+    font-weight: 800;
+    color: var(--naranja-hondo);
+    font-variant-numeric: tabular-nums;
+}
+
+/* El botón de guardar acompaña al QR, no se estira a lo ancho de la hoja. */
+.niveles .btn-principal {
+    max-width: 20rem;
+}

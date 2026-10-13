@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { IonContent, IonIcon } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
+import { AuthService } from '../../services/auth.service';
+import { PedidoService } from '../../services/pedido.service';
+import { BotonHomeComponent } from '../../components/boton-home/boton-home.component';
+import { BotonHomeInterface } from '../../interfaces/component.interface';
 
 /**
  * Juegos — PANTALLA PENDIENTE.
@@ -16,6 +20,41 @@ import { HeaderComponent } from '../../components/header/header.component';
 @Component({
     selector: 'app-juegos',
     templateUrl: './juegos.page.html',
-    imports: [IonContent, IonIcon, HeaderComponent],
+    styleUrls: ['./juegos.page.scss'],
+    imports: [IonContent, BotonHomeComponent, HeaderComponent],
 })
-export class JuegosPage {}
+export class JuegosPage {
+    auth = inject(AuthService);
+    pedidos = inject(PedidoService);
+
+    verJuegos = signal<boolean>(false);
+
+    async ngOnInit() {
+        const userId = this.auth.session()?.user.id;
+        if (!userId) return;
+
+        const pedidosActivos = await this.pedidos.pedidoActualDelCliente(userId);
+
+        if (pedidosActivos?.estado == 'Confirmado') {
+            this.verJuegos.set(true);
+        }
+    }
+
+    botonMemoria: BotonHomeInterface = {
+        texto: 'Adivina el par',
+        icono: 'brain',
+        ruta: '/juegos/memoria',
+    };
+
+    botonQuiz: BotonHomeInterface = {
+        texto: 'Preguntas Rapidas',
+        icono: 'question',
+        ruta: '/juegos/preguntas',
+    };
+
+    botonMayorMenor: BotonHomeInterface = {
+        texto: '¿Mayor o Menor?',
+        icono: 'arrow-trend-up',
+        ruta: './juegos/mayor-menor',
+    };
+}

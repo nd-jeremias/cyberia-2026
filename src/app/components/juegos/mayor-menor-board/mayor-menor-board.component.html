@@ -1,0 +1,32 @@
+<div class="game-container">
+    <div class="board">
+        <div class="card-slot">
+            <p class="titulo-carta">Carta Actual</p>
+            <img [src]="mymService.currentCard()?.image" [alt]="this.mymService.currentCard()?.value" />
+        </div>
+
+        <div class="card-slot">
+            <p class="titulo-carta">Carta Siguiente</p>
+            <div class="card" [class.flipped]="!this.mymService.isDrawing()">
+                <!-- Dorso -->
+                <div class="card-face card-back">
+                    <img [src]="this.mymService.backCardImg" />
+                </div>
+
+                <!-- Frente -->
+                <div class="card-face card-front">
+                    <img [src]="this.mymService.nextCard()?.image" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button (click)="checkGuess('higher')" class="btn btn-edit btn-higher" [disabled]="this.mymService.isDrawing()">
+            MÁS ALTA ↑
+        </button>
+        <button (click)="checkGuess('lower')" class="btn btn-edit btn-lower" [disabled]="this.mymService.isDrawing()">
+            MÁS BAJA ↓
+        </button>
+    </div>
+</div>

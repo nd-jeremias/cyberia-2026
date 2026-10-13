@@ -905,12 +905,23 @@ body.barcode-scanner-active .barcode-scanner-ui {
         overflow: hidden;
         // flex-grow: 1;
         padding-top: 1.5rem;
-        padding-bottom: 50px;
+
+        /* El final de la hoja tiene que quedar POR ENCIMA de la barra de
+           navegación del teléfono. Android dibuja la página por debajo de esa
+           barra y no informa cuánto mide (ver MainActivity.java), así que acá
+           se deja un piso: sin esto, lo último de un listado largo —el botón
+           "Confirmar pago y liberar mesa" del mozo, por ejemplo— queda tapado
+           y no se puede tocar ni desplazando.
+
+           El `max()` es el piso: cuando Android no informa el alto de la barra
+           (que es lo habitual), igual quedan 2rem libres además del solapado
+           del diseño. */
+        padding-bottom: calc(50px + max(2rem, env(safe-area-inset-bottom, 0px)));
 
         flex: 1;
         min-height: 0;
 
-        overflow-y: auto;
+        // overflow-y: auto; // Esto es lo que muestra bordes negros, no lo vamos a usar, asi que podemos eliminarlo
         overflow-x: hidden;
     }
 
@@ -925,7 +936,48 @@ body.barcode-scanner-active .barcode-scanner-ui {
         // padding-bottom: 100px;
         padding-bottom: env(safe-area-inset-bottom, 0px);
         height: auto;
-        max-height: 15vh;
         border-radius: 40px 40px 0 0;
     }
+}
+/* ── La carta en modo reel ─────────────────────────────────────────────
+   La tarjeta ocupa el alto de la pantalla y la foto se queda con lo que sobra
+   después del nombre, la descripción, el precio y el botón. Así nada se corta,
+   entre en el teléfono que entre.
+
+   La foto puede hacerlo porque la tarjeta tiene un alto definido: sin eso el
+   carrusel se queda en cero y no se ve ninguna imagen, que es lo que pasaba
+   antes. Va acá y no en el componente porque los estilos de un componente no
+   entran en otro.
+   ------------------------------------------------------------------- */
+
+.lista-reel .tarjeta-producto {
+    height: 100%;
+}
+
+.lista-reel .tarjeta-producto > .carrusel {
+    flex: 1 1 auto;
+
+    /* La foto es lo que vende el plato: se lleva al menos la mitad de la
+       tarjeta, y todo lo que sobre después del texto. */
+    min-height: 50%;
+    aspect-ratio: auto;
+}
+
+/* El texto y los botones ocupan lo justo y no pelean con la foto por el alto:
+   menos aire entre renglones y la descripción en dos líneas en lugar de tres. */
+.lista-reel .tarjeta-producto > .contenido {
+    flex: 0 0 auto;
+    gap: 0.375rem;
+    padding: 0.75rem 1rem 1rem;
+}
+
+.lista-reel .tarjeta-producto .descripcion {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+}
+
+/* La insignia del tipo ("PLATO") sobra en la carta: la solapa elegida ya dice
+   si se están mirando platos, bebidas o postres. */
+.lista-reel .insignia-tipo {
+    display: none;
 }

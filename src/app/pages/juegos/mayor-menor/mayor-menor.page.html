@@ -1,0 +1,20 @@
+<ion-content [fullscreen]="true">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/juegos'" [tituloHeader]="'¿Mayor o Menor?'"></app-header>
+
+        <div class="superior hoja">
+            @switch (game.gameState()) {
+                @case ('RULES'){
+                    <app-tarjeta-informacion-cliente [texto]="textoInformativo()"></app-tarjeta-informacion-cliente>
+                    <button class="btn-primario" (click)="game.gameState.set('PLAYING')">
+                        Continuar<fa-icon [icon]="['fas', 'chevron-right']"></fa-icon>
+                    </button>
+                }
+                @case ('PLAYING') {
+                    <app-mayor-menor-board></app-mayor-menor-board>
+                    <button class="btn-primario" (click)="cancelarIntento()">SALIR</button>
+                }
+            }
+        </div>
+    </div>
+</ion-content>

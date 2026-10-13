@@ -2,12 +2,32 @@
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Encuestas'"></app-header>
 
-        <div class="superior hoja">
-            <div class="estado-vacio">
-                <ion-icon name="construct-outline"></ion-icon>
-                <p>Esta pantalla todavía no está hecha.</p>
-                <p>Puntos 9 y 20: cargar la encuesta de la visita y ver los resultados en gráficos.</p>
-            </div>
+        <div class="superior hoja hoja-angosta">
+            @if (cargando()) {
+                <div class="estado-vacio">
+                <ion-icon name="time-outline"></ion-icon>
+                <p>Verificando estado de tu visita...</p>
+                </div>
+            } @else {
+            <!-- Selector superior de vista si tiene permiso para responder -->
+
+                 @if (puedeResponder()){ 
+                <div class="contenedor-botones-home">
+                    
+                    <app-boton-home [boton]="botonCompletar"></app-boton-home>
+                    
+                </div>
+                } 
+
+                <app-boton-home [boton]="botonResultados"></app-boton-home>
+
+                @if (!puedeResponder()) {
+                    <div class="aviso-estado">
+                    <ion-icon name="information-circle-outline"></ion-icon>
+                    <p>Podrás responder la encuesta cuando hayas recibido tu pedido en la mesa.</p>
+                    </div>
+                }
+            }
         </div>
     </div>
 </ion-content>

@@ -2,37 +2,22 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { HeaderComponent } from '../../components/header/header.component';
-import { ItemNuevoPedido, PedidoInterface } from '../../interfaces/pedido.interface';
+import { EstadoPedido, ItemNuevoPedido, PedidoInterface } from '../../interfaces/pedido.interface';
 import { AuthService } from '../../services/auth.service';
 import { ChartService } from '../../services/chart.service';
 import { ModalService } from '../../services/modal.service';
 import { PedidoService } from '../../services/pedido.service';
 import { SalonService } from '../../services/salon.service';
+import { SpinnerService } from '../../services/spinner.service';
 import { formatearImporte } from '../../utils/importe';
 import {
     LEYENDA_PAGANDO,
     LEYENDA_PEDIDO,
-    puedeAccederAJuegos,
     puedeConfirmarRecepcion,
-    puedeEnviarOtroPedido,
-    puedeUsarServiciosDeMesa,
+    puedeEnviarPedido,
 } from './mi-pedido.estado';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NotificacionesService } from '../../services/notificaciones.service';
-
-/**
- * Secciones del cliente que se desarrollan en otra rama (eze-dev), con las
- * mismas rutas que tienen allá. Mientras la ruta no exista en esta rama, el
- * botón avisa en lugar de no hacer nada.
- */
-const SECCIONES = {
-    estado: { ruta: 'estado-pedido', titulo: 'Estado del pedido', aviso: 'El seguimiento del pedido todavía no está habilitado.' },
-    juegos: { ruta: 'juegos', titulo: 'Juegos', aviso: 'La sección de juegos todavía no está habilitada.' },
-    encuesta: { ruta: 'encuestas', titulo: 'Encuesta', aviso: 'La encuesta todavía no está habilitada.' },
-    cuenta: { ruta: 'pedir-cuenta', titulo: 'Cuenta', aviso: 'El pedido de la cuenta todavía no está habilitado.' },
-} as const;
-
-export type SeccionCliente = keyof typeof SECCIONES;
 
 /**
  * Pedido del cliente: lo que está armando y lo que ya mandó.
@@ -70,8 +55,9 @@ export class MiPedidoPage {
     private pedidoService = inject(PedidoService);
     private salonService = inject(SalonService);
     private modal = inject(ModalService);
+    private spinner = inject(SpinnerService);
     private router = inject(Router);
-    private notificaciones = inject(NotificacionesService)
+    private notificaciones = inject(NotificacionesService);
 
     carrito = inject(ChartService);
 
@@ -97,10 +83,7 @@ export class MiPedidoPage {
     hayBorrador = computed(() => this.unidades() > 0);
 
     /** Si todavía se puede mandar un pedido nuevo: no, con alguno ya confirmado. */
-    puedeEnviar = computed(() => puedeEnviarOtroPedido(this.pedidos().map((p) => p.estado)));
-
-    /** Algún pedido ya bajó a cocina: se puede seguir su preparación (punto 14). */
-    hayConfirmado = computed(() => !this.puedeEnviar());
+    puedeEnviar = computed(() => puedeEnviarPedido(this.pedidos().map((p) => p.estado)));
 
     /**
      * El borrador se muestra si se puede mandar, o si hay que corregir uno
@@ -108,6 +91,17 @@ export class MiPedidoPage {
      * nada que corregir, lo que quedó en el carrito ya no se puede mandar.
      */
     mostrarBorrador = computed(() => this.hayBorrador() && (this.puedeEnviar() || this.rechazado()));
+
+    /**
+     * El pedido ya enviado se muestra sólo cuando no hay un borrador en
+     * pantalla.
+     *
+     * Con un pedido rechazado pasaban las dos cosas a la vez: arriba lo que el
+     * cliente está corrigiendo y abajo el pedido rechazado, con los mismos
+     * productos repetidos. Lo que importa es lo que va a reenviar; el motivo ya
+     * lo explica el aviso de arriba.
+     */
+    mostrarEnviados = computed(() => this.hayEnviados() && !this.mostrarBorrador());
 
     /** Quedaron productos elegidos que ya no se pueden mandar. */
     borradorBloqueado = computed(() => this.hayBorrador() && !this.mostrarBorrador());
@@ -138,8 +132,8 @@ export class MiPedidoPage {
         // acá para que la regla no dependa sólo de lo que se dibuja.
         if (!this.pedidoRechazado() && !this.puedeEnviar()) {
             this.modal.setOpen(
-                'Pedido ya confirmado',
-                'Tu pedido ya pasó a cocina y barra. No se pueden agregar más productos en esta visita.'
+                'Ya tenés un pedido',
+                'Sólo se puede tener un pedido por visita. Seguí el tuyo desde esta misma pantalla.'
             );
 
             return;
@@ -150,11 +144,16 @@ export class MiPedidoPage {
             cantidad: item.cantidad,
             precioUnitario: item.precioUnitario,
         }));
-        
-        await this.notificaciones.enviarAvisos(['mozo'], "Pedido realizado.", "Nuevo pedido para verificar. ", 'pedido-nuevo')
+
+        await this.notificaciones.enviarAvisos(
+            ['mozo'],
+            'Pedido realizado.',
+            'Nuevo pedido para verificar. ',
+            'pedido-nuevo'
+        );
 
         const aCorregir = this.pedidoRechazado();
-        
+
         if (aCorregir) {
             const reenviado = await this.pedidoService.reenviar(aCorregir.id, items);
 
@@ -168,10 +167,7 @@ export class MiPedidoPage {
         const mesaId = this.salonService.situacion()?.mesaId;
 
         if (!clienteId || !mesaId) {
-            this.modal.setOpen(
-                'Falta la mesa',
-                'Escaneá el código QR de tu mesa antes de enviar el pedido.'
-            );
+            this.modal.setOpen('Falta la mesa', 'Escaneá el código QR de tu mesa antes de enviar el pedido.');
 
             return;
         }
@@ -184,12 +180,23 @@ export class MiPedidoPage {
     }
 
     /** Vacía el borrador y vuelve a leer los pedidos enviados. */
+    /**
+     * Cierra el envío y devuelve al cliente al inicio.
+     *
+     * Con el pedido mandado, esta pantalla ya no tiene nada que ofrecer: no se
+     * puede armar otro (una visita, un pedido) y el seguimiento vive en
+     * "Estado del pedido", que está en el inicio. `replaceUrl` saca "Mi
+     * pedido" del historial, así el botón de atrás del teléfono no trae de
+     * vuelta un carrito que ya se envió.
+     */
     private async terminarEnvio(titulo: string, mensaje: string) {
         this.carrito.vaciarCarrito();
 
         await this.recargar();
 
         this.modal.setOpen(titulo, mensaje, 'info');
+
+        void this.router.navigate(['/inicio'], { replaceUrl: true });
     }
 
     /** Descarta lo que quedó en el carrito y ya no se puede mandar. */
@@ -212,21 +219,6 @@ export class MiPedidoPage {
         this.router.navigate(['/carta']);
     }
 
-    /** Punto 15: alcanza con que alguno de sus pedidos ya esté confirmado. */
-    puedeJugar = computed(() =>
-        this.pedidos().some((p) => puedeAccederAJuegos(p.estado, this.authService.perfil()))
-    );
-
-    /**
-     * Punto 19: la encuesta y la cuenta se habilitan cuando recibió TODO lo que
-     * pidió. Con un solo pedido pendiente todavía no tiene sentido pagar.
-     */
-    serviciosHabilitados = computed(() => {
-        const pedidos = this.pedidos();
-
-        return pedidos.length > 0 && pedidos.every((p) => puedeUsarServiciosDeMesa(p.estado, p.estadoCliente));
-    });
-
     /** Qué decirle al cliente sobre un pedido en particular. */
     leyendaDe(pedido: PedidoInterface): string {
         return pedido.estadoCliente === 'pagando' ? LEYENDA_PAGANDO : LEYENDA_PEDIDO[pedido.estado];
@@ -240,6 +232,40 @@ export class MiPedidoPage {
     /** Se consulta cada vez que se entra: el estado cambia mientras el cliente espera. */
     ionViewWillEnter() {
         void this.recargar();
+
+        const usuarioId = this.authService.session()?.user.id;
+
+        // Punto 14: el mozo confirma desde otro teléfono. Cuando eso pasa, esta
+        // pantalla ya no sirve —no se puede agregar nada más al pedido— así que
+        // se lleva al cliente al inicio, donde están los accesos que sí puede
+        // usar ahora (estado del pedido, juegos).
+        if (usuarioId && !this.dejarDeEscuchar) {
+            this.dejarDeEscuchar = this.pedidoService.escucharPedidosDelCliente(usuarioId, (estado) =>
+                this.alCambiarUnPedido(estado)
+            );
+        }
+    }
+
+    ionViewWillLeave() {
+        this.dejarDeEscuchar?.();
+        this.dejarDeEscuchar = null;
+    }
+
+    private dejarDeEscuchar: (() => void) | null = null;
+
+    private alCambiarUnPedido(estado: EstadoPedido) {
+        // Los otros cambios de estado (rechazado, en preparación) se siguen
+        // viendo acá mismo: sólo la confirmación cierra esta pantalla.
+        if (estado !== 'Confirmado') {
+            void this.recargar();
+            return;
+        }
+
+        this.modal.setOpen('Pedido confirmado', 'El mozo confirmó tu pedido y ya pasó a cocina y barra.', 'info');
+
+        // `replaceUrl` saca esta pantalla del historial: el botón de volver del
+        // teléfono ya no trae de nuevo al pedido, que es lo que se quiere.
+        void this.router.navigate(['/inicio'], { replaceUrl: true });
     }
 
     /** Punto 14: vuelve a pedir los pedidos a la base, para ver si el mozo ya los confirmó. */
@@ -253,6 +279,7 @@ export class MiPedidoPage {
         }
 
         this.cargando.set(true);
+        this.spinner.show();
 
         try {
             this.pedidos.set(await this.pedidoService.pedidosActivosDelCliente(usuarioId));
@@ -262,6 +289,7 @@ export class MiPedidoPage {
             this.modal.setOpen('Error', mensaje, 'error');
         } finally {
             this.cargando.set(false);
+            this.spinner.hide();
         }
     }
 
@@ -269,7 +297,14 @@ export class MiPedidoPage {
     async confirmarRecepcion(pedido: PedidoInterface) {
         const usuarioId = this.authService.session()?.user.id;
 
-        if (!usuarioId) return;
+        if (!usuarioId) {
+            this.modal.setOpen(
+                'Error con el usuario.',
+                'Hubo un error al obtener el usuario actual. Por favor, cierre sesión y vuelva a ingresar.',
+                'error'
+            );
+            return;
+        }
 
         const confirmado = await this.pedidoService.confirmarRecepcion(pedido.id, usuarioId);
 
@@ -289,20 +324,8 @@ export class MiPedidoPage {
         return formatearImporte(this.pedidoService.totalConDescuento(pedido));
     }
 
-
     /**
      * Lleva al estado del pedido o a los juegos (punto 14), a la encuesta o a
      * pedir la cuenta (punto 19).
      */
-    irA(seccion: SeccionCliente) {
-        const { ruta, titulo, aviso } = SECCIONES[seccion];
-        const existe = this.router.config.some((definicion) => definicion.path === ruta);
-
-        if (!existe) {
-            this.modal.setOpen(titulo, aviso, 'info');
-            return;
-        }
-
-        void this.router.navigate(['/', ruta]);
-    }
 }

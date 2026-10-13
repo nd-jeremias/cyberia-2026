@@ -1,0 +1,58 @@
+<ion-content [fullscreen]="true">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Resultados de Encuestas'"></app-header>
+
+        <div class="superior hoja hoja-angosta">
+            <article class="tarjeta seccion-graficos">
+                <!-- Paginador / Carrusel superior -->
+                <div class="carrusel-navegacion">
+                    <button 
+                    type="button" 
+                    class="btn-circulo-header" 
+                    (click)="graficoAnterior()" 
+                    aria-label="Gráfico anterior">
+                    <fa-icon [icon]="iconoIzquierda"></fa-icon>
+                    </button>
+
+                    <div class="indicador-carrusel">
+                    <span class="nombre-grafico">
+                        @switch (graficoActual) {
+                        @case ('torta') { Atención del Personal }
+                        @case ('barras') { Calidad de la Comida }
+                        @case ('lineas') { Tiempos de Espera }
+                        }
+                    </span>
+                    <div class="puntos-progreso">
+                        @for (tipo of tiposGraficos; track $index) {
+                        <span class="punto" [class.activo]="indiceGraficoActual() === $index"></span>
+                        }
+                    </div>
+                    </div>
+
+                    <button 
+                    type="button" 
+                    class="btn-circulo-header" 
+                    (click)="graficoSiguiente()" 
+                    aria-label="Gráfico siguiente">
+                    <fa-icon [icon]="iconoDerecha"></fa-icon>
+                    </button>
+                </div>
+
+                <!-- Contenedor del Gráfico -->
+                <div class="area-grafico">
+                    <canvas #canvasGrafico></canvas>
+                </div>
+                @if (graficoActual === 'torta') {
+                    <ul class="lista-leyenda-vertical">
+                        @for (item of itemsTorta; track item.etiqueta) {
+                        <li class="item-leyenda">
+                            <span class="punto-color" [style.background-color]="item.color"></span>
+                            <span class="etiqueta">{{ item.etiqueta }}</span>
+                        </li>
+                        }
+                    </ul>
+                }
+                </article>
+        </div>
+    </div>
+</ion-content>

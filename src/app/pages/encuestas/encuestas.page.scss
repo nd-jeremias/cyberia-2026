@@ -1,0 +1,66 @@
+:host ::ng-deep {
+  .layout-superpuesto { min-height: 100vh; }
+  .inferior { height: auto; padding-bottom: 0; }
+  .superior { padding-top: 1.5rem; }
+}
+
+.contenedor-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: 100%;
+}
+
+/* Tarjeta interactiva con estilo Home */
+.tarjeta-accion {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem 1rem;
+  box-sizing: border-box;
+  background: var(--hoja-alta);
+  border: var(--borde-hoja);
+  border-radius: var(--radio-grande);
+  box-shadow: var(--sombra-apoyada);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:active {
+    transform: scale(0.985);
+  }
+
+  .titulo-accion {
+    flex: 1;
+    font-size: var(--texto-titulo);
+    font-weight: 800;
+    color: var(--tinta);
+  }
+
+  .flecha-accion {
+    font-size: 1.4rem;
+    color: var(--tinta-tenue);
+  }
+}
+
+.aviso-estado {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: var(--velo-tinta);
+  border-radius: var(--radio-chico);
+  color: var(--tinta-media);
+  font-size: var(--texto-epigrafe);
+
+  ion-icon {
+    font-size: 1.35rem;
+    color: var(--naranja);
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+}

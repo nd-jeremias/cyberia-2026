@@ -1,0 +1,102 @@
+<ion-content [fullscreen]="true">
+    <div class="layout-superpuesto fondo-texturizado">
+        <app-header class="inferior sin-labio" [defaultHref]="'/encuestas'" [tituloHeader]="'Encuesta de Estadía'"></app-header>
+
+        <div class="superior hoja hoja-angosta">
+            @if (!cargando()) {
+            <article class="tarjeta seccion-form">
+                <h2 class="titulo-seccion">¿Cómo fue tu experiencia?</h2>
+                
+                <form [formGroup]="form" (ngSubmit)="enviarEncuesta()">
+                
+                    <!-- Calificación Comida (Estrellas) -->
+                    <div class="grupo-input">
+                        <span class="input-label">Calidad de la comida</span>
+                        <div class="selector-estrellas" role="radiogroup" aria-label="Calificación de la comida">
+                            @for (estrella of [1, 2, 3, 4, 5]; track estrella) {
+                            <button 
+                                type="button" 
+                                class="btn-estrella"
+                                [class.activa]="form.get('calificacionComida')?.value! >= estrella"
+                                (click)="seleccionarEstrellas(estrella)"
+                                [attr.aria-label]="estrella + ' estrellas'"
+                            >
+                                <fa-icon [icon]="form.get('calificacionComida')?.value! >= estrella ? ['fas', 'star'] : ['far', 'star']"></fa-icon>
+                            </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Atención del Mozo -->
+                    <div class="grupo-input">
+                        <span class="input-label">Atención del mozo</span>
+                        <ion-radio-group formControlName="atencionMozo" class="grilla-opciones">
+                            @for (opcion of ['Excelente', 'Buena', 'Regular', 'Mala']; track opcion) {
+                            <ion-radio
+                                [value]="opcion" 
+                                labelPlacement="end"
+                            >
+                                {{ opcion }}
+                            </ion-radio>
+                            }
+                        </ion-radio-group>
+                    </div>
+
+                    <!-- Tiempo de espera -->
+                    <div class="grupo-input">
+                        <span class="input-label">Tiempos de espera</span>
+                        <div class="caja-input">
+                            <fa-icon [icon]="['far', 'clock']" class="icono-campo"></fa-icon>
+                            <div class="select-trigger" (click)="seleccionarTiempoEspera()">{{ tipoSeleccionado() }}</div>
+                            @if (hayError("tiempoEspera", "required")) {
+                                <span class="mensaje-error">Seleccione el tiempo de espera</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Recomienda lugar -->
+                    <div class="grupo-input">
+                        <span class="input-label">¿Recomendarías Cyberia Restó?</span>
+                        <div class="grilla-opciones dos-columnas">
+                            <button 
+                                type="button" 
+                                class="btn-secundario btn-opcion" 
+                                [class.seleccionado]="form.get('recomiendaLugar')?.value === true"
+                                (click)="form.get('recomiendaLugar')?.setValue(true)"
+                            >
+                                Sí, seguro
+                            </button>
+                            <button 
+                                type="button" 
+                                class="btn-secundario btn-opcion" 
+                                [class.seleccionado]="form.get('recomiendaLugar')?.value === false"
+                                (click)="form.get('recomiendaLugar')?.setValue(false)"
+                            >
+                                No por ahora
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Comentario libre -->
+                    <div class="grupo-input">
+                        <label class="input-label" for="comentario-encuesta">Comentarios adicionales</label>
+                        <div class="caja-input caja-textarea">
+                            <ion-textarea 
+                                id="comentario-encuesta"
+                                formControlName="comentario" 
+                                placeholder="Contanos qué te pareció o qué podemos mejorar..."
+                                [rows]="3"
+                                [autoGrow]="true"
+                            ></ion-textarea>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-principal" [disabled]="form.invalid">
+                        Enviar Encuesta
+                    </button>
+                </form>
+            </article>
+            }
+        </div>
+    </div>
+</ion-content>

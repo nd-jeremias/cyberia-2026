@@ -8,10 +8,13 @@ DROP TYPE IF EXISTS public.tipo_mesa;
 -- =========================================================================
 -- 2. CREACIÓN DE TIPOS ENUM PARA MESAS Y PEDIDOS
 -- =========================================================================
+-- Con mayúscula inicial, igual que la base real (ver backup.sql) y que el
+-- código. Los ENUM de Postgres distinguen mayúsculas: 'disponible' en
+-- minúscula es un valor inválido y hace fallar el UPDATE que lo usa.
 CREATE TYPE public.disponibilidad_mesa AS ENUM (
-    'disponible', 
+    'Disponible', 
     'Reservada', 
-    'ocupada'
+    'Ocupada'
 );
 
 CREATE TYPE public.tipo_mesa AS ENUM (
@@ -28,7 +31,7 @@ CREATE TABLE public.mesas (
     numero_mesa INTEGER NOT NULL UNIQUE CHECK (numero_mesa > 0), -- N° físico de mesa
     cantidad_lugares INTEGER NOT NULL CHECK (cantidad_lugares > 0),
     tipo public.tipo_mesa NOT NULL DEFAULT 'estándar',
-    disponibilidad public.disponibilidad_mesa NOT NULL DEFAULT 'disponible',
+    disponibilidad public.disponibilidad_mesa NOT NULL DEFAULT 'Disponible',
     
     -- Cliente que ocupa la mesa ahora mismo, registrado o anónimo: los dos son
     -- filas de `usuarios`, así que alcanza con una sola columna.
@@ -52,11 +55,11 @@ CREATE POLICY "Permitir select total mesas" ON public.mesas FOR ALL USING (true)
 -- =========================================================================
 INSERT INTO public.mesas (numero_mesa, cantidad_lugares, tipo, disponibilidad, qr_url, foto_url)
 VALUES 
-(1, 2, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co'),
-(2, 4, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co'),
-(3, 4, 'movilidad reducida', 'ocupada',    'https://supabase.co', 'https://supabase.co'),
+(1, 2, 'estándar',          'Disponible', 'https://supabase.co', 'https://supabase.co'),
+(2, 4, 'estándar',          'Disponible', 'https://supabase.co', 'https://supabase.co'),
+(3, 4, 'movilidad reducida', 'Ocupada',    'https://supabase.co', 'https://supabase.co'),
 (4, 6, 'VIP',                'Reservada',  'https://supabase.co', 'https://supabase.co'),
-(5, 2, 'estándar',          'disponible', 'https://supabase.co', 'https://supabase.co');
+(5, 2, 'estándar',          'Disponible', 'https://supabase.co', 'https://supabase.co');
 
 -- =========================================================================
 -- 6. CLAVE FORÁNEA DIFERIDA

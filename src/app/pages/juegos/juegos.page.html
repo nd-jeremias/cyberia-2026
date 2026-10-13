@@ -1,13 +1,11 @@
 <ion-content [fullscreen]="true">
     <div class="layout-superpuesto fondo-texturizado">
-        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Juegos'"></app-header>
+        <app-header class="inferior sin-labio" [defaultHref]="'/inicio'" [tituloHeader]="'Juegos'"> </app-header>
 
         <div class="superior hoja">
-            <div class="estado-vacio">
-                <ion-icon name="construct-outline"></ion-icon>
-                <p>Esta pantalla todavía no está hecha.</p>
-                <p>Puntos 14 y 15: tres juegos con descuento del 10, 15 y 20 por ciento.</p>
-            </div>
+            <app-boton-home [boton]="botonMemoria"></app-boton-home>
+            <app-boton-home [boton]="botonQuiz"></app-boton-home>
+            <app-boton-home [boton]="botonMayorMenor"></app-boton-home>
         </div>
     </div>
 </ion-content>

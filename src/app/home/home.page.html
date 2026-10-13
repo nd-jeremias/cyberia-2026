@@ -2,7 +2,7 @@
     <div class="layout-superpuesto fondo-texturizado">
         <app-header class="inferior sin-labio" modo="usuario"></app-header>
 
-        <div class="superior hoja">
+        <div class="superior hoja pantalla-inicio">
             <!--
               Situación del cliente en el local. Se actualiza sola: el inicio queda
               escuchando su fila, así que cuando el metre le asigna una mesa desde
@@ -11,8 +11,6 @@
             @if (situacionCliente(); as situacion) {
             <section class="panel-situacion">
                 <h2 class="titulo-seccion">{{ situacion.titulo }}</h2>
-
-                <p class="situacion-detalle">{{ situacion.detalle }}</p>
 
                 @if (situacion.numeroMesa !== null) {
                 <p class="situacion-mesa">
@@ -23,68 +21,118 @@
             </section>
             }
 
-            <div class="grilla-acciones">
-                @for (boton of botonesDelRol(); track boton.ruta) {
-                <a class="tarjeta-accion" [routerLink]="boton.ruta">
-                    <span class="medallon">
-                        <fa-icon [icon]="['fas', boton.icono]"></fa-icon>
-                    </span>
+            <!--
+              Panel de estado. El contenido lo arma `panel()` según el rol: el
+              mapa del salón para quien lo atiende, los pedidos en curso para
+              cocina y barra.
 
-                    <span class="titulo-accion">{{ boton.texto }}</span>
-                    <fa-icon class="flecha-accion" [icon]="['fas', 'chevron-right']"></fa-icon>
-                </a>
-                } @empty {
-                <div class="estado-vacio">
-                    <fa-icon [icon]="['fas', 'circle-exclamation']"></fa-icon>
-                    @if (authService.perfilError(); as motivo) {
-                    <p>No se pudo consultar tu perfil: {{ motivo }}</p>
-                    } @else if (authService.perfil() === null) {
-                    <p>Tu usuario todavía no tiene un perfil asignado.</p>
-                    } @else if (esCliente()) {
-                    <p>Seguí las indicaciones de abajo.</p>
+              Está en una plantilla porque se dibuja en uno de dos lugares, y el
+              marcado es el mismo: compartiendo la última pantalla con los
+              accesos (roles de pocos accesos, donde llena el hueco), o en una
+              pantalla propia (mozo, dueño y supervisor, donde los accesos ya se
+              llevan medio inicio). Lo decide `panelComparte()`.
+            -->
+            <ng-template #panelEstado>
+                @if (panel(); as estado) {
+                <section class="panel-estado">
+                    <h2 class="titulo-seccion">{{ estado.titulo }}</h2>
+
+                    <div class="cifras">
+                        @for (cifra of estado.cifras; track cifra.rotulo) {
+                        <div class="ficha-cifra">
+                            <b [class]="'valor valor-' + cifra.tono">{{ cifra.valor }}</b>
+                            <span class="rotulo">{{ cifra.rotulo }}</span>
+                        </div>
+                        }
+                    </div>
+
+                    @if (estado.fichas.length) {
+                    <div class="mapa">
+                        @for (ficha of estado.fichas; track $index) {
+                        <span class="ficha-mapa" [class.ficha-verde]="ficha.enVerde"> {{ ficha.numero }} </span>
+                        }
+                    </div>
+
+                    <p class="leyenda">
+                        <span class="punto punto-verde"></span> {{ estado.leyendaVerde }}
+                        <span class="punto punto-naranja"></span> {{ estado.leyendaNaranja }}
+                    </p>
                     } @else {
-                    <p>Todavía no hay funciones asignadas a tu perfil.</p>
+                    <p class="panel-vacio">
+                        <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                        {{ estado.vacio }}
+                    </p>
                     }
+                </section>
+                }
+            </ng-template>
+
+            <!--
+              Sólo esta parte se desplaza, y lo hace de a pantallas completas.
+
+              Cada `pagina-reel` mide exactamente el alto visible y es un punto
+              de parada del desplazamiento: se pasa de pantalla en pantalla como
+              en un reel, y nunca queda un acceso cortado ni asomando.
+
+              El reparto lo hace `paginasDeAccesos()`, que mide el alto real y
+              recorre todos los accesos, así que ninguno puede quedar afuera.
+            -->
+            <div #lista class="lista-accesos" (scroll)="alDesplazar()">
+                @for (pagina of paginasDeAccesos(); track $index) {
+                <div class="pagina-reel">
+                    @if (pagina.length) {
+                    <div class="grilla-acciones">
+                        @for (boton of pagina; track boton.ruta) {
+                        <a class="tarjeta-accion" [routerLink]="boton.ruta">
+                            <span class="medallon">
+                                <fa-icon [icon]="['fas', boton.icono]"></fa-icon>
+                            </span>
+
+                            <span class="titulo-accion">{{ boton.texto }}</span>
+                            <fa-icon class="flecha-accion" [icon]="['fas', 'chevron-right']"></fa-icon>
+                        </a>
+                        }
+                    </div>
+                    } @else {
+                    <div class="estado-vacio">
+                        <fa-icon [icon]="['fas', 'circle-exclamation']"></fa-icon>
+                        @if (authService.perfilError(); as motivo) {
+                        <p>No se pudo consultar tu perfil: {{ motivo }}</p>
+                        } @else if (authService.perfil() === null) {
+                        <p>Tu usuario todavía no tiene un perfil asignado.</p>
+                        } @else if (esCliente()) {
+                        <p>Seguí las indicaciones de abajo.</p>
+                        } @else {
+                        <p>Todavía no hay funciones asignadas a tu perfil.</p>
+                        }
+                    </div>
+                    }
+
+                    <!-- Compartiendo pantalla: va debajo de los accesos de la última. -->
+                    @if ($last && panelComparte()) {
+                    <ng-container [ngTemplateOutlet]="panelEstado"></ng-container>
+                    }
+                </div>
+                }
+
+                <!-- Con pantalla propia: una `pagina-reel` más, al final de todo. -->
+                @if (!panelComparte() && panel()) {
+                <div class="pagina-reel pagina-panel">
+                    <ng-container [ngTemplateOutlet]="panelEstado"></ng-container>
                 </div>
                 }
             </div>
 
             <!--
-              Panel de estado. El contenido lo arma `panel()` según el rol: el mapa
-              del salón para quien lo atiende, los pedidos en curso para cocina y
-              barra. Si todavía no hay datos, no se dibuja.
+              Pista de que el reel se desliza. Sin esto el gesto queda oculto:
+              la pantalla entra justa y nada asoma por abajo.
+
+              Sólo cuando hay accesos dibujados y hay realmente a dónde ir.
             -->
-            @if (panel(); as estado) {
-            <section class="panel-estado">
-                <h2 class="titulo-seccion">{{ estado.titulo }}</h2>
-
-                <div class="cifras">
-                    @for (cifra of estado.cifras; track cifra.rotulo) {
-                    <div class="ficha-cifra">
-                        <b [class]="'valor valor-' + cifra.tono">{{ cifra.valor }}</b>
-                        <span class="rotulo">{{ cifra.rotulo }}</span>
-                    </div>
-                    }
-                </div>
-
-                @if (estado.fichas.length) {
-                <div class="mapa">
-                    @for (ficha of estado.fichas; track $index) {
-                    <span class="ficha-mapa" [class.ficha-verde]="ficha.enVerde"> {{ ficha.numero }} </span>
-                    }
-                </div>
-
-                <p class="leyenda">
-                    <span class="punto punto-verde"></span> {{ estado.leyendaVerde }}
-                    <span class="punto punto-naranja"></span> {{ estado.leyendaNaranja }}
-                </p>
-                } @else {
-                <p class="panel-vacio">
-                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
-                    {{ estado.vacio }}
-                </p>
-                }
-            </section>
+            @if (hayAccesos() && (puedeBajar() || puedeSubir())) {
+            <div class="indicador-reel" [class.hacia-arriba]="!puedeBajar()" aria-hidden="true">
+                <fa-icon [icon]="['fas', puedeBajar() ? 'chevron-down' : 'chevron-up']"></fa-icon>
+            </div>
             }
         </div>
         <!-- <app-footer class="inferior-final fondo-texturizado"></app-footer> -->

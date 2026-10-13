@@ -180,16 +180,29 @@ export class MesaService {
         }
     }
 
-    // Punto 22: al confirmarse el pago la mesa vuelve a estar disponible.
-    async liberar(mesaId: string): Promise<boolean> {
+    /**
+     * Punto 22: al confirmarse el pago la mesa vuelve a estar disponible y sin
+     * cliente.
+     *
+     * Con `clienteId` sólo la libera si sigue ocupada por ese cliente: si dos
+     * mozos confirman el mismo pago y entre medio el metre ya la reasignó, el
+     * segundo no le saca la mesa al cliente nuevo. Si ya estaba libre, la
+     * consulta no afecta ninguna fila, y eso no es un error.
+     */
+    async liberar(mesaId: string, clienteId?: string): Promise<boolean> {
+        // El tipo ata el valor al ENUM de la base. Escrito a mano en minúscula
+        // ('disponible'), Postgres lo rechaza y la mesa nunca se libera.
+        const libre: { disponibilidad: DisponibilidadMesa; cliente_id: null } = {
+            disponibilidad: 'Disponible',
+            cliente_id: null,
+        };
+
         try {
-            const { error } = await supabase
-                .from('mesas')
-                .update({
-                    disponibilidad: 'Disponible',
-                    cliente_id: null,
-                })
-                .eq('id', mesaId);
+            let consulta = supabase.from('mesas').update(libre).eq('id', mesaId);
+
+            if (clienteId) consulta = consulta.eq('cliente_id', clienteId);
+
+            const { error } = await consulta;
 
             if (error) throw error;
 

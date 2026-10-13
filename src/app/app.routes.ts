@@ -73,13 +73,43 @@ export const routes: Routes = [
         canActivate: [authGuard],
     },
     {
+        path: 'estado-pedido/pedido',
+        loadComponent: () => import('./pages/estado-pedido/pedido/pedido.page').then((m) => m.PedidoPage),
+    },
+    {
         path: 'juegos',
         loadComponent: () => import('./pages/juegos/juegos.page').then((m) => m.JuegosPage),
         canActivate: [authGuard],
     },
     {
+        path: 'juegos/memoria',
+        loadComponent: () => import('./pages/juegos/memoria/memoria.page').then((m) => m.MemoriaPage),
+    },
+    {
+        path: 'juegos/preguntas',
+        loadComponent: () => import('./pages/juegos/preguntas/preguntas.page').then((m) => m.PreguntasPage),
+    },
+    {
+        path: 'juegos/mayor-menor',
+        loadComponent: () => import('./pages/juegos/mayor-menor/mayor-menor.page').then((m) => m.MayorMenorPage),
+    },
+    {
         path: 'encuestas',
         loadComponent: () => import('./pages/encuestas/encuestas.page').then((m) => m.EncuestasPage),
+        canActivate: [authGuard],
+    },
+    // Pantalla 1: Formulario puro
+    {
+        path: 'encuestas/completar',
+        loadComponent: () =>
+            import('./pages/encuestas/completar/completar.page').then((m) => m.CompletarPage),
+        canActivate: [authGuard],
+    },
+    // Pantalla 2: Gráficos puros
+    {
+        path: 'encuestas/resultados',
+        loadComponent: () =>
+            import('./pages/encuestas/resultados/resultados.page').then((m) => m.ResultadosPage),
         canActivate: [authGuard],
     },
     {
@@ -87,10 +117,20 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/pedir-cuenta/pedir-cuenta.page').then((m) => m.PedirCuentaPage),
         canActivate: [authGuard],
     },
+    {
+        path: 'pagar',
+        loadComponent: () => import('./pages/pedir-cuenta/pagar/pagar.page').then((m) => m.PagarPage),
+    },
     // El QR de una mesa, para imprimirlo y pegarlo sobre ella.
     {
         path: 'qr-mesa',
         loadComponent: () => import('./pages/qr-mesa/qr-mesa.page').then((m) => m.QrMesaPage),
+        canActivate: [authGuard],
+    },
+    // Los cinco QR de propina, que el mozo le muestra al cliente (punto 21).
+    {
+        path: 'qr-propinas',
+        loadComponent: () => import('./pages/qr-propinas/qr-propinas.page').then((m) => m.QrPropinasPage),
         canActivate: [authGuard],
     },
     // El QR de ingreso, para imprimirlo y pegarlo en la puerta.
