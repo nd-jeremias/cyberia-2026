@@ -17,188 +17,186 @@
           y ahí sí se desplaza la hoja entera.
         -->
         <div class="superior hoja pantalla-mi-pedido" [class.solo-borrador]="mostrarBorrador()">
-        @if (cargando()) {
-        <div class="estado-vacio">
-            <fa-icon [icon]="['fas', 'clock']"></fa-icon>
-            <p>Consultando tu pedido…</p>
-        </div>
-        } @else {
+            @if (cargando()) {
+            <div class="estado-vacio">
+                <fa-icon [icon]="['fas', 'clock']"></fa-icon>
+                <p>Consultando tu pedido…</p>
+            </div>
+            } @else { @if (rechazado()) {
+            <p class="aviso-correccion">
+                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
+                El mozo pidió cambios. Ajustá lo que haga falta y volvé a enviarlo.
+            </p>
+            }
 
-        @if (rechazado()) {
-        <p class="aviso-correccion">
-            <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
-            El mozo pidió cambios. Ajustá lo que haga falta y volvé a enviarlo.
-        </p>
-        }
-
-        <!--
+            <!--
           BORRADOR: lo elegido en la carta, todavía en el teléfono. Va arriba
           porque es lo que el cliente tiene que revisar y mandar (puntos 12 y 13).
           Aparece aunque ya haya pedidos enviados, salvo que alguno ya esté
           confirmado: ahí la visita no admite otro pedido.
         -->
-        @if (borradorBloqueado()) {
-        <p class="aviso-correccion">
-            <fa-icon [icon]="['fas', 'lock']"></fa-icon>
-            Ya enviaste tu pedido, así que lo que quedó elegido en la carta no se puede mandar: hay un solo pedido
-            por visita.
-        </p>
+            @if (borradorBloqueado()) {
+            <p class="aviso-correccion">
+                <fa-icon [icon]="['fas', 'lock']"></fa-icon>
+                Ya enviaste tu pedido, así que lo que quedó elegido en la carta no se puede mandar: hay un solo pedido
+                por visita.
+            </p>
 
-        <button type="button" class="btn-secundario" (click)="descartarBorrador()">
-            <fa-icon [icon]="['fas', 'trash-can']"></fa-icon>
-            Descartar lo elegido
-        </button>
-        }
+            <button type="button" class="btn-secundario" (click)="descartarBorrador()">
+                <fa-icon [icon]="['fas', 'trash-can']"></fa-icon>
+                Descartar lo elegido
+            </button>
+            } @if (mostrarBorrador()) {
+            <article class="tarjeta-pedido tarjeta-borrador">
+                <div class="encabezado">
+                    <span class="ficha-mesa">
+                        <span class="ficha-mesa-rotulo">Tu pedido</span>
+                        <!-- <span class="ficha-mesa-numero">{{ unidades() }}</span> -->
+                    </span>
+                    <span class="estado">Sin enviar</span>
+                </div>
 
-        @if (mostrarBorrador()) {
-        <article class="tarjeta-pedido tarjeta-borrador">
-            <div class="encabezado">
-                <span class="ficha-mesa">
-                    <span class="ficha-mesa-rotulo">Tu pedido</span>
-                    <!-- <span class="ficha-mesa-numero">{{ unidades() }}</span> -->
-                </span>
-                <span class="estado">Sin enviar</span>
-            </div>
+                <ul class="lineas-borrador">
+                    @for (linea of lineas(); track linea.id) {
+                    <li class="linea">
+                        <div class="linea-datos">
+                            <span class="linea-nombre">{{ linea.nombre }}</span>
+                            <span class="linea-importe">{{ importeDeLinea(linea.precioTotal) }}</span>
+                        </div>
 
-            <ul class="lineas-borrador">
-                @for (linea of lineas(); track linea.id) {
-                <li class="linea">
-                    <div class="linea-datos">
-                        <span class="linea-nombre">{{ linea.nombre }}</span>
-                        <span class="linea-importe">{{ importeDeLinea(linea.precioTotal) }}</span>
-                    </div>
+                        <div class="linea-cantidad">
+                            <button
+                                type="button"
+                                class="paso"
+                                [attr.aria-label]="'Quitar una unidad de ' + linea.nombre"
+                                (click)="restar(linea.id)"
+                            >
+                                <fa-icon [icon]="['fas', 'minus']"></fa-icon>
+                            </button>
 
-                    <div class="linea-cantidad">
-                        <button
-                            type="button"
-                            class="paso"
-                            [attr.aria-label]="'Quitar una unidad de ' + linea.nombre"
-                            (click)="restar(linea.id)"
-                        >
-                            <fa-icon [icon]="['fas', 'minus']"></fa-icon>
-                        </button>
+                            <span class="linea-unidades" aria-live="polite">{{ linea.cantidad }}</span>
 
-                        <span class="linea-unidades" aria-live="polite">{{ linea.cantidad }}</span>
+                            <button
+                                type="button"
+                                class="paso"
+                                [attr.aria-label]="'Agregar una unidad de ' + linea.nombre"
+                                (click)="sumar(linea.id)"
+                            >
+                                <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+                            </button>
+                        </div>
+                    </li>
+                    }
+                </ul>
+            </article>
+            }
 
-                        <button
-                            type="button"
-                            class="paso"
-                            [attr.aria-label]="'Agregar una unidad de ' + linea.nombre"
-                            (click)="sumar(linea.id)"
-                        >
-                            <fa-icon [icon]="['fas', 'plus']"></fa-icon>
-                        </button>
-                    </div>
-                </li>
-                }
-            </ul>
-        </article>
-        }
-
-        <!--
+            <!--
           ENVIADOS: los pedidos que ya están en la base. Puede haber más de uno
           en la visita (el punto 21 habla de "los pedidos realizados"), y cada
           uno se sigue y se confirma por separado (puntos 14 y 19).
         -->
-        @if (mostrarEnviados()) {
-        @for (pedido of pedidos(); track pedido.id) {
-        <article class="tarjeta-pedido">
-            <div class="encabezado">
-                <span class="ficha-mesa">
-                    <span class="ficha-mesa-rotulo">Mesa</span>
-                    <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
-                </span>
-                <span class="estado">{{ pedido.estado }}</span>
-            </div>
+            @if (mostrarEnviados()) { @for (pedido of pedidos(); track pedido.id) {
+            <article class="tarjeta-pedido">
+                <div class="encabezado">
+                    <span class="ficha-mesa">
+                        <span class="ficha-mesa-rotulo">Mesa</span>
+                        <span class="ficha-mesa-numero">{{ pedido.numeroMesa }}</span>
+                    </span>
+                    <span class="estado">{{ pedido.estado }}</span>
+                </div>
 
-            <p class="leyenda">{{ leyendaDe(pedido) }}</p>
+                <p class="leyenda">{{ leyendaDe(pedido) }}</p>
 
-            <div class="datos-pedido">
-                <span class="chip">
-                    <fa-icon [icon]="['far', 'clock']"></fa-icon>
-                    {{ tiempoEstimado(pedido) }} minutos estimados
-                </span>
-            </div>
+                <div class="datos-pedido">
+                    <span class="chip">
+                        <fa-icon [icon]="['far', 'clock']"></fa-icon>
+                        {{ tiempoEstimado(pedido) }}' estimados
+                    </span>
+                </div>
 
-            <ul class="detalles">
-                @for (item of pedido.detalles; track item.id) {
-                <li>
-                    <span class="cantidad">{{ item.cantidad }}×</span>
-                    {{ item.nombreProducto }}
-                </li>
+                <ul class="detalles">
+                    @for (item of pedido.detalles; track item.id) {
+                    <li>
+                        <span class="cantidad">{{ item.cantidad }}×</span>
+                        {{ item.nombreProducto }}
+                    </li>
+                    }
+                </ul>
+
+                <p class="total">
+                    <span class="total-rotulo">Total</span>
+                    <span class="total-importe">{{ totalFormateado(pedido) }}</span>
+                </p>
+
+                @if (puedeConfirmarDe(pedido)) {
+                <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme que lo recibió. -->
+                <button
+                    type="button"
+                    class="btn-principal"
+                    [disabled]="procesando()"
+                    (click)="confirmarRecepcion(pedido)"
+                >
+                    <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
+                    Confirmar recepción
+                </button>
                 }
-            </ul>
+            </article>
+            } }
 
-            <p class="total">
-                <span class="total-rotulo">Total</span>
-                <span class="total-importe">{{ totalFormateado(pedido) }}</span>
-            </p>
+            <!-- Sin nada armado ni enviado. -->
+            @if (!hayBorrador() && !hayEnviados()) {
+            <div class="estado-vacio">
+                <fa-icon [icon]="['fas', 'circle-exclamation']"></fa-icon>
+                <p>Todavía no elegiste nada de la carta.</p>
+            </div>
 
-            @if (puedeConfirmarDe(pedido)) {
-            <!-- Punto 19: el mozo ya lo entregó; falta que el cliente confirme que lo recibió. -->
-            <button type="button" class="btn-principal" [disabled]="procesando()" (click)="confirmarRecepcion(pedido)">
-                <fa-icon [icon]="['fas', 'circle-check']"></fa-icon>
-                Confirmar recepción
+            <button type="button" class="btn-principal" (click)="irALaCarta()">
+                <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
+                Ver la carta
+            </button>
+            } @if (rechazado() && !hayBorrador()) {
+            <button type="button" class="btn-principal" (click)="corregirPedido()">
+                <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
+                Corregir pedido
             </button>
             }
-        </article>
-        }
-        }
 
-        <!-- Sin nada armado ni enviado. -->
-        @if (!hayBorrador() && !hayEnviados()) {
-        <div class="estado-vacio">
-            <fa-icon [icon]="['fas', 'circle-exclamation']"></fa-icon>
-            <p>Todavía no elegiste nada de la carta.</p>
-        </div>
-
-        <button type="button" class="btn-principal" (click)="irALaCarta()">
-            <fa-icon [icon]="['fas', 'receipt']"></fa-icon>
-            Ver la carta
-        </button>
-        }
-
-        @if (rechazado() && !hayBorrador()) {
-        <button type="button" class="btn-principal" (click)="corregirPedido()">
-            <fa-icon [icon]="['fas', 'pen-to-square']"></fa-icon>
-            Corregir pedido
-        </button>
-        }
-
-        <!--
+            <!--
           Acá NO van los accesos a los juegos, la encuesta, la cuenta ni el
           estado del pedido: viven en el inicio, que ya los muestra en cuanto
           corresponde. Repetirlos acá daba dos lugares distintos para lo mismo.
         -->
-        }
+            }
         </div>
+
+        <!--
+            Pie fijo, el mismo de la carta: el importe siempre a la vista, que es lo que
+      exige el punto 12. Aparece siempre que haya un borrador para mandar, aunque
+      ya existan pedidos enviados.
+    -->
+        @if (!cargando() && mostrarBorrador()) {
+        <footer class="inferior-final pie-pedido fondo-texturizado">
+            <div class="info">
+                <div class="pie-importe">
+                    <span class="pie-rotulo">{{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }}</span>
+                    <!-- Punto 12: el tiempo total estimado del pedido, en su propio renglón
+                    para que se lea de un vistazo junto al importe. -->
+                    <p class="pie-tiempo">
+                        <fa-icon [icon]="['far', 'clock']"></fa-icon>{{ carrito.tiempoEstimado() }}' estimados
+                    </p>
+                </div>
+
+                <span class="pie-total">{{ totalBorrador() }}</span>
+            </div>
+
+            <div class="pie-acciones">
+                <button type="button" class="btn-principal pie-boton" [disabled]="enviando()" (click)="enviarPedido()">
+                    <fa-icon [icon]="['fas', 'arrow-up-from-bracket']"></fa-icon>
+                    {{ rechazado() ? 'Reenviar pedido' : 'Enviar pedido' }}
+                </button>
+            </div>
+        </footer>
+        }
     </div>
 </ion-content>
-
-<!--
-  Pie fijo, el mismo de la carta: el importe siempre a la vista, que es lo que
-  exige el punto 12. Aparece siempre que haya un borrador para mandar, aunque
-  ya existan pedidos enviados.
--->
-@if (!cargando() && mostrarBorrador()) {
-<footer class="pie-pedido">
-    <div class="pie-importe">
-        <span class="pie-rotulo">{{ unidades() }} {{ unidades() === 1 ? 'producto' : 'productos' }}</span>
-        <span class="pie-total">{{ totalBorrador() }}</span>
-    </div>
-
-    <!-- Punto 12: el tiempo total estimado del pedido, en su propio renglón
-         para que se lea de un vistazo junto al importe. -->
-    <p class="pie-tiempo">
-        <fa-icon [icon]="['far', 'clock']"></fa-icon>
-        {{ carrito.tiempoEstimado() }} minutos estimados
-    </p>
-
-    <div class="pie-acciones">
-        <button type="button" class="btn-principal pie-boton" [disabled]="enviando()" (click)="enviarPedido()">
-            <fa-icon [icon]="['fas', 'arrow-up-from-bracket']"></fa-icon>
-            {{ rechazado() ? 'Reenviar pedido' : 'Enviar pedido' }}
-        </button>
-    </div>
-</footer>
-}

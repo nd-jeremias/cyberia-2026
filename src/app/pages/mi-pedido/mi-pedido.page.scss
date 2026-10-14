@@ -55,6 +55,16 @@
     }
 }
 
+.tarjeta-pedido{
+    height: 50vh;
+}
+
+.info{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .tarjeta-pedido,
 .pantalla-mi-pedido > .btn-principal {
     width: 100%;
@@ -193,6 +203,15 @@
     font-variant-numeric: tabular-nums;
 }
 
+.pie-importe{
+    display: flex;
+    flex-direction: column;
+}
+
+.pie-total{
+    align-self: center;
+}
+
 /* ── Espacio para el pie ───────────────────────────────────────────────
    El pie va fijo encima del contenido, así que la hoja tiene que terminar más
    arriba. El relleno que hereda de la carta (15vh) le quedaba corto: este pie
@@ -202,4 +221,8 @@
 
 .pantalla-mi-pedido {
     padding-bottom: calc(22vh + var(--pie-seguro)) !important;
+}
+
+.pie-boton{
+    border: 1px solid white;
 }
