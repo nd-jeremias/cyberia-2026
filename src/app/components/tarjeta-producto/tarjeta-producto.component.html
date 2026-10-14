@@ -22,7 +22,10 @@
         </div>
         }
 
-        <ion-badge class="insignia-tipo" [color]="colorTipo()">{{ etiquetaTipo() }}</ion-badge>
+        <!-- <ion-badge class="insignia-tipo" [color]="colorTipo()">{{ etiquetaTipo() }}</ion-badge> -->
+        <ion-badge class="insignia-tipo" [color]="'success'"
+            ><fa-icon [icon]="['far', 'clock']"></fa-icon> {{ producto().tiempoElaboracionMinutos }} min</ion-badge
+        >
 
         @if (!sinFotoValida() && producto().fotosUrls.length > 1) {
         <button
@@ -62,10 +65,42 @@
         <p class="descripcion">{{ producto().descripcion }}</p>
 
         <div class="detalles">
-            <span class="detalle">
+            <!-- <span class="detalle">
                 <fa-icon [icon]="['far', 'clock']"></fa-icon>
                 {{ producto().tiempoElaboracionMinutos }} min
-            </span>
+            </span> -->
+            @if(modo() != 'gestion'){ @if (cantidad() > 0) {
+            <!-- Punto 12: el cliente elige los productos con sus cantidades. -->
+            <div class="selector-cantidad">
+                <button
+                    type="button"
+                    class="paso"
+                    [attr.aria-label]="'Quitar una unidad de ' + producto().nombre"
+                    (click)="onQuitarCarrito()"
+                >
+                    <fa-icon [icon]="['fas', 'minus']"></fa-icon>
+                </button>
+
+                <span class="cantidad-elegida" aria-live="polite">
+                    {{ cantidad() }}
+                    <span class="cantidad-rotulo">en el pedido</span>
+                </span>
+
+                <button
+                    type="button"
+                    class="paso"
+                    [attr.aria-label]="'Agregar una unidad de ' + producto().nombre"
+                    (click)="onAgregarCarrito()"
+                >
+                    <fa-icon [icon]="['fas', 'plus']"></fa-icon>
+                </button>
+            </div>
+            } @else {
+            <button type="button" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
+                <fa-icon [icon]="['fas', 'cart-plus']"></fa-icon>
+                Agregar
+            </button>
+            } }
             <span class="precio">{{ precioFormateado() }}</span>
         </div>
 
@@ -80,8 +115,9 @@
                 Eliminar
             </button>
         </div>
-        } @else if (cantidad() > 0) {
-        <!-- Punto 12: el cliente elige los productos con sus cantidades. -->
+        }
+        <!--  @else if (cantidad() > 0) {
+         Punto 12: el cliente elige los productos con sus cantidades. 
         <div class="selector-cantidad">
             <button
                 type="button"
@@ -109,8 +145,8 @@
         } @else {
         <button type="button" class="boton-agregar btn-principal" (click)="onAgregarCarrito()">
             <fa-icon [icon]="['fas', 'cart-plus']"></fa-icon>
-            Agregar al pedido
+            Agregar
         </button>
-        }
+        } -->
     </div>
 </article>

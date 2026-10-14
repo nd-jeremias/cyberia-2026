@@ -902,7 +902,6 @@ body.barcode-scanner-active .barcode-scanner-ui {
         background-color: var(--hoja);
         margin-top: -50px; /* Sube 40px y tapa exactamente el padding-bottom del header */
         border-radius: 40px;
-        overflow: hidden;
         // flex-grow: 1;
         padding-top: 1.5rem;
 
@@ -974,10 +973,4 @@ body.barcode-scanner-active .barcode-scanner-ui {
 .lista-reel .tarjeta-producto .descripcion {
     -webkit-line-clamp: 2;
     line-clamp: 2;
-}
-
-/* La insignia del tipo ("PLATO") sobra en la carta: la solapa elegida ya dice
-   si se están mirando platos, bebidas o postres. */
-.lista-reel .insignia-tipo {
-    display: none;
 }
