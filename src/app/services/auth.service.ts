@@ -61,6 +61,8 @@ export class AuthService {
             .eq('id', userId)
             .maybeSingle();
 
+        await this.delay(300);
+
         if (error) {
             // La consulta falló: no es que falte la fila. Se guarda el motivo
             // para que la pantalla no mande a revisar la base cuando en
