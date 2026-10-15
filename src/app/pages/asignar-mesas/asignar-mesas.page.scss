@@ -86,6 +86,30 @@
     gap: 1rem;
 }
 
+.lista-mesas {
+  gap: 1.25rem;
+  /* Altura delimitada para que exista el contenedor de scroll interno */
+  height: 15rem; 
+  max-height: 15.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  /* Activa el imán vertical de tarjeta en tarjeta */
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+
+  padding: 0.25rem 0.5rem;
+  box-sizing: border-box;
+
+  /* Oculta la barra de scroll visual */
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Advertencia, no un dato más: ámbar, con icono y filo lateral, para que el
    metre no intente asignar una segunda mesa por distracción. */
 .aviso-asignada {
@@ -136,6 +160,14 @@
         border-color: rgba(27, 122, 75, 0.4);
         box-shadow: var(--sombra-elevada);
     }
+
+    flex-shrink: 0;
+    width: 100%;
+    box-sizing: border-box;
+
+    /* Punto de anclaje donde frena el imán */
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
 }
 
 .encabezado-mesa {
@@ -159,4 +191,9 @@
 .tarjeta-mesa .btn {
     margin: 0.25rem 0 0;
     min-height: 3.25rem;
+}
+
+// Asegura que el gesto táctil lo capture .lista-mesas y no la página entera
+.superior {
+  overflow-y: auto;
 }
