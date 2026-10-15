@@ -28,9 +28,10 @@
 .seccion-graficos {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   padding: 1.25rem 1rem;
   margin-bottom: 2rem;
-  min-height: 520px; /* Le da cuerpo a toda la tarjeta */
+  min-height: 65vh; /* Le da cuerpo a toda la tarjeta */
 }
 
 .area-grafico {
