@@ -139,7 +139,7 @@
 
     /* Un rem más que el resto de los pies fijos: con --pie-seguro solo, la
        caja de texto quedaba demasiado pegada al borde de abajo. */
-    padding: 0.625rem 0.75rem calc(var(--pie-seguro) + 1rem);
+    padding: 0.625rem 0.75rem calc(var(--pie-seguro) + 1.4rem);
     box-sizing: border-box;
 
     background: var(--hoja-alta);

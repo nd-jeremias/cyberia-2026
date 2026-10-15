@@ -113,14 +113,14 @@ const BOTON_JUEGOS: BotonHome = {
 
 /** Antes de la visita sólo se miran los resultados de encuestas anteriores. */
 const BOTON_VER_ENCUESTAS: BotonHome = {
-    texto: 'Ver encuestas',
+    texto: 'Encuestas',
     icono: 'chart-simple',
     ruta: '/encuestas',
 };
 
 /** Con el pedido recibido, la encuesta de esta visita (punto 20). */
 const BOTON_RESPONDER_ENCUESTA: BotonHome = {
-    texto: 'Responder la encuesta',
+    texto: 'Encuestas',
     icono: 'chart-simple',
     ruta: '/encuestas',
 };
