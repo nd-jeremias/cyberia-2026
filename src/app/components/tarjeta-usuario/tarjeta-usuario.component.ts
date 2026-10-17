@@ -127,6 +127,9 @@ export class TarjetaUsuarioComponent {
     mostrarContacto = input<boolean>(true);
     mostrarEstado = input<boolean>(false);
 
+    /** Clase CSS extra que se aplica al article raíz del componente. */
+    claseExtra = input<string>('');
+
     accionSeleccionada = output<{
         accion: string;
         usuario: ClienteInterface;

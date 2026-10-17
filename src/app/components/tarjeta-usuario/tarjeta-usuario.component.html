@@ -1,4 +1,4 @@
-<article class="tarjeta-usuario">
+<article class="tarjeta-usuario" [class]="'tarjeta-usuario ' + claseExtra()">
     <div class="contenedor-foto">
         @if (usuario().foto_url) {
         <img class="foto-usuario" [src]="usuario().foto_url" [alt]="'Foto de ' + nombreCompleto()" />
