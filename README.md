@@ -330,7 +330,7 @@ npx cap open android
 
 ### Pantallas de Inicio
 
-<img src="assets\screenshots/Screenshot_inicio_cliente.jpeg" width="600" alt="Pantalla de inicio"/> <img src="assets\screenshots/Screenshot_pantalla_inicio_dueño.jpeg" width="600" alt="Pantalla de inicio Dueño"/> <img src="assets\screenshots/Screenshot_pantalla_inicio_meitre.jpeg" width="600" alt=""/> <img src="assets\screenshots\" width="600" alt="Pantalla de inicio Meitre"/> <img src="assets\screenshots/Screenshot_inicio_cocinero.jpeg" width="600" alt="Pantalla de inicio Cocinero"/> 
+<img src="assets\screenshots/Screenshot_inicio_cliente.jpeg" width="600" alt="Pantalla de inicio"/> <img src="assets\screenshots/Screenshot_pantalla_inicio_dueño.jpeg" width="600" alt="Pantalla de inicio Dueño"/> <img src="assets\screenshots\Screenshot_pantalla_inicio_meitre.jpeg" width="600" alt="Pantalla de inicio Meitre"/> <img src="assets\screenshots\Screenshot_pantalla_inicio_cocinero.jpeg" width="600" alt="Pantalla de inicio Cocinero"/> 
 
 ---
 
@@ -357,7 +357,7 @@ npx cap open android
 
 ### Pantalla Consultas al Mozo
 
-<img src="assets\screenshots\Screenshot_consultas" width="600" alt="Consultas"/> <img src="assets\screenshots\Screenshot_consultas_mensaje" width="600" alt="Consultas Mensajes"/>
+<img src="assets\screenshots\Screenshot_consultas.jpeg" width="600" alt="Consultas"/> <img src="assets\screenshots\Screenshot_consultas_mensaje.jpeg" width="600" alt="Consultas Mensajes"/>
 
 ---
 
