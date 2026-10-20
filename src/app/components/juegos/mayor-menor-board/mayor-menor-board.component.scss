@@ -1,11 +1,16 @@
+/* `min-height: 400px` empujaba el botón de salir fuera de la pantalla en los
+   teléfonos bajos: ahora el tablero se acomoda al hueco que le dan. */
 :host {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 400px;
+    min-height: 0;
 }
 
 .game-container {
+    max-height: 100%;
+    overflow: hidden;
+
     text-align: center;
     // background: #34495e;
     background: var(--tinta);

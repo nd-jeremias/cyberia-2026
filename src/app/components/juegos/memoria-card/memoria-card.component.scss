@@ -1,7 +1,10 @@
-/* Contenedor principal que da la sensación de profundidad */
+/* Contenedor principal que da la sensación de profundidad.
+
+   Llena la celda que le toca en el tablero: con un tamaño fijo, las doce
+   cartas no entraban en la pantalla de un teléfono. */
 .card-slot {
-    width: 126px;
-    height: 173px;
+    width: 100%;
+    height: 100%;
     perspective: 1000px;
     background-color: transparent;
 }

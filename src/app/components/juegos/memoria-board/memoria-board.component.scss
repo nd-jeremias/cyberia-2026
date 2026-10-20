@@ -1,6 +1,16 @@
+/* El tablero ocupa el hueco que le da la pantalla, ni más ni menos: antes las
+   cartas medían 126 × 173 px fijos, las doce no entraban en un teléfono y
+   quedaban cortadas a la derecha y abajo. */
+:host {
+    display: block;
+    min-height: 0;
+}
+
 .tablero {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(4, 1fr);
     gap: 8px;
+
+    height: 100%;
 }

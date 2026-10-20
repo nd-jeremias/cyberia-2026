@@ -1,4 +1,4 @@
-<app-tarjeta-informacion-cliente [texto]="preguntaActual.pregunta"></app-tarjeta-informacion-cliente>
+<p class="pregunta">{{ preguntaActual.pregunta }}</p>
 
 @for(resp of preguntaActual.opciones; track $index){
 <app-preguntas-boton

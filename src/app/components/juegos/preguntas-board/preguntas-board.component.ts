@@ -1,5 +1,4 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { TarjetaInformacionClienteComponent } from '../../tarjeta-informacion-cliente/tarjeta-informacion-cliente.component';
 import { PreguntasBotonComponent } from '../preguntas-boton/preguntas-boton.component';
 import { Opcion, Pregunta } from '../../../interfaces/games.interface';
 import { JuegosPreguntasService } from '../../../services/juegos.preguntas.service';
@@ -10,7 +9,7 @@ import { JuegosService } from '../../../services/juegos.service';
     selector: 'app-preguntas-board',
     templateUrl: './preguntas-board.component.html',
     styleUrls: ['./preguntas-board.component.scss'],
-    imports: [TarjetaInformacionClienteComponent, PreguntasBotonComponent],
+    imports: [PreguntasBotonComponent],
 })
 export class PreguntasBoardComponent implements OnInit {
     juegosService = inject(JuegosService);

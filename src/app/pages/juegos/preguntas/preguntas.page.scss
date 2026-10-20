@@ -1,0 +1,31 @@
+/**
+ * El juego entra entero en la pantalla, sin desplazarse.
+ *
+ * El `!important` es obligatorio: global.scss declara
+ * `.superior { display: block !important }` y además le da desplazamiento
+ * propio. Acá se lo saca, y el tablero se queda con el alto que sobra entre la
+ * banda naranja y el botón de salir.
+ */
+.superior {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    min-height: 0;
+    overflow: hidden !important;
+
+    /* Lugar para la barra de navegación del teléfono. El `max()` es el piso:
+       Android no informa cuánto mide, y sin esto el botón de salir quedaba
+       detrás de los tres botones del sistema. */
+    padding-bottom: calc(0.5rem + max(3rem, env(safe-area-inset-bottom, 0px))) !important;
+}
+
+/* El tablero se lleva el hueco; el botón de salir no se achica nunca. */
+app-preguntas-board {
+    flex: 1;
+    min-height: 0;
+}
+
+.superior > .btn-primario {
+    flex-shrink: 0;
+}
