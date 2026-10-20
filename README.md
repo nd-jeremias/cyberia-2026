@@ -113,6 +113,7 @@ Los scripts de la carpeta `sql/` se corren desde el **SQL Editor** de Supabase, 
 ## Prohibido hacer git pull origin main sobre ramas de desarrollo
 
 Para actualizar una rama propia luego de actualizar main o main-test seguir estos pasos:
+
 ```bash
 git checkout main
 git pull
@@ -327,9 +328,9 @@ npx cap open android
 
 ---
 
-### Pantalla de Inicio de cliente
+### Pantallas de Inicio
 
-<img src="assets\screenshots/Screenshot_inicio_cliente.jpeg" width="600" alt="Pantalla de inicio"/>
+<img src="assets\screenshots/Screenshot_inicio_cliente.jpeg" width="600" alt="Pantalla de inicio"/> <img src="assets\screenshots/Screenshot_pantalla_inicio_dueño.jpeg" width="600" alt="Pantalla de inicio Dueño"/> <img src="assets\screenshots\Screenshot_pantalla_inicio_meitre.jpeg" width="600" alt="Pantalla de inicio Meitre"/> <img src="assets\screenshots\Screenshot_pantalla_inicio_cocinero.jpeg" width="600" alt="Pantalla de inicio Cocinero"/> 
 
 ---
 
@@ -348,9 +349,15 @@ npx cap open android
 
 ---
 
-<!-- ### Pantalla de Inicio
+### Pantalla QR Propinas
 
-<img src="assets\screenshots\Screenshot_pantalla_inicio.png" width="600" alt="Pantalla de Inicio"/> -->
+<img src="assets\screenshots/Screenshot_pantalla_propinas.jpeg" width="600" alt="Propinas"/> <img src="assets\screenshots/Screenshot_pantalla_propinas_qr.jpeg" width="600" alt="Propinas QR"/>
+
+---
+
+### Pantalla Consultas al Mozo
+
+<img src="assets\screenshots\Screenshot_consultas.jpeg" width="600" alt="Consultas"/> <img src="assets\screenshots\Screenshot_consultas_mensaje.jpeg" width="600" alt="Consultas Mensajes"/>
 
 ---
 
@@ -382,12 +389,12 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 8.- El dueño o supervisor acepta a un cliente registrado.                                        |   14/09/2026    | 18/09/2026 | Completado |                                                                                   |
 | 21.- El cliente solicita la cuenta al mozo.                                                      |   30/09/2026    | 30/09/2026 | Completado |                                                                                   |
 | **Correcciones a realizar luego de la entrega de los 22 puntos para la primer fecha de entrega** |   12/10/2026    | --/--/---- | ---------- |                                                                                   |
-| Apagar temporizador al finalizar juegos                                                          |                 |            |            |                                                                                   |
-| En el juego de memoria no se agrega la propina luego de finalizado                               |                 |            |            |                                                                                   |
-| Correccion de estetica en juego de memoria                                                       |                 |            |            |                                                                                   |
-| Correccion en la ultima pregunta del cuestionario(da siempre error en la ultima)                 |                 |            |            |                                                                                   |
-| Agregar spinner al pedir cuenta                                                                  |                 |            |            |                                                                                   |
-| Verificar que se guarde la propina en BD correctamente luego de escanear QR                      |                 |            |            |                                                                                   |
+| Apagar temporizador al finalizar juegos                                                          |                 |            | Completado |                                                                                   |
+| En el juego de memoria no se agrega la propina luego de finalizado                               |                 |            | Completado |                                                                                   |
+| Correccion de estetica en juego de memoria                                                       |                 |            | Completado |                                                                                   |
+| Correccion en la ultima pregunta del cuestionario(da siempre error en la ultima)                 |                 |            | Completado |                                                                                   |
+| Agregar spinner al pedir cuenta                                                                  |                 |            | Completado |                                                                                   |
+| Verificar que se guarde la propina en BD correctamente luego de escanear QR                      |                 |            | Completado |                                                                                   |
 
 ---
 
@@ -418,8 +425,8 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 19.- El mozo entrega el pedido completo                                                          |   14/09/2026    | 12/09/2026 | Completado |                                                                 |
 | 22.- El mozo confirma el pago y se libera la mesa.                                               |   16/09/2026    | 12/09/2026 | Completado |                                                                 |
 | **Correcciones a realizar luego de la entrega de los 22 puntos para la primer fecha de entrega** |   12/10/2026    | --/--/---- | ---------- |                                                                 |
-| Colocar todos los spinners faltantes en donde haya una leve carga                                |                 |            |            |                                                                 |
-| Colocar un padding bottom (--pie-seguro) en la casilla para escribir mensajes del mozo-cliente   |                 |            |            |                                                                 |
+| Colocar todos los spinners faltantes en donde haya una leve carga                                |                 |            | Completado |                                                                 |
+| Colocar un padding bottom (--pie-seguro) en la casilla para escribir mensajes del mozo-cliente   |                 |            | Completado |                                                                 |
 
 ---
 
@@ -442,10 +449,10 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 11.- Al cargar el código QR de la mesa (en el dispositivo del cliente), se permite ver el listado de los productos       |   14/09/2026    | 14/09/2026 | Completado |                                                                                                                            |
 | 12.- El cliente procede a realizar el pedido para todos los comensales de la mesa.                                       |   14/09/2026    | 14/09/2026 | Completado |                         ✅ Falta revisar que el pedido sea enviado a los sectores correspondientes                         |
 | **Correcciones a realizar luego de la entrega de los 22 puntos para la primer fecha de entrega**                         |   12/10/2026    | --/--/---- | ---------- |                                                                                                                            |
-| Luego de realizar el pedido redireccionar al inicio                                                                      |                 |            |            |                                                                                                                            |
-| Corregir estetica de las tarjetas informativas(icono mas grande, centrado de tarjeta, etc. Ocupar el 60% de la pantalla) |                 |            |            |                                                                                                                            |
-| Quitar elementos redundantes en la pagina "carta"                                                                        |                 |            |            |                                                                                                                            |
-| Errores que dispara el qr deben estar en español                                                                         |                 |            |            |                                                                                                                            |
+| Luego de realizar el pedido redireccionar al inicio                                                                      |                 |            | Completado |                                                                                                                            |
+| Corregir estetica de las tarjetas informativas(icono mas grande, centrado de tarjeta, etc. Ocupar el 60% de la pantalla) |                 |            | Completado |                                                                                                                            |
+| Quitar elementos redundantes en la pagina "carta"                                                                        |                 |            | Completado |                                                                                                                            |
+| Errores que dispara el qr deben estar en español                                                                         |                 |            | Completado |                                                                                                                            |
 
 ---
 
@@ -471,11 +478,11 @@ A continuación se detalla la distribución tentativa de tareas para los integra
 | 15.- El cliente accede a la sección de juegos en busca de descuentos.                            |   30/09/2026    | 30/09/2026 | Completado |                                                                |
 | 20.- El cliente accede a la encuesta                                                             |   30/09/2026    | 30/09/2026 | Completado |                                                                |
 | **Correcciones a realizar luego de la entrega de los 22 puntos para la primer fecha de entrega** |   12/10/2026    | --/--/---- | ---------- |                                                                |
-| Revisar el cambio de estado del pedido en el punto 18                                            |                 |            |            |                                                                |
-| Revisar la push notification en el punto 21 (push hacia el mozo)                                 |                 |            |            |                                                                |
-| Verificar push notifications cuando se solicita la cuenta (recibe el mozo)                       |                 |            |            |                                                                |
-| Verificar push notifications cuando un cliente realiza un pago (recibe mozo, dueño y supervisor) |                 |            |            |                                                                |
-| Verificar push notifications cuando el mozo confirma el pago (recibe dueño y supervisor)         |                 |            |            |                                                                |
+| Revisar el cambio de estado del pedido en el punto 18                                            |                 |            | Completado |                                                                |
+| Revisar la push notification en el punto 21 (push hacia el mozo)                                 |                 |            | Completado |                                                                |
+| Verificar push notifications cuando se solicita la cuenta (recibe el mozo)                       |                 |            | Completado |                                                                |
+| Verificar push notifications cuando un cliente realiza un pago (recibe mozo, dueño y supervisor) |                 |            | Completado |                                                                |
+| Verificar push notifications cuando el mozo confirma el pago (recibe dueño y supervisor)         |                 |            | Completado |                                                                |
 
 ---
 
@@ -486,4 +493,5 @@ _Nota: La fecha real se actualizará únicamente al momento de realizar el deplo
 > **Aprobación de la primer parte:** La fecha de entrega es el 17-10-2026. El objetivo es tener hasta el punto 22 realizado para el 03-10-2026 (dos semanas antes de la entrega). De esta manera podríamos disponer una semana para revisar los detalles (estéticos y funcionales) y una semana para corrección de errores y generar la apk unificada en todos los dispositivos
 
 ## Actualizacion 03/10:
+
 > **Posibilidades de promoción.** Tenemos realizados los primeros 22 puntos de manera funcional. Solamente faltan corregir cuestiones esteticas. Si llegamos a presentarlas correctamente para el 17/10 podriamos promocionar la materia para esa fecha.
