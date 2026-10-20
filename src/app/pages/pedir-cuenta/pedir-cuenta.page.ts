@@ -16,6 +16,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../services/auth.service';
 import { SalonService } from '../../services/salon.service';
 import { NotificacionesService } from '../../services/notificaciones.service';
+import { Preferences } from '@capacitor/preferences';
 
 /**
  * Pedir la cuenta — PANTALLA PENDIENTE.
@@ -79,10 +80,52 @@ export class PedirCuentaPage {
             this.pedido.set(pedido_cliente);
 
             if (this.pedido()?.propinaPorcentaje) this.propinaAgregada.set(true);
+
+            // Punto 21: "el cliente solicita la cuenta al mozo (push
+            // notification)". Entrar acá ES pedir la cuenta, así que el aviso
+            // sale en este momento y no al pagar, que es el paso siguiente.
+            await this.avisarQuePidioLaCuenta();
         } catch (error) {
             console.log(error);
         } finally {
             this.spinner.hide();
+        }
+    }
+
+    /**
+     * Le avisa al mozo que esta mesa pidió la cuenta (punto 21).
+     *
+     * Una sola vez por pedido: el cliente puede entrar y salir de esta
+     * pantalla varias veces —para buscar el QR de la propina, por ejemplo— y
+     * un aviso por cada entrada sería ruido para el mozo. La marca se guarda
+     * en el teléfono junto al id del pedido, así vale para esta visita y no
+     * para la siguiente.
+     *
+     * Si el aviso falla no se le muestra nada al cliente: pedir la cuenta
+     * igual funciona, y el mozo ve la mesa en su pantalla.
+     */
+    private async avisarQuePidioLaCuenta(): Promise<void> {
+        const pedido = this.pedido();
+
+        if (!pedido) return;
+
+        const clave = `cuenta-pedida-${pedido.id}`;
+
+        try {
+            const { value } = await Preferences.get({ key: clave });
+
+            if (value) return;
+
+            await this.notificaciones.enviarAvisos(
+                ['mozo'],
+                `La mesa ${pedido.numeroMesa} pidió la cuenta`,
+                'El cliente está por pagar. Acercate con el QR de propina si hace falta.',
+                'pago'
+            );
+
+            await Preferences.set({ key: clave, value: 'si' });
+        } catch (error) {
+            console.error('No se pudo avisar al mozo que el cliente pidió la cuenta:', error);
         }
     }
 
