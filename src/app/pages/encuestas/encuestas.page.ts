@@ -8,75 +8,86 @@ import { SalonService } from '../../services/salon.service';
 import { PedidoService } from '../../services/pedido.service';
 import { EncuestasService } from '../../services/encuestas.service';
 import { BotonHome } from '../../home/home-botones.config';
-import { BotonHomeComponent } from '../../components/boton-home/boton-home.component'; 
+import { BotonHomeComponent } from '../../components/boton-home/boton-home.component';
+import { TarjetaInformacionClienteComponent } from '../../components/tarjeta-informacion-cliente/tarjeta-informacion-cliente.component';
 
 @Component({
-  selector: 'app-encuestas',
-  templateUrl: './encuestas.page.html',
-  styleUrls: ['./encuestas.page.scss'],
-  standalone: true,
-  imports: [IonContent, IonIcon, CommonModule, HeaderComponent, BotonHomeComponent]
+    selector: 'app-encuestas',
+    templateUrl: './encuestas.page.html',
+    styleUrls: ['./encuestas.page.scss'],
+    standalone: true,
+    imports: [
+        IonContent,
+        IonIcon,
+        CommonModule,
+        HeaderComponent,
+        BotonHomeComponent,
+        TarjetaInformacionClienteComponent,
+    ],
 })
 export class EncuestasPage {
-  private auth = inject(AuthService);
-  private salon = inject(SalonService);
-  private pedidoService = inject(PedidoService);
-  private encuestasService = inject(EncuestasService);
-  private router = inject(Router);
+    private auth = inject(AuthService);
+    private salon = inject(SalonService);
+    private pedidoService = inject(PedidoService);
+    private encuestasService = inject(EncuestasService);
+    private router = inject(Router);
 
-  cargando = signal(true);
-  puedeResponder = signal(false);
+    cargando = signal(true);
+    puedeResponder = signal(false);
 
-  // Objetos de botones con icono, texto y navegación
-  botonCompletar: BotonHome = {
-    texto: 'Completar Encuesta',
-    icono: 'pen-to-square',
-    ruta: '/encuestas/completar'
-  };
+    public textoInformativo =
+        'Bienvenido a la sección de encuestas. Aquí podrás completar la encuesta de satisfacción de tu estadía y ver los resultados de las encuestas anteriores.';
 
-  botonResultados: BotonHome = {
-    texto: 'Ver Resultados',
-    icono: 'chart-simple',
-    ruta: '/encuestas/resultados'
-  };
+    // Objetos de botones con icono, texto y navegación
+    botonCompletar: BotonHome = {
+        texto: 'Completar Encuesta',
+        icono: 'pen-to-square',
+        ruta: '/encuestas/completar',
+    };
 
-  async ionViewWillEnter() {
-    await this.verificarAcceso();
-  }
+    botonResultados: BotonHome = {
+        texto: 'Ver Resultados',
+        icono: 'chart-simple',
+        ruta: '/encuestas/resultados',
+    };
 
-  async verificarAcceso() {
-    this.cargando.set(true);
-    const usuarioId = this.auth.session()?.user.id;
-    if (!usuarioId) {
-      this.puedeResponder.set(false);
-      this.cargando.set(false);
-      return;
+    async ionViewWillEnter() {
+        await this.verificarAcceso();
     }
 
-    // 1. Verificar si tiene mesa asignada
-    const situacion = await this.salon.cargarSituacion(usuarioId);
-    if (!situacion?.mesaId) {
-      this.puedeResponder.set(false);
-      this.cargando.set(false);
-      return;
+    async verificarAcceso() {
+        this.cargando.set(true);
+        const usuarioId = this.auth.session()?.user.id;
+        if (!usuarioId) {
+            this.puedeResponder.set(false);
+            this.cargando.set(false);
+            return;
+        }
+
+        // 1. Verificar si tiene mesa asignada
+        const situacion = await this.salon.cargarSituacion(usuarioId);
+        if (!situacion?.mesaId) {
+            this.puedeResponder.set(false);
+            this.cargando.set(false);
+            return;
+        }
+
+        // 2. Verificar si tiene pedido recibido en esta visita
+        const pedidoActual = await this.pedidoService.pedidoActualDelCliente(usuarioId);
+        const estadosValidos = ['Recibido', 'Pagado'];
+        if (!pedidoActual || !estadosValidos.includes(pedidoActual.estado)) {
+            this.puedeResponder.set(false);
+            this.cargando.set(false);
+            return;
+        }
+
+        // 3. Verificar si ya respondió en esta estadía
+        const yaRespondio = await this.encuestasService.yaCompletoEncuestaDeEstadia(usuarioId, pedidoActual.id);
+        this.puedeResponder.set(!yaRespondio);
+        this.cargando.set(false);
     }
 
-    // 2. Verificar si tiene pedido recibido en esta visita
-    const pedidoActual = await this.pedidoService.pedidoActualDelCliente(usuarioId);
-    const estadosValidos = ['Recibido', 'Pagado'];
-    if (!pedidoActual || !estadosValidos.includes(pedidoActual.estado)) {
-      this.puedeResponder.set(false);
-      this.cargando.set(false);
-      return;
+    navegar(ruta: string) {
+        this.router.navigate([ruta]);
     }
-
-    // 3. Verificar si ya respondió en esta estadía
-    const yaRespondio = await this.encuestasService.yaCompletoEncuestaDeEstadia(usuarioId, pedidoActual.id);
-    this.puedeResponder.set(!yaRespondio);
-    this.cargando.set(false);
-  }
-
-  navegar(ruta: string) {
-    this.router.navigate([ruta]);
-  }
 }
