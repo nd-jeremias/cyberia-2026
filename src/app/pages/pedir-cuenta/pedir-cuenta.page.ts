@@ -219,12 +219,18 @@ export class PedirCuentaPage {
      * rechazado.
      */
     private async avisarAlMozo(): Promise<void> {
+        const mesa = this.pedido()?.numeroMesa;
+
         try {
-            // Aca deberia ser un mensaje mas personalizado, pero hay q traer la mesa, y para eso hay q traer el ID. Revisar el local storage primero
+            // Punto 21: el aviso del pago lo reciben el mozo, el dueño y el
+            // supervisor. Van los tres en una sola llamada: `enviarAvisos`
+            // acepta varios perfiles y junta todos los teléfonos en un envío.
             await this.notificaciones.enviarAvisos(
-                ['mozo'],
+                ['mozo', 'dueño', 'supervisor'],
                 'Pago realizado',
-                `Un cliente ha realizado un pago. Confirma la recepción.`,
+                mesa
+                    ? `La mesa ${mesa} pagó la cuenta. Falta confirmar la recepción del pago.`
+                    : 'Un cliente ha realizado un pago. Confirma la recepción.',
                 'pago'
             );
             this.modal.setOpen(
