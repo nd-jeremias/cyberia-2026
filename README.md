@@ -14,9 +14,9 @@
 -   [Guía Rápida de Git](#-guía-rápida-de-git)
 -   [Arquitectura de Carpetas](#-arquitectura-de-carpetas)
 -   [Guía de Compilación Nativa (Capacitor + Android)](<#-guía-de-compilación-nativa-(capacitor-+-android)>)
--   [Índice de Imágenes](#-índice-de-imágenes)
+-   [Índice de Imágenes](#-indice-de-imagenes)
 -   [Cronograma y Distribución de Tareas](#-cronograma-y-distribución-de-tareas)
-
+-   [Descargar la App](#-descargar-la-app)
 ---
 
 ## 🔍 Descripción General
@@ -276,7 +276,7 @@ npx cap open android
 
 ### Pantalla de Ingreso
 
-<img src="assets\screenshots\Screenshot_pantalla_ingreso.png" width="600" alt="Pantalla de Ingreso"/> <img src="assets\screenshots\Screenshot_pantalla_ingreso_botones.png" width="600" alt="Pantalla de Ingreso Botones Acceso Rapido"/>
+<img src="assets\screenshots\Screenshot_pantalla_ingreso.png" width="600" alt="Pantalla de Ingreso"/> <img src="assets\screenshots\Screenshot_pantalla_ingreso_botones.jpeg" width="600" alt="Pantalla de Ingreso Botones Acceso Rapido"/>
 
 ---
 
@@ -495,3 +495,11 @@ _Nota: La fecha real se actualizará únicamente al momento de realizar el deplo
 ## Actualizacion 03/10:
 
 > **Posibilidades de promoción.** Tenemos realizados los primeros 22 puntos de manera funcional. Solamente faltan corregir cuestiones esteticas. Si llegamos a presentarlas correctamente para el 17/10 podriamos promocionar la materia para esa fecha.
+
+--- 
+
+## 📱 Descargar la App
+
+[Descargar APK](https://github.com/nd-jeremias/cyberia-2026/releases/download/V1.0.0_ENTREGA_FINAL/app-V1.0.0.apk)
+
+> **Versión actual:** v1.0.0 (Compilada el 29/10/2026)
